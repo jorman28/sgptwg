@@ -1,0 +1,41 @@
+label {
+  color: #269abc;
+}
+
+.form-control {
+    margin-bottom: 12px;
+    border: 1px solid #269abc;
+}
+
+.btn-default {
+    background-color: #a6e1ec;
+    border-color: #afd9ee;
+    color: #269abc;
+    font-weight: 600;
+}
+
+.btn-default:hover, .btn-default:focus, .btn-default.focus, .btn-default:active, .btn-default.active, .open>.dropdown-toggle.btn-default {
+    background-color: #46b8da;
+    color: #fff;
+    font-weight: 500;
+}
+
+h2, .h2 {
+    color: #2aabd2;
+}
+
+.panel-heading {
+    padding: 6px;
+}
+
+.panel-success {
+    border-color: #46b8da;
+}
+
+.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default{
+    color: #46b8da;
+}
+
+.ui-state-hover, .ui-widget-content .ui-state-hover, .ui-widget-header .ui-state-hover, .ui-state-focus, .ui-widget-content .ui-state-focus, .ui-widget-header .ui-state-focus{
+        border: 1px solid #46b8da;
+}
