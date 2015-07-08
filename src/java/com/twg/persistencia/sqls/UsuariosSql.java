@@ -10,7 +10,7 @@ public class UsuariosSql {
     }
     
     public String consultarUsuarios(){
-        return "SELECT * FROM usuarios";
+        return "SELECT id_persona, usuario, clave, perfil FROM usuarios";
     }
     
     public String insertarUsuario(){

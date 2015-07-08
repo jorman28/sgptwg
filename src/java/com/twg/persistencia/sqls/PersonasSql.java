@@ -15,7 +15,8 @@ public class PersonasSql {
     }
     
     public String consultarPersonas(){
-        return "SELECT * FROM personas";
+        return "SELECT id, documento, tipo_documento, nombres, apellidos, direccion, "
+                + "telefono, celular, correo FROM personas";
     }
     
     public String insertarPersona(){

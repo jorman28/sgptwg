@@ -15,7 +15,7 @@ public class TiposDocumentosSql {
     }
     
     public String consultarTiposDocumentos(){
-        return "SELECT * FROM tipos_documentos";
+        return "SELECT tipo, nombre FROM tipos_documentos";
     }
     
     public String insertarTipoDocumento(){

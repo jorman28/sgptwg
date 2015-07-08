@@ -15,7 +15,7 @@ public class EmpleadosSql {
     }
     
     public String consultarEmpleados(){
-        return "SELECT * FROM empleados";
+        return "SELECT id_persona, cargo FROM empleados";
     }
     
     public String insertarEmpleado(){

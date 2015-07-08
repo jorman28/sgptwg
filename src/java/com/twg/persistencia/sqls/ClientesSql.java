@@ -15,7 +15,7 @@ public class ClientesSql {
     }
     
     public String consultarClientes(){
-        return "SELECT * FROM clientes";
+        return "SELECT id_persona, fecha_inicio FROM clientes";
     }
     
     public String insertarCliente(){
