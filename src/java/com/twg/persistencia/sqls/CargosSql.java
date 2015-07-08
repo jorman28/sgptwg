@@ -15,7 +15,7 @@ public class CargosSql {
     }
     
     public String consultarCargos(){
-        return "SELECT * FROM cargos";
+        return "SELECT id, nombre FROM cargos";
     }
     
     public String insertarCargo(){
