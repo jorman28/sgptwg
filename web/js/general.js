@@ -1,9 +1,3 @@
-$(document).ready(function (){
-    $( "#accordion" ).accordion({
-        active: 0
-    });
-});
-
 function ocultarMensajes(){
     $('#msg')[0].style.display = 'none';
     $('#warn')[0].style.display = 'none';
