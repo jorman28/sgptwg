@@ -6,10 +6,12 @@
 
 package com.twg.controladores;
 
+import com.twg.persistencia.beans.TiposDocumentosBean;
+import com.twg.persistencia.daos.TiposDocumentosDao;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -18,7 +20,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Erika Jhoana
  */
-@WebServlet(name = "PersonasController", urlPatterns = {"/PersonasController"})
+//@WebServlet(name = "PersonasController", urlPatterns = {"/PersonasController"})
 public class PersonasController extends HttpServlet {
 
     /**
@@ -32,19 +34,40 @@ public class PersonasController extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet PersonasController</title>");            
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet PersonasController at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
+        String accion = request.getParameter("accion");
+        if(accion == null){
+            accion = "";
         }
+        switch(accion){
+            case "consultar":
+                break;
+            case "editar":
+                break;
+            case "guardar":
+                break;
+            case "eliminar":
+                break;
+            default:
+                break;
+        }
+        request.setAttribute("tiposDocumentos", obtenerTiposDocumentos());
+        request.getRequestDispatcher("jsp/personas.jsp").forward(request, response);
+    }
+    
+    private List<TiposDocumentosBean> obtenerTiposDocumentos(){
+        List<TiposDocumentosBean> tiposDocumentos = new ArrayList<>();
+//        tiposDocumentos = TiposDocumentosDao.consultarTiposDocumentos();
+        return tiposDocumentos;
+    }
+    
+    @Override
+    protected void doGet(HttpServletRequest reqeust, HttpServletResponse response) throws ServletException, IOException{
+        processRequest(reqeust, response);
+    }
+    
+    @Override
+    protected void doPost(HttpServletRequest reqeust, HttpServletResponse response) throws ServletException, IOException{
+        processRequest(reqeust, response);
     }
 
 }
