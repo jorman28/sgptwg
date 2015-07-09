@@ -24,7 +24,24 @@
             <div class="row">
                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" id="contenido">
                     <form autocomplete="off" action="./UsuariosController" method="POST">
+                        <div id="confirmationMessage" class="modal fade">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <!-- dialog body -->
+                                    <div class="modal-body">
+                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                        Realmente desea eliminar el registro?
+                                    </div>
+                                    <!-- dialog buttons -->
+                                    <div class="modal-footer">
+                                        <button type="submit" class="btn btn-primary" name="accion" id="eliminar" value="eliminar">Si</button>
+                                        <button type="button" class="btn btn-primary" data-dismiss="modal">No</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <h1>USUARIOS</h1>
+                        <input type="hidden" id="idPersona" name="idPersona" value="${idPersona}" />
                         <div class="row">
                             <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                 <label for="tipoDocumento">*Tipo de documento:</label>
@@ -36,26 +53,29 @@
                                 </select>
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                                <label for="identificacion">*Documento:</label> 
-                                <input class="form-control" type="text" id="identificacion" name="identificacion"/>
+                                <label for="documento">*Documento:</label> 
+                                <input class="form-control" type="text" id="documento" name="documento" value="${documento}"/>
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                 <label for="usuario">*Usuario:</label> 
-                                <input class="form-control" type="text" id="usuario" name="usuario" value="" />
+                                <input class="form-control" type="text" id="usuario" name="usuario" value="${usuario}" />
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                 <label for="perfil">*Perfil:</label> 
-                                <select class="form-control" id="perfil" name="perfil" value="">
-                                    <option value="0" label="Seleccione">
+                                <select class="form-control" id="perfil" name="perfil" value="${perfil}">
+                                    <option value="0">SELECCIONE</option>
+                                    <c:forEach items="${perfiles}" var="per">
+                                        <option value="${per.id}">${per.nombre}</option>
+                                    </c:forEach>
                                 </select>
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                 <label for="clave">*Clave:</label> 
-                                <input class="form-control" type="password" id="clave" name="clave" value="" />
+                                <input class="form-control" type="password" id="clave" name="clave" value="${clave}" />
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                 <label for="clave">*Confirmar clave:</label> 
-                                <input class="form-control" type="password" id="clave2" name="clave2" value="" />
+                                <input class="form-control" type="password" id="clave2" name="clave2" value="${clave}" />
                             </div>
                         </div>
                         <br>
@@ -76,69 +96,23 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>Cédula de ciudadanía</td>
-                                    <td>1128460258</td>
-                                    <td>Admin</td>
-                                    <td>Administrador</td>
-                                    <td>
-                                        <button class="btn btn-default" type="submit" name="accion" id="editar" value="editar">Editar</button>
-                                        <button class="btn btn-default" type="button" data-toggle="modal" data-target="#confirmationMessage">Eliminar</button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Cédula de ciudadanía</td>
-                                    <td>1128460258</td>
-                                    <td>Admin</td>
-                                    <td>Administrador</td>
-                                    <td>
-                                        <button class="btn btn-default" type="submit" name="accion" id="editar" value="editar">Editar</button>
-                                        <button class="btn btn-default" type="button" data-toggle="modal" data-target="#confirmationMessage">Eliminar</button>
-                                    </td>
-                                </tr>
+                                <c:forEach items="${usuarios}" var="item">
+                                    <tr>
+                                        <td>${item.descripcionTipoDocumento}</td>
+                                        <td>${item.documento}</td>
+                                        <td>${item.usuario}</td>
+                                        <td>${item.descripcionPerfil}</td>
+                                        <td>
+                                            <button class="btn btn-default" type="button" name="accion" id="editar" value="editar" onclick="jQuery('#idPersona').val(${item.descripcionPerfil}); submit();">Editar</button>
+                                            <button class="btn btn-default" type="button" data-toggle="modal" data-target="#confirmationMessage" onclick="jQuery('#idPersona').val(${item.descripcionPerfil}); submit();">Eliminar</button>
+                                        </td>
+                                    </tr>
+                                </c:forEach>
                             </tbody>
                         </table>
                     </form>
                 </div>
             </div>
         </div>
-
-    <div id="confirmationMessage" class="modal fade">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <!-- dialog body -->
-                <div class="modal-body">
-                    Hello world!
-                </div>
-                <!-- dialog buttons -->
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" name="accion" id="eliminar" value="eliminar">OK</button>
-                </div>
-            </div>
-        </div>
-    </div>
- 
-    <script>
-        $("#confirmationMessage").on("show", function() {    // wire up the OK button to dismiss the modal when shown
-            $("#eliminar").on("click", function(e) {
-                console.log("button pressed");   // just as an example...
-                $("#confirmationMessage").modal('hide');     // dismiss the dialog
-            });
-        });
-
-        $("#confirmationMessage").on("hide", function() {    // remove the event listeners when the dialog is dismissed
-            $("#confirmationMessage button.btn").off("click");
-        });
-
-        $("#confirmationMessage").on("hidden", function() {  // remove the actual elements from the DOM when fully hidden
-            $("#confirmationMessage").remove();
-        });
-
-        $("#confirmationMessage").modal({                    // wire up the actual modal functionality and show the dialog
-          "backdrop"  : "static",
-          "keyboard"  : false,
-          "show"      : false                     // ensure the modal is shown immediately
-        });
-    </script>
     </body>
 </html>

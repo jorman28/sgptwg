@@ -10,6 +10,10 @@ public class UsuariosBean {
     private String usuario;
     private String clave;
     private Integer perfil;
+    private String descripcionPerfil;
+    private Integer tipoDocumento;
+    private String documento;
+    private String descripcionTipoDocumento;
     
     public UsuariosBean(){
     }
@@ -44,5 +48,37 @@ public class UsuariosBean {
 
     public void setPerfil(Integer perfil) {
         this.perfil = perfil;
+    }
+
+    public String getDescripcionPerfil() {
+        return descripcionPerfil;
+    }
+
+    public void setDescripcionPerfil(String descripcionPerfil) {
+        this.descripcionPerfil = descripcionPerfil;
+    }
+
+    public Integer getTipoDocumento() {
+        return tipoDocumento;
+    }
+
+    public void setTipoDocumento(Integer tipoDocumento) {
+        this.tipoDocumento = tipoDocumento;
+    }
+
+    public String getDocumento() {
+        return documento;
+    }
+
+    public void setDocumento(String documento) {
+        this.documento = documento;
+    }
+
+    public String getDescripcionTipoDocumento() {
+        return descripcionTipoDocumento;
+    }
+
+    public void setDescripcionTipoDocumento(String descripcionTipoDocumento) {
+        this.descripcionTipoDocumento = descripcionTipoDocumento;
     }
 }
