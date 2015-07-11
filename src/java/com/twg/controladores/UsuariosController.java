@@ -26,7 +26,7 @@ public class UsuariosController extends HttpServlet {
     private final TiposDocumentosDao tiposDocumentosDao = new TiposDocumentosDao();
     private final PerfilesDao perfilesDao = new PerfilesDao();
     private final UsuariosDao usuariosDao = new UsuariosDao();
-    private String mensajeInformacion;
+    private String mensajeAlerta;
     private String mensajeExito;
     private String mensajeError;
     
@@ -40,7 +40,7 @@ public class UsuariosController extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        mensajeInformacion = "";
+        mensajeAlerta = "";
         mensajeExito = "";
         mensajeError = "";
         
@@ -135,7 +135,7 @@ public class UsuariosController extends HttpServlet {
             mensajeError = "Ocurrió un error procesando los datos. Revise el log de aplicación.";
         }
         
-        request.setAttribute("mensajeInformacion", mensajeInformacion);
+        request.setAttribute("mensajeAlerta", mensajeAlerta);
         request.setAttribute("mensajeExito", mensajeExito);
         request.setAttribute("mensajeError", mensajeError);
         request.setAttribute("tiposDocumentos", obtenerTiposDocumentos());
