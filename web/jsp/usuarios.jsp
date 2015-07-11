@@ -23,7 +23,7 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" id="contenido">
-                    <form autocomplete="off" action="./UsuariosController" method="POST">
+                    <form autocomplete="off" action="./UsuariosController" method="POST" id="formularioUsuarios">
                         <div id="confirmationMessage" class="modal fade">
                             <div class="modal-dialog">
                                 <div class="modal-content">
@@ -45,10 +45,10 @@
                         <div class="row">
                             <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                 <label for="tipoDocumento">*Tipo de documento:</label>
-                                <select class="form-control" id="tipoDocumento" name="tipoDocumento" value="${tipoDocumento}" >
+                                <select class="form-control" id="tipoDocumento" name="tipoDocumento" value="${tipoDocumento}">
                                     <option value="0">SELECCIONE</option>
-                                    <c:forEach items="${tiposDocumento}" var="tipo">
-                                        <option value="${tipo.tipo}">${tipo.nombre}</option>
+                                    <c:forEach items="${tiposDocumentos}" var="tipo">
+                                        <option value="${tipo.tipo}" <c:if test="${tipoDocumento == tipo.tipo}">selected</c:if> >${tipo.nombre}</option>
                                     </c:forEach>
                                 </select>
                             </div>
@@ -62,10 +62,10 @@
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                 <label for="perfil">*Perfil:</label> 
-                                <select class="form-control" id="perfil" name="perfil" value="${perfil}">
+                                <select class="form-control" id="perfil" name="perfil">
                                     <option value="0">SELECCIONE</option>
                                     <c:forEach items="${perfiles}" var="per">
-                                        <option value="${per.id}">${per.nombre}</option>
+                                        <option value="${per.id}" <c:if test="${perfil == per.id}">selected</c:if> >${per.nombre}</option>
                                     </c:forEach>
                                 </select>
                             </div>
@@ -103,8 +103,8 @@
                                         <td>${item.usuario}</td>
                                         <td>${item.descripcionPerfil}</td>
                                         <td>
-                                            <button class="btn btn-default" type="button" name="accion" id="editar" value="editar" onclick="jQuery('#idPersona').val(${item.descripcionPerfil}); submit();">Editar</button>
-                                            <button class="btn btn-default" type="button" data-toggle="modal" data-target="#confirmationMessage" onclick="jQuery('#idPersona').val(${item.descripcionPerfil}); submit();">Eliminar</button>
+                                            <a class="btn btn-default" href="<%=request.getContextPath()%>/UsuariosController?accion=editar&idPersona=${item.idPersona}">Editar</a>
+                                            <button class="btn btn-default" type="button" data-toggle="modal" data-target="#confirmationMessage" onclick="jQuery('#idPersona').val('${item.idPersona}');">Eliminar</button>
                                         </td>
                                     </tr>
                                 </c:forEach>
