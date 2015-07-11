@@ -14,9 +14,15 @@ public class PersonasSql {
     public PersonasSql(){
     }
     
-    public String consultarPersonas(){
-        return "SELECT id, documento, tipo_documento, nombres, apellidos, direccion, "
-                + "telefono, celular, correo FROM personas";
+    public String consultarPersonas(boolean unica){
+        String sql = "";
+        
+        sql += "SELECT id, documento, tipo_documento, nombres, apellidos, direccion, "
+                + "telefono, celular, correo FROM personas ";
+        if(unica){
+            sql += "WHERE documento = ?";
+        }
+        return sql;
     }
     
     public String insertarPersona(){
