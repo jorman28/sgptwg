@@ -61,6 +61,12 @@
                                     <li><a href="#">Documentación</a></li>
                                     <li><a href="#">Reportes</a></li>
                                     <li><a href="#">Ayuda</a></li>
+                                    <li class="dropdown">
+                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Cerrar sesión <span class="caret"></span></a>
+                                        <ul class="dropdown-menu">
+                                            <li><a href="<%=request.getContextPath()%>/InicioSesionController">Continuar</a></li>
+                                        </ul>
+                                    </li>
                                 </ul>
                             </div>
                         </div>
