@@ -14,6 +14,7 @@ public class UsuariosBean {
     private String tipoDocumento;
     private String documento;
     private String descripcionTipoDocumento;
+    private String activo;
     
     public UsuariosBean(){
     }
@@ -80,5 +81,13 @@ public class UsuariosBean {
 
     public void setDescripcionTipoDocumento(String descripcionTipoDocumento) {
         this.descripcionTipoDocumento = descripcionTipoDocumento;
+    }
+
+    public String getActivo() {
+        return activo;
+    }
+
+    public void setActivo(String activo) {
+        this.activo = activo;
     }
 }

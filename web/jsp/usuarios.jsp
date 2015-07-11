@@ -63,7 +63,7 @@
                             <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                 <label for="perfil">*Perfil:</label> 
                                 <select class="form-control" id="perfil" name="perfil">
-                                    <option value="0">SELECCIONE</option>
+                                    <option value="">SELECCIONE</option>
                                     <c:forEach items="${perfiles}" var="per">
                                         <option value="${per.id}" <c:if test="${perfil == per.id}">selected</c:if> >${per.nombre}</option>
                                     </c:forEach>
@@ -76,6 +76,14 @@
                             <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                 <label for="clave">*Confirmar clave:</label> 
                                 <input class="form-control" type="password" id="clave2" name="clave2" value="${clave}" />
+                            </div>
+                            <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                <label for="activo">*Estado:</label> 
+                                <select class="form-control" id="activo" name="activo">
+                                    <option value="">SELECCIONE</option>
+                                    <option value="T" <c:if test="${activo == 'T'}">selected</c:if> >Activo</option>
+                                    <option value="F" <c:if test="${activo == 'F'}">selected</c:if> >Inactivo</option>
+                                </select>
                             </div>
                         </div>
                         <br>
@@ -92,6 +100,7 @@
                                     <th>Documento</th>
                                     <th>Usuario</th>
                                     <th>Perfil</th>
+                                    <th>Estado</th>
                                     <th>Acciones</th>
                                 </tr>
                             </thead>
@@ -102,6 +111,14 @@
                                         <td>${item.documento}</td>
                                         <td>${item.usuario}</td>
                                         <td>${item.descripcionPerfil}</td>
+                                        <td>
+                                            <c:if test="${item.activo == 'T'}">
+                                                Activo
+                                            </c:if>
+                                            <c:if test="${item.activo == 'F'}">
+                                                Inactivo
+                                            </c:if>
+                                        </td>
                                         <td>
                                             <a class="btn btn-default" href="<%=request.getContextPath()%>/UsuariosController?accion=editar&idPersona=${item.idPersona}">Editar</a>
                                             <button class="btn btn-default" type="button" data-toggle="modal" data-target="#confirmationMessage" onclick="jQuery('#idPersona').val('${item.idPersona}');">Eliminar</button>

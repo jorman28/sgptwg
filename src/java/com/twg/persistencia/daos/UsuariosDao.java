@@ -21,23 +21,23 @@ public class UsuariosDao {
     }
 
     public List<UsuariosBean> consultarUsuarios() throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
-        return consultarUsuarios(null, null, null, null, null, null);
+        return consultarUsuarios(null, null, null, null, null, null, null);
     }
     
     public List<UsuariosBean> consultarUsuarios(String nombreUsuario, String clave) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
-        return consultarUsuarios(null, nombreUsuario, clave, null, null, null);
+        return consultarUsuarios(null, nombreUsuario, clave, null, null, null, null);
     }
     
     public List<UsuariosBean> consultarUsuarios(Integer idPersona) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
-        return consultarUsuarios(idPersona, null, null, null, null, null);
+        return consultarUsuarios(idPersona, null, null, null, null, null, null);
     }
     
-    public List<UsuariosBean> consultarUsuarios(Integer idPersona, String nombreUsuario, String clave, Integer perfil, String documento, String tipoDocumento) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
+    public List<UsuariosBean> consultarUsuarios(Integer idPersona, String nombreUsuario, String clave, Integer perfil, String activo, String documento, String tipoDocumento) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
         List<UsuariosBean> listaUsuarios = new ArrayList<>();
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;
-        ps = con.prepareStatement(sql.consultarUsuarios(idPersona, nombreUsuario, clave, perfil, documento, tipoDocumento));
+        ps = con.prepareStatement(sql.consultarUsuarios(idPersona, nombreUsuario, clave, perfil, activo, documento, tipoDocumento));
         ResultSet rs;
         rs = ps.executeQuery();
         while(rs.next()){
@@ -49,7 +49,8 @@ public class UsuariosDao {
             usuario.setUsuario(rs.getString("usuario"));
             usuario.setClave(rs.getString("clave"));
             usuario.setPerfil(rs.getInt("id_perfil"));
-            usuario.setDescripcionPerfil("descripcion_perfil");
+            usuario.setDescripcionPerfil(rs.getString("descripcion_perfil"));
+            usuario.setActivo(rs.getString("activo"));
             
             listaUsuarios.add(usuario);
         }
@@ -68,6 +69,7 @@ public class UsuariosDao {
         ps.setString(2, usuario.getUsuario());
         ps.setString(3, usuario.getClave());
         ps.setInt(4, usuario.getPerfil());
+        ps.setString(5, usuario.getActivo());
         int insercion = ps.executeUpdate();
         ps.close();
         con.close();
@@ -82,7 +84,8 @@ public class UsuariosDao {
         ps.setString(1, usuario.getUsuario());
         ps.setString(2, usuario.getClave());
         ps.setInt(3, usuario.getPerfil());
-        ps.setInt(4, usuario.getIdPersona());
+        ps.setString(4, usuario.getActivo());
+        ps.setInt(5, usuario.getIdPersona());
         int actualizacion = ps.executeUpdate();
         ps.close();
         con.close();
