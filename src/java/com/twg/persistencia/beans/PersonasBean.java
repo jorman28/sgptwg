@@ -17,7 +17,7 @@ public class PersonasBean {
     private String tipo_documento;
     private String nombres;
     private String apellidos;
-    private String direcion;
+    private String direccion;
     private String telefono;
     private String celular;
     private String correo;
@@ -65,12 +65,12 @@ public class PersonasBean {
         this.apellidos = apellidos;
     }
 
-    public String getDirecion() {
-        return direcion;
+    public String getDireccion() {
+        return direccion;
     }
 
-    public void setDirecion(String direcion) {
-        this.direcion = direcion;
+    public void setDireccion(String direccion) {
+        this.direccion = direccion;
     }
 
     public String getTelefono() {
