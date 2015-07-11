@@ -28,13 +28,11 @@
                         <div class="row">
                             <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                 <label for="tipoEstado">*Estado:</label>
-                                <select class="form-control" id="tipoEstado" name="tipoEstado" value="${tipoEstado}" >
+                                <select class="form-control" id="tipoEstado" name="tipoEstado" value="" >
                                     <option value="0">SELECCIONE</option>
+                                    <option value="Estado de Actividad">Estado de Actividad</option>
+                                    <option value="Estado de Versión">Estado de Versión</option>
                                 </select>
-                            </div>
-                            <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                                <label for="id">*Id:</label> 
-                                <input class="form-control" type="text" id="id" name="id"/>
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                 <label for="nombre">*Nombre:</label> 
