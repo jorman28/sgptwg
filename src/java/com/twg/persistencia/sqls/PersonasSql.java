@@ -38,4 +38,8 @@ public class PersonasSql {
     public String eliminarPersona(){
         return "DELETE FROM personas WHERE id = ?";
     }
+    
+    public String consultarIdPersona(String documento, String tipoDocumento){
+        return "SELECT id FROM personas WHERE documento = '"+documento+"' AND tipo_documento = '"+tipoDocumento+"'";
+    }
 }
