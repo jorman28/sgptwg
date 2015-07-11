@@ -115,13 +115,27 @@
                         </div>
                     </c:if>
                     <form id="formularioPersonas" autocomplete="off" action="./PersonasController" method="POST"> 
-                        <br>
-                        <div>
-                            <center>
-                                <h4>REGISTRO DE PERSONAS</h4>
-                                Los campos marcados con asterisco (*) son obligatorios.
-                            </center>
+                        <div id="confirmationMessage" class="modal fade">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <!-- dialog body -->
+                                    <div class="modal-body">
+                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                        Realmente desea eliminar el registro?
+                                    </div>
+                                    <!-- dialog buttons -->
+                                    <div class="modal-footer">
+                                        <button type="submit" class="btn btn-primary" name="accion" id="eliminar" value="eliminar">Si</button>
+                                        <button type="button" class="btn btn-primary" data-dismiss="modal">No</button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
+                        <center>
+                            <h2>REGISTRO DE PERSONAS</h2>
+                            Los campos marcados con asterisco (*) son obligatorios.
+                        </center>
+                        <input type="hidden" id="idPersona" name="idPersona" value="${idPersona}" />
                         <div class="panel panel-info">
                             <div class="panel-heading">INFORACIÓN PERSONAL</div>
                             <div class="panel-body">
@@ -227,12 +241,8 @@
                                 <button type="submit" class="btn btn-default" value="crearPersona" name="accion">
                                     Guardar
                                 </button>
-                                <button type="button" class="btn btn-default" onclick="consultarPersona();">
-                                    Consultar
-                                </button>
-                                <button type="button" class="btn btn-default" onclick="limpiarPersona();">
-                                    Limpiar
-                                </button>
+                                <button class="btn btn-default" type="submit" name="accion" id="consultar" value="consultar">Consultar</button>
+                                <button class="btn btn-default" type="submit" name="accion" id="limpiar" value="limpiar">Limpiar</button>
                             </div>
                             <div class="col-lg-12"><br></div>
                         </div>
@@ -250,7 +260,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <c:forEach items="${personas}" var="item">
+                                <c:forEach items="${listaPersonas}" var="item">
                                     <tr>
                                         <td>${item.documento}</td>
                                         <td>${item.nombres}</td>
@@ -260,8 +270,8 @@
                                         <td>${item.correo}</td>
                                         <td>${item.direccion}</td>
                                         <td>
-                                            <a class="btn btn-default" href="<%=request.getContextPath()%>/PersonasController?accion=editar&idPersona=${item.idPersona}">Editar</a>
-                                            <button class="btn btn-default" type="button" data-toggle="modal" data-target="#confirmationMessage" onclick="jQuery('#idPersona').val('${item.idPersona}');">Eliminar</button>
+                                            <a class="btn btn-default" href="<%=request.getContextPath()%>/PersonasController?accion=editar&idPersona=${item.id}">Editar</a>
+                                            <button class="btn btn-default" type="button" data-toggle="modal" data-target="#confirmationMessage" onclick="jQuery('#idPersona').val('${item.id}');">Eliminar</button>
                                         </td>
                                     </tr>
                                 </c:forEach>

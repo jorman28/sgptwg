@@ -39,8 +39,9 @@ import javax.servlet.http.HttpServletResponse;
 public class PersonasController extends HttpServlet {
 
     private final TiposDocumentosDao tiposDocumentosDao = new TiposDocumentosDao();
-    private final CargosDao cargosDao = new CargosDao();
-    private final PerfilesDao perfiles = new PerfilesDao();
+    private final PerfilesDao perfilesDao = new PerfilesDao();
+    private final UsuariosDao usuariosDao = new UsuariosDao();
+    private final PersonasDao personasDao = new PersonasDao();
     private String mensajeInformacion;
     private String mensajeExito;
     private String mensajeError;
@@ -65,51 +66,116 @@ public class PersonasController extends HttpServlet {
         mensajeAlerta = "";
         
         String accion = request.getParameter("accion");
-        String documento = request.getParameter("documento");
-
-        PersonasDao personasDao = new PersonasDao();
-        List<PersonasBean> personasB = new ArrayList<>();
         if(accion == null){
             accion = "";
         }
+        
+        String idPersonaStr = request.getParameter("idPersona");
+        String documento = request.getParameter("documento");
+        String tipo_documento = request.getParameter("tipoDocumento");
+        String nombres = request.getParameter("nombres");
+        String apellidos = request.getParameter("apellidos");
+        String telefono = request.getParameter("telefono");
+        String celular = request.getParameter("celular");
+        String correo = request.getParameter("correo");
+        String direccion = request.getParameter("direccion");
+        String tipoPersona = request.getParameter("tipoPersona");
+        String Id_Cargo = request.getParameter("Id_Cargo");
+        String fechaInicio = request.getParameter("fechaInicio");
+        String usuario = request.getParameter("usuario");
+        String perfil = request.getParameter("perfil");
+        String clave1 = request.getParameter("clave1");
+        String clave2 = request.getParameter("clave2");
+            
+        Integer idPersona = null;
+        try {
+            idPersona = Integer.valueOf(idPersonaStr);
+        } catch (NumberFormatException e) {
+        }
+        
+        List<PersonasBean> listaPersonas = null;
+        PersonasBean persona = null;
+        
         try {
             switch(accion){
                 case "consultar":
+                    listaPersonas = personasDao.consultarPersonas(idPersona, documento, tipo_documento, nombres, apellidos,
+                        telefono, celular, correo, direccion, usuario, perfil);
+                    persona = new PersonasBean();
+                    persona.setDocumento(documento);
+                    persona.setTipo_documento(tipo_documento);
+                    persona.setNombres(nombres);
+                    persona.setApellidos(apellidos);
+                    persona.setTelefono(telefono);
+                    persona.setCelular(celular);
+                    persona.setCorreo(correo);
+                    persona.setDireccion(direccion);
+                    enviarDatos(request, persona, null);
                     break;
                 case "editar":
-                    PersonasBean personaB = new PersonasBean();
-                    List<UsuariosBean> usu = new ArrayList<>();
-                    if(documento != null && !documento.equals("")){
-                       personasB = personasDao.consultarPersonas(true,Integer.valueOf(documento));
-                        if(personasB != null && !personasB.isEmpty()){
-                            personaB = personasB.get(0);
-                            UsuariosDao userDao = new UsuariosDao();
-                            usu = userDao.consultarUsuarios(personaB.getId());
+                    /*persona = new PersonasBean();
+                    if(idPersona != null){
+                        List<PersonasBean> usu = new ArrayList<>();
+                        if(documento != null && !documento.equals("")){
+                           personasB = personasDao.consultarPersonas(true,Integer.valueOf(documento));
+                            if(personasB != null && !personasB.isEmpty()){
+                                personaB = personasB.get(0);
+                                UsuariosDao userDao = new UsuariosDao();
+                                usu = userDao.consultarUsuarios(personaB.getId());
+                            }
                         }
                     }
-
                     enviarDatos(request, personaB, usu!=null ? usu.get(0) : null);
+                    */
                     break;
                 case "crearPersona":
-                    crearPersona(request, response);
+                    persona = new PersonasBean();
+                    persona.setDocumento(documento);
+                    persona.setTipo_documento(tipo_documento);
+                    persona.setNombres(nombres);
+                    persona.setApellidos(apellidos);
+                    persona.setTelefono(telefono);
+                    persona.setCelular(celular);
+                    persona.setCorreo(correo);
+                    persona.setDireccion(direccion);
+                    crearPersona(request, response, persona);
+                    enviarDatos(request, new PersonasBean(), null);
                     break;
                 case "eliminar":
+                    if(idPersona != null){
+                        int eliminar = personasDao.eliminarPersona(idPersona);
+                        if(eliminar >0){
+                            mensajeExito = "El registro fue eliminado con éxito";
+                        } else {
+                            mensajeError = "El registro no pudo ser eliminado";
+                        }
+                    }
                     break;
                 default:
+                    enviarDatos(request, new PersonasBean(), null);
                     break;
-            }
-            if(personasB == null || personasB.isEmpty()){
-                personasB = personasDao.consultarPersonas(false, null);
             }
         } catch (Exception e) {
             Logger.getLogger(UsuariosController.class.getName()).log(Level.SEVERE, null, e);
             mensajeError = "Ocurrió un error procesando los datos. Revise el log de aplicación.";
         }
         
+        if(listaPersonas == null){
+            try {
+                listaPersonas = personasDao.consultarPersonas(null, null, null, null, null, null, null, null, null, null, null);
+            } catch (Exception e) {
+                mensajeError = "Ha currido un error en el registro de la persona";
+                e.printStackTrace();
+                return;
+            }
+            
+        }
+        
         request.setAttribute("mensajeInformacion", mensajeInformacion);
         request.setAttribute("mensajeExito", mensajeExito);
         request.setAttribute("mensajeError", mensajeError);
         request.setAttribute("mensajeAlerta", mensajeAlerta);
+        request.setAttribute("listaPersonas", listaPersonas);
         request.getRequestDispatcher("jsp/personas.jsp").forward(request, response);
     }
     
@@ -118,31 +184,32 @@ public class PersonasController extends HttpServlet {
      * @param request
      * @param response 
      */
-    public void crearPersona(HttpServletRequest request, HttpServletResponse response){
+    public void crearPersona(HttpServletRequest request, HttpServletResponse response, PersonasBean persona){
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
+        
+        String idPersonaStr = request.getParameter("idPersona");
+        String documento = request.getParameter("documento");
+        String tipo_documento = request.getParameter("tipoDocumento");
+        String nombres = request.getParameter("nombres");
+        String apellidos = request.getParameter("apellidos");
+        String telefono = request.getParameter("telefono");
+        String celular = request.getParameter("celular");
+        String correo = request.getParameter("correo");
+        String direccion = request.getParameter("direccion");
+        String tipoPersona = request.getParameter("tipoPersona");
+        String Id_Cargo = request.getParameter("Id_Cargo");
+        String fechaInicio = request.getParameter("fechaInicio");
+        String usuario = request.getParameter("usuario");
+        String perfil = request.getParameter("perfil");
+        String clave1 = request.getParameter("clave1");
+        String clave2 = request.getParameter("clave2");
+        
         try {
-            /*
-                Información del canino
-            */
-            String documento = request.getParameter("documento");
-            String tipoDocumento = request.getParameter("tipoDocumento");
-            String nombres = request.getParameter("nombres");
-            String apellidos = request.getParameter("apellidos");
-            String telefono = request.getParameter("telefono");
-            String celular = request.getParameter("celular");
-            String correo = request.getParameter("correo");
-            String direccion = request.getParameter("direccion");
-            String tipoPersona = request.getParameter("tipoPersona");
-            String Id_Cargo = request.getParameter("Id_Cargo");
-            String fechaInicio = request.getParameter("fechaInicio");
-            String usuario = request.getParameter("usuario");
-            String perfil = request.getParameter("perfil");
-            String clave1 = request.getParameter("clave1");
-            String clave2 = request.getParameter("clave2");
             
-            if(documento==null || documento.isEmpty() || tipoDocumento==null || tipoDocumento.equals("0") || nombres==null || nombres.isEmpty() ||
-                    apellidos==null || apellidos.isEmpty() || telefono==null || telefono.isEmpty() || direccion==null || direccion.isEmpty()
+            boolean insertUser =  false;
+            if(persona.getDocumento()==null || persona.getDocumento().isEmpty() || persona.getTipo_documento()==null || persona.getTipo_documento().equals("0") || persona.getNombres()==null || persona.getNombres().isEmpty() ||
+                    persona.getApellidos()==null || persona.getApellidos().isEmpty() || persona.getTelefono()==null || persona.getTelefono().isEmpty() || persona.getDireccion()==null || persona.getDireccion().isEmpty()
                     /*|| tipoPersona==null || tipoPersona.equals("0")|| Id_Cargo==null || Id_Cargo.equals("0")*/){
                     
                 mensajeError = "Los campos marcados con asterisco (*) son bligatorios.";
@@ -163,9 +230,10 @@ public class PersonasController extends HttpServlet {
                     }
                 }
                 
-                List<PersonasBean> persona = new ArrayList<>();
+                List<PersonasBean> person = new ArrayList<>();
+                PersonasBean personBena = new PersonasBean();
                 PersonasDao perDao = new PersonasDao();
-                persona = perDao.consultarPersonas(true, Integer.valueOf(documento));
+                person = perDao.consultarPersonas(null, documento, null, null, null, null, null, null, null, null, null);
                 if(usuario!=null && !usuario.isEmpty()){
                     List<UsuariosBean> usu = new ArrayList<>();
                     UsuariosDao userDao = new UsuariosDao();
@@ -173,25 +241,27 @@ public class PersonasController extends HttpServlet {
                     if(usu != null && !usu.isEmpty()){
                         mensajeError = "El usuario ya existe actualmente en el sistema";
                         return;
+                    }else{
+                        insertUser = true;
                     }
                 }
-                if(persona != null && !persona.isEmpty()){
+                if(person != null && !person.isEmpty()){
                     mensajeError = "La persona ya existe actualmente en el sistema";
                     return;
                 }else{
-                    PersonasBean person = new PersonasBean();
-                    person.setDocumento(documento);
-                    person.setTipo_documento(tipoDocumento);
-                    person.setNombres(nombres);
-                    person.setApellidos(apellidos);
-                    person.setTelefono(telefono);
-                    person.setCelular(celular);
-                    person.setCorreo(correo);
-                    person.setDirecion(direccion);
+                    personBena = new PersonasBean();
+                    personBena.setDocumento(documento);
+                    personBena.setTipo_documento(tipo_documento);
+                    personBena.setNombres(nombres);
+                    personBena.setApellidos(apellidos);
+                    personBena.setTelefono(telefono);
+                    personBena.setCelular(celular);
+                    personBena.setCorreo(correo);
+                    personBena.setDireccion(direccion);
                     
                     int resultado = 0;
                     try {
-                        resultado = perDao.insertarPersona(person);
+                        resultado = perDao.insertarPersona(personBena);
                         if(resultado == 1){
                             mensajeExito = "La persona fue registrada exitosamente";
                             return;
@@ -227,7 +297,7 @@ public class PersonasController extends HttpServlet {
         request.setAttribute("telefono", persona.getTelefono());
         request.setAttribute("celular", persona.getCelular());
         request.setAttribute("correo", persona.getCorreo());
-        request.setAttribute("direccion", persona.getDirecion());
+        request.setAttribute("direccion", persona.getDireccion());
         
         if(usuario!=null){
             request.setAttribute("usuario", usuario.getUsuario());

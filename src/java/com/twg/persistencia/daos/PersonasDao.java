@@ -25,28 +25,15 @@ public class PersonasDao {
     
     public PersonasDao(){
     }
-
-    /**
-     * Método para consultar a las personas.
-     * Se envía [true] y [documento] en los parámetros, cuando se necesita consultar una sola persona.
-     * Se envía [false] y [null] para traer el listaro de todas las personas el sistema.
-     * @param unica
-     * @param documento
-     * @return
-     * @throws ClassNotFoundException
-     * @throws InstantiationException
-     * @throws SQLException
-     * @throws IllegalAccessException 
-     */
-    public List<PersonasBean> consultarPersonas(boolean unica, Integer documento) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
+    
+    public List<PersonasBean> consultarPersonas(Integer id, String documento, String tipo_documento, String nombres, String apellidos,
+                            String telefono, String celular, String correo, String direccion, String usuario, String perfil) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
         List<PersonasBean> listaPersonas = new ArrayList<>();
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;
-        ps = con.prepareStatement(sql.consultarPersonas(unica));
-        if(documento!=null && unica){
-            ps.setInt(1, documento);
-        }
+        ps = con.prepareStatement(sql.consultarPersonas(id==null?0:id, documento, tipo_documento, nombres, apellidos,
+                telefono, celular, correo, direccion, usuario, perfil));
         ResultSet rs;
         rs = ps.executeQuery();
         while(rs.next()){
@@ -56,7 +43,7 @@ public class PersonasDao {
             persona.setTipo_documento(rs.getString("tipo_documento"));
             persona.setNombres(rs.getString("nombres"));
             persona.setApellidos(rs.getString("apellidos"));
-            persona.setDirecion(rs.getString("direccion"));
+            persona.setDireccion(rs.getString("direccion"));
             persona.setTelefono(rs.getString("telefono"));
             persona.setCelular(rs.getString("celular"));
             persona.setCorreo(rs.getString("correo"));
@@ -95,7 +82,7 @@ public class PersonasDao {
         ps.setString(3, persona.getTipo_documento());
         ps.setString(4, persona.getNombres());
         ps.setString(5, persona.getApellidos());
-        ps.setString(6, persona.getDirecion());
+        ps.setString(6, persona.getDireccion());
         ps.setString(7, persona.getTelefono());
         ps.setString(8, persona.getCelular());
         ps.setString(9, persona.getCorreo());
@@ -114,7 +101,7 @@ public class PersonasDao {
         ps.setString(2, persona.getTipo_documento());
         ps.setString(3, persona.getNombres());
         ps.setString(4, persona.getApellidos());
-        ps.setString(5, persona.getDirecion());
+        ps.setString(5, persona.getDireccion());
         ps.setString(6, persona.getTelefono());
         ps.setString(7, persona.getCelular());
         ps.setString(8, persona.getCorreo());
