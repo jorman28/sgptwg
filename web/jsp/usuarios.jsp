@@ -89,7 +89,7 @@
                 </div>
             </c:if>
             <div class="row">
-                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" id="contenido">
+                <div class="col-xs-12 col-sm-12 col-md-10 col-md-offset-1 col-lg-8 col-lg-offset-2" id="contenido">
                     <form autocomplete="off" action="./UsuariosController" method="POST" id="formularioUsuarios">
                         <div id="confirmationMessage" class="modal fade">
                             <div class="modal-dialog">
@@ -108,6 +108,7 @@
                             </div>
                         </div>
                         <h2>USUARIOS</h2>
+                        <br/>
                         <input type="hidden" id="idPersona" name="idPersona" value="${idPersona}" />
                         <div class="row">
                             <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
@@ -160,40 +161,42 @@
                                 <button class="btn btn-default" type="submit" name="accion" id="limpiar" value="limpiar">Limpiar</button>
                             </div>
                             <br/>
-                            <table class="table table-striped table-hover table-condensed">
-                                <thead>
-                                    <tr>
-                                        <th>Tipo documento</th>
-                                        <th>Documento</th>
-                                        <th>Usuario</th>
-                                        <th>Perfil</th>
-                                        <th>Estado</th>
-                                        <th>Acciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                <c:forEach items="${usuarios}" var="item">
-                                    <tr>
-                                        <td>${item.descripcionTipoDocumento}</td>
-                                        <td>${item.documento}</td>
-                                        <td>${item.usuario}</td>
-                                        <td>${item.descripcionPerfil}</td>
-                                        <td>
-                                            <c:if test="${item.activo == 'T'}">
-                                                Activo
-                                            </c:if>
-                                            <c:if test="${item.activo == 'F'}">
-                                                Inactivo
-                                            </c:if>
-                                        </td>
-                                        <td>
-                                            <a class="btn btn-default" href="<%=request.getContextPath()%>/UsuariosController?accion=editar&idPersona=${item.idPersona}">Editar</a>
-                                            <button class="btn btn-default" type="button" data-toggle="modal" data-target="#confirmationMessage" onclick="jQuery('#idPersona').val('${item.idPersona}');">Eliminar</button>
-                                        </td>
-                                    </tr>
-                                </c:forEach>
-                            </tbody>
-                        </table>
+                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 bordo-tablas">
+                                <table class="table table-striped table-hover table-condensed">
+                                    <thead>
+                                        <tr>
+                                            <th>Tipo documento</th>
+                                            <th>Documento</th>
+                                            <th>Usuario</th>
+                                            <th>Perfil</th>
+                                            <th>Estado</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    <c:forEach items="${usuarios}" var="item">
+                                        <tr>
+                                            <td>${item.descripcionTipoDocumento}</td>
+                                            <td>${item.documento}</td>
+                                            <td>${item.usuario}</td>
+                                            <td>${item.descripcionPerfil}</td>
+                                            <td>
+                                                <c:if test="${item.activo == 'T'}">
+                                                    Activo
+                                                </c:if>
+                                                <c:if test="${item.activo == 'F'}">
+                                                    Inactivo
+                                                </c:if>
+                                            </td>
+                                            <td>
+                                                <a class="btn btn-default" href="<%=request.getContextPath()%>/UsuariosController?accion=editar&idPersona=${item.idPersona}">Editar</a>
+                                                <button class="btn btn-default" type="button" data-toggle="modal" data-target="#confirmationMessage" onclick="jQuery('#idPersona').val('${item.idPersona}');">Eliminar</button>
+                                            </td>
+                                        </tr>
+                                    </c:forEach>
+                                </tbody>
+                            </table>
+                        </div>
                     </form>
                 </div>
             </div>
