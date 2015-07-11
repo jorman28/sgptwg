@@ -4,9 +4,17 @@
         <servlet-name>UsuariosController</servlet-name>
         <servlet-class>com.twg.controladores.UsuariosController</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>InicioSesionController</servlet-name>
+        <servlet-class>com.twg.controladores.InicioSesionController</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>UsuariosController</servlet-name>
         <url-pattern>/UsuariosController</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>InicioSesionController</servlet-name>
+        <url-pattern>/InicioSesionController</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
@@ -14,6 +22,6 @@
         </session-timeout>
     </session-config>
     <welcome-file-list>
-        <welcome-file>jsp/usuarios.jsp</welcome-file>
+        <welcome-file>jsp/inicioSesion.jsp</welcome-file>
     </welcome-file-list>
 </web-app>

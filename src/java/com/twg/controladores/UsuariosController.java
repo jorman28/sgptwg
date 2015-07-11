@@ -73,7 +73,7 @@ public class UsuariosController extends HttpServlet {
         try {
             switch(accion){
                 case "consultar":
-                    listaUsuarios = usuariosDao.consultarUsuarios(idPersona, nombreUsuario, clave, perfil, activo, documento, tipoDocumento);
+                    listaUsuarios = usuariosDao.consultarUsuarios(idPersona, nombreUsuario, perfil, activo, documento, tipoDocumento);
                     UsuariosBean  usuario = new UsuariosBean();
                     usuario.setDocumento(documento);
                     usuario.setTipoDocumento(tipoDocumento);
