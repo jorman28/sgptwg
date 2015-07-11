@@ -55,6 +55,7 @@ public class UsuariosController extends HttpServlet {
         String nombreUsuario = request.getParameter("usuario");
         String clave = request.getParameter("clave");
         String perfilStr = request.getParameter("perfil");
+        String activo = request.getParameter("activo");
         
         Integer idPersona = null;
         try {
@@ -63,32 +64,31 @@ public class UsuariosController extends HttpServlet {
         }
         
         Integer perfil = null;
-        if(perfilStr != null && !perfilStr.isEmpty()){
-            try {
-                perfil = Integer.valueOf(perfilStr);
-            } catch (NumberFormatException e) {
-            }
+        try {
+            perfil = Integer.valueOf(perfilStr);
+        } catch (NumberFormatException e) {
         }
         
         List<UsuariosBean> listaUsuarios = null;
         try {
             switch(accion){
                 case "consultar":
-                    listaUsuarios = usuariosDao.consultarUsuarios(idPersona, nombreUsuario, clave, perfil, documento, tipoDocumento);
+                    listaUsuarios = usuariosDao.consultarUsuarios(idPersona, nombreUsuario, clave, perfil, activo, documento, tipoDocumento);
                     UsuariosBean  usuario = new UsuariosBean();
                     usuario.setDocumento(documento);
                     usuario.setTipoDocumento(tipoDocumento);
                     usuario.setUsuario(nombreUsuario);
                     usuario.setClave(clave);
                     usuario.setPerfil(perfil);
+                    usuario.setActivo(activo);
                     enviarDatos(request, usuario);
                     break;
                 case "editar":
                     usuario = new UsuariosBean();
                     if(idPersona != null){
-                        listaUsuarios = usuariosDao.consultarUsuarios();
-                        if(listaUsuarios != null && !listaUsuarios.isEmpty()){
-                            usuario = listaUsuarios.get(0);
+                        List<UsuariosBean> usuarios = usuariosDao.consultarUsuarios(idPersona);
+                        if(usuarios != null && !usuarios.isEmpty()){
+                            usuario = usuarios.get(0);
                         }
                     }
                     enviarDatos(request, usuario);
@@ -100,6 +100,7 @@ public class UsuariosController extends HttpServlet {
                         usuario.setUsuario(nombreUsuario);
                         usuario.setClave(clave);
                         usuario.setPerfil(perfil);
+                        usuario.setActivo(activo);
                         int actualizacion = usuariosDao.actualizarUsuario(usuario);
                         if(actualizacion > 0){
                             mensajeExito = "El usuario ha sido guardado con éxito";
@@ -150,6 +151,7 @@ public class UsuariosController extends HttpServlet {
         request.setAttribute("usuario", usuario.getUsuario());
         request.setAttribute("clave", "");
         request.setAttribute("perfil", usuario.getPerfil());
+        request.setAttribute("activo", usuario.getActivo());
     }
 
     private List<TiposDocumentosBean> obtenerTiposDocumentos(){

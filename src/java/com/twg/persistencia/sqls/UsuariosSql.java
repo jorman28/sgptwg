@@ -9,7 +9,7 @@ public class UsuariosSql {
     public UsuariosSql() {
     }
 
-    public String consultarUsuarios(Integer idPersona, String usuario, String clave, Integer perfil, String documento, String tipoDocumento) {
+    public String consultarUsuarios(Integer idPersona, String usuario, String clave, Integer perfil, String activo, String documento, String tipoDocumento) {
         String sql = "SELECT " +
                     "   per.id AS id_persona, " +
                     "	per.documento, " +
@@ -18,6 +18,7 @@ public class UsuariosSql {
                     "	perf.id AS id_perfil, " +
                     "	perf.nombre AS descripcion_perfil, " +
                     "	usu.usuario, " +
+                    "	usu.activo, " +
                     "	usu.clave " +
                     "FROM " +
                     "    usuarios usu " +
@@ -38,6 +39,9 @@ public class UsuariosSql {
         if(clave != null && !clave.isEmpty()){
             sql +=  "	AND usu.clave = '"+clave+"' ";
         }
+        if(activo != null && !activo.isEmpty()){
+            sql +=  "	AND usu.activo = '"+activo+"' ";
+        }
         if(documento != null && !documento.isEmpty()){
             sql +=  "	AND per.documento LIKE '%"+documento+"%' ";
         }
@@ -51,11 +55,11 @@ public class UsuariosSql {
     }
 
     public String insertarUsuario() {
-        return "INSERT INTO usuarios (id_persona, usuario, clave, perfil) VALUES (?, ?, ?, ?)";
+        return "INSERT INTO usuarios (id_persona, usuario, clave, perfil, activo) VALUES (?, ?, ?, ?, ?)";
     }
 
     public String actualizarUsuario() {
-        return "UPDATE usuarios SET usuario = ?, clave = ?, perfil = ? WHERE id_persona = ?";
+        return "UPDATE usuarios SET usuario = ?, clave = ?, perfil = ?, activo = ? WHERE id_persona = ?";
     }
 
     public String eliminarUsuario() {
