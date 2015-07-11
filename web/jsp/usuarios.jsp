@@ -21,6 +21,73 @@
     </head>
     <body>
         <div class="container-fluid">
+            <nav class="navbar navbar-default">
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                            <span class="sr-only">Toggle navigation</span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                    </div>
+                    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                        <ul class="nav navbar-nav">
+                            <li><a href="<%=request.getContextPath()%>/PaginaInicioController">Inicio</a></li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Seguridad <span class="caret"></span></a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="<%=request.getContextPath()%>/UsuariosController">Usuarios</a></li>
+                                    <li><a href="#">Permisos</a></li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Configuración <span class="caret"></span></a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="<%=request.getContextPath()%>/PersonasController">Personas</a></li>
+                                    <li><a href="#">Cargos</a></li>
+                                    <li><a href="#">Estados</a></li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Proyectos <span class="caret"></span></a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="#">Versiones</a></li>
+                                    <li><a href="#">Actividades</a></li>
+                                </ul>
+                            </li>
+                            <li><a href="#">Documentación</a></li>
+                            <li><a href="#">Reportes</a></li>
+                            <li><a href="#">Ayuda</a></li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Cerrar sesión <span class="caret"></span></a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="<%=request.getContextPath()%>/InicioSesionController">Continuar</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+
+            <c:if test="${mensajeError != null and mensajeError != ''}">
+                <div class="alert alert-danger fade in" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    ${mensajeError}
+                </div>
+            </c:if>
+            <c:if test="${mensajeAlerta != null and mensajeAlerta != ''}">
+                <div class="alert alert-warning fade in" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    ${mensajeAlerta}
+                </div>
+            </c:if>
+            <c:if test="${mensajeExito != null and mensajeExito != ''}">
+                <div class="alert alert-success fade in" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    ${mensajeExito}
+                </div>
+            </c:if>
             <div class="row">
                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" id="contenido">
                     <form autocomplete="off" action="./UsuariosController" method="POST" id="formularioUsuarios">
@@ -40,7 +107,7 @@
                                 </div>
                             </div>
                         </div>
-                        <h1>USUARIOS</h1>
+                        <h2>USUARIOS</h2>
                         <input type="hidden" id="idPersona" name="idPersona" value="${idPersona}" />
                         <div class="row">
                             <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
@@ -83,28 +150,28 @@
                                     <option value="">SELECCIONE</option>
                                     <option value="T" <c:if test="${activo == 'T'}">selected</c:if> >Activo</option>
                                     <option value="F" <c:if test="${activo == 'F'}">selected</c:if> >Inactivo</option>
-                                </select>
+                                    </select>
+                                </div>
                             </div>
-                        </div>
-                        <br>
-                        <div class="row" align="center">
-                            <button class="btn btn-default" type="submit" name="accion" id="consultar" value="consultar">Consultar</button>
-                            <button class="btn btn-default" type="submit" name="accion" id="guardar" value="guardar">Guardar</button>
-                            <button class="btn btn-default" type="submit" name="accion" id="limpiar" value="limpiar">Limpiar</button>
-                        </div>
-                        <br/>
-                        <table class="table table-striped table-hover table-condensed">
-                            <thead>
-                                <tr>
-                                    <th>Tipo documento</th>
-                                    <th>Documento</th>
-                                    <th>Usuario</th>
-                                    <th>Perfil</th>
-                                    <th>Estado</th>
-                                    <th>Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody>
+                            <br>
+                            <div class="row" align="center">
+                                <button class="btn btn-default" type="submit" name="accion" id="consultar" value="consultar">Consultar</button>
+                                <button class="btn btn-default" type="submit" name="accion" id="guardar" value="guardar">Guardar</button>
+                                <button class="btn btn-default" type="submit" name="accion" id="limpiar" value="limpiar">Limpiar</button>
+                            </div>
+                            <br/>
+                            <table class="table table-striped table-hover table-condensed">
+                                <thead>
+                                    <tr>
+                                        <th>Tipo documento</th>
+                                        <th>Documento</th>
+                                        <th>Usuario</th>
+                                        <th>Perfil</th>
+                                        <th>Estado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
                                 <c:forEach items="${usuarios}" var="item">
                                     <tr>
                                         <td>${item.descripcionTipoDocumento}</td>

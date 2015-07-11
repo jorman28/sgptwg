@@ -21,19 +21,19 @@
     </head>
     <body>
         <div class="container-fluid">
-            <c:if test="${mensajeError != ''}">
+            <c:if test="${mensajeError != null and mensajeError != ''}">
                 <div class="alert alert-danger fade in" role="alert">
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                     ${mensajeError}
                 </div>
             </c:if>
-            <c:if test="${mensajeAlerta != ''}">
+            <c:if test="${mensajeAlerta != null and mensajeAlerta != ''}">
                 <div class="alert alert-warning fade in" role="alert">
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                     ${mensajeAlerta}
                 </div>
             </c:if>
-            <c:if test="${mensajeExito != ''}">
+            <c:if test="${mensajeExito != null and mensajeExito != ''}">
                 <div class="alert alert-success fade in" role="alert">
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                     ${mensajeExito}
@@ -42,17 +42,23 @@
             <div class="row">
                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" id="contenido">
                     <form autocomplete="off" action="./InicioSesionController" method="POST" id="formularioInicio">
-                        <h1>INICIO SESIÓN</h1>
                         <div class="row">
-                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <br/>
+                            <div align="center">
+                                <img src="images/logo.png" class="img-responsive img-thumbnail">
+                            </div>
+                            <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 col-lg-4 col-lg-offset-4" align="center">
+                                <h2>INICIO SESIÓN</h2>
+                            </div>
+                            <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 col-lg-4 col-lg-offset-4">
                                 <label for="documento">Usuario:</label> 
                                 <input class="form-control" type="text" id="usuario" name="usuario" value="${usuario}"/>
                             </div>
-                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 col-lg-4 col-lg-offset-4">
                                 <label for="clave">Clave:</label> 
                                 <input class="form-control" type="password" id="clave" name="clave" value="${clave}" />
                             </div>
-                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 col-lg-4 col-lg-offset-4" align="center">
                                 <button class="btn btn-default" type="submit" name="accion" value="ingresar">Ingresar</button>
                             </div>
                         </div>

@@ -19,9 +19,9 @@ import javax.servlet.http.HttpServletResponse;
 public class InicioSesionController extends HttpServlet {
 
     private final UsuariosDao usuariosDao = new UsuariosDao();
-    private String mensajeAlerta;
-    private String mensajeExito;
-    private String mensajeError;
+    private String mensajeAlerta = "";
+    private String mensajeExito = "";
+    private String mensajeError = "";
     
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -48,7 +48,11 @@ public class InicioSesionController extends HttpServlet {
                         List<UsuariosBean> listaUsuarios = usuariosDao.consultarUsuarios(usuario);
                         if(listaUsuarios != null && !listaUsuarios.isEmpty()){
                             if(listaUsuarios.get(0).getClave().equals(clave)){
-                                redireccion = "jsp/paginaInicio.jsp";
+                                if(listaUsuarios.get(0).getActivo() != null && listaUsuarios.get(0).getActivo().equals("T")){
+                                    redireccion = "jsp/paginaInicio.jsp";
+                                } else {
+                                    mensajeError = "El usuario con el que intenta ingresar está inactivo";
+                                }
                             } else {
                                 mensajeError = "La contraseña es incorrecta para el usuario ingresado";
                             }
