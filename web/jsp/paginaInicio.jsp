@@ -22,7 +22,7 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" id="contenido">
-                    
+
                     <nav class="navbar navbar-default">
                         <div class="container-fluid">
                             <div class="navbar-header">
@@ -71,7 +71,10 @@
                             </div>
                         </div>
                     </nav>
-                    <h1>PÁGINA DE INICIO</h1>
+                    <div align="center">
+                        <!--<h2>PÁGINA DE INICIO</h2>-->
+                        <img src="images/navegacional.png" class="img-responsive img-thumbnail">
+                    </div>
                 </div>
             </div>
         </div>
