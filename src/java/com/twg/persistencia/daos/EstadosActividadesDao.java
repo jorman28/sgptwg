@@ -6,6 +6,7 @@
 package com.twg.persistencia.daos;
 
 import com.twg.persistencia.beans.EstadosActividadesBean;
+import com.twg.persistencia.beans.UsuariosBean;
 import com.twg.persistencia.sqls.EstadosActividadesSql;
 import com.twg.utilidades.ConexionBaseDatos;
 import java.sql.Connection;
@@ -46,6 +47,31 @@ public class EstadosActividadesDao {
         return listaEstadosActividades;
     }
 
+    public List<EstadosActividadesBean> consultarEstadosActividades(Integer id, String nombre) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
+        List<EstadosActividadesBean> listaEstadosActividades = new ArrayList<>();
+        Connection con;
+        con = new ConexionBaseDatos().obtenerConexion();
+        PreparedStatement ps;
+        ps = con.prepareStatement(sql.consultarEstadosActividades(id, nombre));
+        ResultSet rs;
+        rs = ps.executeQuery();
+        while (rs.next()) {
+            EstadosActividadesBean estadoActividad = new EstadosActividadesBean();
+            estadoActividad.setId(rs.getInt("id"));
+            estadoActividad.setNombre(rs.getString("nombre"));
+
+            listaEstadosActividades.add(estadoActividad);
+        }
+        rs.close();
+        ps.close();
+        con.close();
+        return listaEstadosActividades;
+    }
+
+    public List<EstadosActividadesBean> consultarEstadosActividades(Integer id) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
+        return consultarEstadosActividades(id, null);
+    }
+    
     public int insertarEstadoActividad(EstadosActividadesBean estadoActividad) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
