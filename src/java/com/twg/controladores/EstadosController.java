@@ -59,9 +59,9 @@ public class EstadosController extends HttpServlet {
             idEstado = Integer.valueOf(id);
         } catch (NumberFormatException e) {
         }
+        List<EstadosActividadesBean> listaEstadosActividades = null;
 
-        if (tipoEstado.equals(strConstEstadoActividad)) {
-            List<EstadosActividadesBean> listaEstadosActividades = null;
+        //if (tipoEstado.equals(strConstEstadoActividad)) {
             try {
                 switch (accion) {
                     case "consultar":
@@ -116,73 +116,73 @@ public class EstadosController extends HttpServlet {
                     listaEstadosActividades = estadosActividadesDao.consultarEstadosActividades();
                 }
             } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
-                Logger.getLogger(UsuariosController.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(EstadosController.class.getName()).log(Level.SEVERE, null, ex);
                 mensajeError = "Ocurrió un error procesando los datos. Revise el log de aplicación.";
             }
-            request.setAttribute("usuarios", listaEstadosActividades);
+            request.setAttribute("estadosActividades", listaEstadosActividades);
 
-        }
-        if (tipoEstado.equals(strConstEstadoVersion)) {
-            List<EstadosVersionesBean> listaEstadosVersiones = null;
-            try {
-                switch (accion) {
-                    case "consultar":
-                        listaEstadosVersiones = estadosVersionesDao.consultarEstadosVersiones(idEstado, nombre);
-                        EstadosVersionesBean estadoVersion = new EstadosVersionesBean();
-                        estadoVersion.setId(idEstado);
-                        estadoVersion.setNombre(nombre);
-                        enviarDatosEstadoVersion(request, estadoVersion);
-                        break;
-                    case "editar":
-                        estadoVersion = new EstadosVersionesBean();
-                        if (id != null) {
-                            List<EstadosVersionesBean> estadosVersiones = estadosVersionesDao.consultarEstadosVersiones(id);
-                            if (estadosVersiones != null && !estadosVersiones.isEmpty()) {
-                                estadoVersion = estadosVersiones.get(0);
-                            }
-                        }
-                        enviarDatosEstadoVersion(request, estadoVersion);
-                        break;
-                    case "guardar":
-                        if (nombre != null) {
-                            estadoVersion = new EstadosVersionesBean();
-                            estadoVersion.setId(idEstado);
-                            estadoVersion.setNombre(nombre);
-                            int actualizacion = estadosVersionesDao.actualizarEstadoVersion(estadoVersion);
-                            if (actualizacion > 0) {
-                                mensajeExito = "El estado de versión ha sido guardado con éxito";
-                            } else {
-                                mensajeError = "El estado de versión no pudo ser guardado";
-                            }
-                        }
-                        enviarDatosEstadoVersion(request, new EstadosVersionesBean());
-                        break;
-                    case "eliminar":
-                        if (id != null) {
-                            int eliminacion = estadosVersionesDao.eliminarEstadoVersion(idEstado);
-                            if (eliminacion > 0) {
-                                mensajeExito = "El estado de versión fue eliminado con éxito";
-                            } else {
-                                mensajeError = "El estado de versión no pudo ser eliminado";
-                            }
-                        } else {
-                            mensajeError = "El estado de versión no pudo ser eliminado";
-                        }
-                        enviarDatosEstadoVersion(request, new EstadosVersionesBean());
-                        break;
-                    default:
-                        enviarDatosEstadoVersion(request, new EstadosVersionesBean());
-                        break;
-                }
-                if (listaEstadosVersiones == null) {
-                    listaEstadosVersiones = estadosVersionesDao.consultarEstadosVersiones();
-                }
-            } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
-                Logger.getLogger(UsuariosController.class.getName()).log(Level.SEVERE, null, ex);
-                mensajeError = "Ocurrió un error procesando los datos. Revise el log de aplicación.";
-            }
-            request.setAttribute("usuarios", listaEstadosVersiones);
-        }
+        //}
+//        List<EstadosVersionesBean> listaEstadosVersiones = null;
+//        if (tipoEstado.equals(strConstEstadoVersion)) {
+//            try {
+//                switch (accion) {
+//                    case "consultar":
+//                        listaEstadosVersiones = estadosVersionesDao.consultarEstadosVersiones(idEstado, nombre);
+//                        EstadosVersionesBean estadoVersion = new EstadosVersionesBean();
+//                        estadoVersion.setId(idEstado);
+//                        estadoVersion.setNombre(nombre);
+//                        enviarDatosEstadoVersion(request, estadoVersion);
+//                        break;
+//                    case "editar":
+//                        estadoVersion = new EstadosVersionesBean();
+//                        if (id != null) {
+//                            List<EstadosVersionesBean> estadosVersiones = estadosVersionesDao.consultarEstadosVersiones(id);
+//                            if (estadosVersiones != null && !estadosVersiones.isEmpty()) {
+//                                estadoVersion = estadosVersiones.get(0);
+//                            }
+//                        }
+//                        enviarDatosEstadoVersion(request, estadoVersion);
+//                        break;
+//                    case "guardar":
+//                        if (nombre != null) {
+//                            estadoVersion = new EstadosVersionesBean();
+//                            estadoVersion.setId(idEstado);
+//                            estadoVersion.setNombre(nombre);
+//                            int actualizacion = estadosVersionesDao.actualizarEstadoVersion(estadoVersion);
+//                            if (actualizacion > 0) {
+//                                mensajeExito = "El estado de versión ha sido guardado con éxito";
+//                            } else {
+//                                mensajeError = "El estado de versión no pudo ser guardado";
+//                            }
+//                        }
+//                        enviarDatosEstadoVersion(request, new EstadosVersionesBean());
+//                        break;
+//                    case "eliminar":
+//                        if (id != null) {
+//                            int eliminacion = estadosVersionesDao.eliminarEstadoVersion(idEstado);
+//                            if (eliminacion > 0) {
+//                                mensajeExito = "El estado de versión fue eliminado con éxito";
+//                            } else {
+//                                mensajeError = "El estado de versión no pudo ser eliminado";
+//                            }
+//                        } else {
+//                            mensajeError = "El estado de versión no pudo ser eliminado";
+//                        }
+//                        enviarDatosEstadoVersion(request, new EstadosVersionesBean());
+//                        break;
+//                    default:
+//                        enviarDatosEstadoVersion(request, new EstadosVersionesBean());
+//                        break;
+//                }
+//                if (listaEstadosVersiones == null) {
+//                    listaEstadosVersiones = estadosVersionesDao.consultarEstadosVersiones();
+//                }
+//            } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
+//                Logger.getLogger(EstadosController.class.getName()).log(Level.SEVERE, null, ex);
+//                mensajeError = "Ocurrió un error procesando los datos. Revise el log de aplicación.";
+//            }
+//            request.setAttribute("estadosVersiones", listaEstadosVersiones);
+//        }
 
         request.setAttribute("mensajeAlerta", mensajeAlerta);
         request.setAttribute("mensajeExito", mensajeExito);
