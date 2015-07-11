@@ -18,20 +18,12 @@ public class EstadosActividadesSql {
         return "SELECT * FROM estados_actividades";
     }
 
-    public String consultarEstadosActividades(Integer id, String nombre) {
-        String sql = "";
+    public String consultarEstadosActividades(String nombre) {
+        String sql = "SELECT * FROM estados_actividades";
 
-        if (id != null && nombre != null) {
-            sql += "SELECT * FROM estados_actividades";
-        } else {
-            if (id != null) {
-                sql += "SELECT * FROM estados_actividades Where id = " + id + " ";
-            } else {
-                if (nombre != null) {
-                    sql += "SELECT * FROM estados_actividades Where nombre = " + nombre + " ";
-                }
-            }
-        }
+        if (nombre != null) {
+            sql += "Where nombre = " + nombre + "";
+        } 
         return sql;
     }
 

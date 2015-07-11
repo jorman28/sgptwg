@@ -37,7 +37,7 @@ public class EstadosActividadesDao {
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;
-        ps = con.prepareStatement(sql.consultarEstadosActividades(id, nombre));
+        ps = con.prepareStatement(sql.consultarEstadosActividades(nombre));
         ResultSet rs;
         rs = ps.executeQuery();
         while(rs.next()){

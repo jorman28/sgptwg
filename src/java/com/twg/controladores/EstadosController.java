@@ -86,8 +86,8 @@ public class EstadosController extends HttpServlet {
                             estadoActividad = new EstadosActividadesBean();
                             estadoActividad.setId(idEstado);
                             estadoActividad.setNombre(nombre);
-                            int actualizacion = estadosActividadesDao.actualizarEstadoActividad(estadoActividad);
-                            if (actualizacion > 0) {
+                            int guardar = estadosActividadesDao.insertarEstadoActividad(estadoActividad);
+                            if (guardar > 0) {
                                 mensajeExito = "El estado de actividad ha sido guardado con éxito";
                             } else {
                                 mensajeError = "El estado de actividad no pudo ser guardado";
