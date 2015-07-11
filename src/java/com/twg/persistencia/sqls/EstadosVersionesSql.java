@@ -13,9 +13,22 @@ public class EstadosVersionesSql {
 
     public EstadosVersionesSql() {
     }
+    
+    public String consultarEstadosActividades(Integer id, String nombre) {
+        String sql = "";
 
-    public String consultarEstadosVersiones() {
-        return "SELECT * FROM estados_versiones";
+        if (id != null && nombre != null) {
+            sql += "SELECT * FROM estados_versiones";
+        } else {
+            if (id != null) {
+                sql += "SELECT * FROM estados_versiones Where id = " + id + " ";
+            } else {
+                if (nombre != null) {
+                    sql += "SELECT * FROM estados_versiones Where nombre = " + nombre + " ";
+                }
+            }
+        }
+        return sql;
     }
 
     public String insertarEstadoVersion() {

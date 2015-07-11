@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.twg.persistencia.daos;
 
 import com.twg.persistencia.beans.EstadosVersionesBean;
@@ -27,18 +22,31 @@ public class EstadosVersionesDao {
     }
 
     public List<EstadosVersionesBean> consultarEstadosVersiones() throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
+        return consultarEstadosVersiones(null, null);
+    }
+
+    public List<EstadosVersionesBean> consultarEstadosVersiones(String nombre) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
+        return consultarEstadosVersiones(null, nombre);
+    }
+
+    public List<EstadosVersionesBean> consultarEstadosVersiones(Integer id) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
+        return consultarEstadosVersiones(id, null);
+    }
+
+    public List<EstadosVersionesBean> consultarEstadosVersiones(Integer id, String nombre) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         List<EstadosVersionesBean> listaEstadosVersiones = new ArrayList<>();
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;
-        ps = con.prepareStatement(sql.consultarEstadosVersiones());
+        ps = con.prepareStatement(sql.consultarEstadosActividades(id, nombre));
         ResultSet rs;
         rs = ps.executeQuery();
         while (rs.next()) {
-            EstadosVersionesBean estadoActividad = new EstadosVersionesBean();
-            estadoActividad.setId(rs.getInt("id"));
-            estadoActividad.setNombre(rs.getString("nombre"));
-            listaEstadosVersiones.add(estadoActividad);
+            EstadosVersionesBean estadoVersion = new EstadosVersionesBean();
+            estadoVersion.setId(rs.getInt("id"));
+            estadoVersion.setNombre(rs.getString("nombre"));
+
+            listaEstadosVersiones.add(estadoVersion);
         }
         rs.close();
         ps.close();
@@ -46,13 +54,12 @@ public class EstadosVersionesDao {
         return listaEstadosVersiones;
     }
 
-    public int insertarEstadoActividad(EstadosVersionesBean estadoVersion) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
+    public int insertarEstadoVersion(EstadosVersionesBean estadoVersion) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;
         ps = con.prepareStatement(sql.insertarEstadoVersion());
-        ps.setInt(1, estadoVersion.getId());
-        ps.setString(2, estadoVersion.getNombre());
+        ps.setString(1, estadoVersion.getNombre());
         int insercion = ps.executeUpdate();
         ps.close();
         con.close();
