@@ -21,19 +21,35 @@ public class UsuariosDao {
     }
 
     public List<UsuariosBean> consultarUsuarios() throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
+        return consultarUsuarios(null, null, null, null, null, null);
+    }
+    
+    public List<UsuariosBean> consultarUsuarios(String nombreUsuario, String clave) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
+        return consultarUsuarios(null, nombreUsuario, clave, null, null, null);
+    }
+    
+    public List<UsuariosBean> consultarUsuarios(Integer idPersona) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
+        return consultarUsuarios(idPersona, null, null, null, null, null);
+    }
+    
+    public List<UsuariosBean> consultarUsuarios(Integer idPersona, String nombreUsuario, String clave, Integer perfil, String documento, String tipoDocumento) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
         List<UsuariosBean> listaUsuarios = new ArrayList<>();
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;
-        ps = con.prepareStatement(sql.consultarUsuarios());
+        ps = con.prepareStatement(sql.consultarUsuarios(idPersona, nombreUsuario, clave, perfil, documento, tipoDocumento));
         ResultSet rs;
         rs = ps.executeQuery();
         while(rs.next()){
             UsuariosBean usuario = new UsuariosBean();
             usuario.setIdPersona(rs.getInt("id_persona"));
+            usuario.setDocumento(rs.getString("documento"));
+            usuario.setTipoDocumento(rs.getString("id_tipo_documento"));
+            usuario.setDescripcionTipoDocumento(rs.getString("descripcion_tipo_documento"));
             usuario.setUsuario(rs.getString("usuario"));
             usuario.setClave(rs.getString("clave"));
-            usuario.setPerfil(rs.getInt("perfil"));
+            usuario.setPerfil(rs.getInt("id_perfil"));
+            usuario.setDescripcionPerfil("descripcion_perfil");
             
             listaUsuarios.add(usuario);
         }

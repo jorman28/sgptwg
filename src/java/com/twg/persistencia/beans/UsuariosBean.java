@@ -11,7 +11,7 @@ public class UsuariosBean {
     private String clave;
     private Integer perfil;
     private String descripcionPerfil;
-    private Integer tipoDocumento;
+    private String tipoDocumento;
     private String documento;
     private String descripcionTipoDocumento;
     
@@ -58,11 +58,11 @@ public class UsuariosBean {
         this.descripcionPerfil = descripcionPerfil;
     }
 
-    public Integer getTipoDocumento() {
+    public String getTipoDocumento() {
         return tipoDocumento;
     }
 
-    public void setTipoDocumento(Integer tipoDocumento) {
+    public void setTipoDocumento(String tipoDocumento) {
         this.tipoDocumento = tipoDocumento;
     }
 
