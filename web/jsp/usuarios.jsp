@@ -108,6 +108,8 @@
                             </div>
                         </div>
                         <h2>USUARIOS</h2>
+                        Los campos marcados con (*) son obligatorios
+                        <br/>
                         <br/>
                         <input type="hidden" id="idPersona" name="idPersona" value="${idPersona}" />
                         <div class="row">

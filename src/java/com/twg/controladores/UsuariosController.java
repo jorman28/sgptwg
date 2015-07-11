@@ -4,6 +4,7 @@ import com.twg.persistencia.beans.PerfilesBean;
 import com.twg.persistencia.beans.TiposDocumentosBean;
 import com.twg.persistencia.beans.UsuariosBean;
 import com.twg.persistencia.daos.PerfilesDao;
+import com.twg.persistencia.daos.PersonasDao;
 import com.twg.persistencia.daos.TiposDocumentosDao;
 import com.twg.persistencia.daos.UsuariosDao;
 import java.io.IOException;
@@ -26,10 +27,11 @@ public class UsuariosController extends HttpServlet {
     private final TiposDocumentosDao tiposDocumentosDao = new TiposDocumentosDao();
     private final PerfilesDao perfilesDao = new PerfilesDao();
     private final UsuariosDao usuariosDao = new UsuariosDao();
+    private final PersonasDao personasDao = new PersonasDao();
     private String mensajeAlerta;
     private String mensajeExito;
     private String mensajeError;
-    
+
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -43,38 +45,39 @@ public class UsuariosController extends HttpServlet {
         mensajeAlerta = "";
         mensajeExito = "";
         mensajeError = "";
-        
+
         String accion = request.getParameter("accion");
-        if(accion == null){
+        if (accion == null) {
             accion = "";
         }
-        
+
         String idPersonaStr = request.getParameter("idPersona");
         String documento = request.getParameter("documento");
         String tipoDocumento = request.getParameter("tipoDocumento");
         String nombreUsuario = request.getParameter("usuario");
         String clave = request.getParameter("clave");
+        String clave2 = request.getParameter("clave2");
         String perfilStr = request.getParameter("perfil");
         String activo = request.getParameter("activo");
-        
+
         Integer idPersona = null;
         try {
             idPersona = Integer.valueOf(idPersonaStr);
         } catch (NumberFormatException e) {
         }
-        
+
         Integer perfil = null;
         try {
             perfil = Integer.valueOf(perfilStr);
         } catch (NumberFormatException e) {
         }
-        
+
         List<UsuariosBean> listaUsuarios = null;
         try {
-            switch(accion){
+            switch (accion) {
                 case "consultar":
                     listaUsuarios = usuariosDao.consultarUsuarios(idPersona, nombreUsuario, perfil, activo, documento, tipoDocumento);
-                    UsuariosBean  usuario = new UsuariosBean();
+                    UsuariosBean usuario = new UsuariosBean();
                     usuario.setDocumento(documento);
                     usuario.setTipoDocumento(tipoDocumento);
                     usuario.setUsuario(nombreUsuario);
@@ -85,35 +88,63 @@ public class UsuariosController extends HttpServlet {
                     break;
                 case "editar":
                     usuario = new UsuariosBean();
-                    if(idPersona != null){
+                    if (idPersona != null) {
                         List<UsuariosBean> usuarios = usuariosDao.consultarUsuarios(idPersona);
-                        if(usuarios != null && !usuarios.isEmpty()){
+                        if (usuarios != null && !usuarios.isEmpty()) {
                             usuario = usuarios.get(0);
                         }
                     }
                     enviarDatos(request, usuario);
                     break;
                 case "guardar":
-                    if(idPersona != null){
-                        usuario = new UsuariosBean();
-                        usuario.setIdPersona(idPersona);
-                        usuario.setUsuario(nombreUsuario);
-                        usuario.setClave(clave);
-                        usuario.setPerfil(perfil);
-                        usuario.setActivo(activo);
-                        int actualizacion = usuariosDao.actualizarUsuario(usuario);
-                        if(actualizacion > 0){
-                            mensajeExito = "El usuario ha sido guardado con éxito";
+                    usuario = new UsuariosBean();
+                    usuario.setUsuario(nombreUsuario);
+                    usuario.setClave(clave);
+                    usuario.setPerfil(perfil);
+                    usuario.setActivo(activo);
+                    usuario.setDocumento(documento);
+                    usuario.setTipoDocumento(tipoDocumento);
+                    usuario.setIdPersona(idPersona);
+
+                    mensajeError = validarDatos(usuario, clave2);
+                    if (mensajeError.isEmpty()) {
+                        if (idPersona != null) {
+                            int actualizacion = usuariosDao.actualizarUsuario(usuario);
+                            if (actualizacion > 0) {
+                                mensajeExito = "El usuario ha sido guardado con éxito";
+                                usuario = new UsuariosBean();
+                            } else {
+                                mensajeError = "El usuario no pudo ser guardado";
+                            }
                         } else {
-                            mensajeError = "El usuario no pudo ser guardado";
+                            idPersona = personasDao.consultarIdPersona(documento, tipoDocumento);
+                            if (idPersona != null) {
+                                List<UsuariosBean> existente = usuariosDao.consultarUsuarios(idPersona);
+                                if (existente != null && !existente.isEmpty()) {
+                                    mensajeError = "La persona seleccionada ya tiene un usuario asignado";
+                                } else {
+                                    usuario.setIdPersona(idPersona);
+                                    int insercion = usuariosDao.insertarUsuario(usuario);
+                                    if (insercion > 0) {
+                                        mensajeExito = "El usuario ha sido guardado con éxito";
+                                        usuario = new UsuariosBean();
+                                    } else {
+                                        mensajeError = "El usuario no pudo ser guardado";
+                                    }
+                                }
+
+                            } else {
+                                mensajeError = "La persona seleccionada no está registrada en el sistema";
+                            }
                         }
                     }
-                    enviarDatos(request, new UsuariosBean());
+
+                    enviarDatos(request, usuario);
                     break;
                 case "eliminar":
-                    if(idPersona != null){
+                    if (idPersona != null) {
                         int eliminacion = usuariosDao.eliminarUsuario(idPersona);
-                        if(eliminacion > 0){
+                        if (eliminacion > 0) {
                             mensajeExito = "El usuario fue eliminado con éxito";
                         } else {
                             mensajeError = "El usuario no pudo ser eliminado";
@@ -127,14 +158,14 @@ public class UsuariosController extends HttpServlet {
                     enviarDatos(request, new UsuariosBean());
                     break;
             }
-            if(listaUsuarios == null){
+            if (listaUsuarios == null) {
                 listaUsuarios = usuariosDao.consultarUsuarios();
             }
         } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
             Logger.getLogger(UsuariosController.class.getName()).log(Level.SEVERE, null, ex);
             mensajeError = "Ocurrió un error procesando los datos. Revise el log de aplicación.";
         }
-        
+
         request.setAttribute("mensajeAlerta", mensajeAlerta);
         request.setAttribute("mensajeExito", mensajeExito);
         request.setAttribute("mensajeError", mensajeError);
@@ -143,8 +174,8 @@ public class UsuariosController extends HttpServlet {
         request.setAttribute("perfiles", obtenerPerfiles());
         request.getRequestDispatcher("jsp/usuarios.jsp").forward(request, response);
     }
-    
-    private void enviarDatos(HttpServletRequest request, UsuariosBean usuario){
+
+    private void enviarDatos(HttpServletRequest request, UsuariosBean usuario) {
         request.setAttribute("idPersona", usuario.getIdPersona());
         request.setAttribute("tipoDocumento", usuario.getTipoDocumento());
         request.setAttribute("documento", usuario.getDocumento());
@@ -154,7 +185,56 @@ public class UsuariosController extends HttpServlet {
         request.setAttribute("activo", usuario.getActivo());
     }
 
-    private List<TiposDocumentosBean> obtenerTiposDocumentos(){
+    private String validarDatos(UsuariosBean usuario, String clave2) {
+        String error = "";
+        if (usuario.getDocumento() == null || usuario.getDocumento().isEmpty()) {
+            error += "El campo 'Documento' es obligatorio <br/>";
+        }
+
+        if (usuario.getTipoDocumento() == null || usuario.getTipoDocumento().isEmpty() || usuario.getTipoDocumento().equals("0")) {
+            error += "El campo 'Tipo de documento' es obligatorio <br/>";
+        }
+
+        if (usuario.getUsuario() == null || usuario.getUsuario().isEmpty()) {
+            error += "El campo 'Usuario' es obligatorio <br/>";
+        } else {
+            try {
+                List<UsuariosBean> usuarios = usuariosDao.consultarUsuarios(usuario.getUsuario());
+                if (usuarios != null && !usuarios.isEmpty()) {
+                    if (usuario.getIdPersona() != null) {
+                        if (usuario.getIdPersona().intValue() != usuarios.get(0).getIdPersona().intValue()) {
+                            error += "El usuario a ingresar no está disponible <br/>";
+                        }
+                    } else {
+                        error += "El usuario a ingresar no está disponible <br/>";
+                    }
+                }
+            } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
+                Logger.getLogger(UsuariosController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+        if (usuario.getClave() == null || usuario.getClave().isEmpty()) {
+            error += "El campo 'Clave' es obligatorio <br/>";
+        } else {
+            if (clave2 == null || clave2.isEmpty()) {
+                error += "El campo 'Confirmar clave' es obligatorio <br/>";
+            } else if (!usuario.getClave().equals(clave2)) {
+                error += "El valor en el campo 'Clave' y 'Confirmar clave' deben ser iguales <br/>";
+            }
+        }
+
+        if (usuario.getPerfil() == null) {
+            error += "El campo 'Perfil' es obligatorio <br/>";
+        }
+
+        if (usuario.getActivo() == null || usuario.getActivo().isEmpty()) {
+            error += "El campo 'Estado' es obligatorio <br/>";
+        }
+        return error;
+    }
+
+    private List<TiposDocumentosBean> obtenerTiposDocumentos() {
         List<TiposDocumentosBean> tiposDocumentos = new ArrayList<>();
         try {
             tiposDocumentos = tiposDocumentosDao.consultarTiposDocumentos();
@@ -163,8 +243,8 @@ public class UsuariosController extends HttpServlet {
         }
         return tiposDocumentos;
     }
-    
-    private List<PerfilesBean> obtenerPerfiles(){
+
+    private List<PerfilesBean> obtenerPerfiles() {
         List<PerfilesBean> perfiles = new ArrayList<>();
         try {
             perfiles = perfilesDao.consultarPerfiles();
@@ -173,18 +253,18 @@ public class UsuariosController extends HttpServlet {
         }
         return perfiles;
     }
-    
+
     @Override
-    protected void doGet(HttpServletRequest reqeust, HttpServletResponse response) throws ServletException, IOException{
+    protected void doGet(HttpServletRequest reqeust, HttpServletResponse response) throws ServletException, IOException {
         processRequest(reqeust, response);
     }
-    
+
     @Override
-    protected void doPost(HttpServletRequest reqeust, HttpServletResponse response) throws ServletException, IOException{
+    protected void doPost(HttpServletRequest reqeust, HttpServletResponse response) throws ServletException, IOException {
         processRequest(reqeust, response);
     }
-    
-    protected void init(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+
+    protected void init(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         processRequest(request, response);
     }
 }
