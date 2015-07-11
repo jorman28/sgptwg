@@ -9,7 +9,7 @@ public class UsuariosSql {
     public UsuariosSql() {
     }
 
-    public String consultarUsuarios(Integer idPersona, String usuario, String clave, Integer perfil, String activo, String documento, String tipoDocumento) {
+    public String consultarUsuarios(Integer idPersona, String usuario, Integer perfil, String activo, String documento, String tipoDocumento) {
         String sql = "SELECT " +
                     "   per.id AS id_persona, " +
                     "	per.documento, " +
@@ -35,9 +35,6 @@ public class UsuariosSql {
         }
         if(usuario != null && !usuario.isEmpty()){
             sql +=  "	AND usu.usuario = '"+usuario+"' ";
-        }
-        if(clave != null && !clave.isEmpty()){
-            sql +=  "	AND usu.clave = '"+clave+"' ";
         }
         if(activo != null && !activo.isEmpty()){
             sql +=  "	AND usu.activo = '"+activo+"' ";

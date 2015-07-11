@@ -21,23 +21,23 @@ public class UsuariosDao {
     }
 
     public List<UsuariosBean> consultarUsuarios() throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
-        return consultarUsuarios(null, null, null, null, null, null, null);
+        return consultarUsuarios(null, null, null, null, null, null);
     }
     
-    public List<UsuariosBean> consultarUsuarios(String nombreUsuario, String clave) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
-        return consultarUsuarios(null, nombreUsuario, clave, null, null, null, null);
+    public List<UsuariosBean> consultarUsuarios(String nombreUsuario) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
+        return consultarUsuarios(null, nombreUsuario, null, null, null, null);
     }
     
     public List<UsuariosBean> consultarUsuarios(Integer idPersona) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
-        return consultarUsuarios(idPersona, null, null, null, null, null, null);
+        return consultarUsuarios(idPersona, null, null, null, null, null);
     }
     
-    public List<UsuariosBean> consultarUsuarios(Integer idPersona, String nombreUsuario, String clave, Integer perfil, String activo, String documento, String tipoDocumento) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
+    public List<UsuariosBean> consultarUsuarios(Integer idPersona, String nombreUsuario, Integer perfil, String activo, String documento, String tipoDocumento) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
         List<UsuariosBean> listaUsuarios = new ArrayList<>();
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;
-        ps = con.prepareStatement(sql.consultarUsuarios(idPersona, nombreUsuario, clave, perfil, activo, documento, tipoDocumento));
+        ps = con.prepareStatement(sql.consultarUsuarios(idPersona, nombreUsuario, perfil, activo, documento, tipoDocumento));
         ResultSet rs;
         rs = ps.executeQuery();
         while(rs.next()){

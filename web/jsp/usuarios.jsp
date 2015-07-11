@@ -17,7 +17,7 @@
         <link rel="stylesheet" type="text/css" href="css/bootstrap-theme.min.css">
         <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
         <link rel="stylesheet" type="text/css" href="css/business-styles.css">
-        <title>Usuario</title>
+        <title>Usuarios</title>
     </head>
     <body>
         <div class="container-fluid">
