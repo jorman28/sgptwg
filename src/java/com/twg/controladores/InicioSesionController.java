@@ -19,9 +19,9 @@ import javax.servlet.http.HttpServletResponse;
 public class InicioSesionController extends HttpServlet {
 
     private final UsuariosDao usuariosDao = new UsuariosDao();
-    private String mensajeAlerta;
-    private String mensajeExito;
-    private String mensajeError;
+    private String mensajeAlerta = "";
+    private String mensajeExito = "";
+    private String mensajeError = "";
     
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>

@@ -21,19 +21,19 @@
     </head>
     <body>
         <div class="container-fluid">
-            <c:if test="${mensajeError != ''}">
+            <c:if test="${mensajeError != null and mensajeError != ''}">
                 <div class="alert alert-danger fade in" role="alert">
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                     ${mensajeError}
                 </div>
             </c:if>
-            <c:if test="${mensajeAlerta != ''}">
+            <c:if test="${mensajeAlerta != null and mensajeAlerta != ''}">
                 <div class="alert alert-warning fade in" role="alert">
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                     ${mensajeAlerta}
                 </div>
             </c:if>
-            <c:if test="${mensajeExito != ''}">
+            <c:if test="${mensajeExito != null and mensajeExito != ''}">
                 <div class="alert alert-success fade in" role="alert">
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                     ${mensajeExito}
