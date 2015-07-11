@@ -12,6 +12,10 @@
         <servlet-name>PaginaInicioController</servlet-name>
         <servlet-class>com.twg.controladores.PaginaInicioController</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>PersonasController</servlet-name>
+        <servlet-class>com.twg.controladores.PersonasController</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>UsuariosController</servlet-name>
         <url-pattern>/UsuariosController</url-pattern>
@@ -23,6 +27,10 @@
     <servlet-mapping>
         <servlet-name>PaginaInicioController</servlet-name>
         <url-pattern>/PaginaInicioController</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>PersonasController</servlet-name>
+        <url-pattern>/PersonasController</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

@@ -21,6 +21,22 @@ public class PerfilesDao {
     public PerfilesDao(){
     }
 
+    public PerfilesBean consultarPerfil(int id)throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
+        PerfilesBean perfil = new PerfilesBean();
+        Connection con;
+        con = new ConexionBaseDatos().obtenerConexion();
+        PreparedStatement ps;
+        ps = con.prepareStatement(sql.consultarPerfil(id));
+        ResultSet rs;
+        rs = ps.executeQuery();
+        perfil.setId(rs.getInt("id"));
+        perfil.setNombre(rs.getString("nombre"));
+        rs.close();
+        ps.close();
+        con.close();
+        return perfil;
+    }
+    
     public List<PerfilesBean> consultarPerfiles() throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
         List<PerfilesBean> listaPerfiles = new ArrayList<>();
         Connection con;

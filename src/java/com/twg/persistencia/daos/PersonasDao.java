@@ -26,12 +26,27 @@ public class PersonasDao {
     public PersonasDao(){
     }
 
-    public List<PersonasBean> consultarPersonas() throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
+    /**
+     * Método para consultar a las personas.
+     * Se envía [true] y [documento] en los parámetros, cuando se necesita consultar una sola persona.
+     * Se envía [false] y [null] para traer el listaro de todas las personas el sistema.
+     * @param unica
+     * @param documento
+     * @return
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws SQLException
+     * @throws IllegalAccessException 
+     */
+    public List<PersonasBean> consultarPersonas(boolean unica, Integer documento) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
         List<PersonasBean> listaPersonas = new ArrayList<>();
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;
-        ps = con.prepareStatement(sql.consultarPersonas());
+        ps = con.prepareStatement(sql.consultarPersonas(unica));
+        if(documento!=null && unica){
+            ps.setInt(1, documento);
+        }
         ResultSet rs;
         rs = ps.executeQuery();
         while(rs.next()){
