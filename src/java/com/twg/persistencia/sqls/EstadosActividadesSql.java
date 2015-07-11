@@ -36,7 +36,7 @@ public class EstadosActividadesSql {
     }
 
     public String insertarEstadoActividad() {
-        return "INSERT INTO estados_actividades (id, nombre) VALUES (?, ?)";
+        return "INSERT INTO estados_actividades (nombre) VALUES (?)";
     }
 
     public String actualizarEstadoActividad() {

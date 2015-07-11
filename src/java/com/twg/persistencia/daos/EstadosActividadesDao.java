@@ -1,12 +1,6 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.twg.persistencia.daos;
 
 import com.twg.persistencia.beans.EstadosActividadesBean;
-import com.twg.persistencia.beans.UsuariosBean;
 import com.twg.persistencia.sqls.EstadosActividadesSql;
 import com.twg.utilidades.ConexionBaseDatos;
 import java.sql.Connection;
@@ -21,33 +15,24 @@ import java.util.List;
  * @author Jorman
  */
 public class EstadosActividadesDao {
-
     private final EstadosActividadesSql sql = new EstadosActividadesSql();
-
-    public EstadosActividadesDao() {
+    
+    public EstadosActividadesDao(){
     }
 
-    public List<EstadosActividadesBean> consultarEstadosActividades() throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
-        List<EstadosActividadesBean> listaEstadosActividades = new ArrayList<>();
-        Connection con;
-        con = new ConexionBaseDatos().obtenerConexion();
-        PreparedStatement ps;
-        ps = con.prepareStatement(sql.consultarEstadosActividades());
-        ResultSet rs;
-        rs = ps.executeQuery();
-        while (rs.next()) {
-            EstadosActividadesBean estadoActividad = new EstadosActividadesBean();
-            estadoActividad.setId(rs.getInt("id"));
-            estadoActividad.setNombre(rs.getString("nombre"));
-            listaEstadosActividades.add(estadoActividad);
-        }
-        rs.close();
-        ps.close();
-        con.close();
-        return listaEstadosActividades;
+    public List<EstadosActividadesBean> consultarEstadosActividades() throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
+        return consultarEstadosActividades(null, null);
     }
-
-    public List<EstadosActividadesBean> consultarEstadosActividades(Integer id, String nombre) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
+    
+    public List<EstadosActividadesBean> consultarEstadosActividades(String nombre) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
+        return consultarEstadosActividades(null, nombre);
+    }
+    
+    public List<EstadosActividadesBean> consultarEstadosActividades(Integer id) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
+        return consultarEstadosActividades(id, null);
+    }
+    
+    public List<EstadosActividadesBean> consultarEstadosActividades(Integer id, String nombre) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
         List<EstadosActividadesBean> listaEstadosActividades = new ArrayList<>();
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
@@ -55,11 +40,11 @@ public class EstadosActividadesDao {
         ps = con.prepareStatement(sql.consultarEstadosActividades(id, nombre));
         ResultSet rs;
         rs = ps.executeQuery();
-        while (rs.next()) {
+        while(rs.next()){
             EstadosActividadesBean estadoActividad = new EstadosActividadesBean();
             estadoActividad.setId(rs.getInt("id"));
             estadoActividad.setNombre(rs.getString("nombre"));
-
+            
             listaEstadosActividades.add(estadoActividad);
         }
         rs.close();
@@ -67,25 +52,20 @@ public class EstadosActividadesDao {
         con.close();
         return listaEstadosActividades;
     }
-
-    public List<EstadosActividadesBean> consultarEstadosActividades(Integer id) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
-        return consultarEstadosActividades(id, null);
-    }
     
-    public int insertarEstadoActividad(EstadosActividadesBean estadoActividad) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
+    public int insertarEstadoActividad(EstadosActividadesBean estadoActividad) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;
         ps = con.prepareStatement(sql.insertarEstadoActividad());
-        ps.setInt(1, estadoActividad.getId());
-        ps.setString(2, estadoActividad.getNombre());
+        ps.setString(1, estadoActividad.getNombre());
         int insercion = ps.executeUpdate();
         ps.close();
         con.close();
         return insercion;
     }
-
-    public int actualizarEstadoActividad(EstadosActividadesBean estadoActividad) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
+    
+    public int actualizarEstadoActividad(EstadosActividadesBean estadoActividad) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;
@@ -97,8 +77,8 @@ public class EstadosActividadesDao {
         con.close();
         return actualizacion;
     }
-
-    public int eliminarEstadoActividad(Integer id) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
+    
+    public int eliminarEstadoActividad(Integer id) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;
