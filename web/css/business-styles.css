@@ -7,6 +7,10 @@ label {
     border: 1px solid #269abc;
 }
 
+.bordo-tablas {
+    border: 2px solid #269abc;
+}
+
 .btn-default {
     background-color: #a6e1ec;
     border-color: #afd9ee;

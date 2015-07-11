@@ -55,6 +55,23 @@ public class PersonasDao {
         return listaPersonas;
     }
     
+    public Integer consultarIdPersona(String documento, String tipoDocumento) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
+        Integer idPersona = null;
+        Connection con;
+        con = new ConexionBaseDatos().obtenerConexion();
+        PreparedStatement ps;
+        ps = con.prepareStatement(sql.consultarIdPersona(documento, tipoDocumento));
+        ResultSet rs;
+        rs = ps.executeQuery();
+        if(rs.next()){
+            idPersona = rs.getInt("id");
+        }
+        rs.close();
+        ps.close();
+        con.close();
+        return idPersona;
+    }
+    
     public int insertarPersona(PersonasBean persona) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
