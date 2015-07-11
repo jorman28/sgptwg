@@ -1,5 +1,5 @@
 function nuevoEstado(){
-    $('#tipoEstado').val('00');
+    $('#tipoEstado').val('0');
     $('#id').val('');
     $('#nombre').val('');
 }
