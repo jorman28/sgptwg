@@ -15,7 +15,7 @@ public class ConexionBaseDatos {
     }
     
     public Connection obtenerConexion() throws SQLException{
-        return DriverManager.getConnection("jdbc:mysql://mysql.hostinger.es:3306/u101442387_sgptw","u101442387_sgptw","ZbmVVoFDmL4kPsQCdl");
+        return DriverManager.getConnection("jdbc:mysql://127.9.4.2:3306/sgptwg","adminyCU5jj8","UYkkahX37sYj");
     }
     
     public static void main(String[] args) {
