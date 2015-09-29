@@ -10,12 +10,18 @@ import java.sql.SQLException;
  */
 public class ConexionBaseDatos {
     
+    private final String host = "127.9.4.2:3306";
+    private final String port = "3306";
+    private final String dataBase = "sgptwg";
+    private final String user = "adminyCU5jj8";
+    private final String password = "UYkkahX37sYj";
+    
     public ConexionBaseDatos() throws ClassNotFoundException, InstantiationException, IllegalAccessException{
         Class.forName("com.mysql.jdbc.Driver").newInstance();
     }
     
     public Connection obtenerConexion() throws SQLException{
-        return DriverManager.getConnection("jdbc:mysql://127.9.4.2:3306/sgptwg","adminyCU5jj8","UYkkahX37sYj");
+        return DriverManager.getConnection("jdbc:mysql://"+host+":"+port+"/"+dataBase, user, password);
     }
     
     public static void main(String[] args) {
