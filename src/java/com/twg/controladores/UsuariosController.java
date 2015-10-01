@@ -1,36 +1,25 @@
 package com.twg.controladores;
 
-import com.twg.persistencia.beans.PerfilesBean;
-import com.twg.persistencia.beans.TiposDocumentosBean;
+import com.twg.negocio.PerfilesNegocio;
+import com.twg.negocio.TiposDocumentoNegocio;
+import com.twg.negocio.UsuariosNegocio;
 import com.twg.persistencia.beans.UsuariosBean;
-import com.twg.persistencia.daos.PerfilesDao;
-import com.twg.persistencia.daos.PersonasDao;
-import com.twg.persistencia.daos.TiposDocumentosDao;
-import com.twg.persistencia.daos.UsuariosDao;
 import java.io.IOException;
-import java.sql.SQLException;
-import java.util.ArrayList;
+import java.io.PrintWriter;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Map;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.json.simple.JSONObject;
 
-/**
- *
- * @author Pipe
- */
 public class UsuariosController extends HttpServlet {
 
-    private final TiposDocumentosDao tiposDocumentosDao = new TiposDocumentosDao();
-    private final PerfilesDao perfilesDao = new PerfilesDao();
-    private final UsuariosDao usuariosDao = new UsuariosDao();
-    private final PersonasDao personasDao = new PersonasDao();
-    private String mensajeAlerta;
-    private String mensajeExito;
-    private String mensajeError;
+    private final PerfilesNegocio perfilesNegocio = new PerfilesNegocio();
+    private final TiposDocumentoNegocio tiposDocumentoNegocio = new TiposDocumentoNegocio();
+    private final UsuariosNegocio usuariosNegocio = new UsuariosNegocio();
+    
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -42,9 +31,9 @@ public class UsuariosController extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        mensajeAlerta = "";
-        mensajeExito = "";
-        mensajeError = "";
+        String mensajeAlerta = "";
+        String mensajeExito = "";
+        String mensajeError = "";
 
         String accion = request.getParameter("accion");
         if (accion == null) {
@@ -72,186 +61,101 @@ public class UsuariosController extends HttpServlet {
         } catch (NumberFormatException e) {
         }
 
-        List<UsuariosBean> listaUsuarios = null;
-        try {
-            switch (accion) {
-                case "consultar":
-                    listaUsuarios = usuariosDao.consultarUsuarios(idPersona, nombreUsuario, perfil, activo, documento, tipoDocumento);
-                    UsuariosBean usuario = new UsuariosBean();
-                    usuario.setDocumento(documento);
-                    usuario.setTipoDocumento(tipoDocumento);
-                    usuario.setUsuario(nombreUsuario);
-                    usuario.setClave(clave);
-                    usuario.setPerfil(perfil);
-                    usuario.setActivo(activo);
-                    enviarDatos(request, usuario);
-                    break;
-                case "editar":
-                    usuario = new UsuariosBean();
-                    if (idPersona != null) {
-                        List<UsuariosBean> usuarios = usuariosDao.consultarUsuarios(idPersona);
-                        if (usuarios != null && !usuarios.isEmpty()) {
-                            usuario = usuarios.get(0);
-                        }
-                    }
-                    enviarDatos(request, usuario);
-                    break;
-                case "guardar":
-                    usuario = new UsuariosBean();
-                    usuario.setUsuario(nombreUsuario);
-                    usuario.setClave(clave);
-                    usuario.setPerfil(perfil);
-                    usuario.setActivo(activo);
-                    usuario.setDocumento(documento);
-                    usuario.setTipoDocumento(tipoDocumento);
-                    usuario.setIdPersona(idPersona);
-
-                    mensajeError = validarDatos(usuario, clave2);
-                    if (mensajeError.isEmpty()) {
-                        if (idPersona != null) {
-                            int actualizacion = usuariosDao.actualizarUsuario(usuario);
-                            if (actualizacion > 0) {
-                                mensajeExito = "El usuario ha sido guardado con éxito";
-                                usuario = new UsuariosBean();
-                            } else {
-                                mensajeError = "El usuario no pudo ser guardado";
-                            }
-                        } else {
-                            idPersona = personasDao.consultarIdPersona(documento, tipoDocumento);
-                            if (idPersona != null) {
-                                List<UsuariosBean> existente = usuariosDao.consultarUsuarios(idPersona);
-                                if (existente != null && !existente.isEmpty()) {
-                                    mensajeError = "La persona seleccionada ya tiene un usuario asignado";
-                                } else {
-                                    usuario.setIdPersona(idPersona);
-                                    int insercion = usuariosDao.insertarUsuario(usuario);
-                                    if (insercion > 0) {
-                                        mensajeExito = "El usuario ha sido guardado con éxito";
-                                        usuario = new UsuariosBean();
-                                    } else {
-                                        mensajeError = "El usuario no pudo ser guardado";
-                                    }
-                                }
-
-                            } else {
-                                mensajeError = "La persona seleccionada no está registrada en el sistema";
-                            }
-                        }
-                    }
-
-                    enviarDatos(request, usuario);
-                    break;
-                case "eliminar":
-                    if (idPersona != null) {
-                        int eliminacion = usuariosDao.eliminarUsuario(idPersona);
-                        if (eliminacion > 0) {
-                            mensajeExito = "El usuario fue eliminado con éxito";
-                        } else {
-                            mensajeError = "El usuario no pudo ser eliminado";
-                        }
-                    } else {
-                        mensajeError = "El usuario no pudo ser eliminado";
-                    }
-                    enviarDatos(request, new UsuariosBean());
-                    break;
-                default:
-                    enviarDatos(request, new UsuariosBean());
-                    break;
-            }
-            if (listaUsuarios == null) {
-                listaUsuarios = usuariosDao.consultarUsuarios();
-            }
-        } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
-            Logger.getLogger(UsuariosController.class.getName()).log(Level.SEVERE, null, ex);
-            mensajeError = "Ocurrió un error procesando los datos. Revise el log de aplicación.";
+        switch (accion) {
+            case "consultar":
+                cargarTabla(response, idPersona, nombreUsuario, perfil, activo, documento, tipoDocumento);
+                break;
+            case "editar":
+                JSONObject object = usuariosNegocio.consultarUsuario(idPersona);
+                response.getWriter().write(object.toString());
+                break;
+            case "guardar":
+                Map<String, Object> result = usuariosNegocio.crearUsuario(idPersona, nombreUsuario, clave, clave2, perfil, activo, documento, tipoDocumento);
+                if(result.get("mensajeError") != null){
+                    mensajeError = (String)result.get("mensajeError");
+                    enviarDatos(request, idPersona, nombreUsuario, perfil, activo, documento, tipoDocumento);
+                }
+                if(result.get("mensajeExito") != null){
+                    mensajeExito = (String)result.get("mensajeExito");
+                    enviarDatos(request, null, null, null, null, null, null);
+                }
+                break;
+            case "eliminar":
+                result = usuariosNegocio.eliminarUsuario(idPersona);
+                if(result.get("mensajeError") != null){
+                    enviarDatos(request, idPersona, nombreUsuario, perfil, activo, documento, tipoDocumento);
+                }
+                if(result.get("mensajeExito") != null){
+                    enviarDatos(request, null, null, null, null, null, null);
+                }
+                break;
+            default:
+                enviarDatos(request, null, null, null, null, null, null);
+                break;
         }
 
         request.setAttribute("mensajeAlerta", mensajeAlerta);
         request.setAttribute("mensajeExito", mensajeExito);
         request.setAttribute("mensajeError", mensajeError);
-        request.setAttribute("tiposDocumentos", obtenerTiposDocumentos());
-        request.setAttribute("usuarios", listaUsuarios);
-        request.setAttribute("perfiles", obtenerPerfiles());
-        request.getRequestDispatcher("jsp/usuarios.jsp").forward(request, response);
+        request.setAttribute("tiposDocumentos", tiposDocumentoNegocio.consultarTiposDocumentos());
+        request.setAttribute("perfiles", perfilesNegocio.consultarPerfiles());
+        if(!accion.equals("consultar") && !accion.equals("editar")){
+            request.getRequestDispatcher("jsp/usuarios.jsp").forward(request, response);
+        }
     }
 
-    private void enviarDatos(HttpServletRequest request, UsuariosBean usuario) {
-        request.setAttribute("idPersona", usuario.getIdPersona());
-        request.setAttribute("tipoDocumento", usuario.getTipoDocumento());
-        request.setAttribute("documento", usuario.getDocumento());
-        request.setAttribute("usuario", usuario.getUsuario());
+    private void enviarDatos(HttpServletRequest request, Integer idPersona, String nombreUsuario, Integer perfil, String activo, String documento, String tipoDocumento) {
+        request.setAttribute("idPersona", idPersona);
+        request.setAttribute("tipoDocumento", tipoDocumento);
+        request.setAttribute("documento", documento);
+        request.setAttribute("usuario", nombreUsuario);
         request.setAttribute("clave", "");
-        request.setAttribute("perfil", usuario.getPerfil());
-        request.setAttribute("activo", usuario.getActivo());
+        request.setAttribute("perfil", perfil);
+        request.setAttribute("activo", activo);
     }
 
-    private String validarDatos(UsuariosBean usuario, String clave2) {
-        String error = "";
-        if (usuario.getDocumento() == null || usuario.getDocumento().isEmpty()) {
-            error += "El campo 'Documento' es obligatorio <br/>";
-        }
-
-        if (usuario.getTipoDocumento() == null || usuario.getTipoDocumento().isEmpty() || usuario.getTipoDocumento().equals("0")) {
-            error += "El campo 'Tipo de documento' es obligatorio <br/>";
-        }
-
-        if (usuario.getUsuario() == null || usuario.getUsuario().isEmpty()) {
-            error += "El campo 'Usuario' es obligatorio <br/>";
-        } else {
-            try {
-                List<UsuariosBean> usuarios = usuariosDao.consultarUsuarios(usuario.getUsuario());
-                if (usuarios != null && !usuarios.isEmpty()) {
-                    if (usuario.getIdPersona() != null) {
-                        if (usuario.getIdPersona().intValue() != usuarios.get(0).getIdPersona().intValue()) {
-                            error += "El usuario a ingresar no está disponible <br/>";
-                        }
-                    } else {
-                        error += "El usuario a ingresar no está disponible <br/>";
-                    }
+    private void cargarTabla(HttpServletResponse response, Integer idPersona, String nombreUsuario, Integer perfil, String activo, String documento, String tipoDocumento) throws ServletException, IOException {
+        response.setContentType("text/html; charset=iso-8859-1");
+        
+        List<UsuariosBean> listaUsuarios = usuariosNegocio.consultarUsuarios(idPersona, nombreUsuario, perfil, activo, documento, tipoDocumento);
+        PrintWriter out = response.getWriter();
+        out.println("<table class=\"table table-striped table-hover table-condensed bordo-tablas\">");
+        out.println(    "<thead>");
+        out.println(        "<tr>");			
+        out.println(            "<th>Tipo documento</th>");
+        out.println(            "<th>Documento</th>");
+        out.println(            "<th>Usuario</th>");
+        out.println(            "<th>Perfil</th>");
+        out.println(            "<th>Estado</th>");
+        out.println(            "<th>Acciones</th>");
+        out.println(        "</tr>");
+        out.println(    "</thead>");
+        out.println(    "<tbody>");
+        if(listaUsuarios != null && !listaUsuarios.isEmpty()){
+            for (UsuariosBean usuario : listaUsuarios) {
+                out.println("<tr>");			
+                out.println(    "<td>"+usuario.getDescripcionTipoDocumento()+"</td>");
+                out.println(    "<td>"+usuario.getDocumento()+"</td>");
+                out.println(    "<td>"+usuario.getUsuario()+"</td>");
+                out.println(    "<td>"+usuario.getDescripcionPerfil()+"</td>");
+                if(usuario.getActivo().equals("T")){
+                    out.println(    "<td>Activo</td>");
+                } else {
+                    out.println(    "<td>Inactivo</td>");
                 }
-            } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
-                Logger.getLogger(UsuariosController.class.getName()).log(Level.SEVERE, null, ex);
+                out.println(    "<td>");
+                out.println(        "<button class=\"btn btn-default\" type=\"button\" onclick=\"consultarUsuario("+usuario.getIdPersona()+")\">Editar</a>");
+                out.println(        "<button class=\"btn btn-default\" type=\"button\" data-toggle=\"modal\" data-target=\"#confirmationMessage\" onclick=\"jQuery('#idPersona').val('"+usuario.getIdPersona()+"');\">Eliminar</button>");
+                out.println(    "</td>");
+                out.println("</tr>");
             }
-        }
-
-        if (usuario.getClave() == null || usuario.getClave().isEmpty()) {
-            error += "El campo 'Clave' es obligatorio <br/>";
         } else {
-            if (clave2 == null || clave2.isEmpty()) {
-                error += "El campo 'Confirmar clave' es obligatorio <br/>";
-            } else if (!usuario.getClave().equals(clave2)) {
-                error += "El valor en el campo 'Clave' y 'Confirmar clave' deben ser iguales <br/>";
-            }
+            out.println("   <tr>");			
+            out.println(        "<td colspan=\"6\">No se encontraron registros</td>");
+            out.println(    "</tr>");
         }
-
-        if (usuario.getPerfil() == null) {
-            error += "El campo 'Perfil' es obligatorio <br/>";
-        }
-
-        if (usuario.getActivo() == null || usuario.getActivo().isEmpty()) {
-            error += "El campo 'Estado' es obligatorio <br/>";
-        }
-        return error;
-    }
-
-    private List<TiposDocumentosBean> obtenerTiposDocumentos() {
-        List<TiposDocumentosBean> tiposDocumentos = new ArrayList<>();
-        try {
-            tiposDocumentos = tiposDocumentosDao.consultarTiposDocumentos();
-        } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
-            Logger.getLogger(UsuariosController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return tiposDocumentos;
-    }
-
-    private List<PerfilesBean> obtenerPerfiles() {
-        List<PerfilesBean> perfiles = new ArrayList<>();
-        try {
-            perfiles = perfilesDao.consultarPerfiles();
-        } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
-            Logger.getLogger(UsuariosController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return perfiles;
+        out.println(    "</tbody>");
+        out.println("</table>");
     }
 
     @Override

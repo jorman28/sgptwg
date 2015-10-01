@@ -10,7 +10,7 @@ import java.sql.SQLException;
  */
 public class ConexionBaseDatos {
     
-    private final String host = "127.9.4.2";
+    private final String host = "localhost";
     private final String port = "3306";
     private final String dataBase = "sgptwg";
     private final String user = "adminyCU5jj8";
