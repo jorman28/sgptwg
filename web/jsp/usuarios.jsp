@@ -14,6 +14,7 @@
         <script type="text/javascript" src="js/jquery.min.js"></script>
         <script type="text/javascript" src="js/bootstrap.min.js"></script>
         <script type="text/javascript" src="js/general.js"></script>
+        <script type="text/javascript" src="js/usuarios.js"></script>
         <link rel="stylesheet" type="text/css" href="css/bootstrap-theme.min.css">
         <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
         <link rel="stylesheet" type="text/css" href="css/business-styles.css">
@@ -153,51 +154,18 @@
                                     <option value="">SELECCIONE</option>
                                     <option value="T" <c:if test="${activo == 'T'}">selected</c:if> >Activo</option>
                                     <option value="F" <c:if test="${activo == 'F'}">selected</c:if> >Inactivo</option>
-                                    </select>
-                                </div>
+                                </select>
                             </div>
-                            <br>
-                            <div class="row" align="center">
-                                <button class="btn btn-default" type="submit" name="accion" id="consultar" value="consultar">Consultar</button>
-                                <button class="btn btn-default" type="submit" name="accion" id="guardar" value="guardar">Guardar</button>
-                                <button class="btn btn-default" type="submit" name="accion" id="limpiar" value="limpiar">Limpiar</button>
-                            </div>
-                            <br/>
-                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 bordo-tablas">
-                                <table class="table table-striped table-hover table-condensed">
-                                    <thead>
-                                        <tr>
-                                            <th>Tipo documento</th>
-                                            <th>Documento</th>
-                                            <th>Usuario</th>
-                                            <th>Perfil</th>
-                                            <th>Estado</th>
-                                            <th>Acciones</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                    <c:forEach items="${usuarios}" var="item">
-                                        <tr>
-                                            <td>${item.descripcionTipoDocumento}</td>
-                                            <td>${item.documento}</td>
-                                            <td>${item.usuario}</td>
-                                            <td>${item.descripcionPerfil}</td>
-                                            <td>
-                                                <c:if test="${item.activo == 'T'}">
-                                                    Activo
-                                                </c:if>
-                                                <c:if test="${item.activo == 'F'}">
-                                                    Inactivo
-                                                </c:if>
-                                            </td>
-                                            <td>
-                                                <a class="btn btn-default" href="<%=request.getContextPath()%>/UsuariosController?accion=editar&idPersona=${item.idPersona}">Editar</a>
-                                                <button class="btn btn-default" type="button" data-toggle="modal" data-target="#confirmationMessage" onclick="jQuery('#idPersona').val('${item.idPersona}');">Eliminar</button>
-                                            </td>
-                                        </tr>
-                                    </c:forEach>
-                                </tbody>
-                            </table>
+                        </div>
+                        <br>
+                        <div class="row" align="center">
+                            <button class="btn btn-default" type="button" name="accion" id="consultar" value="consultar" onclick="llenarTabla()">Consultar</button>
+                            <button class="btn btn-default" type="submit" name="accion" id="guardar" value="guardar">Guardar</button>
+                            <button class="btn btn-default" type="submit" name="accion" id="limpiar" value="limpiar">Limpiar</button>
+                        </div>
+                        <br/>
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <div id="tablaUsuarios"></div>
                         </div>
                     </form>
                 </div>
