@@ -1,9 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package com.twg.persistencia.beans;
 
 /**
@@ -14,7 +8,7 @@ public class PersonasBean {
 
     private int id;
     private String documento;
-    private String tipo_documento;
+    private String tipoDocumento;
     private String nombres;
     private String apellidos;
     private String direccion;
@@ -42,11 +36,11 @@ public class PersonasBean {
     }
 
     public String getTipo_documento() {
-        return tipo_documento;
+        return tipoDocumento;
     }
 
     public void setTipo_documento(String tipo_documento) {
-        this.tipo_documento = tipo_documento;
+        this.tipoDocumento = tipo_documento;
     }
 
     public String getNombres() {
@@ -96,6 +90,4 @@ public class PersonasBean {
     public void setCorreo(String correo) {
         this.correo = correo;
     }
-    
-    
 }

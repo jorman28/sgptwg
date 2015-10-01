@@ -1,38 +1,29 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package com.twg.persistencia.beans;
 
 /**
  *
  * @author Erika Jhoana
  */
-public class EmpleadosBean {
+public class EmpleadosBean extends PersonasBean{
 
-    private int id_persona;
-    private int cargo;
+    private Integer cargo;
+    private String descripcionCargo;
     
     public EmpleadosBean(){
     }
 
-    public int getId_persona() {
-        return id_persona;
-    }
-
-    public void setId_persona(int id_persona) {
-        this.id_persona = id_persona;
-    }
-
-    public int getCargo() {
+    public Integer getCargo() {
         return cargo;
     }
 
-    public void setCargo(int cargo) {
+    public void setCargo(Integer cargo) {
         this.cargo = cargo;
     }
-    
-    
+    public String getDescripcionCargo() {
+        return descripcionCargo;
+    }
+
+    public void setDescripcionCargo(String descripcionCargo) {
+        this.descripcionCargo = descripcionCargo;
+    }
 }

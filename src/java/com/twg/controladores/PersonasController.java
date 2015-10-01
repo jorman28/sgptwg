@@ -1,27 +1,14 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package com.twg.controladores;
 
-import com.twg.persistencia.beans.CargosBean;
 import com.twg.persistencia.beans.PerfilesBean;
 import com.twg.persistencia.beans.PersonasBean;
-import com.twg.persistencia.beans.TiposDocumentosBean;
 import com.twg.persistencia.beans.UsuariosBean;
-import com.twg.persistencia.daos.CargosDao;
 import com.twg.persistencia.daos.PerfilesDao;
 import com.twg.persistencia.daos.PersonasDao;
-import com.twg.persistencia.daos.TiposDocumentosDao;
 import com.twg.persistencia.daos.UsuariosDao;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -38,16 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 //@WebServlet(name = "PersonasController", urlPatterns = {"/PersonasController"})
 public class PersonasController extends HttpServlet {
 
-    private final TiposDocumentosDao tiposDocumentosDao = new TiposDocumentosDao();
-    private final PerfilesDao perfilesDao = new PerfilesDao();
-    private final UsuariosDao usuariosDao = new UsuariosDao();
     private final PersonasDao personasDao = new PersonasDao();
-    private String mensajeInformacion;
-    private String mensajeExito;
-    private String mensajeError;
-    private String mensajeAlerta;
-    private static final String PATTERN_EMAIL = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
-            + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
     
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -60,10 +38,9 @@ public class PersonasController extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        mensajeInformacion = "";
-        mensajeExito = "";
-        mensajeError = "";
-        mensajeAlerta = "";
+        String mensajeExito = "";
+        String mensajeError = "";
+        String mensajeAlerta = "";
         
         String accion = request.getParameter("accion");
         if(accion == null){
@@ -72,19 +49,21 @@ public class PersonasController extends HttpServlet {
         
         String idPersonaStr = request.getParameter("idPersona");
         String documento = request.getParameter("documento");
-        String tipo_documento = request.getParameter("tipoDocumento");
+        String tipoDocumento = request.getParameter("tipoDocumento");
         String nombres = request.getParameter("nombres");
         String apellidos = request.getParameter("apellidos");
         String telefono = request.getParameter("telefono");
         String celular = request.getParameter("celular");
         String correo = request.getParameter("correo");
         String direccion = request.getParameter("direccion");
+        
         String tipoPersona = request.getParameter("tipoPersona");
         String Id_Cargo = request.getParameter("Id_Cargo");
         String fechaInicio = request.getParameter("fechaInicio");
+        
         String usuario = request.getParameter("usuario");
         String perfil = request.getParameter("perfil");
-        String clave1 = request.getParameter("clave1");
+        String clave = request.getParameter("clave");
         String clave2 = request.getParameter("clave2");
             
         Integer idPersona = null;
@@ -92,9 +71,6 @@ public class PersonasController extends HttpServlet {
             idPersona = Integer.valueOf(idPersonaStr);
         } catch (NumberFormatException e) {
         }
-        
-        List<PersonasBean> listaPersonas = null;
-        PersonasBean persona = null;
         
         try {
             switch(accion){
@@ -281,12 +257,10 @@ public class PersonasController extends HttpServlet {
         }
     }
     
-    public static boolean validarEmail(String email) {
- 
-        Pattern pattern = Pattern.compile(PATTERN_EMAIL);
+    public boolean validarEmail(String email) {
+        Pattern pattern = Pattern.compile("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
         Matcher matcher = pattern.matcher(email);
         return matcher.matches();
- 
     }
     
     private void enviarDatos(HttpServletRequest request, PersonasBean persona, UsuariosBean usuario){
@@ -323,5 +297,4 @@ public class PersonasController extends HttpServlet {
     protected void doPost(HttpServletRequest reqeust, HttpServletResponse response) throws ServletException, IOException{
         processRequest(reqeust, response);
     }
-
 }
