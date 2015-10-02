@@ -1,9 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package com.twg.persistencia.daos;
 
 import com.twg.persistencia.beans.PersonasBean;
@@ -21,22 +15,22 @@ import java.util.List;
  * @author Erika Jhoana
  */
 public class PersonasDao {
+
     private final PersonasSql sql = new PersonasSql();
-    
-    public PersonasDao(){
+
+    public PersonasDao() {
     }
-    
-    public List<PersonasBean> consultarPersonas(Integer id, String documento, String tipo_documento, String nombres, String apellidos,
-                            String telefono, String celular, String correo, String direccion, String usuario, String perfil) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
+
+    public List<?> consultarPersonas(String tipoPersona, Integer id, String documento, String tipoDocumento, String nombres, String apellidos, String correo, String usuario, String perfil) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         List<PersonasBean> listaPersonas = new ArrayList<>();
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;
-        ps = con.prepareStatement(sql.consultarPersonas(id==null?0:id, documento, tipo_documento, nombres, apellidos,
+        ps = con.prepareStatement(sql.consultarPersonas(id == null ? 0 : id, documento, tipo_documento, nombres, apellidos,
                 telefono, celular, correo, direccion, usuario, perfil));
         ResultSet rs;
         rs = ps.executeQuery();
-        while(rs.next()){
+        while (rs.next()) {
             PersonasBean persona = new PersonasBean();
             persona.setId(rs.getInt("id"));
             persona.setDocumento(rs.getString("documento"));
@@ -54,8 +48,8 @@ public class PersonasDao {
         con.close();
         return listaPersonas;
     }
-    
-    public Integer consultarIdPersona(String documento, String tipoDocumento) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
+
+    public Integer consultarIdPersona(String documento, String tipoDocumento) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         Integer idPersona = null;
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
@@ -63,7 +57,7 @@ public class PersonasDao {
         ps = con.prepareStatement(sql.consultarIdPersona(documento, tipoDocumento));
         ResultSet rs;
         rs = ps.executeQuery();
-        if(rs.next()){
+        if (rs.next()) {
             idPersona = rs.getInt("id");
         }
         rs.close();
@@ -71,8 +65,8 @@ public class PersonasDao {
         con.close();
         return idPersona;
     }
-    
-    public int insertarPersona(PersonasBean persona) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
+
+    public int insertarPersona(PersonasBean persona) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;
@@ -91,8 +85,8 @@ public class PersonasDao {
         con.close();
         return insercion;
     }
-    
-    public int actualizarPersona(PersonasBean persona) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
+
+    public int actualizarPersona(PersonasBean persona) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;
@@ -111,8 +105,8 @@ public class PersonasDao {
         con.close();
         return actualizacion;
     }
-    
-    public int eliminarPersona(Integer id) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
+
+    public int eliminarPersona(Integer id) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;

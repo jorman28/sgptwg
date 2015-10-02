@@ -22,11 +22,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Erika Jhoana
  */
-//@WebServlet(name = "PersonasController", urlPatterns = {"/PersonasController"})
 public class PersonasController extends HttpServlet {
-
-    private final PersonasDao personasDao = new PersonasDao();
-    
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -75,34 +71,9 @@ public class PersonasController extends HttpServlet {
         try {
             switch(accion){
                 case "consultar":
-                    listaPersonas = personasDao.consultarPersonas(idPersona, documento, tipo_documento, nombres, apellidos,
-                        telefono, celular, correo, direccion, usuario, perfil);
-                    persona = new PersonasBean();
-                    persona.setDocumento(documento);
-                    persona.setTipo_documento(tipo_documento);
-                    persona.setNombres(nombres);
-                    persona.setApellidos(apellidos);
-                    persona.setTelefono(telefono);
-                    persona.setCelular(celular);
-                    persona.setCorreo(correo);
-                    persona.setDireccion(direccion);
-                    enviarDatos(request, persona, null);
+                    
                     break;
                 case "editar":
-                    /*persona = new PersonasBean();
-                    if(idPersona != null){
-                        List<PersonasBean> usu = new ArrayList<>();
-                        if(documento != null && !documento.equals("")){
-                           personasB = personasDao.consultarPersonas(true,Integer.valueOf(documento));
-                            if(personasB != null && !personasB.isEmpty()){
-                                personaB = personasB.get(0);
-                                UsuariosDao userDao = new UsuariosDao();
-                                usu = userDao.consultarUsuarios(personaB.getId());
-                            }
-                        }
-                    }
-                    enviarDatos(request, personaB, usu!=null ? usu.get(0) : null);
-                    */
                     break;
                 case "crearPersona":
                     persona = new PersonasBean();
