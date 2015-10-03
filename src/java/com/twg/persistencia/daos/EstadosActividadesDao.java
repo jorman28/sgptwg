@@ -74,8 +74,8 @@ public class EstadosActividadesDao {
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;
         ps = con.prepareStatement(sql.insertarEstadoActividad());
-        ps.setInt(1, estadoActividad.getId());
-        ps.setString(2, estadoActividad.getNombre());
+        //ps.setInt(1, estadoActividad.getId());
+        ps.setString(1, estadoActividad.getNombre());
         int insercion = ps.executeUpdate();
         ps.close();
         con.close();
@@ -87,8 +87,8 @@ public class EstadosActividadesDao {
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;
         ps = con.prepareStatement(sql.actualizarEstadoActividad());
-        ps.setInt(1, estadoActividad.getId());
-        ps.setString(2, estadoActividad.getNombre());
+        ps.setInt(2, estadoActividad.getId());
+        ps.setString(1, estadoActividad.getNombre());
         int actualizacion = ps.executeUpdate();
         ps.close();
         con.close();

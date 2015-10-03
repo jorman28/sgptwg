@@ -15,10 +15,11 @@ import java.util.logging.Logger;
 import org.json.simple.JSONObject;
 
 public class EstadosNegocio {
+
     private final EstadosActividadesDao estadosActividadesDao = new EstadosActividadesDao();
     private final EstadosVersionesDao estadosVersionesDao = new EstadosVersionesDao();
-    
-    public JSONObject consultarEstado(Integer id){
+
+    public JSONObject consultarEstado(Integer id) {
         JSONObject jsonUsuario = new JSONObject();
         if (id != null) {
             try {
@@ -34,8 +35,8 @@ public class EstadosNegocio {
         }
         return jsonUsuario;
     }
-    
-    public List<EstadosActividadesBean> consultarEstados(Integer id, String nombre){
+
+    public List<EstadosActividadesBean> consultarEstados(Integer id, String nombre) {
         List<EstadosActividadesBean> listaEstadosActividades = new ArrayList<>();
         try {
             listaEstadosActividades = estadosActividadesDao.consultarEstadosActividades(id, nombre);
@@ -44,12 +45,12 @@ public class EstadosNegocio {
         }
         return listaEstadosActividades;
     }
-    
-    public Map<String, Object> crearEstado(Integer id, String nombre){
+
+    public Map<String, Object> crearEstado(Integer id, String nombre) {
         EstadosActividadesBean estadoActividadBean = new EstadosActividadesBean();
         estadoActividadBean.setNombre(nombre);
         estadoActividadBean.setId(id);
-        
+
         String mensajeExito = "";
         String mensajeError = validarDatos(estadoActividadBean);
         if (mensajeError.isEmpty()) {
@@ -57,13 +58,20 @@ public class EstadosNegocio {
                 if (id != null) {
                     int actualizacion = estadosActividadesDao.actualizarEstadoActividad(estadoActividadBean);
                     if (actualizacion > 0) {
-                        mensajeExito = "El estado ha sido guardado con éxito";
+                        mensajeExito = "El estado ha sido modificado con éxito";
                     } else {
-                        mensajeError = "El estado no pudo ser guardado";
+                        mensajeError = "El estado no pudo ser modificado";
                     }
                 } else {
-                    id = estadosActividadesDao.consultarId(nombre);
-                    if (id != null) {
+                    if (id == null) {
+                        int actualizacion = estadosActividadesDao.insertarEstadoActividad(estadoActividadBean);
+                        if (actualizacion > 0) {
+                            mensajeExito = "El estado ha sido guardado con éxito";
+                        } else {
+                            mensajeError = "El estado no pudo ser guardado";
+                        }
+                    } else {
+
                         List<EstadosActividadesBean> existente = estadosActividadesDao.consultarEstadosActividades(id);
                         if (existente != null && !existente.isEmpty()) {
                             mensajeError = "El estado esta siendo utilizado";
@@ -76,9 +84,6 @@ public class EstadosNegocio {
                                 mensajeError = "El estado no pudo ser guardado";
                             }
                         }
-
-                    } else {
-                        mensajeError = "La persona seleccionada no está registrada en el sistema";
                     }
                 }
             } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
@@ -87,16 +92,16 @@ public class EstadosNegocio {
             }
         }
         Map<String, Object> result = new HashMap<>();
-        if(!mensajeError.isEmpty()){
+        if (!mensajeError.isEmpty()) {
             result.put("mensajeError", mensajeError);
         }
-        if(!mensajeExito.isEmpty()){
+        if (!mensajeExito.isEmpty()) {
             result.put("mensajeExito", mensajeExito);
         }
         return result;
     }
-    
-    public Map<String, Object> eliminarEstado(Integer id){
+
+    public Map<String, Object> eliminarEstado(Integer id) {
         String mensajeExito = "";
         String mensajeError = "";
         if (id != null) {
@@ -115,35 +120,35 @@ public class EstadosNegocio {
             mensajeError = "El estado no pudo ser eliminado";
         }
         Map<String, Object> result = new HashMap<>();
-        if(!mensajeError.isEmpty()){
+        if (!mensajeError.isEmpty()) {
             result.put("mensajeError", mensajeError);
         }
-        if(!mensajeExito.isEmpty()){
+        if (!mensajeExito.isEmpty()) {
             result.put("mensajeExito", mensajeExito);
         }
         return result;
     }
-    
+
     private String validarDatos(EstadosActividadesBean estadoActividad) {
         String error = "";
-        if (estadoActividad.getNombre()== null || estadoActividad.getNombre().isEmpty()) {
+        if (estadoActividad.getNombre() == null || estadoActividad.getNombre().isEmpty()) {
             error += "El campo 'Nombre' es obligatorio <br/>";
         }
-            try {
-                List<EstadosActividadesBean> lstEstadosActividades = estadosActividadesDao.consultarEstadosActividades(estadoActividad.getNombre());
-                if (lstEstadosActividades != null && !lstEstadosActividades.isEmpty()) {
-                    if (estadoActividad.getId() != null) {
-                        if (estadoActividad.getId().intValue() != lstEstadosActividades.get(0).getId().intValue()) {
-                            error += "El usuario a ingresar no está disponible <br/>";
-                        }
-                    } else {
-                        error += "El usuario a ingresar no está disponible <br/>";
-                    }
-                }
-            } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
-                Logger.getLogger(EstadosController.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        
+//        try {
+//            List<EstadosActividadesBean> lstEstadosActividades = estadosActividadesDao.consultarEstadosActividades(estadoActividad.getNombre());
+//            if (lstEstadosActividades != null && !lstEstadosActividades.isEmpty()) {
+//                if (estadoActividad.getId() != null) {
+//                    if (estadoActividad.getId().intValue() != lstEstadosActividades.get(0).getId().intValue()) {
+//                        error += "El estado a ingresar no está disponible <br/>";
+//                    }
+//                } else {
+//                    error += "El estado a ingresar no está disponible <br/>";
+//                }
+//            }
+//        } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
+//            Logger.getLogger(EstadosController.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+
         return error;
     }
 }

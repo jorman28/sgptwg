@@ -20,15 +20,15 @@ public class EstadosActividadesSql {
 
     public String consultarEstadosActividades(Integer id, String nombre) {
         String sql = "";
-
-        if (id != null && nombre != null) {
+        if ("".equals(nombre)) nombre = null;
+        if (id == null && nombre == null) {
             sql += "SELECT * FROM estados_actividades";
         } else {
             if (id != null) {
-                sql += "SELECT * FROM estados_actividades Where id = " + id + " ";
+                sql += "SELECT * FROM estados_actividades Where id = " + id + "";
             } else {
                 if (nombre != null) {
-                    sql += "SELECT * FROM estados_actividades Where nombre = " + nombre + " ";
+                    sql += "SELECT * FROM estados_actividades Where nombre = '" + nombre + "'";
                 }
             }
         } 

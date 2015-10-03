@@ -87,7 +87,7 @@ public class EstadosController extends HttpServlet {
     }
 
     private void enviarDatos(HttpServletRequest request, Integer id, String nombre) {
-        request.setAttribute("id", id);
+        //.setAttribute("id", id);
         request.setAttribute("nombre", nombre);
     }
 
@@ -99,7 +99,7 @@ public class EstadosController extends HttpServlet {
         out.println("<table class=\"table table-striped table-hover table-condensed bordo-tablas\">");
         out.println(    "<thead>");
         out.println(        "<tr>");			
-        out.println(            "<th>Tipo Estado</th>");
+//        out.println(            "<th>Tipo Estado</th>");
         out.println(            "<th>Nombre</th>");
         out.println(            "<th>Acciones</th>");
         out.println(        "</tr>");
@@ -108,9 +108,11 @@ public class EstadosController extends HttpServlet {
         if(listaEstadosActividades != null && !listaEstadosActividades.isEmpty()){
             for (EstadosActividadesBean estadoActividad : listaEstadosActividades) {
                 out.println("<tr>");			
+//                out.println(    "<td>"+estadoActividad.getId()+"</td>");                
                 out.println(    "<td>"+estadoActividad.getNombre()+"</td>");
+
                 out.println(    "<td>");
-                out.println(        "<button class=\"btn btn-default\" type=\"button\" onclick=\"consultarEstadoActividad("+estadoActividad.getId()+")\">Editar</a>");
+                out.println(        "<button class=\"btn btn-default\" type=\"button\" onclick=\"consultarEstado("+estadoActividad.getId()+")\">Editar</button>");
                 out.println(        "<button class=\"btn btn-default\" type=\"button\" data-toggle=\"modal\" data-target=\"#confirmationMessage\" onclick=\"jQuery('#id').val('"+estadoActividad.getId()+"');\">Eliminar</button>");
                 out.println(    "</td>");
                 out.println("</tr>");
