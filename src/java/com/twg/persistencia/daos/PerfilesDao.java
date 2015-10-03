@@ -30,6 +30,10 @@ public class PerfilesDao {
         return listaPerfiles.get(0);
     }
     
+    public List<PerfilesBean> consultarPerfiles() throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
+        return consultarPerfiles(null, null, false);
+    }
+    
     public List<PerfilesBean> consultarPerfiles(Integer idPerfil, String nombrePerfil, boolean nombreExacto) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
         List<PerfilesBean> listaPerfiles = new ArrayList<>();
         Connection con;

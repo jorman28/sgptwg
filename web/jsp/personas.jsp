@@ -23,12 +23,12 @@
 
     List<TiposDocumentosBean> tiposDocumento = new TiposDocumentosDao().consultarTiposDocumentos();
     request.setAttribute("tiposDocumento", tiposDocumento);
-    
+
     List<PerfilesBean> perfiles = new PerfilesDao().consultarPerfiles();
     request.setAttribute("perfiles", perfiles);
-    
+
     DateFormat formatoFecha = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-    request.setAttribute("fechaInicio", formatoFecha.format(new Date()) );
+    request.setAttribute("fechaInicio", formatoFecha.format(new Date()));
 
 %>
 <html>
@@ -48,67 +48,20 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" id="contenido">
-                    <nav class="navbar navbar-default">
-                        <div class="container-fluid">
-                            <div class="navbar-header">
-                                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-                                    <span class="sr-only">Toggle navigation</span>
-                                    <span class="icon-bar"></span>
-                                    <span class="icon-bar"></span>
-                                    <span class="icon-bar"></span>
-                                </button>
-                            </div>
-                            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                                <ul class="nav navbar-nav">
-                                    <li><a href="<%=request.getContextPath()%>/PaginaInicioController">Inicio</a></li>
-                                    <li class="dropdown">
-                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Seguridad <span class="caret"></span></a>
-                                        <ul class="dropdown-menu">
-                                            <li><a href="<%=request.getContextPath()%>/UsuariosController">Usuarios</a></li>
-                                            <li><a href="#">Permisos</a></li>
-                                        </ul>
-                                    </li>
-                                    <li class="dropdown">
-                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Configuración <span class="caret"></span></a>
-                                        <ul class="dropdown-menu">
-                                            <li><a href="<%=request.getContextPath()%>/PersonasController">Personas</a></li>
-                                            <li><a href="<%=request.getContextPath()%>/CargosController">Cargos</a></li>
-                                            <li><a href="<%=request.getContextPath()%>/EstadosController">Estados</a></li>
-                                        </ul>
-                                    </li>
-                                    <li class="dropdown">
-                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Proyectos <span class="caret"></span></a>
-                                        <ul class="dropdown-menu">
-                                            <li><a href="#">Versiones</a></li>
-                                            <li><a href="#">Actividades</a></li>
-                                        </ul>
-                                    </li>
-                                    <li><a href="#">Documentación</a></li>
-                                    <li><a href="#">Reportes</a></li>
-                                    <li><a href="#">Ayuda</a></li>
-                                    <li class="dropdown">
-                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Cerrar sesión <span class="caret"></span></a>
-                                        <ul class="dropdown-menu">
-                                            <li><a href="<%=request.getContextPath()%>/InicioSesionController">Continuar</a></li>
-                                        </ul>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </nav>
-                    <c:if test="${mensajeError != ''}">
+                    <div>${menu}</div>
+                    <c:if test="${not empty mensajeError}">
                         <div class="alert alert-danger fade in" role="alert">
                             <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                             ${mensajeError}
                         </div>
                     </c:if>
-                    <c:if test="${mensajeAlerta != ''}">
+                    <c:if test="${not empty mensajeAlerta}">
                         <div class="alert alert-warning fade in" role="alert">
                             <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                             ${mensajeAlerta}
                         </div>
                     </c:if>
-                    <c:if test="${mensajeExito != ''}">
+                    <c:if test="${not empty mensajeExito}">
                         <div class="alert alert-success fade in" role="alert">
                             <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                             ${mensajeExito}
@@ -196,18 +149,18 @@
                                         <label>* Cargo</label>
                                         <select class="form-control" id="Id_Cargo" name="Id_Cargo">
                                             <option value="0">Seleccione</option>
-                                            <%--<c:forEach items="${cargos}" var="cargo">--%>
-                                                <option value="${cargo.id}">${cargo.nombre}</option>
-                                            <%--</c:forEach>--%>
-                                        </select>
-                                    </div>
-                                    <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                                        <label for="fechaInicio">* Fecha de registro</label>
-                                        <input class="form-control" id="fechaInicio" name="fechaInicio" readonly type="text" value="${fechaInicio}" />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>-->
+                        <%--<c:forEach items="${cargos}" var="cargo">--%>
+                            <option value="${cargo.id}">${cargo.nombre}</option>
+                        <%--</c:forEach>--%>
+                    </select>
+                </div>
+                <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                    <label for="fechaInicio">* Fecha de registro</label>
+                    <input class="form-control" id="fechaInicio" name="fechaInicio" readonly type="text" value="${fechaInicio}" />
+                </div>
+            </div>
+        </div>
+    </div>-->
                         <div class="panel panel-info">
                             <div class="panel-heading">INFORMACIÓN DE USUARIO</div>
                             <div class="panel-body">
