@@ -22,6 +22,7 @@ public class PaginaInicioController extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        request.setAttribute("menu", request.getSession().getAttribute("menu"));
         request.getRequestDispatcher("jsp/paginaInicio.jsp").forward(request, response);
     }
 
