@@ -107,52 +107,61 @@
                                 </div>
                             </div>
                         </div>
-                        <h1>ESTADOS</h1>
+                        <center>
+                            <h2>REGISTRO DE ESTADOS</h2>
+                            Los campos marcados con asterisco (*) son obligatorios.
+                        </center>
                         <input type="hidden" id="id" name="id" value="${id}" />
-                        <div class="row">
-                            <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                                <label for="tipoDocumento">*Tipo de Estado:</label>
-                                <select class="form-control" id="tipoEstado" name="tipoEstado" value="${tipoEstado}">
-                                    <option value="0">SELECCIONE</option>
-                                    <option value="Estado de Actividad">Estado de Actividad</option>
-                                    <option value="Estado de Versión">Estado de Versión</option>
-                                </select>
+                        <div class="panel panel-info">
+                            <div class="panel-heading">INFORMACIÓN DEL ESTADO</div>
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                        <label for="tipoDocumento">*Tipo de Estado:</label>
+                                        <select class="form-control" id="tipoEstado" name="tipoEstado" value="${tipoEstado}">
+                                            <option value="0">SELECCIONE</option>
+                                            <option value="Estado de Actividad">Estado de Actividad</option>
+                                            <option value="Estado de Versión">Estado de Versión</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                        <label for="nombre">*Nombre:</label> 
+                                        <input class="form-control" type="text" id="nombre" name="nombre" value="${nombre}"/>
+                                    </div>
+                                </div>                            
                             </div>
-                            <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                                <label for="nombre">*Nombre:</label> 
-                                <input class="form-control" type="text" id="nombre" name="nombre" value="${nombre}"/>
-                            </div>
-                            <br>
-                            <div class="row" align="center">
-                                <button class="btn btn-default" type="submit" name="accion" id="consultar" value="consultar">Consultar</button>
-                                <button class="btn btn-default" type="submit" name="accion" id="guardar" value="guardar">Guardar</button>
-                                <button class="btn btn-default" type="submit" name="accion" id="limpiar" value="limpiar">Limpiar</button>
-                            </div>
-                            <br/>
-                            <table class="table table-striped table-hover table-condensed">
-                                <thead>
+                        </div>
+                        <br>
+                        <div class="row" align="center">
+                            <button class="btn btn-default" type="submit" name="accion" id="consultar" value="consultar">Consultar</button>
+                            <button class="btn btn-default" type="submit" name="accion" id="guardar" value="guardar">Guardar</button>
+                            <button class="btn btn-default" type="submit" name="accion" id="limpiar" value="limpiar">Limpiar</button>
+                        </div>
+                        <br/>
+                        <table class="table table-striped table-hover table-condensed">
+                            <thead>
+                                <tr>
+                                    <th>Tipo de Estado</th>
+                                    <th>Nombre</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <c:forEach items="${estadosActividades}" var="item">
                                     <tr>
-                                        <th>Tipo de Estado</th>
-                                        <th>Nombre</th>
-                                        <th>Acciones</th>
+                                        <td>Estado Actividad</td>
+                                        <td>${item.nombre}</td>
+                                        <td>
+                                            <a class="btn btn-default" href="<%=request.getContextPath()%>/EstadosController?accion=editar&id=${item.id}">Editar</a>
+                                            <button class="btn btn-default" type="button" data-toggle="modal" data-target="#confirmationMessage" onclick="jQuery('#id').val('${item.id}');">Eliminar</button>
+                                        </td>
                                     </tr>
-                                </thead>
-                                <tbody>
-                                    <c:forEach items="${estadosActividades}" var="item">
-                                        <tr>
-                                            <td>Estado Actividad</td>
-                                            <td>${item.nombre}</td>
-                                            <td>
-                                                <a class="btn btn-default" href="<%=request.getContextPath()%>/EstadosController?accion=editar&id=${item.id}">Editar</a>
-                                                <button class="btn btn-default" type="button" data-toggle="modal" data-target="#confirmationMessage" onclick="jQuery('#id').val('${item.id}');">Eliminar</button>
-                                            </td>
-                                        </tr>
-                                    </c:forEach>
-                                </tbody>
-                            </table>
+                                </c:forEach>
+                            </tbody>
+                        </table>
                     </form>
                 </div>
-            </div>
+            </div>            
         </div>
     </body>
 </html>
