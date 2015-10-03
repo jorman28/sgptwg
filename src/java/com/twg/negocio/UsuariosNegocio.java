@@ -16,6 +16,7 @@ import org.json.simple.JSONObject;
 public class UsuariosNegocio {
     private final UsuariosDao usuariosDao = new UsuariosDao();
     private final PersonasDao personasDao = new PersonasDao();
+    private final PerfilesNegocio perfilesNegocio = new PerfilesNegocio();
     
     public JSONObject consultarUsuario(Integer idPersona){
         JSONObject jsonUsuario = new JSONObject();
@@ -132,7 +133,7 @@ public class UsuariosNegocio {
         return result;
     }
     
-    public String validarDatos(UsuariosBean usuario, String clave2) {
+    private String validarDatos(UsuariosBean usuario, String clave2) {
         String error = "";
         if (usuario.getDocumento() == null || usuario.getDocumento().isEmpty()) {
             error += "El campo 'Documento' es obligatorio <br/>";
@@ -179,5 +180,49 @@ public class UsuariosNegocio {
             error += "El campo 'Estado' es obligatorio <br/>";
         }
         return error;
+    }
+    
+    public Map<String, Object> validarInicioSession(String contexto, String usuario, String clave){
+        Map<String, Object> resultado = new HashMap<>();
+        String mensajeError = "";
+        String mensajeAlerta = "";
+        if(usuario != null && !usuario.isEmpty()){
+            if(clave != null && !clave.isEmpty()){
+                try {
+                    List<UsuariosBean> listaUsuarios = usuariosDao.consultarUsuarios(usuario);
+                    if(listaUsuarios != null && !listaUsuarios.isEmpty()){
+                        if(listaUsuarios.get(0).getClave().equals(clave)){
+                            if(listaUsuarios.get(0).getActivo() != null && listaUsuarios.get(0).getActivo().equals("T")){
+                                /* TODO: Agregar consulta de perfil y permisos */
+                                Map<Integer, Map<String, Object>> permisos = perfilesNegocio.consultarPermisosPorPagina(listaUsuarios.get(0).getPerfil());
+                                String menu = perfilesNegocio.construccionMenuNavegacion(permisos, contexto);
+                                resultado.put("permisos", permisos);
+                                resultado.put("menu", menu);
+                            } else {
+                                mensajeError = "El usuario con el que intenta ingresar está inactivo";
+                            }
+                        } else {
+                            mensajeError = "La contraseña es incorrecta para el usuario ingresado";
+                        }
+                    } else {
+                        mensajeError = "El usuario ingresado no está registrado en el sistema";
+                    }
+                } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
+                    Logger.getLogger(UsuariosNegocio.class.getName()).log(Level.SEVERE, null, ex);
+                    mensajeError = "No hay conexión con la base de datos";
+                }
+            } else {
+                mensajeAlerta = "Debe ingresar la clave";
+            }
+        } else {
+            mensajeAlerta = "Debe ingresar el usuario";
+        }
+        if(!mensajeAlerta.isEmpty()){
+            resultado.put("mensajeAlerta", mensajeAlerta);
+        }
+        if(!mensajeError.isEmpty()){
+            resultado.put("mensajeError", mensajeError);
+        }
+        return resultado;
     }
 }

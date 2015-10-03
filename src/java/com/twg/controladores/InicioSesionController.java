@@ -1,12 +1,8 @@
 package com.twg.controladores;
 
-import com.twg.persistencia.beans.UsuariosBean;
-import com.twg.persistencia.daos.UsuariosDao;
+import com.twg.negocio.UsuariosNegocio;
 import java.io.IOException;
-import java.sql.SQLException;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Map;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -18,10 +14,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class InicioSesionController extends HttpServlet {
 
-    private final UsuariosDao usuariosDao = new UsuariosDao();
-    private String mensajeAlerta = "";
-    private String mensajeExito = "";
-    private String mensajeError = "";
+    private final UsuariosNegocio usuariosNegocio = new UsuariosNegocio();
     
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -33,47 +26,25 @@ public class InicioSesionController extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        mensajeAlerta = "";
-        mensajeExito = "";
-        mensajeError = "";
         String redireccion = "jsp/inicioSesion.jsp";
         String accion = request.getParameter("accion");
 
         if(accion != null && accion.equals("ingresar")){
             String usuario = request.getParameter("usuario");
             String clave = request.getParameter("clave");
-            if(usuario != null && !usuario.isEmpty()){
-                if(clave != null && !clave.isEmpty()){
-                    try {
-                        List<UsuariosBean> listaUsuarios = usuariosDao.consultarUsuarios(usuario);
-                        if(listaUsuarios != null && !listaUsuarios.isEmpty()){
-                            if(listaUsuarios.get(0).getClave().equals(clave)){
-                                if(listaUsuarios.get(0).getActivo() != null && listaUsuarios.get(0).getActivo().equals("T")){
-                                    redireccion = "jsp/paginaInicio.jsp";
-                                } else {
-                                    mensajeError = "El usuario con el que intenta ingresar está inactivo";
-                                }
-                            } else {
-                                mensajeError = "La contraseña es incorrecta para el usuario ingresado";
-                            }
-                        } else {
-                            mensajeError = "El usuario ingresado no está registrado en el sistema";
-                        }
-                    } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
-                        Logger.getLogger(InicioSesionController.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                } else {
-                    mensajeAlerta = "Debe ingresar la clave";
-                }
+            Map<String, Object> inicio = usuariosNegocio.validarInicioSession(request.getContextPath(), usuario, clave);
+            if(inicio.get("mensajeAlerta") != null){
+                request.setAttribute("mensajeAlerta", inicio.get("mensajeAlerta"));
+                request.setAttribute("usuario", usuario);
+            } else if(inicio.get("mensajeError") != null) {
+                request.setAttribute("mensajeError", inicio.get("mensajeError"));
                 request.setAttribute("usuario", usuario);
             } else {
-                mensajeAlerta = "Debe ingresar el usuario";
+                request.getSession().setAttribute("menu", inicio.get("menu"));
+                request.getSession().setAttribute("permisos", inicio.get("permisos"));
+                redireccion = "jsp/paginaInicio.jsp";
             }
-        
         }
-        request.setAttribute("mensajeError", mensajeError);
-        request.setAttribute("mensajeExito", mensajeExito);
-        request.setAttribute("mensajeAlerta", mensajeAlerta);
         request.getRequestDispatcher(redireccion).forward(request, response);
     }
 
