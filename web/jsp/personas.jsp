@@ -22,93 +22,35 @@
     </head>
     <body>
         <div class="container-fluid">
+            <div>${menu}</div>
+            <c:if test="${not empty mensajeError}">
+                <div class="alert alert-danger fade in" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    ${mensajeError}
+                </div>
+            </c:if>
+            <c:if test="${not empty mensajeAlerta}">
+                <div class="alert alert-warning fade in" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    ${mensajeAlerta}
+                </div>
+            </c:if>
+            <c:if test="${not empty mensajeExito}">
+                <div class="alert alert-success fade in" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    ${mensajeExito}
+                </div>
+            </c:if>
             <div class="row">
                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" id="contenido">
-                    <nav class="navbar navbar-default">
-                        <div class="container-fluid">
-                            <div class="navbar-header">
-                                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-                                    <span class="sr-only">Toggle navigation</span>
-                                    <span class="icon-bar"></span>
-                                    <span class="icon-bar"></span>
-                                    <span class="icon-bar"></span>
-                                </button>
-                            </div>
-                            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                                <ul class="nav navbar-nav">
-                                    <li><a href="<%=request.getContextPath()%>/PaginaInicioController">Inicio</a></li>
-                                    <li class="dropdown">
-                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Seguridad <span class="caret"></span></a>
-                                        <ul class="dropdown-menu">
-                                            <li><a href="<%=request.getContextPath()%>/UsuariosController">Usuarios</a></li>
-                                            <li><a href="#">Permisos</a></li>
-                                        </ul>
-                                    </li>
-                                    <li class="dropdown">
-                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Configuración <span class="caret"></span></a>
-                                        <ul class="dropdown-menu">
-                                            <li><a href="<%=request.getContextPath()%>/PersonasController">Personas</a></li>
-                                            <li><a href="#">Cargos</a></li>
-                                            <li><a href="#">Estados</a></li>
-                                        </ul>
-                                    </li>
-                                    <li class="dropdown">
-                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Proyectos <span class="caret"></span></a>
-                                        <ul class="dropdown-menu">
-                                            <li><a href="#">Versiones</a></li>
-                                            <li><a href="#">Actividades</a></li>
-                                        </ul>
-                                    </li>
-                                    <li><a href="#">Documentación</a></li>
-                                    <li><a href="#">Reportes</a></li>
-                                    <li><a href="#">Ayuda</a></li>
-                                    <li class="dropdown">
-                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Cerrar sesión <span class="caret"></span></a>
-                                        <ul class="dropdown-menu">
-                                            <li><a href="<%=request.getContextPath()%>/InicioSesionController">Continuar</a></li>
-                                        </ul>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </nav>
-                    <c:if test="${not empty mensajeError}">
-                        <div class="alert alert-danger fade in" role="alert">
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                            ${mensajeError}
-                        </div>
-                    </c:if>
-                    <c:if test="${not empty mensajeAlerta}">
-                        <div class="alert alert-warning fade in" role="alert">
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                            ${mensajeAlerta}
-                        </div>
-                    </c:if>
-                    <c:if test="${not empty mensajeExito}">
-                        <div class="alert alert-success fade in" role="alert">
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                            ${mensajeExito}
-                        </div>
-                    </c:if>
                     <form id="formularioPersonas" autocomplete="off" action="./PersonasController" method="POST"> 
-                        <div id="confirmationMessage" class="modal fade">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <!-- dialog body -->
-                                    <div class="modal-body">
-                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                        Realmente desea eliminar el registro?
-                                    </div>
-                                    <!-- dialog buttons -->
-                                    <div class="modal-footer">
-                                        <button type="submit" class="btn btn-primary" name="accion" id="eliminar" value="eliminar">Si</button>
-                                        <button type="button" class="btn btn-primary" data-dismiss="modal">No</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                         <center>
-                            <h2>REGISTRO DE PERSONAS</h2>
+                            <c:if test="${formulario == 'CREACION'}">
+                                <h2>REGISTRO DE PERSONAS</h2>
+                            </c:if>
+                            <c:if test="${formulario == 'EDICION'}">
+                                <h2>EDICIÓN DE PERSONAS</h2>
+                            </c:if>
                             Los campos marcados con asterisco (*) son obligatorios.
                         </center>
                         <input type="hidden" id="idPersona" name="idPersona" value="${idPersona}" />
