@@ -26,22 +26,22 @@ public class InicioSesionController extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String mensajeAlerta = "";
-        String mensajeError = "";
         String redireccion = "jsp/inicioSesion.jsp";
         String accion = request.getParameter("accion");
 
         if(accion != null && accion.equals("ingresar")){
             String usuario = request.getParameter("usuario");
             String clave = request.getParameter("clave");
-            Map<String, Object> inicio = usuariosNegocio.validarInicioSession(usuario, clave);
+            Map<String, Object> inicio = usuariosNegocio.validarInicioSession(request.getContextPath(), usuario, clave);
             if(inicio.get("mensajeAlerta") != null){
-                request.setAttribute("mensajeAlerta", mensajeAlerta);
+                request.setAttribute("mensajeAlerta", inicio.get("mensajeAlerta"));
                 request.setAttribute("usuario", usuario);
             } else if(inicio.get("mensajeError") != null) {
-                request.setAttribute("mensajeError", mensajeError);
+                request.setAttribute("mensajeError", inicio.get("mensajeError"));
                 request.setAttribute("usuario", usuario);
             } else {
+                request.getSession().setAttribute("menu", inicio.get("menu"));
+                request.getSession().setAttribute("permisos", inicio.get("permisos"));
                 redireccion = "jsp/paginaInicio.jsp";
             }
         }
