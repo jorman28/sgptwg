@@ -1,9 +1,7 @@
 package com.twg.controladores;
 
-import com.twg.negocio.PerfilesNegocio;
-import com.twg.negocio.TiposDocumentoNegocio;
-import com.twg.negocio.UsuariosNegocio;
-import com.twg.persistencia.beans.UsuariosBean;
+import com.twg.negocio.EstadosNegocio;
+import com.twg.persistencia.beans.EstadosActividadesBean;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
@@ -16,9 +14,7 @@ import org.json.simple.JSONObject;
 
 public class EstadosController extends HttpServlet {
 
-    private final PerfilesNegocio perfilesNegocio = new PerfilesNegocio();
-    private final TiposDocumentoNegocio tiposDocumentoNegocio = new TiposDocumentoNegocio();
-    private final UsuariosNegocio usuariosNegocio = new UsuariosNegocio();
+    private final EstadosNegocio estadosNegocio = new EstadosNegocio();
     
 
     /**
@@ -40,112 +36,82 @@ public class EstadosController extends HttpServlet {
             accion = "";
         }
 
-        String idPersonaStr = request.getParameter("idPersona");
-        String documento = request.getParameter("documento");
-        String tipoDocumento = request.getParameter("tipoDocumento");
-        String nombreUsuario = request.getParameter("usuario");
-        String clave = request.getParameter("clave");
-        String clave2 = request.getParameter("clave2");
-        String perfilStr = request.getParameter("perfil");
-        String activo = request.getParameter("activo");
+        String idStr = request.getParameter("id");
+        String nombre = request.getParameter("nombre");
 
-        Integer idPersona = null;
+        Integer id = null;
         try {
-            idPersona = Integer.valueOf(idPersonaStr);
-        } catch (NumberFormatException e) {
-        }
-
-        Integer perfil = null;
-        try {
-            perfil = Integer.valueOf(perfilStr);
+            id = Integer.valueOf(idStr);
         } catch (NumberFormatException e) {
         }
 
         switch (accion) {
             case "consultar":
-                cargarTabla(response, idPersona, nombreUsuario, perfil, activo, documento, tipoDocumento);
+                cargarTabla(response, id, nombre);
                 break;
             case "editar":
-                JSONObject object = usuariosNegocio.consultarUsuario(idPersona);
+                JSONObject object = estadosNegocio.consultarEstado(id);
                 response.getWriter().write(object.toString());
                 break;
             case "guardar":
-                Map<String, Object> result = usuariosNegocio.crearUsuario(idPersona, nombreUsuario, clave, clave2, perfil, activo, documento, tipoDocumento);
+                Map<String, Object> result = estadosNegocio.crearEstado(id, nombre);
                 if(result.get("mensajeError") != null){
                     mensajeError = (String)result.get("mensajeError");
-                    enviarDatos(request, idPersona, nombreUsuario, perfil, activo, documento, tipoDocumento);
+                    enviarDatos(request, id, nombre);
                 }
                 if(result.get("mensajeExito") != null){
                     mensajeExito = (String)result.get("mensajeExito");
-                    enviarDatos(request, null, null, null, null, null, null);
+                    enviarDatos(request, null, null);
                 }
                 break;
             case "eliminar":
-                result = usuariosNegocio.eliminarUsuario(idPersona);
+                result = estadosNegocio.eliminarEstado(id);
                 if(result.get("mensajeError") != null){
-                    enviarDatos(request, idPersona, nombreUsuario, perfil, activo, documento, tipoDocumento);
+                    enviarDatos(request, id, nombre);
                 }
                 if(result.get("mensajeExito") != null){
-                    enviarDatos(request, null, null, null, null, null, null);
+                    enviarDatos(request, null, null);
                 }
                 break;
             default:
-                enviarDatos(request, null, null, null, null, null, null);
+                enviarDatos(request, null, null);
                 break;
         }
 
         request.setAttribute("mensajeAlerta", mensajeAlerta);
         request.setAttribute("mensajeExito", mensajeExito);
         request.setAttribute("mensajeError", mensajeError);
-        request.setAttribute("tiposDocumentos", tiposDocumentoNegocio.consultarTiposDocumentos());
-        request.setAttribute("perfiles", perfilesNegocio.consultarPerfiles());
         if(!accion.equals("consultar") && !accion.equals("editar")){
-            request.getRequestDispatcher("jsp/usuarios.jsp").forward(request, response);
+            request.getRequestDispatcher("jsp/estados.jsp").forward(request, response);
         }
     }
 
-    private void enviarDatos(HttpServletRequest request, Integer idPersona, String nombreUsuario, Integer perfil, String activo, String documento, String tipoDocumento) {
-        request.setAttribute("idPersona", idPersona);
-        request.setAttribute("tipoDocumento", tipoDocumento);
-        request.setAttribute("documento", documento);
-        request.setAttribute("usuario", nombreUsuario);
-        request.setAttribute("clave", "");
-        request.setAttribute("perfil", perfil);
-        request.setAttribute("activo", activo);
+    private void enviarDatos(HttpServletRequest request, Integer id, String nombre) {
+        request.setAttribute("id", id);
+        request.setAttribute("nombre", nombre);
     }
 
-    private void cargarTabla(HttpServletResponse response, Integer idPersona, String nombreUsuario, Integer perfil, String activo, String documento, String tipoDocumento) throws ServletException, IOException {
+    private void cargarTabla(HttpServletResponse response, Integer id, String nombre) throws ServletException, IOException {
         response.setContentType("text/html; charset=iso-8859-1");
         
-        List<UsuariosBean> listaUsuarios = usuariosNegocio.consultarUsuarios(idPersona, nombreUsuario, perfil, activo, documento, tipoDocumento);
+        List<EstadosActividadesBean> listaEstadosActividades = estadosNegocio.consultarEstados(id, nombre);
         PrintWriter out = response.getWriter();
         out.println("<table class=\"table table-striped table-hover table-condensed bordo-tablas\">");
         out.println(    "<thead>");
         out.println(        "<tr>");			
-        out.println(            "<th>Tipo documento</th>");
-        out.println(            "<th>Documento</th>");
-        out.println(            "<th>Usuario</th>");
-        out.println(            "<th>Perfil</th>");
-        out.println(            "<th>Estado</th>");
+        out.println(            "<th>Tipo Estado</th>");
+        out.println(            "<th>Nombre</th>");
         out.println(            "<th>Acciones</th>");
         out.println(        "</tr>");
         out.println(    "</thead>");
         out.println(    "<tbody>");
-        if(listaUsuarios != null && !listaUsuarios.isEmpty()){
-            for (UsuariosBean usuario : listaUsuarios) {
+        if(listaEstadosActividades != null && !listaEstadosActividades.isEmpty()){
+            for (EstadosActividadesBean estadoActividad : listaEstadosActividades) {
                 out.println("<tr>");			
-                out.println(    "<td>"+usuario.getDescripcionTipoDocumento()+"</td>");
-                out.println(    "<td>"+usuario.getDocumento()+"</td>");
-                out.println(    "<td>"+usuario.getUsuario()+"</td>");
-                out.println(    "<td>"+usuario.getDescripcionPerfil()+"</td>");
-                if(usuario.getActivo().equals("T")){
-                    out.println(    "<td>Activo</td>");
-                } else {
-                    out.println(    "<td>Inactivo</td>");
-                }
+                out.println(    "<td>"+estadoActividad.getNombre()+"</td>");
                 out.println(    "<td>");
-                out.println(        "<button class=\"btn btn-default\" type=\"button\" onclick=\"consultarUsuario("+usuario.getIdPersona()+")\">Editar</a>");
-                out.println(        "<button class=\"btn btn-default\" type=\"button\" data-toggle=\"modal\" data-target=\"#confirmationMessage\" onclick=\"jQuery('#idPersona').val('"+usuario.getIdPersona()+"');\">Eliminar</button>");
+                out.println(        "<button class=\"btn btn-default\" type=\"button\" onclick=\"consultarEstadoActividad("+estadoActividad.getId()+")\">Editar</a>");
+                out.println(        "<button class=\"btn btn-default\" type=\"button\" data-toggle=\"modal\" data-target=\"#confirmationMessage\" onclick=\"jQuery('#id').val('"+estadoActividad.getId()+"');\">Eliminar</button>");
                 out.println(    "</td>");
                 out.println("</tr>");
             }
