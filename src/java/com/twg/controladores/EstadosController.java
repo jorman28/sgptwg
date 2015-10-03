@@ -77,7 +77,6 @@ public class EstadosController extends HttpServlet {
                 enviarDatos(request, null, null);
                 break;
         }
-
         request.setAttribute("mensajeAlerta", mensajeAlerta);
         request.setAttribute("mensajeExito", mensajeExito);
         request.setAttribute("mensajeError", mensajeError);
