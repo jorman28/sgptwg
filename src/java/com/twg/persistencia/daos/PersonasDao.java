@@ -32,7 +32,7 @@ public class PersonasDao {
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;
-        ps = con.prepareStatement(sql.consultarPersonas(id==null?0:id, documento, tipo_documento, nombres, apellidos,
+        ps = con.prepareStatement(sql.consultarPersonas(id==null?-1:id, documento, tipo_documento, nombres, apellidos,
                 telefono, celular, correo, direccion, usuario, perfil));
         ResultSet rs;
         rs = ps.executeQuery();
