@@ -16,6 +16,7 @@ import org.json.simple.JSONObject;
 public class UsuariosNegocio {
     private final UsuariosDao usuariosDao = new UsuariosDao();
     private final PersonasDao personasDao = new PersonasDao();
+    private final PerfilesNegocio perfilesNegocio = new PerfilesNegocio();
     
     public JSONObject consultarUsuario(Integer idPersona){
         JSONObject jsonUsuario = new JSONObject();
@@ -181,7 +182,7 @@ public class UsuariosNegocio {
         return error;
     }
     
-    public Map<String, Object> validarInicioSession(String usuario, String clave){
+    public Map<String, Object> validarInicioSession(String contexto, String usuario, String clave){
         Map<String, Object> resultado = new HashMap<>();
         String mensajeError = "";
         String mensajeAlerta = "";
@@ -193,6 +194,10 @@ public class UsuariosNegocio {
                         if(listaUsuarios.get(0).getClave().equals(clave)){
                             if(listaUsuarios.get(0).getActivo() != null && listaUsuarios.get(0).getActivo().equals("T")){
                                 /* TODO: Agregar consulta de perfil y permisos */
+                                Map<Integer, Map<String, Object>> permisos = perfilesNegocio.consultarPermisosPorPagina(listaUsuarios.get(0).getPerfil());
+                                String menu = perfilesNegocio.construccionMenuNavegacion(permisos, contexto);
+                                resultado.put("permisos", permisos);
+                                resultado.put("menu", menu);
                             } else {
                                 mensajeError = "El usuario con el que intenta ingresar está inactivo";
                             }
@@ -204,6 +209,7 @@ public class UsuariosNegocio {
                     }
                 } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
                     Logger.getLogger(UsuariosNegocio.class.getName()).log(Level.SEVERE, null, ex);
+                    mensajeError = "No hay conexión con la base de datos";
                 }
             } else {
                 mensajeAlerta = "Debe ingresar la clave";

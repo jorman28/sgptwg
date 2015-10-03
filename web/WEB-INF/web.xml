@@ -17,8 +17,16 @@
         <servlet-class>com.twg.controladores.PersonasController</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>CargosController</servlet-name>
+        <servlet-class>com.twg.controladores.CargosController</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>EstadosController</servlet-name>
         <servlet-class>com.twg.controladores.EstadosController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>PermisosController</servlet-name>
+        <servlet-class>com.twg.controladores.PermisosController</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>UsuariosController</servlet-name>
@@ -37,8 +45,16 @@
         <url-pattern>/PersonasController</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
+        <servlet-name>CargosController</servlet-name>
+        <url-pattern>/CargosController</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
         <servlet-name>EstadosController</servlet-name>
         <url-pattern>/EstadosController</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>PermisosController</servlet-name>
+        <url-pattern>/PermisosController</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
