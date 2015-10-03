@@ -14,8 +14,18 @@ public class CargosSql {
     public CargosSql(){
     }
     
-    public String consultarCargos(){
-        return "SELECT id, nombre FROM cargos";
+    public String consultarCargos(String param){
+        String sql = "";
+        if(param==null || param.isEmpty()){
+            sql = "SELECT id, nombre FROM cargos";
+        }else{
+            sql = "SELECT id, nombre FROM cargos WHERE nombre like '%"+param+"%'";
+        }
+        return sql;
+    }
+    
+    public String consultarCargo(int id){
+        return "SELECT id, nombre FROM cargos WHERE id = "+id;
     }
     
     public String insertarCargo(){

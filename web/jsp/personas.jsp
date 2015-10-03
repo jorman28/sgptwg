@@ -18,7 +18,7 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html>
 <%
-    List<CargosBean> cargos = new CargosDao().consultarCargos();
+    List<CargosBean> cargos = new CargosDao().consultarCargos(null);
     request.setAttribute("cargos", cargos);
 
     List<TiposDocumentosBean> tiposDocumento = new TiposDocumentosDao().consultarTiposDocumentos();
@@ -72,8 +72,8 @@
                                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Configuración <span class="caret"></span></a>
                                         <ul class="dropdown-menu">
                                             <li><a href="<%=request.getContextPath()%>/PersonasController">Personas</a></li>
-                                            <li><a href="#">Cargos</a></li>
-                                            <li><a href="#">Estados</a></li>
+                                            <li><a href="<%=request.getContextPath()%>/CargosController">Cargos</a></li>
+                                            <li><a href="<%=request.getContextPath()%>/EstadosController">Estados</a></li>
                                         </ul>
                                     </li>
                                     <li class="dropdown">

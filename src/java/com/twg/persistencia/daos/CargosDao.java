@@ -26,12 +26,16 @@ public class CargosDao {
     public CargosDao(){
     }
 
-    public List<CargosBean> consultarCargos() throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
+    public List<CargosBean> consultarCargos(String param) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
         List<CargosBean> listaCargos = new ArrayList<>();
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;
-        ps = con.prepareStatement(sql.consultarCargos());
+        if(param!=null && !param.isEmpty()){
+            ps = con.prepareStatement(sql.consultarCargos(param));
+        }else{
+            ps = con.prepareStatement(sql.consultarCargos(null));
+        }
         ResultSet rs;
         rs = ps.executeQuery();
         while(rs.next()){
@@ -45,6 +49,24 @@ public class CargosDao {
         ps.close();
         con.close();
         return listaCargos;
+    }
+    
+    public CargosBean consultarCargo(Integer id) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
+        CargosBean cargo = new CargosBean();
+        Connection con;
+        con = new ConexionBaseDatos().obtenerConexion();
+        PreparedStatement ps;
+        ps = con.prepareStatement(sql.consultarCargo(id));
+        ResultSet rs;
+        rs = ps.executeQuery();
+        while(rs.next()){
+            cargo.setId(rs.getInt("id"));
+            cargo.setNombre(rs.getString("nombre"));
+        }
+        rs.close();
+        ps.close();
+        con.close();
+        return cargo;
     }
     
     public int insertarCargo(CargosBean cargo) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
