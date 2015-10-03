@@ -27,7 +27,6 @@
 
                     <div align="center">
                         <!--<h2>PÁGINA DE INICIO</h2>-->
-                        Este es mi cambio!!!!
                         <img src="images/navegacional.png" class="img-responsive img-thumbnail">
                     </div>
                 </div>
