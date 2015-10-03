@@ -18,11 +18,19 @@ public class EstadosActividadesSql {
         return "SELECT * FROM estados_actividades";
     }
 
-    public String consultarEstadosActividades(String nombre) {
-        String sql = "SELECT * FROM estados_actividades";
+    public String consultarEstadosActividades(Integer id, String nombre) {
+        String sql = "";
 
-        if (nombre != null) {
-            sql += "Where nombre = " + nombre + "";
+        if (id != null && nombre != null) {
+            sql += "SELECT * FROM estados_actividades";
+        } else {
+            if (id != null) {
+                sql += "SELECT * FROM estados_actividades Where id = " + id + " ";
+            } else {
+                if (nombre != null) {
+                    sql += "SELECT * FROM estados_actividades Where nombre = " + nombre + " ";
+                }
+            }
         } 
         return sql;
     }
@@ -37,5 +45,9 @@ public class EstadosActividadesSql {
 
     public String eliminarEstadoActividad() {
         return "DELETE FROM estados_actividades WHERE id = ?";
+    }
+    
+    public String consultarId(String nombre){
+        return "SELECT id FROM estados_actividades WHERE nombre = '"+nombre+"'";
     }
 }

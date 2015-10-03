@@ -12,7 +12,7 @@ import java.util.List;
 
 /**
  *
- * @author Jorman
+ * @author Jorman Rincón
  */
 public class EstadosActividadesDao {
     private final EstadosActividadesSql sql = new EstadosActividadesSql();
@@ -37,14 +37,13 @@ public class EstadosActividadesDao {
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;
-        ps = con.prepareStatement(sql.consultarEstadosActividades(nombre));
+        ps = con.prepareStatement(sql.consultarEstadosActividades(id, nombre));
         ResultSet rs;
         rs = ps.executeQuery();
         while(rs.next()){
             EstadosActividadesBean estadoActividad = new EstadosActividadesBean();
             estadoActividad.setId(rs.getInt("id"));
-            estadoActividad.setNombre(rs.getString("nombre"));
-            
+            estadoActividad.setNombre(rs.getString("nombre"));            
             listaEstadosActividades.add(estadoActividad);
         }
         rs.close();
@@ -53,12 +52,30 @@ public class EstadosActividadesDao {
         return listaEstadosActividades;
     }
     
+    public Integer consultarId(String nombre) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
+        Integer idPersona = null;
+        Connection con;
+        con = new ConexionBaseDatos().obtenerConexion();
+        PreparedStatement ps;
+        ps = con.prepareStatement(sql.consultarId(nombre));
+        ResultSet rs;
+        rs = ps.executeQuery();
+        if(rs.next()){
+            idPersona = rs.getInt("id");
+        }
+        rs.close();
+        ps.close();
+        con.close();
+        return idPersona;
+    }
+    
     public int insertarEstadoActividad(EstadosActividadesBean estadoActividad) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;
         ps = con.prepareStatement(sql.insertarEstadoActividad());
-        ps.setString(1, estadoActividad.getNombre());
+        ps.setInt(1, estadoActividad.getId());
+        ps.setString(2, estadoActividad.getNombre());
         int insercion = ps.executeUpdate();
         ps.close();
         con.close();
@@ -70,8 +87,8 @@ public class EstadosActividadesDao {
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;
         ps = con.prepareStatement(sql.actualizarEstadoActividad());
-        ps.setString(1, estadoActividad.getNombre());
-        ps.setInt(2, estadoActividad.getId());
+        ps.setInt(1, estadoActividad.getId());
+        ps.setString(2, estadoActividad.getNombre());
         int actualizacion = ps.executeUpdate();
         ps.close();
         con.close();
