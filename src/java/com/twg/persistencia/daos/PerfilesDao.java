@@ -24,41 +24,48 @@ public class PerfilesDao {
     public PerfilesDao(){
     }
 
-    public PerfilesBean consultarPerfil(int id)throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
-        PerfilesBean perfil = new PerfilesBean();
-        Connection con;
-        con = new ConexionBaseDatos().obtenerConexion();
-        PreparedStatement ps;
-        ps = con.prepareStatement(sql.consultarPerfil(id));
-        ResultSet rs;
-        rs = ps.executeQuery();
-        perfil.setId(rs.getInt("id"));
-        perfil.setNombre(rs.getString("nombre"));
-        rs.close();
-        ps.close();
-        con.close();
-        return perfil;
+    /* Eliminar cuando se arregle la pantalla de personas */
+    public PerfilesBean consultarPerfil(Integer idPerfil) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
+        List<PerfilesBean> listaPerfiles = consultarPerfiles(idPerfil, null, false);
+        return listaPerfiles.get(0);
     }
     
-    public List<PerfilesBean> consultarPerfiles() throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
+    public List<PerfilesBean> consultarPerfiles(Integer idPerfil, String nombrePerfil, boolean nombreExacto) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
         List<PerfilesBean> listaPerfiles = new ArrayList<>();
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;
-        ps = con.prepareStatement(sql.consultarPerfiles());
+        ps = con.prepareStatement(sql.consultarPerfiles(idPerfil, nombrePerfil, nombreExacto));
         ResultSet rs;
         rs = ps.executeQuery();
         while(rs.next()){
             PerfilesBean perfil = new PerfilesBean();
             perfil.setId(rs.getInt("id"));
             perfil.setNombre(rs.getString("nombre"));
-            
             listaPerfiles.add(perfil);
         }
         rs.close();
         ps.close();
         con.close();
         return listaPerfiles;
+    }
+    
+    public List<Integer> obtenerPermisosPerfil(Integer idPerfil) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
+        List<Integer> permisos = new ArrayList<>();
+        Connection con;
+        con = new ConexionBaseDatos().obtenerConexion();
+        PreparedStatement ps;
+        ps = con.prepareStatement(sql.obtenerPermisosPerfil());
+        ps.setInt(1, idPerfil);
+        ResultSet rs;
+        rs = ps.executeQuery();
+        while(rs.next()){
+            permisos.add(rs.getInt("permiso"));
+        }
+        rs.close();
+        ps.close();
+        con.close();
+        return permisos;
     }
     
     public int insertarPerfil(PerfilesBean perfil) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
@@ -86,16 +93,37 @@ public class PerfilesDao {
         return actualizacion;
     }
     
-    public int eliminarUsuario(Integer idPerfil) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
+    public int eliminarPerfil(Integer idPerfil) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
+        con.setAutoCommit(false);
         PreparedStatement ps;
+        ps = con.prepareStatement(sql.eliminarPermisosPorPerfil());
+        ps.setInt(1, idPerfil);
+        ps.executeUpdate();
         ps = con.prepareStatement(sql.eliminarPerfil());
         ps.setInt(1, idPerfil);
         int eliminacion = ps.executeUpdate();
+        con.commit();
         ps.close();
         con.close();
         return eliminacion;
+    }
+    
+    public int insertarPermisos(Integer idPerfil, List<Integer> permisos) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
+        Connection con;
+        con = new ConexionBaseDatos().obtenerConexion();
+        con.setAutoCommit(false);
+        PreparedStatement ps;
+        ps = con.prepareStatement(sql.eliminarPermisosPorPerfil());
+        ps.setInt(1, idPerfil);
+        ps.executeUpdate();
+        ps = con.prepareStatement(sql.insertarPermisos(idPerfil, permisos));
+        int insercion = ps.executeUpdate();
+        con.commit();
+        ps.close();
+        con.close();
+        return insercion;
     }
     
     public Map<Integer, Map<String, Object>> consultarPermisosPorPagina(Integer idPerfil) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
