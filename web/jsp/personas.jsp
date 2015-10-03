@@ -99,10 +99,10 @@
                                     </div>
                                     <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                         <label>* Tipo de documento</label>
-                                        <select class="form-control" id="tipoDocumento" value="${tipoDocumento}" name="tipoDocumento" >
+                                        <select class="form-control" id="tipoDocumento" name="tipoDocumento" >
                                             <option value="0">Seleccione</option>
                                             <c:forEach items="${tiposDocumento}" var="tipoD">
-                                                <option value="${tipoD.tipo}">${tipoD.nombre}</option>
+                                                <option value="${tipoD.tipo}" <c:if test="${tipoDocumento == tipoD.tipo}">selected</c:if>>${tipoD.nombre}</option>
                                             </c:forEach>
                                         </select>
                                     </div>
@@ -173,8 +173,8 @@
                                         <label>* Perfil</label>
                                         <select class="form-control" id="perfil" name="perfil">
                                             <option value="0">Seleccione</option>
-                                            <c:forEach items="${perfiles}" var="perfil">
-                                                <option value="${perfil.id}">${perfil.nombre}</option>
+                                            <c:forEach items="${perfiles}" var="per">
+                                                <option value="${per.id}" <c:if test="${perfil == per.id}">selected</c:if>>${per.nombre}</option>
                                             </c:forEach>
                                         </select>
                                     </div>
