@@ -17,14 +17,14 @@ public class EstadosVersionesSql {
     public String consultarEstadosActividades(Integer id, String nombre) {
         String sql = "";
 
-        if (id != null && nombre != null) {
+        if (id == null && nombre == null) {
             sql += "SELECT * FROM estados_versiones";
         } else {
             if (id != null) {
-                sql += "SELECT * FROM estados_versiones Where id = " + id + " ";
+                sql += "SELECT * FROM estados_versiones Where id = " + id + "";
             } else {
                 if (nombre != null) {
-                    sql += "SELECT * FROM estados_versiones Where nombre = " + nombre + " ";
+                    sql += "SELECT * FROM estados_versiones Where nombre = '" + nombre + "'";
                 }
             }
         }
