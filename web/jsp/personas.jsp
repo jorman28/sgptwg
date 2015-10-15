@@ -90,7 +90,7 @@
                         </center>
                         <input type="hidden" id="idPersona" name="idPersona" value="${idPersona}" />
                         <div class="panel panel-info">
-                            <div class="panel-heading">INFORACIÓN PERSONAL</div>
+                            <div class="panel-heading">INFORMACIÓN PERSONAL</div>
                             <div class="panel-body">
                                 <div class="row">
                                     <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">

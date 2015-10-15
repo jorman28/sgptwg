@@ -6,22 +6,16 @@
 
 package com.twg.controladores;
 
-import com.twg.persistencia.beans.CargosBean;
 import com.twg.persistencia.beans.PerfilesBean;
 import com.twg.persistencia.beans.PersonasBean;
-import com.twg.persistencia.beans.TiposDocumentosBean;
 import com.twg.persistencia.beans.UsuariosBean;
-import com.twg.persistencia.daos.CargosDao;
 import com.twg.persistencia.daos.PerfilesDao;
 import com.twg.persistencia.daos.PersonasDao;
 import com.twg.persistencia.daos.TiposDocumentosDao;
 import com.twg.persistencia.daos.UsuariosDao;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -58,8 +52,9 @@ public class PersonasController extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
         mensajeInformacion = "";
         mensajeExito = "";
         mensajeError = "";
