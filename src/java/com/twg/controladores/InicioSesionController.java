@@ -26,6 +26,8 @@ public class InicioSesionController extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
         String redireccion = "jsp/inicioSesion.jsp";
         String accion = request.getParameter("accion");
 
