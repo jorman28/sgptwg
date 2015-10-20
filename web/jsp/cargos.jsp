@@ -1,24 +1,24 @@
 <%-- 
-    Document   : estados
-    Created on : 08-jul-2015, 23:33:00
-    Author     : Jorman
+    Document   : cargos
+    Created on : 2/10/2015, 12:32:47 PM
+    Author     : erikasta07
 --%>
 
+<%@page import="com.twg.persistencia.daos.CargosDao"%>
+<%@page import="com.twg.persistencia.beans.CargosBean"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html>
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <link href="images/tab.jpg" rel='shortcut icon' type='image/jpeg'>
         <script type="text/javascript" src="js/jquery.min.js"></script>
         <script type="text/javascript" src="js/bootstrap.min.js"></script>
         <script type="text/javascript" src="js/general.js"></script>
-        <script type="text/javascript" src="js/estados.js"></script>
         <link rel="stylesheet" type="text/css" href="css/bootstrap-theme.min.css">
         <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
         <link rel="stylesheet" type="text/css" href="css/business-styles.css">
-        <title>Estados</title>
+        <title>Cargos</title>
     </head>
     <body>
         <div class="container-fluid">
@@ -43,16 +43,16 @@
             </c:if>
             <div class="row">
                 <div class="col-xs-12 col-sm-12 col-md-10 col-md-offset-1 col-lg-8 col-lg-offset-2" id="contenido">
-                    <form autocomplete="off" action="./EstadosController" method="POST" id="formularioEstados">
+                    <form id="formularioCargos" autocomplete="off" action="./CargosController" method="POST"> 
                         <div id="confirmationMessage" class="modal fade">
                             <div class="modal-dialog">
                                 <div class="modal-content">
-                                    <!-- dialog body -->
+
                                     <div class="modal-body">
                                         <button type="button" class="close" data-dismiss="modal">&times;</button>
                                         Realmente desea eliminar el registro?
                                     </div>
-                                    <!-- dialog buttons -->
+
                                     <div class="modal-footer">
                                         <button type="submit" class="btn btn-primary" name="accion" id="eliminar" value="eliminar">Si</button>
                                         <button type="button" class="btn btn-primary" data-dismiss="modal">No</button>
@@ -60,33 +60,38 @@
                                 </div>
                             </div>
                         </div>
-                        <center>
-                            <h2>REGISTRO DE ESTADOS</h2>
-                            Los campos marcados con (*) son obligatorios
-                        </center>
-                        <input type="hidden" id="id" name="id" value="${id}" />
-                        <div class="panel panel-info">
-                            <div class="panel-heading">INFORACIÓN DEL ESTADO</div>
-                            <div class="panel-body">
-                                <div class="row">
-                                    <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                                        <label for="nombre">*Nombre:</label> 
-                                        <input class="form-control" type="text" id="nombre" name="nombre" value="${nombre}"/>
-                                    </div>
-                                </div>
-                                <br>
-                            </div>                            
-                        </div>
-                        <div class="row" align="center">
-                            <button class="btn btn-default" type="button" name="accion" id="consultar" value="consultar" onclick="llenarTablaEstados()">Consultar</button>
-                            <button class="btn btn-default" type="submit" name="accion" id="guardar" value="guardar">Guardar</button>
-                            <button class="btn btn-default" type="submit" name="accion" id="limpiar" value="limpiar">Limpiar</button>
+                        <h2>CARGOS</h2>
+                        Los campos marcados con (*) son obligatorios<br/><br/>
+                        <input type="hidden" id="idCargo" name="idCargo" value="${idCargo}" />
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                <label for="descripcion">* Descripción del cargo</label>
+                                <input class="form-control" id="descripcion" name="descripcion" maxlength="50" value="${descripcion}" type="text" />
+                            </div>
                         </div>
                         <br>
-                        <br>
-                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                            <div id="tablaEstados"></div>
-                        </div>
+                        <button class="btn btn-default" type="submit" name="accion" id="consultar" value="consultar">Consultar</button>
+                        <button class="btn btn-default" type="submit" name="accion" id="crear" value="crear">Guardar</button>
+                        <button class="btn btn-default" type="submit" name="accion" id="limpiar" value="limpiar">Limpiar</button>
+                        <br/><br/>
+                        <table class="table table-striped table-hover table-condensed">
+                            <thead>
+                                <tr>
+                                    <th>Descripción del cargo</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <c:forEach items="${listaCargos}" var="item">
+                                    <tr>
+                                        <td>${item.nombre}</td>
+                                        <td>
+                                            <a class="btn btn-default" href="<%=request.getContextPath()%>/CargosController?accion=editar&idCargo=${item.id}">Editar</a>
+                                            <button class="btn btn-default" type="button" data-toggle="modal" data-target="#confirmationMessage" onclick="jQuery('#idCargo').val('${item.id}');">Eliminar</button>
+                                        </td>
+                                    </tr>
+                                </c:forEach>
+                            </tbody>
+                        </table>
                     </form>
                 </div>
             </div>

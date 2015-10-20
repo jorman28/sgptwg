@@ -12,12 +12,15 @@ public class PersonasSql {
                             String telefono, String celular, String correo, String direccion, String usuario, String perfil){
         String sql = "";
         
-        sql += "select p.id, p.documento, p.nombres, p.apellidos, p.telefono, p.celular, p.correo, p.direccion, d.nombre as tipo_documento, u.usuario, pf.nombre as perfil " +
+        sql += "select p.id, p.documento, p.tipo_documento, p.nombres, p.apellidos, p.telefono, p.celular, p.correo, p.direccion, d.nombre as nombre_documento, u.usuario, pf.nombre as perfil " +
                 "from personas p " +
                 "inner join tipos_documentos d on d.tipo=p.tipo_documento " +
                 "left join usuarios u on p.id=u.id_persona " +
                 "left join perfiles pf on pf.id=u.perfil " +
                 "where 1=1 ";
+        if(id>0){
+            sql += "and p.id = "+id;
+        }
         if(documento!=null && !documento.isEmpty()){
             sql += "and p.documento like '%"+documento+"%' ";
         }

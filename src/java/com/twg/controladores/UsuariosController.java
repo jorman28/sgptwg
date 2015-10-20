@@ -31,6 +31,8 @@ public class UsuariosController extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
         String mensajeAlerta = "";
         String mensajeExito = "";
         String mensajeError = "";
@@ -83,9 +85,11 @@ public class UsuariosController extends HttpServlet {
             case "eliminar":
                 result = usuariosNegocio.eliminarUsuario(idPersona);
                 if(result.get("mensajeError") != null){
+                    mensajeError = (String)result.get("mensajeError");
                     enviarDatos(request, idPersona, nombreUsuario, perfil, activo, documento, tipoDocumento);
                 }
                 if(result.get("mensajeExito") != null){
+                    mensajeExito = (String)result.get("mensajeExito");
                     enviarDatos(request, null, null, null, null, null, null);
                 }
                 break;

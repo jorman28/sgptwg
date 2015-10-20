@@ -5,6 +5,8 @@ import com.twg.persistencia.beans.PersonasBean;
 import com.twg.persistencia.beans.UsuariosBean;
 import com.twg.persistencia.daos.PerfilesDao;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -28,11 +30,13 @@ public class PersonasController extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        String mensajeExito = "";
-        String mensajeError = "";
-        String mensajeAlerta = "";
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
+        mensajeInformacion = "";
+        mensajeExito = "";
+        mensajeError = "";
+        mensajeAlerta = "";
         
         String accion = request.getParameter("accion");
         if(accion == null){
@@ -96,6 +100,7 @@ public class PersonasController extends HttpServlet {
     }
     
     private void enviarDatos(HttpServletRequest request, PersonasBean persona, UsuariosBean usuario){
+        request.setAttribute("idPersona", persona.getId());
         request.setAttribute("tipoDocumento", persona.getTipo_documento());
         request.setAttribute("documento", persona.getDocumento());
         request.setAttribute("nombres", persona.getNombres());

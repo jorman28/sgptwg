@@ -1,35 +1,21 @@
 package com.twg.controladores;
 
+import com.twg.negocio.EstadosNegocio;
 import com.twg.persistencia.beans.EstadosActividadesBean;
-import com.twg.persistencia.beans.EstadosVersionesBean;
-import com.twg.persistencia.daos.EstadosActividadesDao;
-import com.twg.persistencia.daos.EstadosVersionesDao;
 import java.io.IOException;
-import java.sql.SQLException;
-import java.util.ArrayList;
+import java.io.PrintWriter;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Map;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.json.simple.JSONObject;
 
-/**
- *
- * @author Pipe
- */
 public class EstadosController extends HttpServlet {
 
-    private final EstadosActividadesDao estadosActividadesDao = new EstadosActividadesDao();
-    private final EstadosVersionesDao estadosVersionesDao = new EstadosVersionesDao();
-
-    private static final String strConstEstadoActividad = "Estado de Actividad";
-    private static final String strConstEstadoVersion = "Estado de Versión";
-
-    private String mensajeAlerta;
-    private String mensajeExito;
-    private String mensajeError;
+    private final EstadosNegocio estadosNegocio = new EstadosNegocio();
+    
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -41,163 +27,104 @@ public class EstadosController extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        mensajeAlerta = "";
-        mensajeExito = "";
-        mensajeError = "";
+        request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
+        String mensajeAlerta = "";
+        String mensajeExito = "";
+        String mensajeError = "";
 
         String accion = request.getParameter("accion");
         if (accion == null) {
             accion = "";
         }
 
-        String tipoEstado = request.getParameter("tipoEstado");
-        String id = request.getParameter("id");
+        String idStr = request.getParameter("id");
         String nombre = request.getParameter("nombre");
 
-        Integer idEstado = null;
+        Integer id = null;
         try {
-            idEstado = Integer.valueOf(id);
+            id = Integer.valueOf(idStr);
         } catch (NumberFormatException e) {
         }
-        List<EstadosActividadesBean> listaEstadosActividades = null;
 
-        //if (tipoEstado.equals(strConstEstadoActividad)) {
-            try {
-                switch (accion) {
-                    case "consultar":
-                        listaEstadosActividades = estadosActividadesDao.consultarEstadosActividades(idEstado, nombre);
-                        EstadosActividadesBean estadoActividad = new EstadosActividadesBean();
-                        estadoActividad.setId(idEstado);
-                        estadoActividad.setNombre(nombre);
-                        enviarDatosEstadoActividad(request, estadoActividad);
-                        break;
-                    case "editar":
-                        estadoActividad = new EstadosActividadesBean();
-                        if (idEstado != null) {
-                            List<EstadosActividadesBean> estadosActividades = estadosActividadesDao.consultarEstadosActividades(idEstado);
-                            if (estadosActividades != null && !estadosActividades.isEmpty()) {
-                                estadoActividad = estadosActividades.get(0);
-                            }
-                        }
-                        enviarDatosEstadoActividad(request, estadoActividad);
-                        break;
-                    case "guardar":
-                        if (nombre != null) {
-                            estadoActividad = new EstadosActividadesBean();
-                            estadoActividad.setId(idEstado);
-                            estadoActividad.setNombre(nombre);
-                            int guardar = estadosActividadesDao.insertarEstadoActividad(estadoActividad);
-                            if (guardar > 0) {
-                                mensajeExito = "El estado de actividad ha sido guardado con éxito";
-                            } else {
-                                mensajeError = "El estado de actividad no pudo ser guardado";
-                            }
-                        }
-                        enviarDatosEstadoActividad(request, new EstadosActividadesBean());
-                        break;
-                    case "eliminar":
-                        if (id != null) {
-                            int eliminacion = estadosActividadesDao.eliminarEstadoActividad(idEstado);
-                            if (eliminacion > 0) {
-                                mensajeExito = "El estado de actividad fue eliminado con éxito";
-                            } else {
-                                mensajeError = "El estado de actividad no pudo ser eliminado";
-                            }
-                        } else {
-                            mensajeError = "El estado de actividad no pudo ser eliminado";
-                        }
-                        enviarDatosEstadoActividad(request, new EstadosActividadesBean());
-                        break;
-                    default:
-                        enviarDatosEstadoActividad(request, new EstadosActividadesBean());
-                        break;
+        switch (accion) {
+            case "consultar":
+                cargarTabla(response, id, nombre);
+                break;
+            case "editar":
+                JSONObject object = estadosNegocio.consultarEstado(id);
+                response.getWriter().write(object.toString());
+                break;
+            case "guardar":
+                Map<String, Object> result = estadosNegocio.crearEstado(id, nombre);
+                if(result.get("mensajeError") != null){
+                    mensajeError = (String)result.get("mensajeError");
+                    enviarDatos(request, id, nombre);
                 }
-                if (listaEstadosActividades == null) {
-                    listaEstadosActividades = estadosActividadesDao.consultarEstadosActividades();
+                if(result.get("mensajeExito") != null){
+                    mensajeExito = (String)result.get("mensajeExito");
+                    enviarDatos(request, null, null);
                 }
-            } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
-                Logger.getLogger(EstadosController.class.getName()).log(Level.SEVERE, null, ex);
-                mensajeError = "Ocurrió un error procesando los datos. Revise el log de aplicación.";
-            }
-            request.setAttribute("estadosActividades", listaEstadosActividades);
-
-        //}
-//        List<EstadosVersionesBean> listaEstadosVersiones = null;
-//        if (tipoEstado.equals(strConstEstadoVersion)) {
-//            try {
-//                switch (accion) {
-//                    case "consultar":
-//                        listaEstadosVersiones = estadosVersionesDao.consultarEstadosVersiones(idEstado, nombre);
-//                        EstadosVersionesBean estadoVersion = new EstadosVersionesBean();
-//                        estadoVersion.setId(idEstado);
-//                        estadoVersion.setNombre(nombre);
-//                        enviarDatosEstadoVersion(request, estadoVersion);
-//                        break;
-//                    case "editar":
-//                        estadoVersion = new EstadosVersionesBean();
-//                        if (id != null) {
-//                            List<EstadosVersionesBean> estadosVersiones = estadosVersionesDao.consultarEstadosVersiones(id);
-//                            if (estadosVersiones != null && !estadosVersiones.isEmpty()) {
-//                                estadoVersion = estadosVersiones.get(0);
-//                            }
-//                        }
-//                        enviarDatosEstadoVersion(request, estadoVersion);
-//                        break;
-//                    case "guardar":
-//                        if (nombre != null) {
-//                            estadoVersion = new EstadosVersionesBean();
-//                            estadoVersion.setId(idEstado);
-//                            estadoVersion.setNombre(nombre);
-//                            int actualizacion = estadosVersionesDao.actualizarEstadoVersion(estadoVersion);
-//                            if (actualizacion > 0) {
-//                                mensajeExito = "El estado de versión ha sido guardado con éxito";
-//                            } else {
-//                                mensajeError = "El estado de versión no pudo ser guardado";
-//                            }
-//                        }
-//                        enviarDatosEstadoVersion(request, new EstadosVersionesBean());
-//                        break;
-//                    case "eliminar":
-//                        if (id != null) {
-//                            int eliminacion = estadosVersionesDao.eliminarEstadoVersion(idEstado);
-//                            if (eliminacion > 0) {
-//                                mensajeExito = "El estado de versión fue eliminado con éxito";
-//                            } else {
-//                                mensajeError = "El estado de versión no pudo ser eliminado";
-//                            }
-//                        } else {
-//                            mensajeError = "El estado de versión no pudo ser eliminado";
-//                        }
-//                        enviarDatosEstadoVersion(request, new EstadosVersionesBean());
-//                        break;
-//                    default:
-//                        enviarDatosEstadoVersion(request, new EstadosVersionesBean());
-//                        break;
-//                }
-//                if (listaEstadosVersiones == null) {
-//                    listaEstadosVersiones = estadosVersionesDao.consultarEstadosVersiones();
-//                }
-//            } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
-//                Logger.getLogger(EstadosController.class.getName()).log(Level.SEVERE, null, ex);
-//                mensajeError = "Ocurrió un error procesando los datos. Revise el log de aplicación.";
-//            }
-//            request.setAttribute("estadosVersiones", listaEstadosVersiones);
-//        }
-
+                break;
+            case "eliminar":
+                result = estadosNegocio.eliminarEstado(id);
+                if(result.get("mensajeError") != null){
+                    enviarDatos(request, id, nombre);
+                }
+                if(result.get("mensajeExito") != null){
+                    enviarDatos(request, null, null);
+                }
+                break;
+            default:
+                enviarDatos(request, null, null);
+                break;
+        }
         request.setAttribute("mensajeAlerta", mensajeAlerta);
         request.setAttribute("mensajeExito", mensajeExito);
         request.setAttribute("mensajeError", mensajeError);
-        request.getRequestDispatcher("jsp/estados.jsp").forward(request, response);
+        if(!accion.equals("consultar") && !accion.equals("editar")){
+            request.getRequestDispatcher("jsp/estados.jsp").forward(request, response);
+        }
     }
 
-    private void enviarDatosEstadoActividad(HttpServletRequest request, EstadosActividadesBean estadoActividad) {
-        request.setAttribute("id", estadoActividad.getId());
-        request.setAttribute("nombre", estadoActividad.getNombre());
+    private void enviarDatos(HttpServletRequest request, Integer id, String nombre) {
+        //.setAttribute("id", id);
+        request.setAttribute("nombre", nombre);
     }
 
-    private void enviarDatosEstadoVersion(HttpServletRequest request, EstadosVersionesBean estadoVersion) {
-        request.setAttribute("id", estadoVersion.getId());
-        request.setAttribute("nombre", estadoVersion.getNombre());
+    private void cargarTabla(HttpServletResponse response, Integer id, String nombre) throws ServletException, IOException {
+        response.setContentType("text/html; charset=iso-8859-1");
+        
+        List<EstadosActividadesBean> listaEstadosActividades = estadosNegocio.consultarEstados(id, nombre);
+        PrintWriter out = response.getWriter();
+        out.println("<table class=\"table table-striped table-hover table-condensed bordo-tablas\">");
+        out.println(    "<thead>");
+        out.println(        "<tr>");			
+//        out.println(            "<th>Tipo Estado</th>");
+        out.println(            "<th>Nombre</th>");
+        out.println(            "<th>Acciones</th>");
+        out.println(        "</tr>");
+        out.println(    "</thead>");
+        out.println(    "<tbody>");
+        if(listaEstadosActividades != null && !listaEstadosActividades.isEmpty()){
+            for (EstadosActividadesBean estadoActividad : listaEstadosActividades) {
+                out.println("<tr>");			
+//                out.println(    "<td>"+estadoActividad.getId()+"</td>");                
+                out.println(    "<td>"+estadoActividad.getNombre()+"</td>");
+
+                out.println(    "<td>");
+                out.println(        "<button class=\"btn btn-default\" type=\"button\" onclick=\"consultarEstado("+estadoActividad.getId()+")\">Editar</button>");
+                out.println(        "<button class=\"btn btn-default\" type=\"button\" data-toggle=\"modal\" data-target=\"#confirmationMessage\" onclick=\"jQuery('#id').val('"+estadoActividad.getId()+"');\">Eliminar</button>");
+                out.println(    "</td>");
+                out.println("</tr>");
+            }
+        } else {
+            out.println("   <tr>");			
+            out.println(        "<td colspan=\"6\">No se encontraron registros</td>");
+            out.println(    "</tr>");
+        }
+        out.println(    "</tbody>");
+        out.println("</table>");
     }
 
     @Override

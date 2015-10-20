@@ -12,28 +12,27 @@ import java.util.List;
 
 /**
  *
- * @author Jorman
+ * @author Jorman Rincón
  */
 public class EstadosVersionesDao {
-
     private final EstadosVersionesSql sql = new EstadosVersionesSql();
-
-    public EstadosVersionesDao() {
+    
+    public EstadosVersionesDao(){
     }
 
-    public List<EstadosVersionesBean> consultarEstadosVersiones() throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
+    public List<EstadosVersionesBean> consultarEstadosVersiones() throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
         return consultarEstadosVersiones(null, null);
     }
-
-    public List<EstadosVersionesBean> consultarEstadosVersiones(String nombre) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
+    
+    public List<EstadosVersionesBean> consultarEstadosVersiones(String nombre) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
         return consultarEstadosVersiones(null, nombre);
     }
-
-    public List<EstadosVersionesBean> consultarEstadosVersiones(Integer id) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
+    
+    public List<EstadosVersionesBean> consultarEstadosVersiones(Integer id) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
         return consultarEstadosVersiones(id, null);
     }
-
-    public List<EstadosVersionesBean> consultarEstadosVersiones(Integer id, String nombre) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
+    
+    public List<EstadosVersionesBean> consultarEstadosVersiones(Integer id, String nombre) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
         List<EstadosVersionesBean> listaEstadosVersiones = new ArrayList<>();
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
@@ -41,45 +40,45 @@ public class EstadosVersionesDao {
         ps = con.prepareStatement(sql.consultarEstadosActividades(id, nombre));
         ResultSet rs;
         rs = ps.executeQuery();
-        while (rs.next()) {
-            EstadosVersionesBean estadoVersion = new EstadosVersionesBean();
-            estadoVersion.setId(rs.getInt("id"));
-            estadoVersion.setNombre(rs.getString("nombre"));
-
-            listaEstadosVersiones.add(estadoVersion);
+        while(rs.next()){
+            EstadosVersionesBean estadoActividad = new EstadosVersionesBean();
+            estadoActividad.setId(rs.getInt("id"));
+            estadoActividad.setNombre(rs.getString("nombre"));            
+            listaEstadosVersiones.add(estadoActividad);
         }
         rs.close();
         ps.close();
         con.close();
         return listaEstadosVersiones;
     }
-
-    public int insertarEstadoVersion(EstadosVersionesBean estadoVersion) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
+    
+    public int insertarEstadoVersion(EstadosVersionesBean estadoVersion) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;
         ps = con.prepareStatement(sql.insertarEstadoVersion());
-        ps.setString(1, estadoVersion.getNombre());
+        ps.setInt(1, estadoVersion.getId());
+        ps.setString(2, estadoVersion.getNombre());
         int insercion = ps.executeUpdate();
         ps.close();
         con.close();
         return insercion;
     }
-
-    public int actualizarEstadoVersion(EstadosVersionesBean estadoVersion) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
+    
+    public int actualizarEstadoVersion(EstadosVersionesBean estadoVersion) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;
         ps = con.prepareStatement(sql.actualizarEstadoVersion());
-        ps.setString(1, estadoVersion.getNombre());
-        ps.setInt(2, estadoVersion.getId());
+        ps.setInt(1, estadoVersion.getId());
+        ps.setString(2, estadoVersion.getNombre());
         int actualizacion = ps.executeUpdate();
         ps.close();
         con.close();
         return actualizacion;
     }
-
-    public int eliminarEstadoVersion(Integer id) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
+    
+    public int eliminarEstadoVersion(Integer id) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;

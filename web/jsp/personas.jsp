@@ -55,7 +55,7 @@
                         </center>
                         <input type="hidden" id="idPersona" name="idPersona" value="${idPersona}" />
                         <div class="panel panel-info">
-                            <div class="panel-heading">INFORACIÓN PERSONAL</div>
+                            <div class="panel-heading">INFORMACIÓN PERSONAL</div>
                             <div class="panel-body">
                                 <div class="row">
                                     <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
@@ -137,9 +137,9 @@
                                     <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                         <label for="perfil">*Perfil:</label> 
                                         <select class="form-control" id="perfil" name="perfil">
-                                            <option value="">SELECCIONE</option>
+                                            <option value="0">Seleccione</option>
                                             <c:forEach items="${perfiles}" var="per">
-                                                <option value="${per.id}" <c:if test="${perfil == per.id}">selected</c:if> >${per.nombre}</option>
+                                                <option value="${per.id}" <c:if test="${perfil == per.id}">selected</c:if>>${per.nombre}</option>
                                             </c:forEach>
                                         </select>
                                     </div>
