@@ -9,6 +9,7 @@ public class PersonasBean {
     private int id;
     private String documento;
     private String tipoDocumento;
+    private String nombreTipoDocumento;
     private String nombres;
     private String apellidos;
     private String direccion;
@@ -19,6 +20,7 @@ public class PersonasBean {
     private String clave;
     private String clave2;
     private Integer perfil;
+    private Integer nombrePerfil;
     
     public PersonasBean(){
     }
@@ -37,14 +39,6 @@ public class PersonasBean {
 
     public void setDocumento(String documento) {
         this.documento = documento;
-    }
-
-    public String getTipo_documento() {
-        return tipoDocumento;
-    }
-
-    public void setTipo_documento(String tipo_documento) {
-        this.tipoDocumento = tipo_documento;
     }
 
     public String getNombres() {
@@ -133,5 +127,21 @@ public class PersonasBean {
 
     public void setClave2(String clave2) {
         this.clave2 = clave2;
+    }
+
+    public String getNombreTipoDocumento() {
+        return nombreTipoDocumento;
+    }
+
+    public void setNombreTipoDocumento(String nombreTipoDocumento) {
+        this.nombreTipoDocumento = nombreTipoDocumento;
+    }
+
+    public Integer getNombrePerfil() {
+        return nombrePerfil;
+    }
+
+    public void setNombrePerfil(Integer nombrePerfil) {
+        this.nombrePerfil = nombrePerfil;
     }
 }

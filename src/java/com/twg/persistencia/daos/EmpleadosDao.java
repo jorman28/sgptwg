@@ -36,7 +36,7 @@ public class EmpleadosDao {
         rs = ps.executeQuery();
         while(rs.next()){
             EmpleadosBean empleado = new EmpleadosBean();
-            empleado.setId_persona(rs.getInt("id_persona"));
+            empleado.setId(rs.getInt("id_persona"));
             empleado.setCargo(rs.getInt("cargo"));
             
             listaEmpleados.add(empleado);
@@ -52,7 +52,7 @@ public class EmpleadosDao {
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;
         ps = con.prepareStatement(sql.insertarEmpleado());
-        ps.setInt(1, empleado.getId_persona());
+        ps.setInt(1, empleado.getId());
         ps.setInt(2, empleado.getCargo());
         int insercion = ps.executeUpdate();
         ps.close();
@@ -66,7 +66,7 @@ public class EmpleadosDao {
         PreparedStatement ps;
         ps = con.prepareStatement(sql.actualizarEmpleado());
         ps.setInt(1, empleado.getCargo());
-        ps.setInt(2, empleado.getId_persona());
+        ps.setInt(2, empleado.getId());
         int actualizacion = ps.executeUpdate();
         ps.close();
         con.close();
