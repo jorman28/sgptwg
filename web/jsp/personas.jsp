@@ -80,7 +80,7 @@
                                         <input class="form-control" type="text" id="apellidos" name="apellidos" value="${apellidos}"/>
                                     </div>
                                     <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                                        <label for="telefono">* Teléfono</label>
+                                        <label for="telefono">Teléfono</label>
                                         <input class="form-control" type="text" id="telefono" name="telefono" value="${telefono}" maxlength="15" />
                                     </div>
                                     <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
@@ -88,7 +88,7 @@
                                         <input class="form-control" type="text" id="celular" name="celular" value="${celular}" maxlength="15"/>
                                     </div>
                                     <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                                        <label for="correo">Correo</label>
+                                        <label for="correo">* Correo</label>
                                         <input class="form-control" type="text" id="correo" name="correo" value="${correo}" maxlength="50"/>
                                     </div>
                                     <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">

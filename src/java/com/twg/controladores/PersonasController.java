@@ -5,10 +5,6 @@ import com.twg.persistencia.beans.PersonasBean;
 import com.twg.persistencia.beans.UsuariosBean;
 import com.twg.persistencia.daos.PerfilesDao;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -51,11 +47,11 @@ public class PersonasController extends HttpServlet {
         String direccion = request.getParameter("direccion");
         
         String tipoPersona = request.getParameter("tipoPersona");
-        String Id_Cargo = request.getParameter("Id_Cargo");
+        String cargoStr = request.getParameter("idCargo");
         String fechaInicio = request.getParameter("fechaInicio");
         
         String usuario = request.getParameter("usuario");
-        String perfil = request.getParameter("perfil");
+        String perfilStr = request.getParameter("perfil");
         String clave = request.getParameter("clave");
         String clave2 = request.getParameter("clave2");
             
@@ -65,35 +61,37 @@ public class PersonasController extends HttpServlet {
         } catch (NumberFormatException e) {
         }
         
+        Integer cargo;
         try {
-            switch(accion){
-                case "consultar":
-                    
-                    break;
-                case "editar":
-                    break;
-                case "crearPersona":
-                    break;
-                case "eliminar":
-                    break;
-                default:
-                    break;
-            }
-        } catch (Exception e) {
-            Logger.getLogger(UsuariosController.class.getName()).log(Level.SEVERE, null, e);
-            mensajeError = "Ocurrió un error procesando los datos. Revise el log de aplicación.";
+            cargo = Integer.valueOf(cargoStr);
+        } catch (NumberFormatException e) {
+            cargo = null;
         }
         
+        Integer perfil;
+        try {
+            perfil = Integer.valueOf(perfilStr);
+        } catch (NumberFormatException e) {
+            perfil = null;
+        }
+        
+        switch(accion){
+            case "consultar":
+                break;
+            case "editar":
+                break;
+            case "guardar":
+                break;
+            case "eliminar":
+                break;
+            default:
+                break;
+        }
+            
         request.setAttribute("mensajeExito", mensajeExito);
         request.setAttribute("mensajeError", mensajeError);
         request.setAttribute("mensajeAlerta", mensajeAlerta);
         request.getRequestDispatcher("jsp/personas.jsp").forward(request, response);
-    }
-    
-    public boolean validarEmail(String email) {
-        Pattern pattern = Pattern.compile("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
-        Matcher matcher = pattern.matcher(email);
-        return matcher.matches();
     }
     
     private void enviarDatos(HttpServletRequest request, PersonasBean persona, UsuariosBean usuario){
