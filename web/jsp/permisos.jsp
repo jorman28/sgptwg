@@ -110,7 +110,7 @@
                                                         <div class="panel-group" id="pagina_usuarios" role="tablist" aria-multiselectable="true">
                                                             <div class="panel panel-default">
                                                                 <div class="panel-heading" role="tab" id="heading_usuarios">
-                                                                    <a role="button" data-toggle="collapse" data-parent="#pagina_seguridad" href="#collapse_usuarios" aria-expanded="true" aria-controls="collapse_usuarios">
+                                                                    <a role="button" data-toggle="collapse" data-parent="#pagina_usuarios" href="#collapse_usuarios" aria-expanded="true" aria-controls="collapse_usuarios">
                                                                         <h4 class="panel-title">
                                                                             Usuarios
                                                                         </h4>
