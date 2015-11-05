@@ -6,6 +6,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 /**
  *
@@ -55,13 +57,32 @@ public class ProyectosController extends HttpServlet {
                 request.setAttribute("fechaInicio", fechaInicio);
                 request.setAttribute("idPersona", idPersona);
                 break;
+            case "hola":
+                JSONArray array = new JSONArray();
+                JSONObject object = new JSONObject();
+                object.put("value", 1);
+                object.put("label", "Toronto");
+                array.add(object);
+                object = new JSONObject();
+                object.put("value", 2);
+                object.put("label", "Montreal");
+                array.add(object);
+                object = new JSONObject();
+                object.put("value", 3);
+                object.put("label", "Buffalo");
+                array.add(object);
+                response.getWriter().write(array.toJSONString());
+                break;
             default:
                 break;
         }
-        request.setAttribute("mensajeError", mensajeError);
-        request.setAttribute("mensajeExito", mensajeExito);
-        request.setAttribute("mensajeAlerta", mensajeAlerta);
-        request.getRequestDispatcher(redireccion).forward(request, response);
+
+        if (!accion.equals("hola")) {
+            request.setAttribute("mensajeError", mensajeError);
+            request.setAttribute("mensajeExito", mensajeExito);
+            request.setAttribute("mensajeAlerta", mensajeAlerta);
+            request.getRequestDispatcher(redireccion).forward(request, response);
+        }
     }
 
     /**

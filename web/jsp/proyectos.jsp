@@ -11,7 +11,7 @@
     <head>
         <c:import url="/jsp/general/header.jsp"/>
         <script type="text/javascript" src="js/proyectos.js"></script>
-        <title>Usuarios</title>
+        <title>Proyectos</title>
     </head>
     <body>
         <div class="container-fluid">
@@ -34,15 +34,11 @@
                             <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                 <label for="fechaInicio">*Fecha de inicio:</label> 
                                 <input class="form-control" type="text" id="fechaInicio" name="fechaInicio" value="${fechaInicio}" readonly="true"/>
-                                <script type="text/javascript">
-                                    $(function() {
-                                        $('#fechaInicio').datetimepicker({format: 'dd/mm/yyyy', language:'es', weekStart:true, todayBtn:true, autoclose:true, todayHighlight:true, startView:2, minView:2});
-                                    });
-                                </script>
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                 <label for="responsable">*Responsable:</label> 
-                                <input class="form-control" type="text" id="idPersona" name="idPersona" value="${idPersona}" />
+                                <input class="form-control" type="text" id="responsable" name="responsable" value="${responsable}" />
+                                <input class="form-control" type="hidden" id="idPersona" name="idPersona" value="${idPersona}" />
                             </div>
                         </div>
                         <br>
