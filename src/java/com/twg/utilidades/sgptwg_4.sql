@@ -29,3 +29,5 @@ CREATE TABLE IF NOT EXISTS personas_proyectos (
   CONSTRAINT personas_proyectos_proyectos_fk FOREIGN KEY (id_proyecto) REFERENCES proyectos (id)
 ) ENGINE = InnoDB
 DEFAULT CHARACTER SET=latin1 COLLATE=latin1_spanish_ci;
+
+ALTER TABLE versiones ADD CONSTRAINT versiones_estados_fk FOREIGN KEY (estado) REFERENCES estados (id);
