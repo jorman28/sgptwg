@@ -148,7 +148,7 @@ public class UsuariosController extends HttpServlet {
                     out.println(    "<td>Inactivo</td>");
                 }
                 out.println(    "<td>");
-                out.println(        "<button class=\"btn btn-default\" type=\"button\" onclick=\"consultarUsuario("+usuario.getIdPersona()+")\">Editar</a>");
+                out.println(        "<button class=\"btn btn-default\" type=\"button\" onclick=\"consultarUsuario("+usuario.getIdPersona()+")\">Editar</button>");
                 out.println(        "<button class=\"btn btn-default\" type=\"button\" data-toggle=\"modal\" data-target=\"#confirmationMessage\" onclick=\"jQuery('#idPersona').val('"+usuario.getIdPersona()+"');\">Eliminar</button>");
                 out.println(    "</td>");
                 out.println("</tr>");

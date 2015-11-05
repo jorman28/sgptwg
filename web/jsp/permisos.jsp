@@ -18,7 +18,9 @@
             <div>${menu}</div>
             <c:import url="/jsp/general/alertas.jsp"/>
             <div class="row">
-                <div class="col-xs-12 col-sm-12 col-md-10 col-md-offset-1 col-lg-8 col-lg-offset-2" id="contenido">
+                <div class="hidden-xs col-sm-3 col-md-3 col-lg-3">
+                </div>
+                <div class="col-xs-12 col-sm-9 col-md-9 col-lg-9" id="contenido">
                     <form autocomplete="off" action="./PermisosController" method="POST" id="formularioPermisos">
                         <c:import url="/jsp/general/eliminacion.jsp"/>
                         <div id="modalPermisos" class="modal fade">

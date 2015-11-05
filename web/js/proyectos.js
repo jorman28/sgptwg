@@ -1,6 +1,6 @@
 $(function() {
     $('#fechaInicio').datetimepicker({format: 'dd/mm/yyyy', language: 'es', weekStart: true, todayBtn: true, autoclose: true, todayHighlight: true, startView: 2, minView: 2});
-    $("#responsable").typeahead({
+    $("#participante").typeahead({
         onSelect: function(item) {
             console.log(item);
         },
