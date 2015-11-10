@@ -9,57 +9,18 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <link href="images/tab.jpg" rel='shortcut icon' type='image/jpeg'>
-        <script type="text/javascript" src="js/jquery.min.js"></script>
-        <script type="text/javascript" src="js/bootstrap.min.js"></script>
-        <script type="text/javascript" src="js/general.js"></script>
+        <c:import url="/jsp/general/header.jsp"/>
         <script type="text/javascript" src="js/permisos.js"></script>
-        <link rel="stylesheet" type="text/css" href="css/bootstrap-theme.min.css">
-        <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
-        <link rel="stylesheet" type="text/css" href="css/business-styles.css">
         <title>Permisos</title>
     </head>
     <body>
         <div class="container-fluid">
             <div>${menu}</div>
-            <c:if test="${not empty mensajeError}">
-                <div class="alert alert-danger fade in" role="alert">
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    ${mensajeError}
-                </div>
-            </c:if>
-            <c:if test="${not empty mensajeAlerta}">
-                <div class="alert alert-warning fade in" role="alert">
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    ${mensajeAlerta}
-                </div>
-            </c:if>
-            <c:if test="${not empty mensajeExito}">
-                <div class="alert alert-success fade in" role="alert">
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    ${mensajeExito}
-                </div>
-            </c:if>
+            <c:import url="/jsp/general/alertas.jsp"/>
             <div class="row">
                 <div class="col-xs-12 col-sm-12 col-md-10 col-md-offset-1 col-lg-8 col-lg-offset-2" id="contenido">
                     <form autocomplete="off" action="./PermisosController" method="POST" id="formularioPermisos">
-                        <div id="confirmationMessage" class="modal fade">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <!-- dialog body -->
-                                    <div class="modal-body">
-                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                        Realmente desea eliminar el registro?
-                                    </div>
-                                    <!-- dialog buttons -->
-                                    <div class="modal-footer">
-                                        <button type="submit" class="btn btn-primary" name="accion" id="eliminar" value="eliminar">Si</button>
-                                        <button type="button" class="btn btn-primary" data-dismiss="modal">No</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <c:import url="/jsp/general/eliminacion.jsp"/>
                         <div id="modalPermisos" class="modal fade">
                             <input type="hidden" name="perfilPermiso" id="perfilPermiso"/>
                             <div class="modal-dialog modal-lg">
@@ -110,7 +71,7 @@
                                                         <div class="panel-group" id="pagina_usuarios" role="tablist" aria-multiselectable="true">
                                                             <div class="panel panel-default">
                                                                 <div class="panel-heading" role="tab" id="heading_usuarios">
-                                                                    <a role="button" data-toggle="collapse" data-parent="#pagina_seguridad" href="#collapse_usuarios" aria-expanded="true" aria-controls="collapse_usuarios">
+                                                                    <a role="button" data-toggle="collapse" data-parent="#pagina_usuarios" href="#collapse_usuarios" aria-expanded="true" aria-controls="collapse_usuarios">
                                                                         <h4 class="panel-title">
                                                                             Usuarios
                                                                         </h4>

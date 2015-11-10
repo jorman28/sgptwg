@@ -9,36 +9,12 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <link href="images/tab.jpg" rel='shortcut icon' type='image/jpeg'>
-        <script type="text/javascript" src="js/jquery.min.js"></script>
-        <script type="text/javascript" src="js/bootstrap.min.js"></script>
-        <script type="text/javascript" src="js/general.js"></script>
-        <link rel="stylesheet" type="text/css" href="css/bootstrap-theme.min.css">
-        <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
-        <link rel="stylesheet" type="text/css" href="css/business-styles.css">
+        <c:import url="/jsp/general/header.jsp"/>
         <title>Inicio sesión</title>
     </head>
     <body>
         <div class="container-fluid">
-            <c:if test="${not empty mensajeError}">
-                <div class="alert alert-danger fade in" role="alert">
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    ${mensajeError}
-                </div>
-            </c:if>
-            <c:if test="${not empty mensajeAlerta}">
-                <div class="alert alert-warning fade in" role="alert">
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    ${mensajeAlerta}
-                </div>
-            </c:if>
-            <c:if test="${not empty mensajeExito}">
-                <div class="alert alert-success fade in" role="alert">
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    ${mensajeExito}
-                </div>
-            </c:if>
+            <c:import url="/jsp/general/alertas.jsp"/>
             <div class="row">
                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" id="contenido">
                     <form autocomplete="off" action="./InicioSesionController" method="POST" id="formularioInicio">
