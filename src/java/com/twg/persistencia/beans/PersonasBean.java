@@ -18,11 +18,12 @@ public class PersonasBean {
     private String correo;
     private String usuario;
     private String clave;
-    private String clave2;
     private Integer perfil;
     private Integer nombrePerfil;
-    
-    public PersonasBean(){
+    private Integer cargo;
+    private String nombreCargo;
+
+    public PersonasBean() {
     }
 
     public int getId() {
@@ -121,14 +122,6 @@ public class PersonasBean {
         this.clave = clave;
     }
 
-    public String getClave2() {
-        return clave2;
-    }
-
-    public void setClave2(String clave2) {
-        this.clave2 = clave2;
-    }
-
     public String getNombreTipoDocumento() {
         return nombreTipoDocumento;
     }
@@ -144,4 +137,21 @@ public class PersonasBean {
     public void setNombrePerfil(Integer nombrePerfil) {
         this.nombrePerfil = nombrePerfil;
     }
+
+    public Integer getCargo() {
+        return cargo;
+    }
+
+    public void setCargo(Integer cargo) {
+        this.cargo = cargo;
+    }
+
+    public String getNombreCargo() {
+        return nombreCargo;
+    }
+
+    public void setNombreCargo(String nombreCargo) {
+        this.nombreCargo = nombreCargo;
+    }
+
 }

@@ -9,49 +9,36 @@ public class PersonasSql {
     public PersonasSql() {
     }
 
-    public String consultarPersonas(String tipoPersona, Integer idPersona, String documento, String tipoDocumento, String nombres, String apellidos, String correo, String usuario, String perfil) {
+    public String consultarPersonas(String idPersona, String documento, String tipoDocumento, String nombres, String apellidos, String correo, String usuario, String perfil) {
         String sql = "";
-        sql += "SELECT  " +
-                "    p.id, " +
-                "    p.documento, " +
-                "    p.tipo_documento, " +
-                "    d.nombre AS nombre_tipo_documento, " +
-                "    p.nombres, " +
-                "    p.apellidos, " +
-                "    p.telefono, " +
-                "    p.celular, " +
-                "    p.correo, " +
-                "    p.direccion, " +
-                "    u.usuario, " +
-                "    u.perfil AS id_perfil, " +
-                "    pf.nombre AS nombre_perfil, " +
-                "    u.clave ";
-        if(tipoPersona.equals("EMPLEADO")){
-            sql += " ,car.id AS cargo, " +
-                   " car.nombre AS nombre_cargo " ;
-        } else {
-            sql += " ,cli.fecha_inicio ";
-        }
-        sql +=  "FROM " +
-                "    personas p " +
-                "        INNER JOIN " +
-                "    tipos_documentos d ON d.tipo = p.tipo_documento ";
-        if(tipoPersona.equals("EMPLEADO")){
-            sql += "     INNER JOIN " +
-                "    empleados emp ON emp.id_persona = p.id " +
-                "        INNER JOIN " +
-                "    cargos car ON car.id = emp.cargo ";
-        } else {
-            sql += "     INNER JOIN " +
-                "    clientes cli ON cli.id_persona = p.id ";
-        }
-        sql +=  "        LEFT JOIN " +
-                "    usuarios u ON p.id = u.id_persona " +
-                "        LEFT JOIN " +
-                "    perfiles pf ON pf.id = u.perfil " +
-                "WHERE " +
-                "    1 = 1 ";
-        if (idPersona != null && idPersona != 0) {
+        sql += "SELECT  "
+                + "    p.id, "
+                + "    p.documento, "
+                + "    p.tipo_documento, "
+                + "    d.nombre AS nombre_tipo_documento, "
+                + "    p.nombres, "
+                + "    p.apellidos, "
+                + "    p.telefono, "
+                + "    p.celular, "
+                + "    p.correo, "
+                + "    p.direccion, "
+                + "    u.usuario, "
+                + "    u.perfil AS id_perfil, "
+                + "    pf.nombre AS nombre_perfil, "
+                + "    u.clave "
+                + "FROM "
+                + "    personas p "
+                + "        INNER JOIN "
+                + "    tipos_documentos d ON d.tipo = p.tipo_documento "
+                + "        INNER JOIN "
+                + "    cargos car ON car.id = emp.cargo "
+                + "        LEFT JOIN "
+                + "    usuarios u ON p.id = u.id_persona "
+                + "        LEFT JOIN "
+                + "    perfiles pf ON pf.id = u.perfil "
+                + "WHERE "
+                + "    1 = 1 ";
+        if (idPersona != null && !idPersona.isEmpty() && !idPersona.equals("0")) {
             sql += "and p.id = " + idPersona + " ";
         }
         if (documento != null && !documento.isEmpty()) {
@@ -73,24 +60,24 @@ public class PersonasSql {
             sql += "and u.usuario like '%" + usuario + "%' ";
         }
         if (perfil != null && !perfil.isEmpty() && !perfil.equals("0")) {
-            sql += "and pf.nombre like '%" + perfil + "%' ";
+            sql += "and u.perfil = " + perfil + "";
         }
         return sql;
     }
 
     public String insertarPersona() {
-        return "INSERT INTO personas (id, documento, tipo_documento, nombres, apellidos, direccion, telefono, celular, correo) "
+        return "INSERT INTO personas (documento, tipo_documento, nombres, apellidos, direccion, telefono, celular, correo, cargo) "
                 + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
     }
 
     public String actualizarPersona() {
         return "UPDATE personas "
-                + "SET documento = ?, tipo_documento = ?, nombres = ?, apellidos = ?, direccion = ?, telefono = ?, celular = ?, correo = ? "
+                + "SET documento = ?, tipo_documento = ?, nombres = ?, apellidos = ?, direccion = ?, telefono = ?, celular = ?, correo = ?, cargo = ? "
                 + "WHERE id = ?";
     }
 
     public String eliminarPersona() {
-        return "DELETE FROM personas WHERE id = ?";
+        return "UPDATE PERSONAS SET fecha_eliminacion = now() WHERE id = ?";
     }
 
     public String consultarIdPersona(String documento, String tipoDocumento) {
