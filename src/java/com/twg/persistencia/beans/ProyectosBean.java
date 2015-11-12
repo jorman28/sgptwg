@@ -6,7 +6,7 @@ import java.util.Date;
  *
  * @author Pipe
  */
-public class ProyectoBean {
+public class ProyectosBean {
     private Integer id;
     private String nombre;
     private Date fechaInicio;

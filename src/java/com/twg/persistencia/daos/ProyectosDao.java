@@ -1,6 +1,6 @@
 package com.twg.persistencia.daos;
 
-import com.twg.persistencia.beans.ProyectoBean;
+import com.twg.persistencia.beans.ProyectosBean;
 import com.twg.persistencia.sqls.ProyectosSql;
 import com.twg.utilidades.ConexionBaseDatos;
 import java.sql.Connection;
@@ -19,8 +19,8 @@ public class ProyectosDao {
 
     private final ProyectosSql sql = new ProyectosSql();
 
-    public List<ProyectoBean> consultarProyectos() throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
-        List<ProyectoBean> listaProyectos = new ArrayList();
+    public List<ProyectosBean> consultarProyectos() throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
+        List<ProyectosBean> listaProyectos = new ArrayList();
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;
@@ -28,7 +28,7 @@ public class ProyectosDao {
         ResultSet rs;
         rs = ps.executeQuery();
         while (rs.next()) {
-            ProyectoBean proyecto = new ProyectoBean();
+            ProyectosBean proyecto = new ProyectosBean();
             proyecto.setId(rs.getInt("id"));
             proyecto.setNombre(rs.getString("nombre"));
             proyecto.setFechaInicio(rs.getDate("fecha_inicio"));
@@ -43,7 +43,7 @@ public class ProyectosDao {
         return listaProyectos;
     }
     
-    public int crearProyecto(ProyectoBean proyecto) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
+    public int crearProyecto(ProyectosBean proyecto) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;
@@ -57,7 +57,7 @@ public class ProyectosDao {
         return insercion;
     }
     
-    public int actualizarProyecto(ProyectoBean proyecto) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
+    public int actualizarProyecto(ProyectosBean proyecto) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;

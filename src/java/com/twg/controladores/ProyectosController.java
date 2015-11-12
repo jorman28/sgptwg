@@ -1,6 +1,7 @@
 package com.twg.controladores;
 
 import com.twg.negocio.ProyectosNegocio;
+import com.twg.negocio.VersionesNegocio;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -16,6 +17,7 @@ import org.json.simple.JSONObject;
 public class ProyectosController extends HttpServlet {
 
     ProyectosNegocio proyectosNegocio = new ProyectosNegocio();
+    VersionesNegocio versionesNegocio = new VersionesNegocio();
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -39,25 +41,51 @@ public class ProyectosController extends HttpServlet {
         }
         String redireccion = "jsp/proyectos.jsp";
         String idProyecto = request.getParameter("idProyecto");
-        String nombre = request.getParameter("nombre");
-        String fechaInicio = request.getParameter("fechaInicio");
+        String nombreProyecto = request.getParameter("nombreProyecto");
+        String fechaInicioProyecto = request.getParameter("fechaInicioProyecto");
         String idPersona = request.getParameter("idPersona");
+
+        String idVersion = request.getParameter("idVersion");
+        String idProyectoVersion = request.getParameter("idProyectoVersion");
+        String fechaInicioVersion = request.getParameter("fechaInicioVersion");
+        String fechaFinVersion = request.getParameter("fechaFinVersion");
+        String nombreVersion = request.getParameter("nombreVersion");
+        String estado = request.getParameter("estado");
+        String alcance = request.getParameter("alcance");
+
         switch (accion) {
-            case "guardar":
-                mensajeAlerta = proyectosNegocio.validarDatos(nombre, fechaInicio, idPersona);
+            case "guardarProyecto":
+                mensajeAlerta = proyectosNegocio.validarDatos(nombreProyecto, fechaInicioProyecto, idPersona);
                 if (mensajeAlerta.isEmpty()) {
-                    mensajeError = proyectosNegocio.guardarProyecto(idProyecto, nombre, fechaInicio, idPersona);
+                    mensajeError = proyectosNegocio.guardarProyecto(idProyecto, nombreVersion, fechaInicioProyecto, idPersona);
                     if (mensajeError.isEmpty()) {
-                        mensajeExito = "El proyecto ha sido insertado con éxito";
+                        mensajeExito = "El proyecto ha sido guardado con éxito";
                         break;
                     }
                 }
                 request.setAttribute("idProyecto", idProyecto);
-                request.setAttribute("nombre", nombre);
-                request.setAttribute("fechaInicio", fechaInicio);
+                request.setAttribute("nombreProyecto", nombreProyecto);
+                request.setAttribute("fechaInicioProyecto", fechaInicioProyecto);
                 request.setAttribute("idPersona", idPersona);
                 break;
-            case "hola":
+            case "guardarVersion":
+                mensajeAlerta = versionesNegocio.validarDatos(nombreVersion, fechaInicioVersion, fechaFinVersion, alcance, idProyectoVersion, estado);
+                if (mensajeAlerta.isEmpty()) {
+                    mensajeError = versionesNegocio.guardarVersion(idVersion, nombreVersion, fechaInicioVersion, fechaFinVersion, alcance, idProyectoVersion, estado);
+                    if (mensajeError.isEmpty()) {
+                        mensajeExito = "La versión ha sido guardada con éxito";
+                        break;
+                    }
+                }
+                request.setAttribute("idProyectoVersion", idProyecto);
+                request.setAttribute("idVersion", idVersion);
+                request.setAttribute("nombreVersion", nombreVersion);
+                request.setAttribute("fechaInicioVersion", fechaInicioVersion);
+                request.setAttribute("fechaFinVersion", fechaFinVersion);
+                request.setAttribute("alcance", alcance);
+                request.setAttribute("estado", estado);
+                break;
+            case "completarPersonas":
                 JSONArray array = new JSONArray();
                 JSONObject object = new JSONObject();
                 object.put("value", 1);

@@ -34,12 +34,12 @@
                                         <input type="hidden" id="idProyecto" name="idProyecto" value="${idProyecto}" />
                                         <div class="row form-group">
                                             <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                                                <label for="nombre">*Nombre:</label> 
-                                                <input class="form-control" type="text" id="nombre" name="nombre" value="${nombre}"/>
+                                                <label for="nombreProyecto">*Nombre:</label> 
+                                                <input class="form-control" type="text" id="nombreProyecto" name="nombreProyecto" value="${nombreProyecto}"/>
                                             </div>
                                             <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                                                <label for="fechaInicio">*Fecha de inicio:</label> 
-                                                <input class="form-control" type="text" id="fechaInicio" name="fechaInicio" value="${fechaInicio}" readonly="true"/>
+                                                <label for="fechaInicioProyecto">*Fecha de inicio:</label> 
+                                                <input class="form-control" type="text" id="fechaInicioProyecto" name="fechaInicioProyecto" value="${fechaInicioProyecto}" readonly="true"/>
                                             </div>
                                             <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                                 <label for="participante">*Participante:</label> 
@@ -108,6 +108,51 @@
                                     </div>
                                     <div class="modal-footer">
                                         <button type="submit" class="btn btn-primary" name="accion" id="guardarProyecto" value="guardarProyecto">Guardar</button>
+                                        <button type="button" class="btn btn-primary" data-dismiss="modal">Cancelar</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="modalVersiones" class="modal fade">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                        Los campos marcados con (*) son obligatorios
+                                    </div>
+                                    <div class="modal-body">
+                                        <input type="hidden" id="idProyectoVersion" name="idProyectoVersion" value="${idProyectoVersion}" />
+                                        <input type="hidden" id="idVersion" name="idVersion" value="${idVersion}" />
+                                        <div class="row form-group">
+                                            <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                                <label for="nombreVersion">*Nombre:</label> 
+                                                <input class="form-control" type="text" id="nombreVersion" name="nombreVersion" value="${nombreVersion}"/>
+                                            </div>
+                                            <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                                <label for="estado">*Estado:</label> 
+                                                <select class="form-control" id="estado" name="estado">
+                                                    <option value="0" label="SELECCIONE"/>
+                                                    <c:forEach items="${estados}" var="esta">
+                                                        <option value="${esta.id}" label="${esta.nombre}" <c:if test="${estado == esta.id}">selected</c:if> />
+                                                    </c:forEach>
+                                                </select>
+                                            </div>
+                                            <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                                <label for="fechaInicioVersion">*Fecha de inicio:</label> 
+                                                <input class="form-control" type="text" id="fechaInicioVersion" name="fechaInicioVersion" value="${fechaInicioVersion}" readonly="true"/>
+                                            </div>
+                                            <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                                <label for="fechaFinVersion">*Fecha de fin:</label> 
+                                                <input class="form-control" type="text" id="fechaFinVersion" name="fechaFinVersion" value="${fechaFinVersion}" readonly="true"/>
+                                            </div>
+                                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                                <label for="alcance">*Alcance:</label> 
+                                                <textarea class="form-control" type="text" id="alcance" name="alcance" >${alcance}</textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="submit" class="btn btn-primary" name="accion" id="guardarVersion" value="guardarVersion">Guardar</button>
                                         <button type="button" class="btn btn-primary" data-dismiss="modal">Cancelar</button>
                                     </div>
                                 </div>

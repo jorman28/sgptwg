@@ -1,6 +1,6 @@
 package com.twg.negocio;
 
-import com.twg.persistencia.beans.ProyectoBean;
+import com.twg.persistencia.beans.ProyectosBean;
 import com.twg.persistencia.daos.ProyectosDao;
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -19,7 +19,7 @@ public class ProyectosNegocio {
 
     public String guardarProyecto(String id, String nombre, String fechaInicio, String responsable) {
         String error = "";
-        ProyectoBean proyecto = new ProyectoBean();
+        ProyectosBean proyecto = new ProyectosBean();
         proyecto.setNombre(nombre);
         proyecto.setIdPersona(Integer.valueOf(responsable));
         try {
