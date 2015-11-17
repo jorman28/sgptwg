@@ -26,23 +26,18 @@ public class CargosDao {
     public CargosDao(){
     }
 
-    public List<CargosBean> consultarCargos(String param) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
+    public List<CargosBean> consultarCargos(String nombre) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
         List<CargosBean> listaCargos = new ArrayList<>();
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;
-        if(param!=null && !param.isEmpty()){
-            ps = con.prepareStatement(sql.consultarCargos(param));
-        }else{
-            ps = con.prepareStatement(sql.consultarCargos(null));
-        }
+        ps = con.prepareStatement(sql.consultarCargos(nombre));
         ResultSet rs;
         rs = ps.executeQuery();
         while(rs.next()){
             CargosBean cargo = new CargosBean();
             cargo.setId(rs.getInt("id"));
             cargo.setNombre(rs.getString("nombre"));
-            
             listaCargos.add(cargo);
         }
         rs.close();
@@ -59,7 +54,7 @@ public class CargosDao {
         ps = con.prepareStatement(sql.consultarCargo(id));
         ResultSet rs;
         rs = ps.executeQuery();
-        while(rs.next()){
+        if(rs.next()){
             cargo.setId(rs.getInt("id"));
             cargo.setNombre(rs.getString("nombre"));
         }

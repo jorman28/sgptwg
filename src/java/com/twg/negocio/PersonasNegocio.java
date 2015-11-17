@@ -21,10 +21,10 @@ public class PersonasNegocio {
     private final PersonasDao personasDao = new PersonasDao();
     private final UsuariosDao usuariosDao = new UsuariosDao();
 
-    public List<PersonasBean> consultarPersonas(String documento, String tipoDocumento, String nombre, String apellidos, String correo, String usuario, String perfil) {
+    public List<PersonasBean> consultarPersonas(String documento, String tipoDocumento, String nombre, String apellidos, String correo, String usuario, String perfil, String cargo) {
         List<PersonasBean> listaPersonas = new ArrayList<>();
         try {
-            listaPersonas = personasDao.consultarPersonas(null, documento, tipoDocumento, nombre, apellidos, correo, usuario, perfil);
+            listaPersonas = personasDao.consultarPersonas(null, documento, tipoDocumento, nombre, apellidos, correo, usuario, perfil, cargo);
         } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
             Logger.getLogger(PersonasNegocio.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -36,9 +36,9 @@ public class PersonasNegocio {
         List<PersonasBean> listaPersonas = null;
         try {
             if (idPersona != null) {
-                listaPersonas = personasDao.consultarPersonas(idPersona, null, null, null, null, null, null, null);
+                listaPersonas = personasDao.consultarPersonas(idPersona, null, null, null, null, null, null, null, null);
             } else if (documento != null && !documento.isEmpty() && tipoDocumento != null && !tipoDocumento.isEmpty()) {
-                listaPersonas = personasDao.consultarPersonas(null, documento, tipoDocumento, null, null, null, null, null);
+                listaPersonas = personasDao.consultarPersonas(null, documento, tipoDocumento, null, null, null, null, null, null);
             }
         } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
             Logger.getLogger(PersonasNegocio.class.getName()).log(Level.SEVERE, null, ex);
@@ -91,6 +91,7 @@ public class PersonasNegocio {
                         guardado = usuariosDao.actualizarUsuario(usuario);
                     } else {
                         usuario.setIdPersona(personaConsultada.getId());
+                        usuario.setActivo("T");
                         guardado = usuariosDao.insertarUsuario(usuario);
                     }
                     if (guardado == 0) {
@@ -135,23 +136,39 @@ public class PersonasNegocio {
         if (direccion == null || direccion.trim().isEmpty()) {
             error += "El campo 'Dirección' es obligatorio \n";
         }
-        if (cargo == null || !cargo.equals("0")) {
+        if (cargo == null || cargo.equals("0")) {
             error += "El campo 'Cargo' es obligatorio \n";
         }
-        if ((usuario != null && !usuario.isEmpty()) || perfil != null || (clave != null && !clave.isEmpty()) || (clave2 != null && !clave2.isEmpty())) {
-            if (usuario == null || !usuario.isEmpty()) {
+        if ((usuario != null && !usuario.isEmpty()) || (perfil != null && !perfil.equals("0")) || (clave != null && !clave.isEmpty()) || (clave2 != null && !clave2.isEmpty())) {
+            if (usuario == null || usuario.isEmpty()) {
                 error += "El campo 'Usuario' es obligatorio \n";
             }
             if (perfil == null) {
                 error += "El campo 'Perfil' es obligatorio \n";
             }
+            UsuariosBean objetoUsuario = null;
+            if (documento != null && !documento.isEmpty() && tipoDocumento != null && !tipoDocumento.equals("0")) {
+                try {
+                    List<UsuariosBean> listaUsuarios = usuariosDao.consultarUsuarios(null, null, null, null, documento, tipoDocumento);
+                    if (listaUsuarios != null && !listaUsuarios.isEmpty()) {
+                        objetoUsuario = listaUsuarios.get(0);
+                    }
+                } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
+                    Logger.getLogger(PersonasNegocio.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+
             if (clave == null || clave.isEmpty()) {
-                error += "El campo 'Clave' es obligatorio <br/>";
+                if (objetoUsuario == null) {
+                    error += "El campo 'Clave' es obligatorio \n";
+                } else if (clave2 != null && !clave2.isEmpty()) {
+                    error += "El campo 'Clave' es obligatorio \n";
+                }
             } else {
                 if (clave2 == null || clave2.isEmpty()) {
-                    error += "El campo 'Confirmar clave' es obligatorio <br/>";
+                    error += "El campo 'Confirmar clave' es obligatorio \n";
                 } else if (!clave.equals(clave2)) {
-                    error += "El valor en el campo 'Clave' y 'Confirmar clave' deben ser iguales <br/>";
+                    error += "El valor en el campo 'Clave' y 'Confirmar clave' deben ser iguales \n";
                 }
             }
         }
@@ -161,12 +178,8 @@ public class PersonasNegocio {
     public String eliminarPersona(Integer idPersona) {
         String error = "";
         try {
-            int eliminacion = usuariosDao.eliminarUsuario(idPersona);
-            if (eliminacion == 0) {
-                error = "El usuario no pudo ser eliminado";
-                return error;
-            }
-            eliminacion = personasDao.eliminarPersona(idPersona);
+            usuariosDao.eliminarUsuario(idPersona);
+            int eliminacion = personasDao.eliminarPersona(idPersona);
             if (eliminacion == 0) {
                 error = "La persona no pudo ser eliminada";
             }

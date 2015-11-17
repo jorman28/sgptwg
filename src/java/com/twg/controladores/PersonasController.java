@@ -1,8 +1,13 @@
 package com.twg.controladores;
 
+import com.twg.negocio.CargosNegocio;
+import com.twg.negocio.PerfilesNegocio;
 import com.twg.negocio.PersonasNegocio;
+import com.twg.negocio.TiposDocumentoNegocio;
 import com.twg.persistencia.beans.PersonasBean;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -15,6 +20,9 @@ import javax.servlet.http.HttpServletResponse;
 public class PersonasController extends HttpServlet {
 
     private final PersonasNegocio personasNegocio = new PersonasNegocio();
+    private final TiposDocumentoNegocio tiposDocumentoNegocio = new TiposDocumentoNegocio();
+    private final CargosNegocio cargosNegocio = new CargosNegocio();
+    private final PerfilesNegocio perfilesNegocio = new PerfilesNegocio();
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -59,10 +67,11 @@ public class PersonasController extends HttpServlet {
         } catch (NumberFormatException e) {
         }
 
-        String redireccion = "jsp/consultarPersonas.jsp";
+        String redireccion = "jsp/consultaPersonas.jsp";
 
         switch (accion) {
             case "consultar":
+                cargarTabla(response, documento, tipoDocumento, nombres, apellidos, correo, usuario, perfil, cargo);
                 break;
             case "editar":
                 PersonasBean persona = personasNegocio.consultarPersona(idPersonaStr, null, null);
@@ -104,6 +113,7 @@ public class PersonasController extends HttpServlet {
                 request.setAttribute("cargo", cargo);
                 request.setAttribute("usuario", usuario);
                 request.setAttribute("perfil", perfil);
+                redireccion = "jsp/personas.jsp";
                 break;
             case "eliminar":
                 mensajeError = personasNegocio.eliminarPersona(idPersona);
@@ -123,8 +133,52 @@ public class PersonasController extends HttpServlet {
             request.setAttribute("mensajeExito", mensajeExito);
             request.setAttribute("mensajeError", mensajeError);
             request.setAttribute("mensajeAlerta", mensajeAlerta);
-            request.getRequestDispatcher("jsp/personas.jsp").forward(request, response);
+            request.setAttribute("tiposDocumentos", tiposDocumentoNegocio.consultarTiposDocumentos());
+            request.setAttribute("cargos", cargosNegocio.consultarCargos(null));
+            request.setAttribute("perfiles", perfilesNegocio.consultarPerfiles());
+            request.getRequestDispatcher(redireccion).forward(request, response);
         }
+    }
+
+    private void cargarTabla(HttpServletResponse response, String documento, String tipoDocumento, String nombres, String apellidos, String correo, String usuario, String perfil, String cargo) throws ServletException, IOException {
+        response.setContentType("text/html; charset=iso-8859-1");
+        List<PersonasBean> listaPersonas = personasNegocio.consultarPersonas(documento, tipoDocumento, nombres, apellidos, correo, usuario, perfil, cargo);
+        PrintWriter out = response.getWriter();
+        out.println("<table class=\"table table-striped table-hover table-condensed bordo-tablas\">");
+        out.println("<thead>");
+        out.println("<tr>");
+        out.println("<th>Tipo documento</th>");
+        out.println("<th>Documento</th>");
+        out.println("<th>Nombre</th>");
+        out.println("<th>Dirección</th>");
+        out.println("<th>Correo</th>");
+        out.println("<th>Cargo</th>");
+        out.println("<th>Acciones</th>");
+        out.println("</tr>");
+        out.println("</thead>");
+        out.println("<tbody>");
+        if (listaPersonas != null && !listaPersonas.isEmpty()) {
+            for (PersonasBean persona : listaPersonas) {
+                out.println("<tr>");
+                out.println("<td>" + persona.getNombreTipoDocumento() + "</td>");
+                out.println("<td>" + persona.getDocumento() + "</td>");
+                out.println("<td>" + persona.getNombres() + " " + persona.getApellidos() + "</td>");
+                out.println("<td>" + persona.getDireccion() + "</td>");
+                out.println("<td>" + persona.getCorreo() + "</td>");
+                out.println("<td>" + persona.getNombreCargo() + "</td>");
+                out.println("<td>");
+                out.println("<button class=\"btn btn-default\" type=\"button\" onclick=\"editarPersona(" + persona.getId() + ")\">Editar</button>");
+                out.println("<button class=\"btn btn-default\" type=\"button\" data-toggle=\"modal\" data-target=\"#confirmationMessage\" onclick=\"jQuery('#idPersona').val('" + persona.getId() + "');\">Eliminar</button>");
+                out.println("</td>");
+                out.println("</tr>");
+            }
+        } else {
+            out.println("<tr>");
+            out.println("<td colspan=\"9\">No se encontraron registros</td>");
+            out.println("</tr>");
+        }
+        out.println("</tbody>");
+        out.println("</table>");
     }
 
     @Override

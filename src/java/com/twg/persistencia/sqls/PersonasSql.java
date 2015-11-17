@@ -9,7 +9,7 @@ public class PersonasSql {
     public PersonasSql() {
     }
 
-    public String consultarPersonas(String idPersona, String documento, String tipoDocumento, String nombres, String apellidos, String correo, String usuario, String perfil) {
+    public String consultarPersonas(String idPersona, String documento, String tipoDocumento, String nombres, String apellidos, String correo, String usuario, String perfil, String cargo) {
         String sql = "";
         sql += "SELECT  "
                 + "    p.id, "
@@ -22,22 +22,23 @@ public class PersonasSql {
                 + "    p.celular, "
                 + "    p.correo, "
                 + "    p.direccion, "
+                + "    p.cargo, "
+                + "    car.nombre nombre_cargo, "
                 + "    u.usuario, "
                 + "    u.perfil AS id_perfil, "
-                + "    pf.nombre AS nombre_perfil, "
-                + "    u.clave "
+                + "    pf.nombre AS nombre_perfil "
                 + "FROM "
                 + "    personas p "
                 + "        INNER JOIN "
                 + "    tipos_documentos d ON d.tipo = p.tipo_documento "
                 + "        INNER JOIN "
-                + "    cargos car ON car.id = emp.cargo "
+                + "    cargos car ON car.id = p.cargo "
                 + "        LEFT JOIN "
-                + "    usuarios u ON p.id = u.id_persona "
+                + "    usuarios u ON p.id = u.id_persona AND u.fecha_eliminacion IS NULL "
                 + "        LEFT JOIN "
-                + "    perfiles pf ON pf.id = u.perfil "
+                + "    perfiles pf ON pf.id = u.perfil AND pf.fecha_eliminacion IS NULL "
                 + "WHERE "
-                + "    1 = 1 ";
+                + "    1 = 1 AND p.fecha_eliminacion IS NULL ";
         if (idPersona != null && !idPersona.isEmpty() && !idPersona.equals("0")) {
             sql += "and p.id = " + idPersona + " ";
         }
@@ -60,7 +61,10 @@ public class PersonasSql {
             sql += "and u.usuario like '%" + usuario + "%' ";
         }
         if (perfil != null && !perfil.isEmpty() && !perfil.equals("0")) {
-            sql += "and u.perfil = " + perfil + "";
+            sql += "and u.perfil = " + perfil + " ";
+        }
+        if (cargo != null && !cargo.isEmpty() && !cargo.equals("0")) {
+            sql += "and p.cargo = " + cargo + "";
         }
         return sql;
     }

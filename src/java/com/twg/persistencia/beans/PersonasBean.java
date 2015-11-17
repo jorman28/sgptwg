@@ -6,7 +6,7 @@ package com.twg.persistencia.beans;
  */
 public class PersonasBean {
 
-    private int id;
+    private Integer id;
     private String documento;
     private String tipoDocumento;
     private String nombreTipoDocumento;
@@ -19,18 +19,18 @@ public class PersonasBean {
     private String usuario;
     private String clave;
     private Integer perfil;
-    private Integer nombrePerfil;
+    private String nombrePerfil;
     private Integer cargo;
     private String nombreCargo;
 
     public PersonasBean() {
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -130,11 +130,11 @@ public class PersonasBean {
         this.nombreTipoDocumento = nombreTipoDocumento;
     }
 
-    public Integer getNombrePerfil() {
+    public String getNombrePerfil() {
         return nombrePerfil;
     }
 
-    public void setNombrePerfil(Integer nombrePerfil) {
+    public void setNombrePerfil(String nombrePerfil) {
         this.nombrePerfil = nombrePerfil;
     }
 

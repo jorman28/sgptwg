@@ -1,9 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package com.twg.persistencia.sqls;
 
 /**
@@ -14,12 +8,10 @@ public class CargosSql {
     public CargosSql(){
     }
     
-    public String consultarCargos(String param){
-        String sql = "";
-        if(param==null || param.isEmpty()){
-            sql = "SELECT id, nombre FROM cargos";
-        }else{
-            sql = "SELECT id, nombre FROM cargos WHERE nombre like '%"+param+"%'";
+    public String consultarCargos(String nombre){
+        String sql = "SELECT id, nombre FROM cargos WHERE 1 = 1 ";
+        if(nombre != null && !nombre.isEmpty()){
+            sql = "AND nombre like '%"+nombre+"%'";
         }
         return sql;
     }
@@ -37,6 +29,6 @@ public class CargosSql {
     }
     
     public String eliminarCargo(){
-        return "DELETE FROM cargos WHERE id = ?";
+        return "UPDATE cargos SET fecha_eliminacion = now() WHERE id = ?";
     }
 }

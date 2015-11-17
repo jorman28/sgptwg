@@ -35,10 +35,6 @@
                             <div class="panel-body">
                                 <div class="row">
                                     <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                                        <label for="documento">*Documento:</label> 
-                                        <input class="form-control" type="text" id="documento" name="documento" value="${documento}"/>
-                                    </div>
-                                    <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                         <label for="tipoDocumento">*Tipo de documento:</label>
                                         <select class="form-control" id="tipoDocumento" name="tipoDocumento">
                                             <option value="0">SELECCIONE</option>
@@ -46,6 +42,10 @@
                                                 <option value="${tipo.tipo}" <c:if test="${tipoDocumento == tipo.tipo}">selected</c:if> >${tipo.nombre}</option>
                                             </c:forEach>
                                         </select>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                        <label for="documento">*Documento:</label> 
+                                        <input class="form-control" type="text" id="documento" name="documento" value="${documento}"/>
                                     </div>
                                     <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                         <label for="nombres">*Nombres</label>
@@ -86,6 +86,7 @@
                         <div class="panel panel-info">
                             <div class="panel-heading">INFORMACIÓN DE USUARIO</div>
                             <div class="panel-body">
+                                Si especifica alguno de los campos, aquellos marcados con asterisco (*) serán obligatorios.
                                 <div class="row">
                                     <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                         <label for="usuario">*Usuario:</label> 
@@ -113,8 +114,7 @@
                         </div>
                         <div class="row" align="center">
                             <div class="col-lg-12">
-                                <button class="btn btn-default" type="submit" value="guardar" name="accion">Guardar</button>
-                                <button class="btn btn-default" type="button" name="accion" id="limpiar" value="limpiar" onclick="limpiar()">Limpiar</button>
+                                <button class="btn btn-default" type="submit" name="accion" id="guardar" value="guardar">Guardar</button>
                                 <button class="btn btn-default" type="submit" name="accion" id="cancelar" value="cancelar">Cancelar</button>
                             </div>
                         </div>
