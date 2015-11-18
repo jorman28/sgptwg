@@ -134,7 +134,7 @@ public class PersonasController extends HttpServlet {
             request.setAttribute("mensajeError", mensajeError);
             request.setAttribute("mensajeAlerta", mensajeAlerta);
             request.setAttribute("tiposDocumentos", tiposDocumentoNegocio.consultarTiposDocumentos());
-            request.setAttribute("cargos", cargosNegocio.consultarCargos(null));
+            request.setAttribute("cargos", cargosNegocio.consultarCargos(null, false));
             request.setAttribute("perfiles", perfilesNegocio.consultarPerfiles());
             request.getRequestDispatcher(redireccion).forward(request, response);
         }

@@ -88,6 +88,12 @@ public class PersonasNegocio {
                         usuario.setClave(clave);
                     }
                     if (usuario.getIdPersona() != null) {
+                        if (usuario.getClave() == null || usuario.getClave().isEmpty()) {
+                            List<UsuariosBean> usuarios = usuariosDao.consultarUsuarios(usuario.getIdPersona());
+                            if (usuarios != null && !usuarios.isEmpty()) {
+                                usuario.setClave(usuarios.get(0).getClave());
+                            }
+                        }
                         guardado = usuariosDao.actualizarUsuario(usuario);
                     } else {
                         usuario.setIdPersona(personaConsultada.getId());

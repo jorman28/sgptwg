@@ -65,6 +65,12 @@ public class UsuariosNegocio {
         if (mensajeError.isEmpty()) {
             try {
                 if (idPersona != null) {
+                    if (usuario.getClave() == null || usuario.getClave().isEmpty()) {
+                        List<UsuariosBean> usuarios = usuariosDao.consultarUsuarios(idPersona);
+                        if (usuarios != null && !usuarios.isEmpty()) {
+                            usuario.setClave(usuarios.get(0).getClave());
+                        }
+                    }
                     int actualizacion = usuariosDao.actualizarUsuario(usuario);
                     if (actualizacion > 0) {
                         mensajeExito = "El usuario ha sido guardado con éxito";
