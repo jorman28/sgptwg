@@ -18,7 +18,8 @@
             <div>${menu}</div>
             <c:import url="/jsp/general/alertas.jsp"/>
             <div class="row">
-                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" id="contenido">
+                <c:import url="/jsp/general/about.jsp"/>
+                <div class="col-xs-12 col-sm-9 col-md-9 col-lg-9" id="contenido">
                     <form id="formularioPersonas" autocomplete="off" action="./PersonasController" method="POST"> 
                         <center>
                             <c:if test="${formulario == 'CREACION'}">
