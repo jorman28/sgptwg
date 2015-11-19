@@ -22,6 +22,7 @@
                 <div class="col-xs-12 col-sm-9 col-md-9 col-lg-9" id="contenido">
                     <form autocomplete="off" action="./ProyectosController" method="POST" id="formularioProyectos">
                         <c:import url="/jsp/general/eliminacion.jsp"/>
+                        <input type="hidden" id="tipoEliminacion" name="tipoEliminacion"/>
                         <div id="modalProyectos" class="modal fade">
                             <div class="modal-dialog modal-lg">
                                 <div class="modal-content">
@@ -134,9 +135,9 @@
                                             <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                                 <label for="estado">*Estado:</label> 
                                                 <select class="form-control" id="estado" name="estado">
-                                                    <option value="0" label="SELECCIONE"/>
+                                                    <option value="0">SELECCIONE</option>
                                                     <c:forEach items="${estados}" var="esta">
-                                                        <option value="${esta.id}" label="${esta.nombre}" <c:if test="${estado == esta.id}">selected</c:if> />
+                                                        <option value="${esta.id}" <c:if test="${esta.id == estado}">selected</c:if>>${esta.nombre}</option>
                                                     </c:forEach>
                                                 </select>
                                             </div>

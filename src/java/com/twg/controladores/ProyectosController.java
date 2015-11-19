@@ -1,5 +1,6 @@
 package com.twg.controladores;
 
+import com.twg.negocio.EstadosNegocio;
 import com.twg.negocio.ProyectosNegocio;
 import com.twg.negocio.VersionesNegocio;
 import com.twg.persistencia.beans.ProyectosBean;
@@ -21,6 +22,7 @@ public class ProyectosController extends HttpServlet {
 
     ProyectosNegocio proyectosNegocio = new ProyectosNegocio();
     VersionesNegocio versionesNegocio = new VersionesNegocio();
+    EstadosNegocio estadosNegocio = new EstadosNegocio();
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -43,30 +45,52 @@ public class ProyectosController extends HttpServlet {
             accion = "";
         }
         String redireccion = "jsp/proyectos.jsp";
-        String idProyecto = request.getParameter("idProyecto");
+        String idProyectoStr = request.getParameter("idProyecto");
         String nombreProyecto = request.getParameter("nombreProyecto");
         String fechaInicioProyecto = request.getParameter("fechaInicioProyecto");
         String idPersona = request.getParameter("idPersona");
+        Integer idProyecto;
+        try {
+            idProyecto = Integer.valueOf(idProyectoStr);
+        } catch (NumberFormatException e) {
+            idProyecto = null;
+        }
 
-        String idVersion = request.getParameter("idVersion");
+        String idVersionStr = request.getParameter("idVersion");
         String idProyectoVersion = request.getParameter("idProyectoVersion");
         String fechaInicioVersion = request.getParameter("fechaInicioVersion");
         String fechaFinVersion = request.getParameter("fechaFinVersion");
         String nombreVersion = request.getParameter("nombreVersion");
         String estado = request.getParameter("estado");
         String alcance = request.getParameter("alcance");
+        Integer idVersion;
+        try {
+            idVersion = Integer.valueOf(idVersionStr);
+        } catch (NumberFormatException e) {
+            idVersion = null;
+        }
+
+        String tipoEliminacion = request.getParameter("tipoEliminacion");
 
         switch (accion) {
+            case "editarProyecto":
+                JSONObject proyecto = proyectosNegocio.consultarProyecto(idProyecto);
+                response.getWriter().write(proyecto.toJSONString());
+                break;
+            case "editarVersion":
+                JSONObject version = versionesNegocio.consultarVersion(idVersion);
+                response.getWriter().write(version.toJSONString());
+                break;
             case "guardarProyecto":
                 mensajeAlerta = proyectosNegocio.validarDatos(nombreProyecto, fechaInicioProyecto);
                 if (mensajeAlerta.isEmpty()) {
-                    mensajeError = proyectosNegocio.guardarProyecto(idProyecto, nombreVersion, fechaInicioProyecto);
+                    mensajeError = proyectosNegocio.guardarProyecto(idProyectoStr, nombreProyecto, fechaInicioProyecto);
                     if (mensajeError.isEmpty()) {
                         mensajeExito = "El proyecto ha sido guardado con éxito";
                         break;
                     }
                 }
-                request.setAttribute("idProyecto", idProyecto);
+                request.setAttribute("idProyecto", idProyectoStr);
                 request.setAttribute("nombreProyecto", nombreProyecto);
                 request.setAttribute("fechaInicioProyecto", fechaInicioProyecto);
                 request.setAttribute("idPersona", idPersona);
@@ -74,14 +98,14 @@ public class ProyectosController extends HttpServlet {
             case "guardarVersion":
                 mensajeAlerta = versionesNegocio.validarDatos(nombreVersion, fechaInicioVersion, fechaFinVersion, alcance, idProyectoVersion, estado);
                 if (mensajeAlerta.isEmpty()) {
-                    mensajeError = versionesNegocio.guardarVersion(idVersion, nombreVersion, fechaInicioVersion, fechaFinVersion, alcance, idProyectoVersion, estado);
+                    mensajeError = versionesNegocio.guardarVersion(idVersionStr, nombreVersion, fechaInicioVersion, fechaFinVersion, alcance, idProyectoVersion, estado);
                     if (mensajeError.isEmpty()) {
                         mensajeExito = "La versión ha sido guardada con éxito";
                         break;
                     }
                 }
-                request.setAttribute("idProyectoVersion", idProyecto);
-                request.setAttribute("idVersion", idVersion);
+                request.setAttribute("idProyectoVersion", idProyectoStr);
+                request.setAttribute("idVersion", idVersionStr);
                 request.setAttribute("nombreVersion", nombreVersion);
                 request.setAttribute("fechaInicioVersion", fechaInicioVersion);
                 request.setAttribute("fechaFinVersion", fechaFinVersion);
@@ -104,15 +128,33 @@ public class ProyectosController extends HttpServlet {
                 array.add(object);
                 response.getWriter().write(array.toJSONString());
                 break;
+            case "eliminar":
+                if (tipoEliminacion != null && !tipoEliminacion.isEmpty()) {
+                    if (tipoEliminacion.equals("VERSION")) {
+                        mensajeError = versionesNegocio.eliminarVersion(idVersion, null);
+                        if(mensajeError.isEmpty()){
+                            mensajeExito = "La versión ha sido eliminada con éxito";
+                        }
+                    } else {
+                        mensajeError = proyectosNegocio.eliminarProyecto(idProyecto);
+                        if(mensajeError.isEmpty()){
+                            mensajeExito = "El proyecto ha sido eliminado con éxito";
+                        }
+                    }
+                } else {
+                    mensajeError = "No se especificó tipo de eliminación";
+                }
+                break;
             default:
                 break;
         }
 
-        if (!accion.equals("hola")) {
+        if (!accion.equals("editarProyecto") && !accion.equals("editarVersion") && !accion.equals("completarPersonas")) {
             request.setAttribute("mensajeError", mensajeError);
             request.setAttribute("mensajeExito", mensajeExito);
             request.setAttribute("mensajeAlerta", mensajeAlerta);
             request.setAttribute("listaProyectos", listarProyectos());
+            request.setAttribute("estados", estadosNegocio.consultarEstados(null, null));
             request.getRequestDispatcher(redireccion).forward(request, response);
         }
     }
@@ -133,8 +175,8 @@ public class ProyectosController extends HttpServlet {
                         + "                         </div>\n"
                         + "                     </a>\n"
                         + "                     <div class=\"col-xs-2 col-sm-1 col-md-1 col-lg-1\">\n"
-                        + "                         <span class=\"glyphicon glyphicon-pencil\" data-toggle=\"modal\" data-target=\"#modalProyectos\"></span>\n"
-                        + "                         <span class=\"glyphicon glyphicon-remove\" onclick=\"$('#proyecto" + proyecto.getId() + "').remove();\"></span>\n"
+                        + "                         <span class=\"glyphicon glyphicon-pencil\" onclick=\"editarProyecto(" + proyecto.getId() + ");\"></span>\n"
+                        + "                         <span class=\"glyphicon glyphicon-remove\" onclick=\"eliminarProyecto(" + proyecto.getId() + ");\"></span>\n"
                         + "                     </div>\n"
                         + "                 </div>\n"
                         + "             </h4>\n"
@@ -144,14 +186,14 @@ public class ProyectosController extends HttpServlet {
                 List<VersionesBean> listaVersiones = versionesNegocio.consultarVersiones(null, proyecto.getId());
                 if (listaVersiones != null && !listaVersiones.isEmpty()) {
                     for (VersionesBean version : listaVersiones) {
-                        lista += "                 <li class=\"list-group-item\" id=\"version"+version.getId()+"\">\n"
+                        lista += "                 <li class=\"list-group-item\" id=\"version" + version.getId() + "\">\n"
                                 + "                     <div class=\"row\">\n"
                                 + "                         <div class=\"col-xs-10 col-sm-11 col-md-11 col-lg-11\">\n"
-                                + "                             "+version.getNombre()+"\n"
+                                + "                             " + version.getNombre() + "\n"
                                 + "                         </div>\n"
                                 + "                         <div class=\"col-xs-2 col-sm-1 col-md-1 col-lg-1\">\n"
-                                + "                             <span class=\"glyphicon glyphicon-pencil\" data-toggle=\"modal\" data-target=\"#modalVersiones\"></span>\n"
-                                + "                             <span class=\"glyphicon glyphicon-remove\" onclick=\"$('#version"+version.getId()+"').remove();\"></span>\n"
+                                + "                             <span class=\"glyphicon glyphicon-pencil\" onclick=\"editarVersion(" + version.getId() + ")\"></span>\n"
+                                + "                             <span class=\"glyphicon glyphicon-remove\" onclick=\"eliminarVersion(" + version.getId() + ");\"></span>\n"
                                 + "                         </div>\n"
                                 + "                     </div>\n"
                                 + "                 </li>\n";
@@ -162,7 +204,7 @@ public class ProyectosController extends HttpServlet {
                         + "                         <div class=\"col-xs-11 col-sm-11 col-md-11 col-lg-11\">\n"
                         + "                         </div>\n"
                         + "                         <div class=\"col-xs-1 col-sm-1 col-md-1 col-lg-1\">\n"
-                        + "                             <span class=\"glyphicon glyphicon-plus\" onclick=\"nuevaVersion("+proyecto.getId()+");\"></span>\n"
+                        + "                             <span class=\"glyphicon glyphicon-plus\" onclick=\"nuevaVersion(" + proyecto.getId() + ");\"></span>\n"
                         + "                         </div>\n"
                         + "                     </div>\n"
                         + "                 </li>\n"

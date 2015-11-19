@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.json.simple.JSONObject;
 
 /**
  *
@@ -84,7 +85,7 @@ public class VersionesNegocio {
                 validacion += "El valor ingresado en el campo 'Proyecto' no corresponde al id de un proyecto \n";
             }
         }
-        if (estado == null || estado.isEmpty()) {
+        if (estado == null || estado.equals("0")) {
             validacion += "El campo 'Estado' no debe estar vacío \n";
         } else {
             try {
@@ -98,8 +99,8 @@ public class VersionesNegocio {
         }
         return validacion;
     }
-    
-    public List<VersionesBean> consultarVersiones(Integer id, Integer idProyecto){
+
+    public List<VersionesBean> consultarVersiones(Integer id, Integer idProyecto) {
         List<VersionesBean> listaVersiones = new ArrayList<>();
         try {
             listaVersiones = versionesDao.consultarVersiones(id, idProyecto);
@@ -107,5 +108,34 @@ public class VersionesNegocio {
             Logger.getLogger(VersionesNegocio.class.getName()).log(Level.SEVERE, null, ex);
         }
         return listaVersiones;
+    }
+
+    public JSONObject consultarVersion(Integer idVersion) {
+        JSONObject object = new JSONObject();
+        List<VersionesBean> listaVersiones = consultarVersiones(idVersion, null);
+        if (listaVersiones != null && !listaVersiones.isEmpty()) {
+            object.put("idVersion", listaVersiones.get(0).getId());
+            object.put("idProyecto", listaVersiones.get(0).getProyecto());
+            object.put("nombreVersion", listaVersiones.get(0).getNombre());
+            object.put("estado", listaVersiones.get(0).getEstado());
+            object.put("fechaInicio", listaVersiones.get(0).getFechaInicio() != null ? sdf.format(listaVersiones.get(0).getFechaInicio()) : "");
+            object.put("fechaFin", listaVersiones.get(0).getFechaTerminacion()!= null ? sdf.format(listaVersiones.get(0).getFechaTerminacion()) : "");
+            object.put("alcance", listaVersiones.get(0).getAlcance());
+        }
+        return object;
+    }
+    
+    public String eliminarVersion(Integer idVersion, Integer idProyecto) {
+        String error = "";
+        try {
+            int eliminacion = versionesDao.eliminarVersion(idVersion, idProyecto);
+            if(eliminacion == 0){
+                error = "La versión no pudo ser eliminada";
+            }
+        } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
+            Logger.getLogger(ProyectosNegocio.class.getName()).log(Level.SEVERE, null, ex);
+            error = "Ocurrió un error eliminando la versión";
+        }
+        return error;
     }
 }

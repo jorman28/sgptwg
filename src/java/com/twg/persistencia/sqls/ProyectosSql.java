@@ -19,7 +19,7 @@ public class ProyectosSql {
     }
 
     public String insertarProyecto() {
-        return "INSERT INTO PROYECTOS (nombre,fecha_inicio) VALUES (?,?,?)";
+        return "INSERT INTO PROYECTOS (nombre,fecha_inicio) VALUES (?,?)";
     }
 
     public String actualizarProyecto() {
@@ -27,6 +27,6 @@ public class ProyectosSql {
     }
 
     public String eliminarProyecto() {
-        return "UPDATE PROYECTOS SET fecha_eliminacion = ? WHERE id = ?";
+        return "UPDATE PROYECTOS SET fecha_eliminacion = now() WHERE id = ?";
     }
 }

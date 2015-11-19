@@ -68,4 +68,16 @@ public class ProyectosDao {
         con.close();
         return actualizacion;
     }
+    
+    public int eliminarProyecto(Integer idProyecto) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
+        Connection con;
+        con = new ConexionBaseDatos().obtenerConexion();
+        PreparedStatement ps;
+        ps = con.prepareStatement(sql.eliminarProyecto());
+        ps.setInt(1, idProyecto);
+        int eliminacion = ps.executeUpdate();
+        ps.close();
+        con.close();
+        return eliminacion;
+    }
 }

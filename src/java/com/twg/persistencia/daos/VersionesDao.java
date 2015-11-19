@@ -82,4 +82,15 @@ public class VersionesDao {
         con.close();
         return actualizacion;
     }
+
+    public int eliminarVersion(Integer idVersion, Integer idProyecto) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
+        Connection con;
+        con = new ConexionBaseDatos().obtenerConexion();
+        PreparedStatement ps;
+        ps = con.prepareStatement(sql.eliminarVersion(idVersion, idProyecto));
+        int actualizacion = ps.executeUpdate();
+        ps.close();
+        con.close();
+        return actualizacion;
+    }
 }
