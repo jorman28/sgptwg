@@ -15,39 +15,33 @@ public class EstadosActividadesSql {
     }
 
     public String consultarEstadosActividades() {
-        return "SELECT * FROM estados_actividades";
+        return "SELECT * FROM estados WHERE fecha_eliminacion IS NULL ";
     }
 
     public String consultarEstadosActividades(Integer id, String nombre) {
-        String sql = "";
-        if ("".equals(nombre)) nombre = null;
-        if (id == null && nombre == null) {
-            sql += "SELECT * FROM estados_actividades";
-        } else {
-            if (id != null) {
-                sql += "SELECT * FROM estados_actividades Where id = " + id + "";
-            } else {
-                if (nombre != null) {
-                    sql += "SELECT * FROM estados_actividades Where nombre = '" + nombre + "'";
-                }
-            }
-        } 
+        String sql = "SELECT * FROM estados WHERE fecha_eliminacion IS NULL ";
+        if (id != null) {
+            sql += "AND id = " + id + " ";
+        }
+        if (nombre != null) {
+            sql += "AND nombre LIKE '%" + nombre + "%'";
+        }
         return sql;
     }
 
     public String insertarEstadoActividad() {
-        return "INSERT INTO estados_actividades (nombre) VALUES (?)";
+        return "INSERT INTO estados (nombre) VALUES (?)";
     }
 
     public String actualizarEstadoActividad() {
-        return "UPDATE estados_actividades SET nombre = ? WHERE id = ?";
+        return "UPDATE estados SET nombre = ? WHERE id = ?";
     }
 
     public String eliminarEstadoActividad() {
-        return "DELETE FROM estados_actividades WHERE id = ?";
+        return "DELETE FROM estados WHERE id = ?";
     }
-    
-    public String consultarId(String nombre){
-        return "SELECT id FROM estados_actividades WHERE nombre = '"+nombre+"'";
+
+    public String consultarId(String nombre) {
+        return "SELECT id FROM estados WHERE nombre = '" + nombre + "'";
     }
 }
