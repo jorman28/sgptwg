@@ -10,16 +10,20 @@ public class ProyectosSql {
         return "SELECT COUNT(*) FROM PROYECTOS";
     }
 
-    public String consultarProyectos() {
-        return "SELECT * FROM PROYECTOS";
+    public String consultarProyectos(Integer id) {
+        String sql = "SELECT * FROM PROYECTOS WHERE fecha_eliminacion IS NULL ";
+        if (id != null) {
+            sql += "AND id = " + id + " ";
+        }
+        return sql;
     }
 
     public String insertarProyecto() {
-        return "INSERT INTO PROYECTOS (nombre,fecha_inicio,id_persona) VALUES (?,?,?)";
+        return "INSERT INTO PROYECTOS (nombre,fecha_inicio) VALUES (?,?,?)";
     }
 
     public String actualizarProyecto() {
-        return "UPDATE PROYECTOS SET nombre = ?, fecha_inicio = ?, id_persona = ? WHERE id = ?";
+        return "UPDATE PROYECTOS SET nombre = ?, fecha_inicio = ? WHERE id = ?";
     }
 
     public String eliminarProyecto() {

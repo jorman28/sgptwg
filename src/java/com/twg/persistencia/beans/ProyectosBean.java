@@ -10,7 +10,6 @@ public class ProyectosBean {
     private Integer id;
     private String nombre;
     private Date fechaInicio;
-    private Integer idPersona;
     private Date fechaEliminacion;
 
     public Integer getId() {
@@ -35,14 +34,6 @@ public class ProyectosBean {
 
     public void setFechaInicio(Date fechaInicio) {
         this.fechaInicio = fechaInicio;
-    }
-
-    public Integer getIdPersona() {
-        return idPersona;
-    }
-
-    public void setIdPersona(Integer idPersona) {
-        this.idPersona = idPersona;
     }
 
     public Date getFechaEliminacion() {

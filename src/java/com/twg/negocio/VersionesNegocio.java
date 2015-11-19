@@ -5,6 +5,8 @@ import com.twg.persistencia.daos.VersionesDao;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -95,5 +97,15 @@ public class VersionesNegocio {
             validacion += "El campo 'Alcance' no debe estar vacío \n";
         }
         return validacion;
+    }
+    
+    public List<VersionesBean> consultarVersiones(Integer id, Integer idProyecto){
+        List<VersionesBean> listaVersiones = new ArrayList<>();
+        try {
+            listaVersiones = versionesDao.consultarVersiones(id, idProyecto);
+        } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
+            Logger.getLogger(VersionesNegocio.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return listaVersiones;
     }
 }

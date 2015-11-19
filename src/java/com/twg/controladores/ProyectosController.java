@@ -2,7 +2,10 @@ package com.twg.controladores;
 
 import com.twg.negocio.ProyectosNegocio;
 import com.twg.negocio.VersionesNegocio;
+import com.twg.persistencia.beans.ProyectosBean;
+import com.twg.persistencia.beans.VersionesBean;
 import java.io.IOException;
+import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -55,9 +58,9 @@ public class ProyectosController extends HttpServlet {
 
         switch (accion) {
             case "guardarProyecto":
-                mensajeAlerta = proyectosNegocio.validarDatos(nombreProyecto, fechaInicioProyecto, idPersona);
+                mensajeAlerta = proyectosNegocio.validarDatos(nombreProyecto, fechaInicioProyecto);
                 if (mensajeAlerta.isEmpty()) {
-                    mensajeError = proyectosNegocio.guardarProyecto(idProyecto, nombreVersion, fechaInicioProyecto, idPersona);
+                    mensajeError = proyectosNegocio.guardarProyecto(idProyecto, nombreVersion, fechaInicioProyecto);
                     if (mensajeError.isEmpty()) {
                         mensajeExito = "El proyecto ha sido guardado con éxito";
                         break;
@@ -109,8 +112,69 @@ public class ProyectosController extends HttpServlet {
             request.setAttribute("mensajeError", mensajeError);
             request.setAttribute("mensajeExito", mensajeExito);
             request.setAttribute("mensajeAlerta", mensajeAlerta);
+            request.setAttribute("listaProyectos", listarProyectos());
             request.getRequestDispatcher(redireccion).forward(request, response);
         }
+    }
+
+    private String listarProyectos() {
+        String lista = "";
+        List<ProyectosBean> listaProyectos = proyectosNegocio.consultarProyectos(null);
+        if (listaProyectos != null && !listaProyectos.isEmpty()) {
+            for (ProyectosBean proyecto : listaProyectos) {
+                lista += "  <div class=\"panel-group\" id=\"proyecto" + proyecto.getId() + "\" role=\"tablist\" aria-multiselectable=\"true\">\n"
+                        + "     <div class=\"panel panel-default\">\n"
+                        + "         <div class=\"panel-heading\" id=\"headingProyecto" + proyecto.getId() + "\">\n"
+                        + "             <h4 class=\"panel-title\">\n"
+                        + "                 <div class=\"row\">\n"
+                        + "                     <a role=\"button\" data-toggle=\"collapse\" data-parent=\"#proyecto" + proyecto.getId() + "\" href=\"#collapseProyecto" + proyecto.getId() + "\" aria-expanded=\"true\" aria-controls=\"collapseProyecto" + proyecto.getId() + "\">\n"
+                        + "                         <div class=\"col-xs-10 col-sm-11 col-md-11 col-lg-11\">\n"
+                        + "                             " + proyecto.getNombre() + "\n"
+                        + "                         </div>\n"
+                        + "                     </a>\n"
+                        + "                     <div class=\"col-xs-2 col-sm-1 col-md-1 col-lg-1\">\n"
+                        + "                         <span class=\"glyphicon glyphicon-pencil\" data-toggle=\"modal\" data-target=\"#modalProyectos\"></span>\n"
+                        + "                         <span class=\"glyphicon glyphicon-remove\" onclick=\"$('#proyecto" + proyecto.getId() + "').remove();\"></span>\n"
+                        + "                     </div>\n"
+                        + "                 </div>\n"
+                        + "             </h4>\n"
+                        + "         </div>\n"
+                        + "         <div id=\"collapseProyecto" + proyecto.getId() + "\" class=\"panel-collapse collapse\" role=\"tabpanel\" aria-labelledby=\"headingProyecto" + proyecto.getId() + "\">\n"
+                        + "             <ul class=\"list-group\">\n";
+                List<VersionesBean> listaVersiones = versionesNegocio.consultarVersiones(null, proyecto.getId());
+                if (listaVersiones != null && !listaVersiones.isEmpty()) {
+                    for (VersionesBean version : listaVersiones) {
+                        lista += "                 <li class=\"list-group-item\" id=\"version"+version.getId()+"\">\n"
+                                + "                     <div class=\"row\">\n"
+                                + "                         <div class=\"col-xs-10 col-sm-11 col-md-11 col-lg-11\">\n"
+                                + "                             "+version.getNombre()+"\n"
+                                + "                         </div>\n"
+                                + "                         <div class=\"col-xs-2 col-sm-1 col-md-1 col-lg-1\">\n"
+                                + "                             <span class=\"glyphicon glyphicon-pencil\" data-toggle=\"modal\" data-target=\"#modalVersiones\"></span>\n"
+                                + "                             <span class=\"glyphicon glyphicon-remove\" onclick=\"$('#version"+version.getId()+"').remove();\"></span>\n"
+                                + "                         </div>\n"
+                                + "                     </div>\n"
+                                + "                 </li>\n";
+                    }
+                }
+                lista += "                 <li class=\"list-group-item\">\n"
+                        + "                     <div class=\"row\">\n"
+                        + "                         <div class=\"col-xs-11 col-sm-11 col-md-11 col-lg-11\">\n"
+                        + "                         </div>\n"
+                        + "                         <div class=\"col-xs-1 col-sm-1 col-md-1 col-lg-1\">\n"
+                        + "                             <span class=\"glyphicon glyphicon-plus\" onclick=\"nuevaVersion("+proyecto.getId()+");\"></span>\n"
+                        + "                         </div>\n"
+                        + "                     </div>\n"
+                        + "                 </li>\n"
+                        + "             </ul>\n"
+                        + "         </div>\n"
+                        + "     </div>\n"
+                        + " </div>";
+            }
+        } else {
+            lista = "<h3>No se encontraron proyectos en el sistema</h3>";
+        }
+        return lista;
     }
 
     /**

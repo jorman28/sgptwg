@@ -17,3 +17,22 @@ $(function() {
         }
     });
 });
+
+function nuevoProyecto(){
+    $("#idProyecto").val('');
+    $("#nombreProyecto").val('');
+    $("#fechaInicioProyecto").val('');
+    $("#clientesProyecto").html('No se han agregado clientes al proyecto');
+    $("#empleadosProyecto").html('No se han agregado empleados al proyecto');
+    $("#modalProyectos").modal("show");
+}
+
+function nuevaVersion(idProyecto){
+    $("#idProyectoVersion").val(idProyecto);
+    $("#nombreVersion").val('');
+    $("#estado").val('');
+    $("#fechaInicioVersion").val('');
+    $("#fechaFinVersion").val('');
+    $("#alcance").val('');
+    $("#modalVersiones").modal("show");
+}

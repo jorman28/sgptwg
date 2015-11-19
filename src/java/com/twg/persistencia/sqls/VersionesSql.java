@@ -10,7 +10,7 @@ public class VersionesSql {
         return "SELECT COUNT(*) FROM VERSIONES";
     }
 
-    public String consultarVersiones(Integer id) {
+    public String consultarVersiones(Integer id, Integer idProyecto) {
         String sql = "  SELECT  "
                 + "         ver.id, "
                 + "         ver.nombre, "
@@ -29,7 +29,10 @@ public class VersionesSql {
                 + "         estados est ON est.id = ver.estado "
                 + "     WHERE 1 = 1 ";
         if (id != null) {
-            sql += "        AND ver.id = " + id;
+            sql += "        AND ver.id = " + id + " ";
+        }
+        if (idProyecto != null) {
+            sql += "        AND pro.id = " + idProyecto + " ";
         }
         return sql;
     }

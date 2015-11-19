@@ -19,12 +19,12 @@ public class ProyectosDao {
 
     private final ProyectosSql sql = new ProyectosSql();
 
-    public List<ProyectosBean> consultarProyectos() throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
+    public List<ProyectosBean> consultarProyectos(Integer id) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         List<ProyectosBean> listaProyectos = new ArrayList();
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;
-        ps = con.prepareStatement(sql.consultarProyectos());
+        ps = con.prepareStatement(sql.consultarProyectos(id));
         ResultSet rs;
         rs = ps.executeQuery();
         while (rs.next()) {
@@ -32,7 +32,6 @@ public class ProyectosDao {
             proyecto.setId(rs.getInt("id"));
             proyecto.setNombre(rs.getString("nombre"));
             proyecto.setFechaInicio(rs.getDate("fecha_inicio"));
-            proyecto.setIdPersona(rs.getInt("id_persona"));
             proyecto.setFechaEliminacion(rs.getDate("fecha_eliminacion"));
 
             listaProyectos.add(proyecto);
@@ -50,7 +49,6 @@ public class ProyectosDao {
         ps = con.prepareStatement(sql.insertarProyecto());
         ps.setString(1, proyecto.getNombre());
         ps.setDate(2, new Date(proyecto.getFechaInicio().getTime()));
-        ps.setInt(3, proyecto.getIdPersona());
         int insercion = ps.executeUpdate();
         ps.close();
         con.close();
@@ -64,8 +62,7 @@ public class ProyectosDao {
         ps = con.prepareStatement(sql.actualizarProyecto());
         ps.setString(1, proyecto.getNombre());
         ps.setDate(2, new Date(proyecto.getFechaInicio().getTime()));
-        ps.setInt(3, proyecto.getIdPersona());
-        ps.setInt(4, proyecto.getId());
+        ps.setInt(3, proyecto.getId());
         int actualizacion = ps.executeUpdate();
         ps.close();
         con.close();

@@ -5,6 +5,8 @@ import com.twg.persistencia.daos.ProyectosDao;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -17,11 +19,10 @@ public class ProyectosNegocio {
     private final ProyectosDao proyectosDao = new ProyectosDao();
     private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
-    public String guardarProyecto(String id, String nombre, String fechaInicio, String responsable) {
+    public String guardarProyecto(String id, String nombre, String fechaInicio) {
         String error = "";
         ProyectosBean proyecto = new ProyectosBean();
         proyecto.setNombre(nombre);
-        proyecto.setIdPersona(Integer.valueOf(responsable));
         try {
             proyecto.setFechaInicio(sdf.parse(fechaInicio));
         } catch (ParseException ex) {
@@ -44,19 +45,10 @@ public class ProyectosNegocio {
         return error;
     }
 
-    public String validarDatos(String nombre, String fechaInicio, String responsable) {
+    public String validarDatos(String nombre, String fechaInicio) {
         String validacion = "";
         if (nombre == null || nombre.isEmpty()) {
             validacion += "El campo 'Nombre' no debe estar vacío \n";
-        }
-        if (responsable == null || responsable.isEmpty()) {
-            validacion += "El campo 'Responsable' no debe estar vacío \n";
-        } else {
-            try {
-                Integer.valueOf(responsable);
-            } catch (NumberFormatException e) {
-                validacion += "El valor ingresado en el campo 'Responsable' no corresponde al id de un cliente \n";
-            }
         }
         if (fechaInicio == null || fechaInicio.isEmpty()) {
             validacion += "El campo 'Fecha de inicio' no debe estar vacío \n";
@@ -68,5 +60,15 @@ public class ProyectosNegocio {
             }
         }
         return validacion;
+    }
+    
+    public List<ProyectosBean> consultarProyectos(Integer id){
+        List<ProyectosBean> listaProyectos = new ArrayList<>();
+        try {
+            listaProyectos = proyectosDao.consultarProyectos(id);
+        } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
+            Logger.getLogger(ProyectosNegocio.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return listaProyectos;
     }
 }
