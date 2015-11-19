@@ -34,13 +34,13 @@ public class UsuariosSql {
             sql +=  "	AND usu.id_persona = "+idPersona+" ";
         }
         if(usuario != null && !usuario.isEmpty()){
-            sql +=  "	AND usu.usuario = '"+usuario+"' ";
+            sql +=  "	AND BINARY usu.usuario = '"+usuario+"' ";
         }
         if(activo != null && !activo.isEmpty()){
             sql +=  "	AND usu.activo = '"+activo+"' ";
         }
         if(documento != null && !documento.isEmpty()){
-            sql +=  "	AND per.documento LIKE '%"+documento+"%' ";
+            sql +=  "	AND per.documento = '"+documento+"' ";
         }
         if(tipoDocumento != null && !tipoDocumento.isEmpty() && !tipoDocumento.endsWith("0")){
             sql +=  "	AND per.tipo_documento = '"+tipoDocumento+"' ";
@@ -60,7 +60,7 @@ public class UsuariosSql {
     }
 
     public String eliminarUsuario() {
-        return "DELETE FROM usuarios WHERE id_persona = ?";
+        return "UPDATE USUARIOS SET fecha_eliminacion = now(), activo = 'F' WHERE id_persona = ?";
     }
 
 }

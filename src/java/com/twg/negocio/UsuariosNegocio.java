@@ -14,11 +14,12 @@ import java.util.logging.Logger;
 import org.json.simple.JSONObject;
 
 public class UsuariosNegocio {
+
     private final UsuariosDao usuariosDao = new UsuariosDao();
     private final PersonasDao personasDao = new PersonasDao();
     private final PerfilesNegocio perfilesNegocio = new PerfilesNegocio();
-    
-    public JSONObject consultarUsuario(Integer idPersona){
+
+    public JSONObject consultarUsuario(Integer idPersona) {
         JSONObject jsonUsuario = new JSONObject();
         if (idPersona != null) {
             try {
@@ -38,8 +39,8 @@ public class UsuariosNegocio {
         }
         return jsonUsuario;
     }
-    
-    public List<UsuariosBean> consultarUsuarios(Integer idPersona, String nombreUsuario, Integer perfil, String activo, String documento, String tipoDocumento){
+
+    public List<UsuariosBean> consultarUsuarios(Integer idPersona, String nombreUsuario, Integer perfil, String activo, String documento, String tipoDocumento) {
         List<UsuariosBean> listaUsuarios = new ArrayList<>();
         try {
             listaUsuarios = usuariosDao.consultarUsuarios(idPersona, nombreUsuario, perfil, activo, documento, tipoDocumento);
@@ -48,8 +49,8 @@ public class UsuariosNegocio {
         }
         return listaUsuarios;
     }
-    
-    public Map<String, Object> crearUsuario(Integer idPersona, String nombreUsuario, String clave, String clave2, Integer perfil, String activo, String documento, String tipoDocumento){
+
+    public Map<String, Object> crearUsuario(Integer idPersona, String nombreUsuario, String clave, String clave2, Integer perfil, String activo, String documento, String tipoDocumento) {
         UsuariosBean usuario = new UsuariosBean();
         usuario.setUsuario(nombreUsuario);
         usuario.setClave(clave);
@@ -58,12 +59,18 @@ public class UsuariosNegocio {
         usuario.setDocumento(documento);
         usuario.setTipoDocumento(tipoDocumento);
         usuario.setIdPersona(idPersona);
-        
+
         String mensajeExito = "";
         String mensajeError = validarDatos(usuario, clave2);
         if (mensajeError.isEmpty()) {
             try {
                 if (idPersona != null) {
+                    if (usuario.getClave() == null || usuario.getClave().isEmpty()) {
+                        List<UsuariosBean> usuarios = usuariosDao.consultarUsuarios(idPersona);
+                        if (usuarios != null && !usuarios.isEmpty()) {
+                            usuario.setClave(usuarios.get(0).getClave());
+                        }
+                    }
                     int actualizacion = usuariosDao.actualizarUsuario(usuario);
                     if (actualizacion > 0) {
                         mensajeExito = "El usuario ha sido guardado con éxito";
@@ -96,16 +103,16 @@ public class UsuariosNegocio {
             }
         }
         Map<String, Object> result = new HashMap<>();
-        if(!mensajeError.isEmpty()){
+        if (!mensajeError.isEmpty()) {
             result.put("mensajeError", mensajeError);
         }
-        if(!mensajeExito.isEmpty()){
+        if (!mensajeExito.isEmpty()) {
             result.put("mensajeExito", mensajeExito);
         }
         return result;
     }
-    
-    public Map<String, Object> eliminarUsuario(Integer idPersona){
+
+    public Map<String, Object> eliminarUsuario(Integer idPersona) {
         String mensajeExito = "";
         String mensajeError = "";
         if (idPersona != null) {
@@ -124,37 +131,37 @@ public class UsuariosNegocio {
             mensajeError = "El usuario no pudo ser eliminado";
         }
         Map<String, Object> result = new HashMap<>();
-        if(!mensajeError.isEmpty()){
+        if (!mensajeError.isEmpty()) {
             result.put("mensajeError", mensajeError);
         }
-        if(!mensajeExito.isEmpty()){
+        if (!mensajeExito.isEmpty()) {
             result.put("mensajeExito", mensajeExito);
         }
         return result;
     }
-    
+
     private String validarDatos(UsuariosBean usuario, String clave2) {
         String error = "";
         if (usuario.getDocumento() == null || usuario.getDocumento().isEmpty()) {
-            error += "El campo 'Documento' es obligatorio <br/>";
+            error += "El campo 'Documento' es obligatorio \n";
         }
 
         if (usuario.getTipoDocumento() == null || usuario.getTipoDocumento().isEmpty() || usuario.getTipoDocumento().equals("0")) {
-            error += "El campo 'Tipo de documento' es obligatorio <br/>";
+            error += "El campo 'Tipo de documento' es obligatorio \n";
         }
 
         if (usuario.getUsuario() == null || usuario.getUsuario().isEmpty()) {
-            error += "El campo 'Usuario' es obligatorio <br/>";
+            error += "El campo 'Usuario' es obligatorio \n";
         } else {
             try {
                 List<UsuariosBean> usuarios = usuariosDao.consultarUsuarios(usuario.getUsuario());
                 if (usuarios != null && !usuarios.isEmpty()) {
                     if (usuario.getIdPersona() != null) {
                         if (usuario.getIdPersona().intValue() != usuarios.get(0).getIdPersona().intValue()) {
-                            error += "El usuario a ingresar no está disponible <br/>";
+                            error += "El usuario a ingresar no está disponible \n";
                         }
                     } else {
-                        error += "El usuario a ingresar no está disponible <br/>";
+                        error += "El usuario a ingresar no está disponible \n";
                     }
                 }
             } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
@@ -162,37 +169,54 @@ public class UsuariosNegocio {
             }
         }
 
+        UsuariosBean objetoUsuario = null;
+        if (usuario.getDocumento() != null && !usuario.getDocumento().isEmpty()
+                && usuario.getTipoDocumento() != null && !usuario.getTipoDocumento().equals("0")) {
+            try {
+                List<UsuariosBean> listaUsuarios = usuariosDao.consultarUsuarios(null, null, null, null, usuario.getDocumento(), usuario.getTipoDocumento());
+                if (listaUsuarios != null && !listaUsuarios.isEmpty()) {
+                    objetoUsuario = listaUsuarios.get(0);
+                }
+            } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
+                Logger.getLogger(PersonasNegocio.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
         if (usuario.getClave() == null || usuario.getClave().isEmpty()) {
-            error += "El campo 'Clave' es obligatorio <br/>";
+            if (objetoUsuario == null) {
+                error += "El campo 'Clave' es obligatorio \n";
+            } else if (clave2 != null && !clave2.isEmpty()) {
+                error += "El campo 'Clave' es obligatorio \n";
+            }
         } else {
             if (clave2 == null || clave2.isEmpty()) {
-                error += "El campo 'Confirmar clave' es obligatorio <br/>";
+                error += "El campo 'Confirmar clave' es obligatorio \n";
             } else if (!usuario.getClave().equals(clave2)) {
-                error += "El valor en el campo 'Clave' y 'Confirmar clave' deben ser iguales <br/>";
+                error += "El valor en el campo 'Clave' y 'Confirmar clave' deben ser iguales \n";
             }
         }
 
         if (usuario.getPerfil() == null) {
-            error += "El campo 'Perfil' es obligatorio <br/>";
+            error += "El campo 'Perfil' es obligatorio \n";
         }
 
         if (usuario.getActivo() == null || usuario.getActivo().isEmpty()) {
-            error += "El campo 'Estado' es obligatorio <br/>";
+            error += "El campo 'Estado' es obligatorio \n";
         }
         return error;
     }
-    
-    public Map<String, Object> validarInicioSession(String contexto, String usuario, String clave){
+
+    public Map<String, Object> validarInicioSession(String contexto, String usuario, String clave) {
         Map<String, Object> resultado = new HashMap<>();
         String mensajeError = "";
         String mensajeAlerta = "";
-        if(usuario != null && !usuario.isEmpty()){
-            if(clave != null && !clave.isEmpty()){
+        if (usuario != null && !usuario.isEmpty()) {
+            if (clave != null && !clave.isEmpty()) {
                 try {
                     List<UsuariosBean> listaUsuarios = usuariosDao.consultarUsuarios(usuario);
-                    if(listaUsuarios != null && !listaUsuarios.isEmpty()){
-                        if(listaUsuarios.get(0).getClave().equals(clave)){
-                            if(listaUsuarios.get(0).getActivo() != null && listaUsuarios.get(0).getActivo().equals("T")){
+                    if (listaUsuarios != null && !listaUsuarios.isEmpty()) {
+                        if (listaUsuarios.get(0).getClave().equals(clave)) {
+                            if (listaUsuarios.get(0).getActivo() != null && listaUsuarios.get(0).getActivo().equals("T")) {
                                 /* TODO: Agregar consulta de perfil y permisos */
                                 Map<Integer, Map<String, Object>> permisos = perfilesNegocio.consultarPermisosPorPagina(listaUsuarios.get(0).getPerfil());
                                 String menu = perfilesNegocio.construccionMenuNavegacion(permisos, contexto);
@@ -217,10 +241,10 @@ public class UsuariosNegocio {
         } else {
             mensajeAlerta = "Debe ingresar el usuario";
         }
-        if(!mensajeAlerta.isEmpty()){
+        if (!mensajeAlerta.isEmpty()) {
             resultado.put("mensajeAlerta", mensajeAlerta);
         }
-        if(!mensajeError.isEmpty()){
+        if (!mensajeError.isEmpty()) {
             resultado.put("mensajeError", mensajeError);
         }
         return resultado;

@@ -37,7 +37,7 @@ public class ClientesDao {
         rs = ps.executeQuery();
         while(rs.next()){
             ClientesBean cliente = new ClientesBean();
-            cliente.setId_persona(rs.getInt("id_persona"));
+            cliente.setId(rs.getInt("id_persona"));
             cliente.setFecha_inicio(rs.getDate("fecha_inicio"));
             
             listaClientes.add(cliente);
@@ -53,7 +53,7 @@ public class ClientesDao {
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;
         ps = con.prepareStatement(sql.insertarCliente());
-        ps.setInt(1, cliente.getId_persona());
+        ps.setInt(1, cliente.getId());
         ps.setDate(2, new Date(cliente.getFecha_inicio().getTime()));
         int insercion = ps.executeUpdate();
         ps.close();
@@ -67,7 +67,7 @@ public class ClientesDao {
         PreparedStatement ps;
         ps = con.prepareStatement(sql.actualizarCliente());
         ps.setDate(1, new Date(cliente.getFecha_inicio().getTime()));
-        ps.setInt(2, cliente.getId_persona());
+        ps.setInt(2, cliente.getId());
         int actualizacion = ps.executeUpdate();
         ps.close();
         con.close();
