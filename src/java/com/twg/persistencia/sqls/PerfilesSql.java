@@ -17,7 +17,7 @@ public class PerfilesSql {
         if(idPerfil != null){
             sql.append("AND id = ").append(idPerfil).append(" ");
         }
-        if(nombrePerfil != null){
+        if(nombrePerfil != null && !nombrePerfil.isEmpty()){
             if(nombreExacto){
                 sql.append("AND nombre = \"").append(nombrePerfil).append("\" ");
             } else {

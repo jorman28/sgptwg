@@ -1,9 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package com.twg.persistencia.beans;
 
 /**
@@ -12,24 +6,31 @@ package com.twg.persistencia.beans;
  */
 public class PersonasBean {
 
-    private int id;
+    private Integer id;
     private String documento;
-    private String tipo_documento;
+    private String tipoDocumento;
+    private String nombreTipoDocumento;
     private String nombres;
     private String apellidos;
     private String direccion;
     private String telefono;
     private String celular;
     private String correo;
-    
-    public PersonasBean(){
+    private String usuario;
+    private String clave;
+    private Integer perfil;
+    private String nombrePerfil;
+    private Integer cargo;
+    private String nombreCargo;
+
+    public PersonasBean() {
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -39,14 +40,6 @@ public class PersonasBean {
 
     public void setDocumento(String documento) {
         this.documento = documento;
-    }
-
-    public String getTipo_documento() {
-        return tipo_documento;
-    }
-
-    public void setTipo_documento(String tipo_documento) {
-        this.tipo_documento = tipo_documento;
     }
 
     public String getNombres() {
@@ -96,6 +89,69 @@ public class PersonasBean {
     public void setCorreo(String correo) {
         this.correo = correo;
     }
-    
-    
+
+    public String getTipoDocumento() {
+        return tipoDocumento;
+    }
+
+    public void setTipoDocumento(String tipoDocumento) {
+        this.tipoDocumento = tipoDocumento;
+    }
+
+    public String getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(String usuario) {
+        this.usuario = usuario;
+    }
+
+    public Integer getPerfil() {
+        return perfil;
+    }
+
+    public void setPerfil(Integer perfil) {
+        this.perfil = perfil;
+    }
+
+    public String getClave() {
+        return clave;
+    }
+
+    public void setClave(String clave) {
+        this.clave = clave;
+    }
+
+    public String getNombreTipoDocumento() {
+        return nombreTipoDocumento;
+    }
+
+    public void setNombreTipoDocumento(String nombreTipoDocumento) {
+        this.nombreTipoDocumento = nombreTipoDocumento;
+    }
+
+    public String getNombrePerfil() {
+        return nombrePerfil;
+    }
+
+    public void setNombrePerfil(String nombrePerfil) {
+        this.nombrePerfil = nombrePerfil;
+    }
+
+    public Integer getCargo() {
+        return cargo;
+    }
+
+    public void setCargo(Integer cargo) {
+        this.cargo = cargo;
+    }
+
+    public String getNombreCargo() {
+        return nombreCargo;
+    }
+
+    public void setNombreCargo(String nombreCargo) {
+        this.nombreCargo = nombreCargo;
+    }
+
 }
