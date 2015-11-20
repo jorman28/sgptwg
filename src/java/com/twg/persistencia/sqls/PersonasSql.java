@@ -81,7 +81,7 @@ public class PersonasSql {
     }
 
     public String eliminarPersona() {
-        return "UPDATE PERSONAS SET fecha_eliminacion = now() WHERE id = ?";
+        return "UPDATE personas SET fecha_eliminacion = now() WHERE id = ?";
     }
 
     public String consultarIdPersona(String documento, String tipoDocumento) {

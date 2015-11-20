@@ -69,6 +69,7 @@ function editarVersion(idVersion) {
         success: function(data) {
             if (data !== undefined) {
                 $("#idProyectoVersion").val(data.idProyecto !== undefined ? data.idProyecto : "");
+                $("#idVersion").val(data.idVersion !== undefined ? data.idVersion : "");
                 $("#nombreVersion").val(data.nombreVersion !== undefined ? data.nombreVersion : "");
                 $("#estado").val(data.estado !== undefined ? data.estado : "0");
                 $("#fechaInicioVersion").val(data.fechaInicio !== undefined ? data.fechaInicio : "");

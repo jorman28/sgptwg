@@ -60,7 +60,7 @@ public class UsuariosSql {
     }
 
     public String eliminarUsuario() {
-        return "UPDATE USUARIOS SET fecha_eliminacion = now(), activo = 'F' WHERE id_persona = ?";
+        return "UPDATE usuarios SET fecha_eliminacion = now(), activo = 'F' WHERE id_persona = ?";
     }
 
 }

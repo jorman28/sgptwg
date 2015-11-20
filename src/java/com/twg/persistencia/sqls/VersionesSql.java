@@ -39,15 +39,15 @@ public class VersionesSql {
     }
 
     public String insertarVersion() {
-        return "INSERT INTO VERSIONES (nombre,fecha_inicio,fecha_terminacion,alcance,proyecto,estado) VALUES (?,?,?,?,?,?)";
+        return "INSERT INTO versiones (nombre,fecha_inicio,fecha_terminacion,alcance,proyecto,estado) VALUES (?,?,?,?,?,?)";
     }
 
     public String actualizarVersion() {
-        return "UPDATE VERSIONES SET nombre = ?, fecha_inicio = ?, fecha_terminacion = ?, alcance = ?, proyecto = ?, estado = ? WHERE id = ?";
+        return "UPDATE versiones SET nombre = ?, fecha_inicio = ?, fecha_terminacion = ?, alcance = ?, proyecto = ?, estado = ? WHERE id = ?";
     }
 
     public String eliminarVersion(Integer idVersion, Integer idProyecto) {
-        String sql = "UPDATE VERSIONES SET fecha_eliminacion = now() WHERE 1 = 1 ";
+        String sql = "UPDATE versiones SET fecha_eliminacion = now() WHERE 1 = 1 ";
         if (idVersion != null) {
             sql += "AND id = " + idVersion + " ";
         }
