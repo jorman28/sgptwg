@@ -1,8 +1,6 @@
 package com.twg.negocio;
-
 import com.twg.controladores.EstadosController;
-import com.twg.persistencia.beans.EstadosActividadesBean;
-import com.twg.persistencia.beans.EstadosVersionesBean;
+import com.twg.persistencia.beans.EstadosBean;
 import com.twg.persistencia.daos.EstadosDao;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -21,11 +19,11 @@ public class EstadosNegocio {
         JSONObject jsonUsuario = new JSONObject();
         if (id != null) {
             try {
-                List<EstadosActividadesBean> listaEstadosActividades = estadosDao.consultarEstadosActividades(id);
-                if (listaEstadosActividades != null && !listaEstadosActividades.isEmpty()) {
-                    EstadosActividadesBean estadoActividad = listaEstadosActividades.get(0);
-                    jsonUsuario.put("id", estadoActividad.getId());
-                    jsonUsuario.put("nombre", estadoActividad.getNombre());
+                List<EstadosBean> listaEstados = estadosDao.consultarEstados(id);
+                if (listaEstados != null && !listaEstados.isEmpty()) {
+                    EstadosBean estado = listaEstados.get(0);
+                    jsonUsuario.put("id", estado.getId());
+                    jsonUsuario.put("nombre", estado.getNombre());
                 }
             } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
                 Logger.getLogger(EstadosNegocio.class.getName()).log(Level.SEVERE, null, ex);
@@ -34,27 +32,27 @@ public class EstadosNegocio {
         return jsonUsuario;
     }
 
-    public List<EstadosActividadesBean> consultarEstados(Integer id, String nombre) {
-        List<EstadosActividadesBean> listaEstadosActividades = new ArrayList<>();
+    public List<EstadosBean> consultarEstados(Integer id, String nombre) {
+        List<EstadosBean> listaEstados = new ArrayList<>();
         try {
-            listaEstadosActividades = estadosDao.consultarEstadosActividades(id, nombre);
+            listaEstados = estadosDao.consultarEstados(id, nombre);
         } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
             Logger.getLogger(TiposDocumentoNegocio.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return listaEstadosActividades;
+        return listaEstados;
     }
 
     public Map<String, Object> crearEstado(Integer id, String nombre) {
-        EstadosActividadesBean estadoActividadBean = new EstadosActividadesBean();
-        estadoActividadBean.setNombre(nombre);
-        estadoActividadBean.setId(id);
+        EstadosBean estadoBean = new EstadosBean();
+        estadoBean.setNombre(nombre);
+        estadoBean.setId(id);
 
         String mensajeExito = "";
-        String mensajeError = validarDatos(estadoActividadBean);
+        String mensajeError = validarDatos(estadoBean);
         if (mensajeError.isEmpty()) {
             try {
                 if (id != null) {
-                    int actualizacion = estadosDao.actualizarEstadoActividad(estadoActividadBean);
+                    int actualizacion = estadosDao.actualizarEstado(estadoBean);
                     if (actualizacion > 0) {
                         mensajeExito = "El estado ha sido modificado con éxito";
                     } else {
@@ -62,7 +60,7 @@ public class EstadosNegocio {
                     }
                 } else {
                     if (id == null) {
-                        int actualizacion = estadosDao.insertarEstadoActividad(estadoActividadBean);
+                        int actualizacion = estadosDao.insertarEstado(estadoBean);
                         if (actualizacion > 0) {
                             mensajeExito = "El estado ha sido guardado con éxito";
                         } else {
@@ -70,12 +68,12 @@ public class EstadosNegocio {
                         }
                     } else {
 
-                        List<EstadosActividadesBean> existente = estadosDao.consultarEstadosActividades(id);
+                        List<EstadosBean> existente = estadosDao.consultarEstados(id);
                         if (existente != null && !existente.isEmpty()) {
                             mensajeError = "El estado esta siendo utilizado";
                         } else {
-                            estadoActividadBean.setId(id);
-                            int insercion = estadosDao.insertarEstadoActividad(estadoActividadBean);
+                            estadoBean.setId(id);
+                            int insercion = estadosDao.insertarEstado(estadoBean);
                             if (insercion > 0) {
                                 mensajeExito = "El estado ha sido guardado con éxito";
                             } else {
@@ -104,7 +102,7 @@ public class EstadosNegocio {
         String mensajeError = "";
         if (id != null) {
             try {
-                int eliminacion = estadosDao.eliminarEstadoActividad(id);
+                int eliminacion = estadosDao.eliminarEstado(id);
                 if (eliminacion > 0) {
                     mensajeExito = "El estado fue eliminado con éxito";
                 } else {
@@ -127,16 +125,16 @@ public class EstadosNegocio {
         return result;
     }
 
-    private String validarDatos(EstadosActividadesBean estadoActividad) {
+    private String validarDatos(EstadosBean estado) {
         String error = "";
-        if (estadoActividad.getNombre() == null || estadoActividad.getNombre().isEmpty()) {
+        if (estado.getNombre() == null || estado.getNombre().isEmpty()) {
             error += "El campo 'Nombre' es obligatorio <br/>";
         }
 //        try {
-//            List<EstadosActividadesBean> lstEstadosActividades = estadosActividadesDao.consultarEstadosActividades(estadoActividad.getNombre());
-//            if (lstEstadosActividades != null && !lstEstadosActividades.isEmpty()) {
-//                if (estadoActividad.getId() != null) {
-//                    if (estadoActividad.getId().intValue() != lstEstadosActividades.get(0).getId().intValue()) {
+//            List<EstadosBean> lstEstados = estadosDao.consultarEstados(estado.getNombre());
+//            if (lstEstados != null && !lstEstados.isEmpty()) {
+//                if (estado.getId() != null) {
+//                    if (estado.getId().intValue() != lstEstados.get(0).getId().intValue()) {
 //                        error += "El estado a ingresar no está disponible <br/>";
 //                    }
 //                } else {

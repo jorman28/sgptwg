@@ -1,7 +1,7 @@
 package com.twg.controladores;
 
 import com.twg.negocio.EstadosNegocio;
-import com.twg.persistencia.beans.EstadosActividadesBean;
+import com.twg.persistencia.beans.EstadosBean;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
@@ -95,7 +95,7 @@ public class EstadosController extends HttpServlet {
     private void cargarTabla(HttpServletResponse response, Integer id, String nombre) throws ServletException, IOException {
         response.setContentType("text/html; charset=iso-8859-1");
         
-        List<EstadosActividadesBean> listaEstadosActividades = estadosNegocio.consultarEstados(id, nombre);
+        List<EstadosBean> listaEstados = estadosNegocio.consultarEstados(id, nombre);
         PrintWriter out = response.getWriter();
         out.println("<table class=\"table table-striped table-hover table-condensed bordo-tablas\">");
         out.println(    "<thead>");
@@ -106,15 +106,15 @@ public class EstadosController extends HttpServlet {
         out.println(        "</tr>");
         out.println(    "</thead>");
         out.println(    "<tbody>");
-        if(listaEstadosActividades != null && !listaEstadosActividades.isEmpty()){
-            for (EstadosActividadesBean estadoActividad : listaEstadosActividades) {
+        if(listaEstados != null && !listaEstados.isEmpty()){
+            for (EstadosBean estado : listaEstados) {
                 out.println("<tr>");			
-//                out.println(    "<td>"+estadoActividad.getId()+"</td>");                
-                out.println(    "<td>"+estadoActividad.getNombre()+"</td>");
+//                out.println(    "<td>"+estado.getId()+"</td>");                
+                out.println(    "<td>"+estado.getNombre()+"</td>");
 
                 out.println(    "<td>");
-                out.println(        "<button class=\"btn btn-default\" type=\"button\" onclick=\"consultarEstado("+estadoActividad.getId()+")\">Editar</button>");
-                out.println(        "<button class=\"btn btn-default\" type=\"button\" data-toggle=\"modal\" data-target=\"#confirmationMessage\" onclick=\"jQuery('#id').val('"+estadoActividad.getId()+"');\">Eliminar</button>");
+                out.println(        "<button class=\"btn btn-default\" type=\"button\" onclick=\"consultarEstado("+estado.getId()+")\">Editar</button>");
+                out.println(        "<button class=\"btn btn-default\" type=\"button\" data-toggle=\"modal\" data-target=\"#confirmationMessage\" onclick=\"jQuery('#id').val('"+estado.getId()+"');\">Eliminar</button>");
                 out.println(    "</td>");
                 out.println("</tr>");
             }
