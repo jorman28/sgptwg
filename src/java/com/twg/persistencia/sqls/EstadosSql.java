@@ -9,16 +9,16 @@ package com.twg.persistencia.sqls;
  *
  * @author Jorman
  */
-public class EstadosActividadesSql {
+public class EstadosSql {
 
-    public EstadosActividadesSql() {
+    public EstadosSql() {
     }
 
-    public String consultarEstadosActividades() {
+    public String consultarEstados() {
         return "SELECT * FROM estados WHERE fecha_eliminacion IS NULL ";
     }
 
-    public String consultarEstadosActividades(Integer id, String nombre) {
+    public String consultarEstados(Integer id, String nombre) {
         String sql = "SELECT * FROM estados WHERE fecha_eliminacion IS NULL ";
         if (id != null) {
             sql += "AND id = " + id + " ";
@@ -29,15 +29,15 @@ public class EstadosActividadesSql {
         return sql;
     }
 
-    public String insertarEstadoActividad() {
+    public String insertarEstado() {
         return "INSERT INTO estados (nombre) VALUES (?)";
     }
 
-    public String actualizarEstadoActividad() {
+    public String actualizarEstado() {
         return "UPDATE estados SET nombre = ? WHERE id = ?";
     }
 
-    public String eliminarEstadoActividad() {
+    public String eliminarEstado() {
         return "DELETE FROM estados WHERE id = ?";
     }
 
