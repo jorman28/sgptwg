@@ -3,8 +3,7 @@ package com.twg.negocio;
 import com.twg.controladores.EstadosController;
 import com.twg.persistencia.beans.EstadosActividadesBean;
 import com.twg.persistencia.beans.EstadosVersionesBean;
-import com.twg.persistencia.daos.EstadosActividadesDao;
-import com.twg.persistencia.daos.EstadosVersionesDao;
+import com.twg.persistencia.daos.EstadosDao;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,14 +15,13 @@ import org.json.simple.JSONObject;
 
 public class EstadosNegocio {
 
-    private final EstadosActividadesDao estadosActividadesDao = new EstadosActividadesDao();
-    private final EstadosVersionesDao estadosVersionesDao = new EstadosVersionesDao();
+    private final EstadosDao estadosDao = new EstadosDao();
 
     public JSONObject consultarEstado(Integer id) {
         JSONObject jsonUsuario = new JSONObject();
         if (id != null) {
             try {
-                List<EstadosActividadesBean> listaEstadosActividades = estadosActividadesDao.consultarEstadosActividades(id);
+                List<EstadosActividadesBean> listaEstadosActividades = estadosDao.consultarEstadosActividades(id);
                 if (listaEstadosActividades != null && !listaEstadosActividades.isEmpty()) {
                     EstadosActividadesBean estadoActividad = listaEstadosActividades.get(0);
                     jsonUsuario.put("id", estadoActividad.getId());
@@ -39,7 +37,7 @@ public class EstadosNegocio {
     public List<EstadosActividadesBean> consultarEstados(Integer id, String nombre) {
         List<EstadosActividadesBean> listaEstadosActividades = new ArrayList<>();
         try {
-            listaEstadosActividades = estadosActividadesDao.consultarEstadosActividades(id, nombre);
+            listaEstadosActividades = estadosDao.consultarEstadosActividades(id, nombre);
         } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
             Logger.getLogger(TiposDocumentoNegocio.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -56,7 +54,7 @@ public class EstadosNegocio {
         if (mensajeError.isEmpty()) {
             try {
                 if (id != null) {
-                    int actualizacion = estadosActividadesDao.actualizarEstadoActividad(estadoActividadBean);
+                    int actualizacion = estadosDao.actualizarEstadoActividad(estadoActividadBean);
                     if (actualizacion > 0) {
                         mensajeExito = "El estado ha sido modificado con éxito";
                     } else {
@@ -64,7 +62,7 @@ public class EstadosNegocio {
                     }
                 } else {
                     if (id == null) {
-                        int actualizacion = estadosActividadesDao.insertarEstadoActividad(estadoActividadBean);
+                        int actualizacion = estadosDao.insertarEstadoActividad(estadoActividadBean);
                         if (actualizacion > 0) {
                             mensajeExito = "El estado ha sido guardado con éxito";
                         } else {
@@ -72,12 +70,12 @@ public class EstadosNegocio {
                         }
                     } else {
 
-                        List<EstadosActividadesBean> existente = estadosActividadesDao.consultarEstadosActividades(id);
+                        List<EstadosActividadesBean> existente = estadosDao.consultarEstadosActividades(id);
                         if (existente != null && !existente.isEmpty()) {
                             mensajeError = "El estado esta siendo utilizado";
                         } else {
                             estadoActividadBean.setId(id);
-                            int insercion = estadosActividadesDao.insertarEstadoActividad(estadoActividadBean);
+                            int insercion = estadosDao.insertarEstadoActividad(estadoActividadBean);
                             if (insercion > 0) {
                                 mensajeExito = "El estado ha sido guardado con éxito";
                             } else {
@@ -106,7 +104,7 @@ public class EstadosNegocio {
         String mensajeError = "";
         if (id != null) {
             try {
-                int eliminacion = estadosActividadesDao.eliminarEstadoActividad(id);
+                int eliminacion = estadosDao.eliminarEstadoActividad(id);
                 if (eliminacion > 0) {
                     mensajeExito = "El estado fue eliminado con éxito";
                 } else {
