@@ -16,34 +16,36 @@ public class EstadosNegocio {
     private final EstadosDao estadosDao = new EstadosDao();
 
     public JSONObject consultarEstado(Integer id) {
-        JSONObject jsonUsuario = new JSONObject();
+        JSONObject jsonEstado = new JSONObject();
         if (id != null) {
             try {
                 List<EstadosBean> listaEstados = estadosDao.consultarEstados(id);
                 if (listaEstados != null && !listaEstados.isEmpty()) {
                     EstadosBean estado = listaEstados.get(0);
-                    jsonUsuario.put("id", estado.getId());
-                    jsonUsuario.put("nombre", estado.getNombre());
+                    jsonEstado.put("id", estado.getId());
+                    jsonEstado.put("tipoEstado", estado.getTipo_estado());
+                    jsonEstado.put("nombre", estado.getNombre());
                 }
             } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
                 Logger.getLogger(EstadosNegocio.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        return jsonUsuario;
+        return jsonEstado;
     }
 
-    public List<EstadosBean> consultarEstados(Integer id, String nombre) {
+    public List<EstadosBean> consultarEstados(Integer id, String tipoEstado,String nombre) {
         List<EstadosBean> listaEstados = new ArrayList<>();
         try {
-            listaEstados = estadosDao.consultarEstados(id, nombre);
+            listaEstados = estadosDao.consultarEstados(id, tipoEstado, nombre);
         } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
             Logger.getLogger(TiposDocumentoNegocio.class.getName()).log(Level.SEVERE, null, ex);
         }
         return listaEstados;
     }
 
-    public Map<String, Object> crearEstado(Integer id, String nombre) {
+    public Map<String, Object> crearEstado(Integer id, String tipoEstado, String nombre) {
         EstadosBean estadoBean = new EstadosBean();
+        estadoBean.setTipo_estado(tipoEstado);        
         estadoBean.setNombre(nombre);
         estadoBean.setId(id);
 
@@ -127,6 +129,9 @@ public class EstadosNegocio {
 
     private String validarDatos(EstadosBean estado) {
         String error = "";
+        if (estado.getTipo_estado() == null || estado.getTipo_estado().equals("0") || estado.getTipo_estado().isEmpty()) {
+            error += "El campo 'Tipo de Estado' es obligatorio <br/>";
+        }
         if (estado.getNombre() == null || estado.getNombre().isEmpty()) {
             error += "El campo 'Nombre' es obligatorio <br/>";
         }

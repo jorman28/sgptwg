@@ -154,7 +154,7 @@ public class ProyectosController extends HttpServlet {
             request.setAttribute("mensajeExito", mensajeExito);
             request.setAttribute("mensajeAlerta", mensajeAlerta);
             request.setAttribute("listaProyectos", listarProyectos());
-            request.setAttribute("estados", estadosNegocio.consultarEstados(null, null));
+            request.setAttribute("estados", estadosNegocio.consultarEstados(null, null, null));
             request.getRequestDispatcher(redireccion).forward(request, response);
         }
     }
