@@ -39,7 +39,9 @@ public class EstadosController extends HttpServlet {
         }
 
         String idStr = request.getParameter("id");
+        String tipoEstado = request.getParameter("tipoEstado");        
         String nombre = request.getParameter("nombre");
+
 
         Integer id = null;
         try {
@@ -49,34 +51,34 @@ public class EstadosController extends HttpServlet {
 
         switch (accion) {
             case "consultar":
-                cargarTabla(response, id, nombre);
+                cargarTabla(response, id, tipoEstado, nombre);
                 break;
             case "editar":
                 JSONObject object = estadosNegocio.consultarEstado(id);
                 response.getWriter().write(object.toString());
                 break;
             case "guardar":
-                Map<String, Object> result = estadosNegocio.crearEstado(id, nombre);
+                Map<String, Object> result = estadosNegocio.crearEstado(id, tipoEstado, nombre);
                 if(result.get("mensajeError") != null){
                     mensajeError = (String)result.get("mensajeError");
-                    enviarDatos(request, id, nombre);
+                    enviarDatos(request, id, tipoEstado, nombre);
                 }
                 if(result.get("mensajeExito") != null){
                     mensajeExito = (String)result.get("mensajeExito");
-                    enviarDatos(request, null, null);
+                    enviarDatos(request, null, null, null);
                 }
                 break;
             case "eliminar":
                 result = estadosNegocio.eliminarEstado(id);
                 if(result.get("mensajeError") != null){
-                    enviarDatos(request, id, nombre);
+                    enviarDatos(request, id, tipoEstado, nombre);
                 }
                 if(result.get("mensajeExito") != null){
-                    enviarDatos(request, null, null);
+                    enviarDatos(request, null, null, null);
                 }
                 break;
             default:
-                enviarDatos(request, null, null);
+                enviarDatos(request, null, null, null);
                 break;
         }
         request.setAttribute("mensajeAlerta", mensajeAlerta);
@@ -87,20 +89,21 @@ public class EstadosController extends HttpServlet {
         }
     }
 
-    private void enviarDatos(HttpServletRequest request, Integer id, String nombre) {
+    private void enviarDatos(HttpServletRequest request, Integer id, String tipoEstado, String nombre) {
         //.setAttribute("id", id);
+        request.setAttribute("tipoEstado", tipoEstado);
         request.setAttribute("nombre", nombre);
     }
 
-    private void cargarTabla(HttpServletResponse response, Integer id, String nombre) throws ServletException, IOException {
+    private void cargarTabla(HttpServletResponse response, Integer id, String tipoEstado, String nombre) throws ServletException, IOException {
         response.setContentType("text/html; charset=iso-8859-1");
         
-        List<EstadosBean> listaEstados = estadosNegocio.consultarEstados(id, nombre);
+        List<EstadosBean> listaEstados = estadosNegocio.consultarEstados(id, tipoEstado, nombre);
         PrintWriter out = response.getWriter();
         out.println("<table class=\"table table-striped table-hover table-condensed bordo-tablas\">");
         out.println(    "<thead>");
         out.println(        "<tr>");			
-//        out.println(            "<th>Tipo Estado</th>");
+        out.println(            "<th>Tipo Estado</th>");
         out.println(            "<th>Nombre</th>");
         out.println(            "<th>Acciones</th>");
         out.println(        "</tr>");
@@ -110,8 +113,8 @@ public class EstadosController extends HttpServlet {
             for (EstadosBean estado : listaEstados) {
                 out.println("<tr>");			
 //                out.println(    "<td>"+estado.getId()+"</td>");                
+                out.println(    "<td>"+estado.getTipo_estado()+"</td>");
                 out.println(    "<td>"+estado.getNombre()+"</td>");
-
                 out.println(    "<td>");
                 out.println(        "<button class=\"btn btn-default\" type=\"button\" onclick=\"consultarEstado("+estado.getId()+")\">Editar</button>");
                 out.println(        "<button class=\"btn btn-default\" type=\"button\" data-toggle=\"modal\" data-target=\"#confirmationMessage\" onclick=\"jQuery('#id').val('"+estado.getId()+"');\">Eliminar</button>");
