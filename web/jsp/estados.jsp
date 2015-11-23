@@ -32,7 +32,16 @@
                             <div class="panel-body">
                                 <div class="row">
                                     <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                                        <label for="nombre">*Nombre:</label> 
+                                        <label for="nombre">*Tipo de Estado:</label>
+                                        <select id="tipoEstado" name="tipoEstado" class="form-control">
+                                            <option value ="0">SELECCIONE</option>
+                                            <option value="ACTIVIDADES">ACTIVIDADES</option>
+                                            <option value="VERSIONES">VERSIONES</option>
+                                        </select>                                        
+                                    </div>
+                                    
+                                    <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                        <label for="nombre">*Nombre:</label>
                                         <input class="form-control" type="text" id="nombre" name="nombre" value="${nombre}"/>
                                     </div>
                                 </div>

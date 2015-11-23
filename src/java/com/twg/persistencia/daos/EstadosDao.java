@@ -21,29 +21,30 @@ public class EstadosDao {
     }
 
     public List<EstadosBean> consultarEstados() throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
-        return consultarEstados(null, null);
+        return consultarEstados(null, null, null);
     }
-    
+       
     public List<EstadosBean> consultarEstados(String nombre) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
-        return consultarEstados(null, nombre);
+        return consultarEstados(null, null, nombre);
     }
     
     public List<EstadosBean> consultarEstados(Integer id) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
-        return consultarEstados(id, null);
+        return consultarEstados(id, null, null);
     }
     
-    public List<EstadosBean> consultarEstados(Integer id, String nombre) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
+    public List<EstadosBean> consultarEstados(Integer id, String tipoEstado, String nombre) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
         List<EstadosBean> listaEstados = new ArrayList<>();
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;
-        ps = con.prepareStatement(sql.consultarEstados(id, nombre));
+        ps = con.prepareStatement(sql.consultarEstados(id, tipoEstado, nombre));
         ResultSet rs;
         rs = ps.executeQuery();
         while(rs.next()){
             EstadosBean estado = new EstadosBean();
             estado.setId(rs.getInt("id"));
-            estado.setNombre(rs.getString("nombre"));            
+            estado.setTipo_estado(rs.getString("tipo_estado"));            
+            estado.setNombre(rs.getString("nombre"));
             listaEstados.add(estado);
         }
         rs.close();
@@ -75,7 +76,8 @@ public class EstadosDao {
         PreparedStatement ps;
         ps = con.prepareStatement(sql.insertarEstado());
         //ps.setInt(1, estado.getId());
-        ps.setString(1, estado.getNombre());
+        ps.setString(1, estado.getTipo_estado());        
+        ps.setString(2, estado.getNombre());
         int insercion = ps.executeUpdate();
         ps.close();
         con.close();
@@ -87,8 +89,9 @@ public class EstadosDao {
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;
         ps = con.prepareStatement(sql.actualizarEstado());
-        ps.setInt(2, estado.getId());
-        ps.setString(1, estado.getNombre());
+        ps.setInt(3, estado.getId());
+        ps.setString(1, estado.getTipo_estado());        
+        ps.setString(2, estado.getNombre());
         int actualizacion = ps.executeUpdate();
         ps.close();
         con.close();
