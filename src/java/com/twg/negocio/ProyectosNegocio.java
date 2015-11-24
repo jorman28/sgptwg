@@ -95,8 +95,9 @@ public class ProyectosNegocio {
             if (personasProyecto != null && !personasProyecto.isEmpty()) {
                 for (PersonasBean persona : personasProyecto) {
                     JSONObject objetoPersona = new JSONObject();
-                    objetoPersona.put("value", persona.getId());
-                    objetoPersona.put("text", persona.getTipoDocumento() + persona.getDocumento() + " " + persona.getNombres() + " " + persona.getApellidos());
+                    objetoPersona.put("id", persona.getId());
+                    objetoPersona.put("nombre", persona.getTipoDocumento() + persona.getDocumento() + " " + persona.getNombres() + " " + persona.getApellidos());
+                    objetoPersona.put("cargo", persona.getNombreCargo().equalsIgnoreCase("Cliente") ? "Cliente" : persona.getNombreCargo());
                     if (persona.getNombreCargo().equalsIgnoreCase("Cliente")) {
                         clientes.add(objetoPersona);
                     } else {
@@ -104,8 +105,12 @@ public class ProyectosNegocio {
                     }
                 }
             }
-            object.put("clientes", clientes);
-            object.put("empleados", empleados);
+            if (!clientes.isEmpty()) {
+                object.put("clientes", clientes);
+            }
+            if (!empleados.isEmpty()) {
+                object.put("empleados", empleados);
+            }
         }
         return object;
     }

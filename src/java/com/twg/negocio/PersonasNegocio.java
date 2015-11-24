@@ -204,8 +204,9 @@ public class PersonasNegocio {
         if(listaPersonas != null && !listaPersonas.isEmpty()){
             for (PersonasBean persona : listaPersonas) {
                 JSONObject object = new JSONObject();
-                object.put("texto", persona.getTipoDocumento() + persona.getDocumento() + " " + persona.getNombres() + " " + persona.getApellidos());
-                object.put("valor", persona.getId());
+                object.put("id", persona.getId());
+                object.put("nombre", persona.getTipoDocumento() + persona.getDocumento() + " " + persona.getNombres() + " " + persona.getApellidos());
+                object.put("cargo", persona.getNombreCargo().equalsIgnoreCase("Cliente") ? "Cliente" : persona.getNombreCargo());
                 array.add(object);
             }
         }
