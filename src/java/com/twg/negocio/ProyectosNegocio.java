@@ -1,5 +1,6 @@
 package com.twg.negocio;
 
+import com.twg.persistencia.beans.PersonasBean;
 import com.twg.persistencia.beans.ProyectosBean;
 import com.twg.persistencia.daos.ProyectosDao;
 import com.twg.persistencia.daos.VersionesDao;
@@ -10,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 /**
@@ -82,6 +84,28 @@ public class ProyectosNegocio {
             object.put("idProyecto", listaProyectos.get(0).getId());
             object.put("nombreProyecto", listaProyectos.get(0).getNombre());
             object.put("fechaInicio", listaProyectos.get(0).getFechaInicio() != null ? sdf.format(listaProyectos.get(0).getFechaInicio()) : "");
+            List<PersonasBean> personasProyecto = null;
+            try {
+                personasProyecto = proyectosDao.consultarPersonasProyecto(idProyecto);
+            } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
+                Logger.getLogger(ProyectosNegocio.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            JSONArray clientes = new JSONArray();
+            JSONArray empleados = new JSONArray();
+            if (personasProyecto != null && !personasProyecto.isEmpty()) {
+                for (PersonasBean persona : personasProyecto) {
+                    JSONObject objetoPersona = new JSONObject();
+                    objetoPersona.put("value", persona.getId());
+                    objetoPersona.put("text", persona.getTipoDocumento() + persona.getDocumento() + " " + persona.getNombres() + " " + persona.getApellidos());
+                    if (persona.getNombreCargo().equalsIgnoreCase("Cliente")) {
+                        clientes.add(objetoPersona);
+                    } else {
+                        empleados.add(objetoPersona);
+                    }
+                }
+            }
+            object.put("clientes", clientes);
+            object.put("empleados", empleados);
         }
         return object;
     }
@@ -90,7 +114,7 @@ public class ProyectosNegocio {
         String error = "";
         try {
             int eliminacion = proyectosDao.eliminarProyecto(idProyecto);
-            if(eliminacion == 0){
+            if (eliminacion == 0) {
                 error = "El proyecto no pudo ser eliminado";
             }
             versionesDao.eliminarVersion(null, idProyecto);

@@ -1,6 +1,7 @@
 package com.twg.controladores;
 
 import com.twg.negocio.EstadosNegocio;
+import com.twg.negocio.PersonasNegocio;
 import com.twg.negocio.ProyectosNegocio;
 import com.twg.negocio.VersionesNegocio;
 import com.twg.persistencia.beans.ProyectosBean;
@@ -20,9 +21,10 @@ import org.json.simple.JSONObject;
  */
 public class ProyectosController extends HttpServlet {
 
-    ProyectosNegocio proyectosNegocio = new ProyectosNegocio();
-    VersionesNegocio versionesNegocio = new VersionesNegocio();
-    EstadosNegocio estadosNegocio = new EstadosNegocio();
+    private final ProyectosNegocio proyectosNegocio = new ProyectosNegocio();
+    private final VersionesNegocio versionesNegocio = new VersionesNegocio();
+    private final EstadosNegocio estadosNegocio = new EstadosNegocio();
+    private final PersonasNegocio personasNegocio = new PersonasNegocio();
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -71,6 +73,8 @@ public class ProyectosController extends HttpServlet {
         }
 
         String tipoEliminacion = request.getParameter("tipoEliminacion");
+        
+        String busqueda = request.getParameter("search");
 
         switch (accion) {
             case "editarProyecto":
@@ -113,19 +117,7 @@ public class ProyectosController extends HttpServlet {
                 request.setAttribute("estado", estado);
                 break;
             case "completarPersonas":
-                JSONArray array = new JSONArray();
-                JSONObject object = new JSONObject();
-                object.put("value", 1);
-                object.put("label", "Toronto");
-                array.add(object);
-                object = new JSONObject();
-                object.put("value", 2);
-                object.put("label", "Montreal");
-                array.add(object);
-                object = new JSONObject();
-                object.put("value", 3);
-                object.put("label", "Buffalo");
-                array.add(object);
+                JSONArray array = personasNegocio.completarPersonas(busqueda);
                 response.getWriter().write(array.toJSONString());
                 break;
             case "eliminar":

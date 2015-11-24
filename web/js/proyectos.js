@@ -1,20 +1,25 @@
+var personasAgregadas = {};
+
 $(function() {
     $('#fechaInicioProyecto').datetimepicker({format: 'dd/mm/yyyy', language: 'es', weekStart: true, todayBtn: true, autoclose: true, todayHighlight: true, startView: 2, minView: 2});
     $('#fechaInicioVersion').datetimepicker({format: 'dd/mm/yyyy', language: 'es', weekStart: true, todayBtn: true, autoclose: true, todayHighlight: true, startView: 2, minView: 2});
     $('#fechaFinVersion').datetimepicker({format: 'dd/mm/yyyy', language: 'es', weekStart: true, todayBtn: true, autoclose: true, todayHighlight: true, startView: 2, minView: 2});
     $("#participante").typeahead({
         onSelect: function(item) {
-            console.log(item);
+            if (personasAgregadas[item.value] === undefined) {
+                personasAgregadas[item.value] = item;
+            }
         },
         ajax: {
             url: "ProyectosController",
             timeout: 500,
-            displayField: "label",
-            valueField: 'value',
-            triggerLength: 3,
+            displayField: "texto",
+            valueField: 'valor',
+            triggerLength: 1,
+            items: 10,
             method: "POST",
             preDispatch: function(query) {
-                return {search: query, accion: "hola"};
+                return {search: query, accion: "completarPersonas"};
             }
         }
     });
@@ -27,6 +32,7 @@ function nuevoProyecto() {
     $("#clientesProyecto").html('No se han agregado clientes al proyecto');
     $("#empleadosProyecto").html('No se han agregado empleados al proyecto');
     $("#modalProyectos").modal("show");
+    personasAgregadas = {};
 }
 
 function nuevaVersion(idProyecto) {

@@ -11,6 +11,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 /**
  *
@@ -21,10 +23,10 @@ public class PersonasNegocio {
     private final PersonasDao personasDao = new PersonasDao();
     private final UsuariosDao usuariosDao = new UsuariosDao();
 
-    public List<PersonasBean> consultarPersonas(String documento, String tipoDocumento, String nombre, String apellidos, String correo, String usuario, String perfil, String cargo) {
+    public List<PersonasBean> consultarPersonas(String documento, String tipoDocumento, String nombre, String apellidos, String correo, String usuario, String perfil, String cargo, String nombreCompleto) {
         List<PersonasBean> listaPersonas = new ArrayList<>();
         try {
-            listaPersonas = personasDao.consultarPersonas(null, documento, tipoDocumento, nombre, apellidos, correo, usuario, perfil, cargo);
+            listaPersonas = personasDao.consultarPersonas(null, documento, tipoDocumento, nombre, apellidos, correo, usuario, perfil, cargo, nombreCompleto);
         } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
             Logger.getLogger(PersonasNegocio.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -36,9 +38,9 @@ public class PersonasNegocio {
         List<PersonasBean> listaPersonas = null;
         try {
             if (idPersona != null) {
-                listaPersonas = personasDao.consultarPersonas(idPersona, null, null, null, null, null, null, null, null);
+                listaPersonas = personasDao.consultarPersonas(idPersona, null, null, null, null, null, null, null, null, null);
             } else if (documento != null && !documento.isEmpty() && tipoDocumento != null && !tipoDocumento.isEmpty()) {
-                listaPersonas = personasDao.consultarPersonas(null, documento, tipoDocumento, null, null, null, null, null, null);
+                listaPersonas = personasDao.consultarPersonas(null, documento, tipoDocumento, null, null, null, null, null, null, null);
             }
         } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
             Logger.getLogger(PersonasNegocio.class.getName()).log(Level.SEVERE, null, ex);
@@ -194,5 +196,19 @@ public class PersonasNegocio {
             error = "Ocurrió un error eliminado la persona";
         }
         return error;
+    }
+    
+    public JSONArray completarPersonas(String busqueda){
+        JSONArray array = new JSONArray();
+        List<PersonasBean> listaPersonas = consultarPersonas(null, null, null, null, null, null, null, null, busqueda);
+        if(listaPersonas != null && !listaPersonas.isEmpty()){
+            for (PersonasBean persona : listaPersonas) {
+                JSONObject object = new JSONObject();
+                object.put("texto", persona.getTipoDocumento() + persona.getDocumento() + " " + persona.getNombres() + " " + persona.getApellidos());
+                object.put("valor", persona.getId());
+                array.add(object);
+            }
+        }
+        return array;
     }
 }
