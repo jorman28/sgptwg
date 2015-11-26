@@ -41,7 +41,7 @@
                                                 <label for="fechaInicioProyecto">*Fecha de inicio:</label> 
                                                 <input class="form-control" type="text" id="fechaInicioProyecto" name="fechaInicioProyecto" value="${fechaInicioProyecto}" readonly="true"/>
                                             </div>
-                                            <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                                 <label for="participante">*Participante:</label> 
                                                 <input class="form-control" type="text" id="participante" name="participante" />
                                             </div>
@@ -54,59 +54,13 @@
                                         <div class="row">
                                             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 form-group">
                                                 <p>Clientes</p>
-                                                <div id="clientesProyecto">
-                                                    <ul class="list-group">
-                                                        <li class="list-group-item" id="item3">
-                                                            <div class="row">
-                                                                <div class="col-xs-10 col-sm-11 col-md-11 col-lg-11">
-                                                                    Martin Moreno
-                                                                </div>
-                                                                <div class="col-xs-2 col-sm-1 col-md-1 col-lg-1">
-                                                                    <span class="glyphicon glyphicon-remove" onclick="$('#item3').remove();"></span>
-                                                                </div>
-                                                            </div>
-                                                        </li>
-                                                        <li class="list-group-item" id="item4">
-                                                            <div class="row">
-                                                                <div class="col-xs-10 col-sm-11 col-md-11 col-lg-11">
-                                                                    Maria Sanchez
-                                                                </div>
-                                                                <div class="col-xs-2 col-sm-1 col-md-1 col-lg-1">
-                                                                    <span class="glyphicon glyphicon-remove" onclick="$('#item4').remove();"></span>
-                                                                </div>
-                                                            </div>
-                                                        </li>
-                                                    </ul>
-                                                </div>
+                                                <ul class="list-group" id="clientesProyecto"></ul>
                                             </div>
                                         </div>
                                         <div class="row">
                                             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                                 <p>Empleados</p>
-                                                <div id="empleadosProyecto">
-                                                    <ul class="list-group">
-                                                        <li class="list-group-item" id="item1">
-                                                            <div class="row">
-                                                                <div class="col-xs-10 col-sm-11 col-md-11 col-lg-11">
-                                                                    Marcos Suarez
-                                                                </div>
-                                                                <div class="col-xs-2 col-sm-1 col-md-1 col-lg-1">
-                                                                    <span class="glyphicon glyphicon-remove" onclick="$('#item1').remove();"></span>
-                                                                </div>
-                                                            </div>
-                                                        </li>
-                                                        <li class="list-group-item" id="item2">
-                                                            <div class="row">
-                                                                <div class="col-xs-10 col-sm-11 col-md-11 col-lg-11">
-                                                                    Carlos Restrepo
-                                                                </div>
-                                                                <div class="col-xs-2 col-sm-1 col-md-1 col-lg-1">
-                                                                    <span class="glyphicon glyphicon-remove" onclick="$('#item2').remove();"></span>
-                                                                </div>
-                                                            </div>
-                                                        </li>
-                                                    </ul>
-                                                </div>
+                                                <ul class="list-group" id="empleadosProyecto"></ul>
                                             </div>
                                         </div>
                                     </div>
