@@ -10,10 +10,17 @@ public class ProyectosSql {
         return "SELECT COUNT(*) FROM proyectos";
     }
 
-    public String consultarProyectos(Integer id) {
+    public String consultarProyectos(Integer id, String nombre, boolean nombreExacto) {
         String sql = "SELECT * FROM proyectos WHERE fecha_eliminacion IS NULL ";
         if (id != null) {
             sql += "AND id = " + id + " ";
+        }
+        if (nombre != null && !nombre.isEmpty()) {
+            if (nombreExacto) {
+                sql += "AND nombre = '" + nombre + "' ";
+            } else {
+                sql += "AND nombre LIKE '%" + nombre + "%' ";
+            }
         }
         return sql;
     }
@@ -40,15 +47,15 @@ public class ProyectosSql {
                 + "        INNER JOIN\n"
                 + "    cargos car ON per.cargo = car.id\n"
                 + "WHERE\n"
-                + "    pro.id_proyecto = ?"
+                + "    pro.id_proyecto = ? "
                 + "ORDER BY car.nombre ";
     }
 
     public String eliminarPersonasProyecto() {
-        return "DELETE FROM personas_proyectos WHERE idProyecto = ? ";
+        return "DELETE FROM personas_proyectos WHERE id_proyecto = ? ";
     }
-    
-    public String insertarPersonaProyecto(){
+
+    public String insertarPersonaProyecto() {
         return "INSERT INTO personas_proyectos (id_proyecto, id_persona) VALUES (?,?)";
     }
 }

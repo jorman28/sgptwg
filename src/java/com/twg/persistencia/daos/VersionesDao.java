@@ -19,12 +19,12 @@ public class VersionesDao {
 
     private final VersionesSql sql = new VersionesSql();
 
-    public List<VersionesBean> consultarVersiones(Integer id, Integer idProyecto) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
+    public List<VersionesBean> consultarVersiones(Integer id, Integer idProyecto, String nombre, boolean nombreExacto) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         List<VersionesBean> listaVersiones = new ArrayList();
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;
-        ps = con.prepareStatement(sql.consultarVersiones(id, idProyecto));
+        ps = con.prepareStatement(sql.consultarVersiones(id, idProyecto, nombre, nombreExacto));
         ResultSet rs;
         rs = ps.executeQuery();
         while (rs.next()) {

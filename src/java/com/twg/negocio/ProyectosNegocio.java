@@ -24,7 +24,7 @@ public class ProyectosNegocio {
     private final VersionesDao versionesDao = new VersionesDao();
     private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
-    public String guardarProyecto(String id, String nombre, String fechaInicio) {
+    public String guardarProyecto(String id, String nombre, String fechaInicio, String[] idPersonas) {
         String error = "";
         ProyectosBean proyecto = new ProyectosBean();
         proyecto.setNombre(nombre);
@@ -32,16 +32,38 @@ public class ProyectosNegocio {
             proyecto.setFechaInicio(sdf.parse(fechaInicio));
         } catch (ParseException ex) {
         }
+        Integer idProyecto;
+        try {
+            idProyecto = Integer.valueOf(id);
+        } catch (NumberFormatException e) {
+            idProyecto = null;
+        }
         try {
             int guardado = 0;
-            if (id != null && !id.isEmpty()) {
-                proyecto.setId(Integer.valueOf(id));
+            if (idProyecto != null) {
+                proyecto.setId(idProyecto);
                 guardado = proyectosDao.actualizarProyecto(proyecto);
             } else {
                 guardado = proyectosDao.crearProyecto(proyecto);
             }
             if (guardado == 0) {
                 error += "El proyecto no pudo ser guardado";
+            } else if (idPersonas != null && idPersonas.length > 0) {
+                if (idProyecto == null) {
+                    List<ProyectosBean> listaProyectos = consultarProyectos(null, nombre, true);
+                    if (listaProyectos != null && !listaProyectos.isEmpty()) {
+                        idProyecto = listaProyectos.get(0).getId();
+                    }
+                }
+                if (idProyecto != null) {
+                    proyectosDao.eliminarPersonasProyecto(idProyecto);
+                    for (String idPersona : idPersonas) {
+                        try {
+                            proyectosDao.insertarPersonaProyecto(idProyecto, Integer.valueOf(idPersona));
+                        } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException | NumberFormatException e) {
+                        }
+                    }
+                }
             }
         } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
             Logger.getLogger(ProyectosNegocio.class.getName()).log(Level.SEVERE, null, ex);
@@ -50,10 +72,17 @@ public class ProyectosNegocio {
         return error;
     }
 
-    public String validarDatos(String nombre, String fechaInicio) {
+    public String validarDatos(Integer idProyecto, String nombre, String fechaInicio) {
         String validacion = "";
         if (nombre == null || nombre.isEmpty()) {
             validacion += "El campo 'Nombre' no debe estar vacío \n";
+        } else {
+            List<ProyectosBean> listaProyectos = consultarProyectos(null, nombre, true);
+            if (listaProyectos != null && !listaProyectos.isEmpty()) {
+                if (idProyecto == null || idProyecto.intValue() != listaProyectos.get(0).getId().intValue()) {
+                    validacion += "El valor ingresado en el campo 'Nombre' ya existe en el sistema \n";
+                }
+            }
         }
         if (fechaInicio == null || fechaInicio.isEmpty()) {
             validacion += "El campo 'Fecha de inicio' no debe estar vacío \n";
@@ -67,10 +96,10 @@ public class ProyectosNegocio {
         return validacion;
     }
 
-    public List<ProyectosBean> consultarProyectos(Integer id) {
+    public List<ProyectosBean> consultarProyectos(Integer id, String nombre, boolean nombreExacto) {
         List<ProyectosBean> listaProyectos = new ArrayList<>();
         try {
-            listaProyectos = proyectosDao.consultarProyectos(id);
+            listaProyectos = proyectosDao.consultarProyectos(id, nombre, nombreExacto);
         } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
             Logger.getLogger(ProyectosNegocio.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -79,7 +108,7 @@ public class ProyectosNegocio {
 
     public JSONObject consultarProyecto(Integer idProyecto) {
         JSONObject object = new JSONObject();
-        List<ProyectosBean> listaProyectos = consultarProyectos(idProyecto);
+        List<ProyectosBean> listaProyectos = consultarProyectos(idProyecto, null, false);
         if (listaProyectos != null && !listaProyectos.isEmpty()) {
             object.put("idProyecto", listaProyectos.get(0).getId());
             object.put("nombreProyecto", listaProyectos.get(0).getNombre());

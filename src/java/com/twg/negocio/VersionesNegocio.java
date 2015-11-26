@@ -53,10 +53,17 @@ public class VersionesNegocio {
         return error;
     }
 
-    public String validarDatos(String nombre, String fechaInicio, String fechaTerminacion, String alcance, String proyecto, String estado) {
+    public String validarDatos(Integer idVersion, String nombre, String fechaInicio, String fechaTerminacion, String alcance, String proyecto, String estado) {
         String validacion = "";
         if (nombre == null || nombre.isEmpty()) {
             validacion += "El campo 'Nombre' no debe estar vacío \n";
+        } else {
+            List<VersionesBean> listaVersiones = consultarVersiones(null, null, nombre, true);
+            if (listaVersiones != null && !listaVersiones.isEmpty()) {
+                if (idVersion == null || idVersion.intValue() != listaVersiones.get(0).getId()) {
+                    validacion += "El valor ingresado en el campo 'Nombre' ya existe en el sistema \n";
+                }
+            }
         }
         if (fechaInicio == null || fechaInicio.isEmpty()) {
             validacion += "El campo 'Fecha de inicio' no debe estar vacío \n";
@@ -100,10 +107,10 @@ public class VersionesNegocio {
         return validacion;
     }
 
-    public List<VersionesBean> consultarVersiones(Integer id, Integer idProyecto) {
+    public List<VersionesBean> consultarVersiones(Integer id, Integer idProyecto, String nombre, boolean nombreExacto) {
         List<VersionesBean> listaVersiones = new ArrayList<>();
         try {
-            listaVersiones = versionesDao.consultarVersiones(id, idProyecto);
+            listaVersiones = versionesDao.consultarVersiones(id, idProyecto, nombre, nombreExacto);
         } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
             Logger.getLogger(VersionesNegocio.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -112,24 +119,24 @@ public class VersionesNegocio {
 
     public JSONObject consultarVersion(Integer idVersion) {
         JSONObject object = new JSONObject();
-        List<VersionesBean> listaVersiones = consultarVersiones(idVersion, null);
+        List<VersionesBean> listaVersiones = consultarVersiones(idVersion, null, null, false);
         if (listaVersiones != null && !listaVersiones.isEmpty()) {
             object.put("idVersion", listaVersiones.get(0).getId());
             object.put("idProyecto", listaVersiones.get(0).getProyecto());
             object.put("nombreVersion", listaVersiones.get(0).getNombre());
             object.put("estado", listaVersiones.get(0).getEstado());
             object.put("fechaInicio", listaVersiones.get(0).getFechaInicio() != null ? sdf.format(listaVersiones.get(0).getFechaInicio()) : "");
-            object.put("fechaFin", listaVersiones.get(0).getFechaTerminacion()!= null ? sdf.format(listaVersiones.get(0).getFechaTerminacion()) : "");
+            object.put("fechaFin", listaVersiones.get(0).getFechaTerminacion() != null ? sdf.format(listaVersiones.get(0).getFechaTerminacion()) : "");
             object.put("alcance", listaVersiones.get(0).getAlcance());
         }
         return object;
     }
-    
+
     public String eliminarVersion(Integer idVersion, Integer idProyecto) {
         String error = "";
         try {
             int eliminacion = versionesDao.eliminarVersion(idVersion, idProyecto);
-            if(eliminacion == 0){
+            if (eliminacion == 0) {
                 error = "La versión no pudo ser eliminada";
             }
         } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {

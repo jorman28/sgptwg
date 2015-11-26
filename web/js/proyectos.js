@@ -4,50 +4,59 @@ var empleadosSeleccionados = false;
 
 $(function() {
     $('#fechaInicioProyecto').datetimepicker({format: 'dd/mm/yyyy', language: 'es', weekStart: true, todayBtn: true, autoclose: true, todayHighlight: true, startView: 2, minView: 2});
-    $('#fechaInicioVersion').datetimepicker({format: 'dd/mm/yyyy', language: 'es', weekStart: true, todayBtn: true, autoclose: true, todayHighlight: true, startView: 2, minView: 2});
-    $('#fechaFinVersion').datetimepicker({format: 'dd/mm/yyyy', language: 'es', weekStart: true, todayBtn: true, autoclose: true, todayHighlight: true, startView: 2, minView: 2});
-    $("#participante").typeahead({
-        onSelect: function(item) {
-            if ($("#persona" + item.value)[0] === undefined) {
-                var persona = personasProyecto[item.value];
-                var html = pintarPersona(persona);
-                if (persona.cargo === 'Cliente') {
-                    if (clientesSeleccionados === 0) {
-                        $("#clientesProyecto").html(html);
-                    } else {
-                        $("#clientesProyecto").append(html);
+    $('#fechaInicioVersion')
+            .datetimepicker({format: 'dd/mm/yyyy', language: 'es', weekStart: true, todayBtn: true, autoclose: true, todayHighlight: true, startView: 2, minView: 2})
+            .on('changeDate', function() {
+                $('#fechaFinVersion').datetimepicker('setStartDate', $('#fechaInicioVersion').val());
+            });
+    $('#fechaFinVersion')
+            .datetimepicker({format: 'dd/mm/yyyy', language: 'es', weekStart: true, todayBtn: true, autoclose: true, todayHighlight: true, startView: 2, minView: 2})
+            .on('changeDate', function() {
+                $('#fechaInicioVersion').datetimepicker('setEndDate', $('#fechaFinVersion').val());
+            });
+    $("#participante")
+            .typeahead({
+                onSelect: function(item) {
+                    if ($("#persona" + item.value)[0] === undefined) {
+                        var persona = personasProyecto[item.value];
+                        var html = pintarPersona(persona);
+                        if (persona.cargo === 'Cliente') {
+                            if (clientesSeleccionados === 0) {
+                                $("#clientesProyecto").html(html);
+                            } else {
+                                $("#clientesProyecto").append(html);
+                            }
+                            clientesSeleccionados++;
+                        } else {
+                            if (empleadosSeleccionados === 0) {
+                                $("#empleadosProyecto").html(html);
+                            } else {
+                                $("#empleadosProyecto").append(html);
+                            }
+                            empleadosSeleccionados++;
+                        }
                     }
-                    clientesSeleccionados++;
-                } else {
-                    if (empleadosSeleccionados === 0) {
-                        $("#empleadosProyecto").html(html);
-                    } else {
-                        $("#empleadosProyecto").append(html);
+                },
+                ajax: {
+                    url: "ProyectosController",
+                    timeout: 500,
+                    displayField: "nombre",
+                    valueField: 'id',
+                    triggerLength: 1,
+                    items: 10,
+                    method: "POST",
+                    preDispatch: function(query) {
+                        return {search: query, accion: "completarPersonas"};
+                    },
+                    preProcess: function(data) {
+                        for (var i = 0; i < data.length; i++) {
+                            var persona = data[i];
+                            personasProyecto[persona.id] = persona;
+                        }
+                        return data;
                     }
-                    empleadosSeleccionados++;
                 }
-            }
-        },
-        ajax: {
-            url: "ProyectosController",
-            timeout: 500,
-            displayField: "nombre",
-            valueField: 'id',
-            triggerLength: 1,
-            items: 10,
-            method: "POST",
-            preDispatch: function(query) {
-                return {search: query, accion: "completarPersonas"};
-            },
-            preProcess: function(data) {
-                for (var i = 0; i < data.length; i++) {
-                    var persona = data[i];
-                    personasProyecto[persona.id] = persona;
-                }
-                return data;
-            }
-        }
-    });
+            });
 });
 
 function nuevoProyecto() {
@@ -87,13 +96,13 @@ function editarProyecto(idProyecto) {
                 $("#idProyecto").val(data.idProyecto !== undefined ? data.idProyecto : "");
                 $("#nombreProyecto").val(data.nombreProyecto !== undefined ? data.nombreProyecto : "");
                 $("#fechaInicioProyecto").val(data.fechaInicio !== undefined ? data.fechaInicio : "");
-                $("#clientesProyecto").html(data.clientesProyecto !== undefined ? pintarListaPersonas(data.clientesProyecto) : 'No se han agregado clientes al proyecto');
-                if (data.clientesProyecto !== undefined) {
-                    clientesSeleccionados = data.clientesProyecto.length;
+                $("#clientesProyecto").html(data.clientes !== undefined ? pintarListaPersonas(data.clientes) : 'No se han agregado clientes al proyecto');
+                if (data.clientes !== undefined) {
+                    clientesSeleccionados = data.clientes.length;
                 }
-                $("#empleadosProyecto").html(data.empleadosProyecto !== undefined ? pintarListaPersonas(data.empleadosProyecto) : 'No se han agregado empleados al proyecto');
-                if (data.empleadosProyecto !== undefined) {
-                    empleadosSeleccionados = data.empleadosProyecto.length;
+                $("#empleadosProyecto").html(data.empleados !== undefined ? pintarListaPersonas(data.empleados) : 'No se han agregado empleados al proyecto');
+                if (data.empleados !== undefined) {
+                    empleadosSeleccionados = data.empleados.length;
                 }
                 $("#participante").val('');
                 $("#modalProyectos").modal("show");
@@ -117,7 +126,13 @@ function editarVersion(idVersion) {
                 $("#nombreVersion").val(data.nombreVersion !== undefined ? data.nombreVersion : "");
                 $("#estado").val(data.estado !== undefined ? data.estado : "0");
                 $("#fechaInicioVersion").val(data.fechaInicio !== undefined ? data.fechaInicio : "");
+                if (data.fechaInicio !== undefined) {
+                    $('#fechaFinVersion').datetimepicker('setStartDate', data.fechaInicio);
+                }
                 $("#fechaFinVersion").val(data.fechaFin !== undefined ? data.fechaFin : "");
+                if (data.fechaFin !== undefined) {
+                    $('#fechaInicioVersion').datetimepicker('setEndDate', data.fechaFin);
+                }
                 $("#alcance").val(data.alcance !== undefined ? data.alcance : "");
                 $("#modalVersiones").modal("show");
             }
@@ -142,7 +157,7 @@ function eliminarVersion(idVersion) {
 function pintarListaPersonas(listaPersonas) {
     var html = "";
     for (var persona in listaPersonas) {
-        html += pintarPersona(persona);
+        html += pintarPersona(listaPersonas[persona]);
     }
     return html;
 }
@@ -150,7 +165,7 @@ function pintarListaPersonas(listaPersonas) {
 function pintarPersona(persona) {
     var html = '    <li class="list-group-item" id="persona' + persona.id + '">'
             + '         <div class="row">'
-            + '             <input type="hidden" id="idPersona' + persona.id + '" name="idsPersonas" value="' + persona.id + '" />'
+            + '             <input type="hidden" id="idPersona' + persona.id + '" name="idPersonas" value="' + persona.id + '" />'
             + '             <div class="col-xs-10 col-sm-11 col-md-11 col-lg-11">'
             + '                 ' + persona.nombre
             + '             </div>'

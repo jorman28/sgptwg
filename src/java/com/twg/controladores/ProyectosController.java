@@ -57,6 +57,7 @@ public class ProyectosController extends HttpServlet {
         } catch (NumberFormatException e) {
             idProyecto = null;
         }
+        String[] idPersonas = request.getParameterValues("idPersonas");
 
         String idVersionStr = request.getParameter("idVersion");
         String idProyectoVersion = request.getParameter("idProyectoVersion");
@@ -73,7 +74,6 @@ public class ProyectosController extends HttpServlet {
         }
 
         String tipoEliminacion = request.getParameter("tipoEliminacion");
-        
         String busqueda = request.getParameter("search");
 
         switch (accion) {
@@ -86,9 +86,9 @@ public class ProyectosController extends HttpServlet {
                 response.getWriter().write(version.toJSONString());
                 break;
             case "guardarProyecto":
-                mensajeAlerta = proyectosNegocio.validarDatos(nombreProyecto, fechaInicioProyecto);
+                mensajeAlerta = proyectosNegocio.validarDatos(idProyecto, nombreProyecto, fechaInicioProyecto);
                 if (mensajeAlerta.isEmpty()) {
-                    mensajeError = proyectosNegocio.guardarProyecto(idProyectoStr, nombreProyecto, fechaInicioProyecto);
+                    mensajeError = proyectosNegocio.guardarProyecto(idProyectoStr, nombreProyecto, fechaInicioProyecto, idPersonas);
                     if (mensajeError.isEmpty()) {
                         mensajeExito = "El proyecto ha sido guardado con éxito";
                         break;
@@ -100,7 +100,7 @@ public class ProyectosController extends HttpServlet {
                 request.setAttribute("idPersona", idPersona);
                 break;
             case "guardarVersion":
-                mensajeAlerta = versionesNegocio.validarDatos(nombreVersion, fechaInicioVersion, fechaFinVersion, alcance, idProyectoVersion, estado);
+                mensajeAlerta = versionesNegocio.validarDatos(idVersion, nombreVersion, fechaInicioVersion, fechaFinVersion, alcance, idProyectoVersion, estado);
                 if (mensajeAlerta.isEmpty()) {
                     mensajeError = versionesNegocio.guardarVersion(idVersionStr, nombreVersion, fechaInicioVersion, fechaFinVersion, alcance, idProyectoVersion, estado);
                     if (mensajeError.isEmpty()) {
@@ -153,7 +153,7 @@ public class ProyectosController extends HttpServlet {
 
     private String listarProyectos() {
         String lista = "";
-        List<ProyectosBean> listaProyectos = proyectosNegocio.consultarProyectos(null);
+        List<ProyectosBean> listaProyectos = proyectosNegocio.consultarProyectos(null, null, false);
         if (listaProyectos != null && !listaProyectos.isEmpty()) {
             for (ProyectosBean proyecto : listaProyectos) {
                 lista += "  <div class=\"panel-group\" id=\"proyecto" + proyecto.getId() + "\" role=\"tablist\" aria-multiselectable=\"true\">\n"
@@ -175,7 +175,7 @@ public class ProyectosController extends HttpServlet {
                         + "         </div>\n"
                         + "         <div id=\"collapseProyecto" + proyecto.getId() + "\" class=\"panel-collapse collapse\" role=\"tabpanel\" aria-labelledby=\"headingProyecto" + proyecto.getId() + "\">\n"
                         + "             <ul class=\"list-group\">\n";
-                List<VersionesBean> listaVersiones = versionesNegocio.consultarVersiones(null, proyecto.getId());
+                List<VersionesBean> listaVersiones = versionesNegocio.consultarVersiones(null, proyecto.getId(), null, false);
                 if (listaVersiones != null && !listaVersiones.isEmpty()) {
                     for (VersionesBean version : listaVersiones) {
                         lista += "                 <li class=\"list-group-item\" id=\"version" + version.getId() + "\">\n"

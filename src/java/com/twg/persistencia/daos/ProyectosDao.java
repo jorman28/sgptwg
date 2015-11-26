@@ -20,12 +20,12 @@ public class ProyectosDao {
 
     private final ProyectosSql sql = new ProyectosSql();
 
-    public List<ProyectosBean> consultarProyectos(Integer id) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
+    public List<ProyectosBean> consultarProyectos(Integer id, String nombre, boolean nombreExacto) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         List<ProyectosBean> listaProyectos = new ArrayList();
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;
-        ps = con.prepareStatement(sql.consultarProyectos(id));
+        ps = con.prepareStatement(sql.consultarProyectos(id, nombre, nombreExacto));
         ResultSet rs;
         rs = ps.executeQuery();
         while (rs.next()) {
@@ -88,7 +88,7 @@ public class ProyectosDao {
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;
         ps = con.prepareStatement(sql.consultarPersonasProyecto());
-        ps.setInt(0, idProyecto);
+        ps.setInt(1, idProyecto);
         ResultSet rs;
         rs = ps.executeQuery();
         while (rs.next()) {
@@ -113,7 +113,7 @@ public class ProyectosDao {
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;
         ps = con.prepareStatement(sql.eliminarPersonasProyecto());
-        ps.setInt(0, idProyecto);
+        ps.setInt(1, idProyecto);
         int eliminacion = ps.executeUpdate();
         ps.close();
         con.close();
@@ -125,8 +125,8 @@ public class ProyectosDao {
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;
         ps = con.prepareStatement(sql.insertarPersonaProyecto());
-        ps.setInt(0, idProyecto);
-        ps.setInt(1, idPersona);
+        ps.setInt(1, idProyecto);
+        ps.setInt(2, idPersona);
         int insercion = ps.executeUpdate();
         ps.close();
         con.close();
