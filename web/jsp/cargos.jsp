@@ -19,7 +19,7 @@
             <c:import url="/jsp/general/alertas.jsp"/>
             <div class="row">
                 <c:import url="/jsp/general/about.jsp"/>
-                <div class="col-xs-12 col-sm-9 col-md-9 col-lg-9" id="contenido">
+                <div class="col-xs-12 col-sm-9 col-md-10 col-lg-10" id="contenido">
                     <form id="formularioCargos" autocomplete="off" action="./CargosController" method="POST"> 
                         <c:import url="/jsp/general/eliminacion.jsp"/>
                         <h2>CARGOS</h2>

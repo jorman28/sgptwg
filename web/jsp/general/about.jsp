@@ -1,4 +1,4 @@
-<div class="hidden-xs col-sm-3 col-md-3 col-lg-3">
+<div class="hidden-xs col-sm-3 col-md-2 col-lg-2">
     <br>
-    ACERCA DE CHRONOS
+    <div align="center"><p class="bg-info">CHRONOS</p></div>
 </div>
