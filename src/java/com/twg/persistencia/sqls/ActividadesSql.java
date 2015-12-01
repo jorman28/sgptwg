@@ -20,7 +20,7 @@ public class ActividadesSql {
         return "SELECT * FROM actividades WHERE fecha_eliminacion IS NULL ";
     }
 
-    public String consultarActividades(Integer id, Integer version, String descripcion, Date fechaEstimadaInicio, Date fechaEstimadaTerminacion, Date fechaRealInicio, Date fechaRealTerminacion, Date tiempoEstimado, Date tiempoInvertido, Integer estado) {
+    public String consultarActividades(Integer id, Integer version, String descripcion, Date fecha_estimada_inicio, Date fecha_estimada_terminacion, Date fecha_real_inicio, Date fecha_real_terminacion, Date tiempo_estimado, Date tiempo_invertido, Integer estado) {
         String sql = "SELECT * FROM actividades WHERE fecha_eliminacion IS NULL ";
         if (id != null) {
             sql += "AND id = " + id + " ";
@@ -31,23 +31,23 @@ public class ActividadesSql {
         if (descripcion != null && !descripcion.isEmpty()) {
             sql += "AND descripcion LIKE '%" + descripcion + "%' ";
         }
-        if (fechaEstimadaInicio != null && !fechaEstimadaInicio.toString().isEmpty()) {
-            sql += "AND fecha_estimada_inicio = '" + fechaEstimadaInicio + "' ";
+        if (fecha_estimada_inicio != null && !fecha_estimada_inicio.toString().isEmpty()) {
+            sql += "AND fecha_estimada_inicio = '" + fecha_estimada_inicio + "' ";
         }
-        if (fechaEstimadaTerminacion != null && !fechaEstimadaTerminacion.toString().isEmpty()) {
-            sql += "AND fecha_estimada_terminacion = '" + fechaEstimadaTerminacion + "' ";
+        if (fecha_estimada_terminacion != null && !fecha_estimada_terminacion.toString().isEmpty()) {
+            sql += "AND fecha_estimada_terminacion = '" + fecha_estimada_terminacion + "' ";
         }
-        if (fechaRealInicio != null && !fechaRealInicio.toString().isEmpty()) {
-            sql += "AND fecha_real_inicio = '" + fechaRealInicio + "' ";
+        if (fecha_real_inicio != null && !fecha_real_inicio.toString().isEmpty()) {
+            sql += "AND fecha_real_inicio = '" + fecha_real_inicio + "' ";
         }
-        if (fechaRealTerminacion != null && !fechaRealTerminacion.toString().isEmpty()) {
-            sql += "AND fecha_real_terminacion = '" + fechaRealTerminacion + "' ";
+        if (fecha_real_terminacion != null && !fecha_real_terminacion.toString().isEmpty()) {
+            sql += "AND fecha_real_terminacion = '" + fecha_real_terminacion + "' ";
         }
-        if (tiempoEstimado != null && !tiempoEstimado.toString().isEmpty()) {
-            sql += "AND tiempo_estimado = '" + tiempoEstimado.getTime() + "' ";
+        if (tiempo_estimado != null && !tiempo_estimado.toString().isEmpty()) {
+            sql += "AND tiempo_estimado = '" + tiempo_estimado.getTime() + "' ";
         }
-        if (tiempoInvertido != null && !tiempoInvertido.toString().isEmpty()) {
-            sql += "AND tiempo_invertido = '" + tiempoInvertido.getTime() + "' ";
+        if (tiempo_invertido != null && !tiempo_invertido.toString().isEmpty()) {
+            sql += "AND tiempo_invertido = '" + tiempo_invertido.getTime() + "' ";
         }
         if (estado != null && !estado.toString().isEmpty()) {
             sql += "AND estado = '" + estado + "' ";
