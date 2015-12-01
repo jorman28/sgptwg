@@ -21,12 +21,12 @@ public class PersonasDao {
     public PersonasDao() {
     }
 
-    public List<PersonasBean> consultarPersonas(String idPersona, String documento, String tipoDocumento, String nombres, String apellidos, String correo, String usuario, String perfil, String cargo) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
+    public List<PersonasBean> consultarPersonas(String idPersona, String documento, String tipoDocumento, String nombres, String apellidos, String correo, String usuario, String perfil, String cargo, String nombreCompleto) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         List<PersonasBean> listaPersonas = new ArrayList<>();
         PreparedStatement ps;
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
-        ps = con.prepareStatement(sql.consultarPersonas(idPersona, documento, tipoDocumento, nombres, apellidos, correo, usuario, perfil, cargo));
+        ps = con.prepareStatement(sql.consultarPersonas(idPersona, documento, tipoDocumento, nombres, apellidos, correo, usuario, perfil, cargo, nombreCompleto));
         ResultSet rs;
         rs = ps.executeQuery();
         while (rs.next()) {

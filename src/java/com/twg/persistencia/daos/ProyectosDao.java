@@ -1,5 +1,6 @@
 package com.twg.persistencia.daos;
 
+import com.twg.persistencia.beans.PersonasBean;
 import com.twg.persistencia.beans.ProyectosBean;
 import com.twg.persistencia.sqls.ProyectosSql;
 import com.twg.utilidades.ConexionBaseDatos;
@@ -19,12 +20,12 @@ public class ProyectosDao {
 
     private final ProyectosSql sql = new ProyectosSql();
 
-    public List<ProyectosBean> consultarProyectos(Integer id) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
+    public List<ProyectosBean> consultarProyectos(Integer id, String nombre, boolean nombreExacto) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         List<ProyectosBean> listaProyectos = new ArrayList();
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;
-        ps = con.prepareStatement(sql.consultarProyectos(id));
+        ps = con.prepareStatement(sql.consultarProyectos(id, nombre, nombreExacto));
         ResultSet rs;
         rs = ps.executeQuery();
         while (rs.next()) {
@@ -41,8 +42,8 @@ public class ProyectosDao {
         con.close();
         return listaProyectos;
     }
-    
-    public int crearProyecto(ProyectosBean proyecto) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
+
+    public int crearProyecto(ProyectosBean proyecto) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;
@@ -54,8 +55,8 @@ public class ProyectosDao {
         con.close();
         return insercion;
     }
-    
-    public int actualizarProyecto(ProyectosBean proyecto) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
+
+    public int actualizarProyecto(ProyectosBean proyecto) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;
@@ -68,8 +69,8 @@ public class ProyectosDao {
         con.close();
         return actualizacion;
     }
-    
-    public int eliminarProyecto(Integer idProyecto) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
+
+    public int eliminarProyecto(Integer idProyecto) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;
@@ -79,5 +80,56 @@ public class ProyectosDao {
         ps.close();
         con.close();
         return eliminacion;
+    }
+
+    public List<PersonasBean> consultarPersonasProyecto(Integer idProyecto) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
+        List<PersonasBean> listaPersonas = new ArrayList<>();
+        Connection con;
+        con = new ConexionBaseDatos().obtenerConexion();
+        PreparedStatement ps;
+        ps = con.prepareStatement(sql.consultarPersonasProyecto());
+        ps.setInt(1, idProyecto);
+        ResultSet rs;
+        rs = ps.executeQuery();
+        while (rs.next()) {
+            PersonasBean persona = new PersonasBean();
+            persona.setId(rs.getInt("id"));
+            persona.setTipoDocumento(rs.getString("tipo_documento"));
+            persona.setDocumento(rs.getString("documento"));
+            persona.setNombres(rs.getString("nombres"));
+            persona.setApellidos(rs.getString("apellidos"));
+            persona.setNombreCargo(rs.getString("cargo"));
+
+            listaPersonas.add(persona);
+        }
+        rs.close();
+        ps.close();
+        con.close();
+        return listaPersonas;
+    }
+
+    public int eliminarPersonasProyecto(Integer idProyecto) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
+        Connection con;
+        con = new ConexionBaseDatos().obtenerConexion();
+        PreparedStatement ps;
+        ps = con.prepareStatement(sql.eliminarPersonasProyecto());
+        ps.setInt(1, idProyecto);
+        int eliminacion = ps.executeUpdate();
+        ps.close();
+        con.close();
+        return eliminacion;
+    }
+
+    public int insertarPersonaProyecto(Integer idProyecto, Integer idPersona) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
+        Connection con;
+        con = new ConexionBaseDatos().obtenerConexion();
+        PreparedStatement ps;
+        ps = con.prepareStatement(sql.insertarPersonaProyecto());
+        ps.setInt(1, idProyecto);
+        ps.setInt(2, idPersona);
+        int insercion = ps.executeUpdate();
+        ps.close();
+        con.close();
+        return insercion;
     }
 }

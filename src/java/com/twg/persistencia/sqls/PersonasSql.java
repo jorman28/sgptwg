@@ -9,7 +9,7 @@ public class PersonasSql {
     public PersonasSql() {
     }
 
-    public String consultarPersonas(String idPersona, String documento, String tipoDocumento, String nombres, String apellidos, String correo, String usuario, String perfil, String cargo) {
+    public String consultarPersonas(String idPersona, String documento, String tipoDocumento, String nombres, String apellidos, String correo, String usuario, String perfil, String cargo, String nombreCompleto) {
         String sql = "";
         sql += "SELECT  "
                 + "    p.id, "
@@ -64,7 +64,10 @@ public class PersonasSql {
             sql += "and u.perfil = " + perfil + " ";
         }
         if (cargo != null && !cargo.isEmpty() && !cargo.equals("0")) {
-            sql += "and p.cargo = " + cargo + "";
+            sql += "and p.cargo = " + cargo + " ";
+        }
+        if (nombreCompleto != null && !nombreCompleto.isEmpty()) {
+            sql += "and (CONCAT(p.nombres, ' ', p.apellidos) LIKE '%" + nombreCompleto + "%' OR p.documento like '%"+nombreCompleto+"%')";
         }
         return sql;
     }

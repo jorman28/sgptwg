@@ -10,7 +10,7 @@ public class VersionesSql {
         return "SELECT COUNT(*) FROM VERSIONES WHERE fecha_eliminacion IS NULL";
     }
 
-    public String consultarVersiones(Integer id, Integer idProyecto) {
+    public String consultarVersiones(Integer id, Integer idProyecto, String nombre, boolean nombreExacto) {
         String sql = "  SELECT  "
                 + "         ver.id, "
                 + "         ver.nombre, "
@@ -34,6 +34,13 @@ public class VersionesSql {
         }
         if (idProyecto != null) {
             sql += "        AND pro.id = " + idProyecto + " ";
+        }
+        if (nombre != null && !nombre.isEmpty()) {
+            if (nombreExacto) {
+                sql += "    AND ver.nombre = '" + nombre + "' ";
+            } else {
+                sql += "    AND ver.nombre LIKE '%" + nombre + "%' ";
+            }
         }
         return sql;
     }

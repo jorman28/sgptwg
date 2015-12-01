@@ -142,7 +142,7 @@ public class PersonasController extends HttpServlet {
 
     private void cargarTabla(HttpServletResponse response, String documento, String tipoDocumento, String nombres, String apellidos, String correo, String usuario, String perfil, String cargo) throws ServletException, IOException {
         response.setContentType("text/html; charset=iso-8859-1");
-        List<PersonasBean> listaPersonas = personasNegocio.consultarPersonas(documento, tipoDocumento, nombres, apellidos, correo, usuario, perfil, cargo);
+        List<PersonasBean> listaPersonas = personasNegocio.consultarPersonas(documento, tipoDocumento, nombres, apellidos, correo, usuario, perfil, cargo, null);
         PrintWriter out = response.getWriter();
         out.println("<table class=\"table table-striped table-hover table-condensed bordo-tablas\">");
         out.println("<thead>");
