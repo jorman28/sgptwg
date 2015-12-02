@@ -75,6 +75,7 @@ public class ProyectosController extends HttpServlet {
 
         String tipoEliminacion = request.getParameter("tipoEliminacion");
         String busqueda = request.getParameter("search");
+        String busquedaProyecto = request.getParameter("busquedaProyecto");
 
         switch (accion) {
             case "editarProyecto":
@@ -145,15 +146,15 @@ public class ProyectosController extends HttpServlet {
             request.setAttribute("mensajeError", mensajeError);
             request.setAttribute("mensajeExito", mensajeExito);
             request.setAttribute("mensajeAlerta", mensajeAlerta);
-            request.setAttribute("listaProyectos", listarProyectos());
+            request.setAttribute("listaProyectos", listarProyectos(busquedaProyecto));
             request.setAttribute("estados", estadosNegocio.consultarEstados(null, null, null));
             request.getRequestDispatcher(redireccion).forward(request, response);
         }
     }
 
-    private String listarProyectos() {
+    private String listarProyectos(String nombre) {
         String lista = "";
-        List<ProyectosBean> listaProyectos = proyectosNegocio.consultarProyectos(null, null, false);
+        List<ProyectosBean> listaProyectos = proyectosNegocio.consultarProyectos(null, nombre, false);
         if (listaProyectos != null && !listaProyectos.isEmpty()) {
             for (ProyectosBean proyecto : listaProyectos) {
                 lista += "  <div class=\"panel-group\" id=\"proyecto" + proyecto.getId() + "\" role=\"tablist\" aria-multiselectable=\"true\">\n"

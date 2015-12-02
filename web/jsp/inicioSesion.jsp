@@ -16,7 +16,7 @@
         <div class="container-fluid">
             <c:import url="/jsp/general/alertas.jsp"/>
             <div class="row">
-                <div class="col-xs-12 col-sm-9 col-md-10 col-lg-10" id="contenido">
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" id="contenido">
                     <form autocomplete="off" action="./InicioSesionController" method="POST" id="formularioInicio">
                         <div class="row">
                             <br/>

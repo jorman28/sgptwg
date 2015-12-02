@@ -23,6 +23,22 @@
                     <form autocomplete="off" action="./ProyectosController" method="POST" id="formularioProyectos">
                         <c:import url="/jsp/general/eliminacion.jsp"/>
                         <input type="hidden" id="tipoEliminacion" name="tipoEliminacion"/>
+                        <div id="modalConsulta" class="modal fade">
+                            <div class="modal-dialog modal-sm">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <input type="text" class="form-control" id="busquedaProyecto" name="busquedaProyecto"/>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button class="btn btn-default" type="submit" name="accion" id="consultarProyecto" value="consultarProyecto" onclick="llenarProyectos()">Consultar</button>
+                                        <button type="button" class="btn btn-primary" data-dismiss="modal">Cancelar</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <div id="modalProyectos" class="modal fade">
                             <div class="modal-dialog modal-lg">
                                 <div class="modal-content">
@@ -119,7 +135,7 @@
                         <h2>PROYECTOS</h2>
                         <div id="listaProyectos">${listaProyectos}</div>
                         <div class="row" align="center">
-                            <button class="btn btn-default" type="button" name="accion" id="consultarProyecto" value="consultarProyecto" onclick="llenarProyectos()">Consultar</button>
+                            <button class="btn btn-default" type="button" data-toggle="modal" data-target="#modalConsulta">Consultar</button>
                             <button class="btn btn-default" type="button" name="accion" id="crearProyecto" value="crearProyecto" onclick="nuevoProyecto();">Nuevo</button>
                             <button class="btn btn-default" type="submit" name="accion" id="limpiarProyecto" value="limpiarProyecto">Limpiar</button>
                         </div>

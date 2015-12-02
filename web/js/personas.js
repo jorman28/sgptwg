@@ -9,7 +9,7 @@ function editarPersona(idPersona){
 
 function consultarDatos(){
     var tipoDocumento = $('#tipoDocumento').val() !== undefined && $('#tipoDocumento').val() !== "0" ? $('#tipoDocumento').val() : null;
-    var documento = $('#documento').val() !== undefined && $('#documento').val() !== "" ? $('#idPersona').val() : null;
+    var documento = $('#documento').val() !== undefined && $('#documento').val() !== "" ? $('#documento').val() : null;
     var nombres = $('#nombres').val() !== undefined && $('#nombres').val() !== "" ? $('#nombres').val() : null;
     var apellidos = $('#apellidos').val() !== undefined && $('#apellidos').val() !== "" ? $('#apellidos').val() : null;
     var correo = $('#correo').val() !== undefined && $('#correo').val() !== "" ? $('#correo').val() : null;
