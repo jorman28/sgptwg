@@ -7,7 +7,7 @@ package com.twg.persistencia.sqls;
 public class VersionesSql {
 
     public String contarVersiones() {
-        return "SELECT COUNT(*) FROM VERSIONES WHERE fecha_eliminacion IS NULL";
+        return "SELECT COUNT(*) FROM versiones WHERE fecha_eliminacion IS NULL";
     }
 
     public String consultarVersiones(Integer id, Integer idProyecto, String nombre, boolean nombreExacto) {
