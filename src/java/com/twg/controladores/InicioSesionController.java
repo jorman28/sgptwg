@@ -44,6 +44,8 @@ public class InicioSesionController extends HttpServlet {
             } else {
                 request.getSession().setAttribute("menu", inicio.get("menu"));
                 request.getSession().setAttribute("permisos", inicio.get("permisos"));
+                request.getSession().setAttribute("personaSesion", inicio.get("personaSesion"));
+                request.getSession().setAttribute("usuarioSesion", inicio.get("usuarioSesion"));
                 redireccion = "jsp/paginaInicio.jsp";
             }
         }

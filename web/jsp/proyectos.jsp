@@ -27,13 +27,15 @@
                             <div class="modal-dialog modal-sm">
                                 <div class="modal-content">
                                     <div class="modal-header">
-                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                        CONSULTA
                                     </div>
                                     <div class="modal-body">
-                                        <input type="text" class="form-control" id="busquedaProyecto" name="busquedaProyecto"/>
+                                        <div class="form-group">
+                                            <input type="text" class="form-control" id="busquedaProyecto" name="busquedaProyecto"/>
+                                        </div>
                                     </div>
                                     <div class="modal-footer">
-                                        <button class="btn btn-default" type="submit" name="accion" id="consultarProyecto" value="consultarProyecto" onclick="llenarProyectos()">Consultar</button>
+                                        <button class="btn btn-default" type="submit" name="accion" id="consultarProyecto" value="consultarProyecto">Consultar</button>
                                         <button type="button" class="btn btn-primary" data-dismiss="modal">Cancelar</button>
                                     </div>
                                 </div>
@@ -134,11 +136,14 @@
                         </div>
                         <h2>PROYECTOS</h2>
                         <div id="listaProyectos">${listaProyectos}</div>
-                        <div class="row" align="center">
+                        <div class="row form-group" align="center">
                             <button class="btn btn-default" type="button" data-toggle="modal" data-target="#modalConsulta">Consultar</button>
                             <button class="btn btn-default" type="button" name="accion" id="crearProyecto" value="crearProyecto" onclick="nuevoProyecto();">Nuevo</button>
                             <button class="btn btn-default" type="submit" name="accion" id="limpiarProyecto" value="limpiarProyecto">Limpiar</button>
                         </div>
+                        <c:import url="/jsp/general/comentarios.jsp"/>
+                        <div id="listaComentarios"></div>
+                        <button class="btn btn-default" type="button" data-toggle="modal" data-target="#modalComentarios">Comentar</button>
                     </form>
                 </div>
             </div>

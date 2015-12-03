@@ -14,7 +14,6 @@ public class ComentariosBean {
     private Integer idPersona;
     private String nombres;
     private String apellidos;
-    private String usuario;
     private String tipoDestino;
     private Integer idDestino;
     private Date fechaEliminacion;
@@ -65,14 +64,6 @@ public class ComentariosBean {
 
     public void setApellidos(String apellidos) {
         this.apellidos = apellidos;
-    }
-
-    public String getUsuario() {
-        return usuario;
-    }
-
-    public void setUsuario(String usuario) {
-        this.usuario = usuario;
     }
 
     public String getTipoDestino() {

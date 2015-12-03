@@ -11,7 +11,24 @@ public class ComentariosSql {
     }
 
     public String consultarComentarios() {
-        String sql = "SELECT * FROM comentarios WHERE fecha_eliminacion IS NOT NULL AND tipo_destino = ? AND id_destino = ? ";
+        String sql = "  SELECT \n"
+                + "         com.id,\n"
+                + "         com.id_persona,\n"
+                + "         com.comentario,\n"
+                + "         per.nombres,\n"
+                + "         per.apellidos,\n"
+                + "         com.fecha_creacion,\n"
+                + "         com.tipo_destino,\n"
+                + "         com.id_destino,\n"
+                + "         com.fecha_eliminacion\n"
+                + "     FROM\n"
+                + "         comentarios com\n"
+                + "             INNER JOIN\n"
+                + "         personas per ON per.id = com.id_persona\n"
+                + "     WHERE "
+                + "         fecha_eliminacion IS NOT NULL "
+                + "         AND tipo_destino = ? AND id_destino = ? "
+                + "     ORDER BY fecha_creacion DESC";
         return sql;
     }
 

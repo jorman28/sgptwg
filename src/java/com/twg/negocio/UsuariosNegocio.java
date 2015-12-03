@@ -222,6 +222,8 @@ public class UsuariosNegocio {
                                 String menu = perfilesNegocio.construccionMenuNavegacion(permisos, contexto);
                                 resultado.put("permisos", permisos);
                                 resultado.put("menu", menu);
+                                resultado.put("personaSesion", listaUsuarios.get(0).getIdPersona());
+                                resultado.put("usuarioSesion", listaUsuarios.get(0).getUsuario());
                             } else {
                                 mensajeError = "El usuario con el que intenta ingresar está inactivo";
                             }

@@ -74,4 +74,21 @@ public class ComentariosNegocio {
         }
         return error;
     }
+
+    public String listaComentarios(String tipoDestino, Integer idDestino) {
+        String resultado = "";
+        List<ComentariosBean> listaComentarios = consultarComentarios(tipoDestino, idDestino);
+        if (listaComentarios != null && !listaComentarios.isEmpty()) {
+            for (ComentariosBean comentario : listaComentarios) {
+                resultado += "  <div id=\"comentario" + comentario.getId() + "\" class=\"list-group\">\n"
+                        + "         <div class=\"list-group-item\">\n"
+                        + "             <button type=\"button\" class=\"close\" onclick=\"$('#comentario'" + comentario.getId() + ").remove();\"><span aria-hidden=\"true\">&times;</span></button>\n"
+                        + "             <p class=\"list-group-item-heading\"><strong>" + comentario.getNombres() + " " + comentario.getApellidos() + "</strong></p>\n"
+                        + "             <p class=\"list-group-item-text\">" + comentario.getComentario() + "</p>\n"
+                        + "         </div>\n"
+                        + "     </div>";
+            }
+        }
+        return resultado;
+    }
 }

@@ -33,7 +33,6 @@ public class ComentariosDao {
             comentario.setIdPersona(rs.getInt("id_persona"));
             comentario.setNombres(rs.getString("nombres"));
             comentario.setApellidos(rs.getString("apellidos"));
-            comentario.setUsuario(rs.getString("usuario"));
             comentario.setComentario(rs.getString("comentario"));
             comentario.setFechaCreacion(rs.getDate("fecha_creacion"));
             comentario.setTipoDestino(rs.getString("tipo_destino"));
