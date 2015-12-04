@@ -4,11 +4,11 @@ import com.twg.persistencia.beans.ComentariosBean;
 import com.twg.persistencia.sqls.ComentariosSql;
 import com.twg.utilidades.ConexionBaseDatos;
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -25,6 +25,8 @@ public class ComentariosDao {
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;
         ps = con.prepareStatement(sql.consultarComentarios());
+        ps.setString(1, tipoDestino);
+        ps.setInt(2, idDestino);
         ResultSet rs;
         rs = ps.executeQuery();
         while (rs.next()) {
@@ -34,10 +36,10 @@ public class ComentariosDao {
             comentario.setNombres(rs.getString("nombres"));
             comentario.setApellidos(rs.getString("apellidos"));
             comentario.setComentario(rs.getString("comentario"));
-            comentario.setFechaCreacion(rs.getDate("fecha_creacion"));
+            comentario.setFechaCreacion((Date)rs.getObject("fecha_creacion"));
             comentario.setTipoDestino(rs.getString("tipo_destino"));
             comentario.setIdDestino(rs.getInt("id_destino"));
-            comentario.setFechaEliminacion(rs.getDate("fecha_eliminacion"));
+            comentario.setFechaEliminacion((Date)rs.getObject("fecha_eliminacion"));
 
             listaComentarios.add(comentario);
         }
@@ -54,9 +56,8 @@ public class ComentariosDao {
         ps = con.prepareStatement(sql.insertarComentario());
         ps.setInt(1, comentario.getIdPersona());
         ps.setString(2, comentario.getComentario());
-        ps.setDate(3, new Date(comentario.getFechaCreacion().getTime()));
-        ps.setString(4, comentario.getTipoDestino());
-        ps.setInt(5, comentario.getIdDestino());
+        ps.setString(3, comentario.getTipoDestino());
+        ps.setInt(4, comentario.getIdDestino());
         int insercion = ps.executeUpdate();
         ps.close();
         con.close();
@@ -70,10 +71,9 @@ public class ComentariosDao {
         ps = con.prepareStatement(sql.actualizarComentario());
         ps.setInt(1, comentario.getIdPersona());
         ps.setString(2, comentario.getComentario());
-        ps.setDate(3, new Date(comentario.getFechaCreacion().getTime()));
-        ps.setString(4, comentario.getTipoDestino());
-        ps.setInt(5, comentario.getIdDestino());
-        ps.setInt(6, comentario.getId());
+        ps.setString(3, comentario.getTipoDestino());
+        ps.setInt(4, comentario.getIdDestino());
+        ps.setInt(5, comentario.getId());
         int actualizacion = ps.executeUpdate();
         ps.close();
         con.close();

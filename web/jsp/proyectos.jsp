@@ -142,7 +142,8 @@
                             <button class="btn btn-default" type="submit" name="accion" id="limpiarProyecto" value="limpiarProyecto">Limpiar</button>
                         </div>
                         <c:import url="/jsp/general/comentarios.jsp"/>
-                        <div id="listaComentarios"></div>
+                        <input type="hidden" id="idComentario" name="idComentario"/>
+                        <div id="listaComentarios">${listaComentarios}</div>
                         <button class="btn btn-default" type="button" data-toggle="modal" data-target="#modalComentarios">Comentar</button>
                     </form>
                 </div>

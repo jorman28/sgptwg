@@ -3,6 +3,7 @@ package com.twg.negocio;
 import com.twg.persistencia.beans.ComentariosBean;
 import com.twg.persistencia.daos.ComentariosDao;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -16,14 +17,15 @@ import java.util.logging.Logger;
 public class ComentariosNegocio {
 
     private final ComentariosDao comentariosDao = new ComentariosDao();
+    private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 
-    public String guardarComentario(String id, String idPersona, String comentarioEscrito, String tipoDestino, String idDestino) {
+    public String guardarComentario(String id, Integer idPersona, String comentarioEscrito, String tipoDestino, Integer idDestino) {
         String error = "";
         ComentariosBean comentario = new ComentariosBean();
-        comentario.setIdPersona(Integer.valueOf(idPersona));
+        comentario.setIdPersona(idPersona);
         comentario.setComentario(comentarioEscrito);
         comentario.setTipoDestino(tipoDestino);
-        comentario.setIdDestino(Integer.valueOf(idDestino));
+        comentario.setIdDestino(idDestino);
         comentario.setFechaCreacion(new Date());
         try {
             int guardado = 0;
@@ -82,8 +84,8 @@ public class ComentariosNegocio {
             for (ComentariosBean comentario : listaComentarios) {
                 resultado += "  <div id=\"comentario" + comentario.getId() + "\" class=\"list-group\">\n"
                         + "         <div class=\"list-group-item\">\n"
-                        + "             <button type=\"button\" class=\"close\" onclick=\"$('#comentario'" + comentario.getId() + ").remove();\"><span aria-hidden=\"true\">&times;</span></button>\n"
-                        + "             <p class=\"list-group-item-heading\"><strong>" + comentario.getNombres() + " " + comentario.getApellidos() + "</strong></p>\n"
+                        + "             <button type=\"button\" class=\"close\" onclick=\"eliminarComentario(" + comentario.getId() + ")\"><span aria-hidden=\"true\">&times;</span></button>\n"
+                        + "             <p class=\"list-group-item-heading\"><strong>" + comentario.getNombres() + " " + comentario.getApellidos() + " (" + sdf.format(comentario.getFechaCreacion()) + ")" + "</strong></p>\n"
                         + "             <p class=\"list-group-item-text\">" + comentario.getComentario() + "</p>\n"
                         + "         </div>\n"
                         + "     </div>";

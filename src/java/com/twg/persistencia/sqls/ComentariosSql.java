@@ -26,18 +26,18 @@ public class ComentariosSql {
                 + "             INNER JOIN\n"
                 + "         personas per ON per.id = com.id_persona\n"
                 + "     WHERE "
-                + "         fecha_eliminacion IS NOT NULL "
-                + "         AND tipo_destino = ? AND id_destino = ? "
-                + "     ORDER BY fecha_creacion DESC";
+                + "         com.fecha_eliminacion IS NULL "
+                + "         AND com.tipo_destino = ? AND com.id_destino = ? "
+                + "     ORDER BY com.fecha_creacion DESC, com.id DESC";
         return sql;
     }
 
     public String insertarComentario() {
-        return "INSERT INTO comentarios (id_persona, comentario, fecha_creacion, tipo_destino, id_destino) VALUES (?,?,?,?,?)";
+        return "INSERT INTO comentarios (id_persona, comentario, fecha_creacion, tipo_destino, id_destino) VALUES (?,?,now(),?,?)";
     }
 
     public String actualizarComentario() {
-        return "UPDATE comentarios SET id_persona = ?, comentario = ?, fecha_creacion = ?, tipo_destino = ?, id_destino = ? WHERE id = ?";
+        return "UPDATE comentarios SET id_persona = ?, comentario = ?, fecha_creacion = now(), tipo_destino = ?, id_destino = ? WHERE id = ?";
     }
 
     public String eliminarComentario() {

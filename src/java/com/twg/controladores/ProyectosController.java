@@ -1,5 +1,6 @@
 package com.twg.controladores;
 
+import com.twg.negocio.ComentariosNegocio;
 import com.twg.negocio.EstadosNegocio;
 import com.twg.negocio.PersonasNegocio;
 import com.twg.negocio.ProyectosNegocio;
@@ -25,6 +26,7 @@ public class ProyectosController extends HttpServlet {
     private final VersionesNegocio versionesNegocio = new VersionesNegocio();
     private final EstadosNegocio estadosNegocio = new EstadosNegocio();
     private final PersonasNegocio personasNegocio = new PersonasNegocio();
+    private final ComentariosNegocio comentariosNegocio = new ComentariosNegocio();
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -125,17 +127,39 @@ public class ProyectosController extends HttpServlet {
                 if (tipoEliminacion != null && !tipoEliminacion.isEmpty()) {
                     if (tipoEliminacion.equals("VERSION")) {
                         mensajeError = versionesNegocio.eliminarVersion(idVersion, null);
-                        if(mensajeError.isEmpty()){
+                        if (mensajeError.isEmpty()) {
                             mensajeExito = "La versión ha sido eliminada con éxito";
+                        }
+                    } if (tipoEliminacion.equals("COMENTARIO")) {
+                        Integer idComentario = Integer.valueOf(request.getParameter("idComentario"));
+                        mensajeError = comentariosNegocio.eliminarComentario(idComentario);
+                        if (mensajeError.isEmpty()) {
+                            mensajeExito = "Comentario eliminado con éxito";
                         }
                     } else {
                         mensajeError = proyectosNegocio.eliminarProyecto(idProyecto);
-                        if(mensajeError.isEmpty()){
+                        if (mensajeError.isEmpty()) {
                             mensajeExito = "El proyecto ha sido eliminado con éxito";
                         }
                     }
                 } else {
                     mensajeError = "No se especificó tipo de eliminación";
+                }
+                break;
+            case "guardarComentario":
+                String comentario = request.getParameter("comentario");
+                Integer persona;
+                try {
+                    persona = (Integer) request.getSession().getAttribute("personaSesion");
+                } catch (Exception e) {
+                    persona = null;
+                }
+                mensajeAlerta = comentariosNegocio.validarDatos(comentario);
+                if (mensajeAlerta.isEmpty()) {
+                    mensajeError = comentariosNegocio.guardarComentario(null, persona, comentario, "PROYECTOS", 1);
+                    if (mensajeError.isEmpty()) {
+                        mensajeExito = "Comentario guardado con éxito";
+                    }
                 }
                 break;
             default:
@@ -148,6 +172,7 @@ public class ProyectosController extends HttpServlet {
             request.setAttribute("mensajeAlerta", mensajeAlerta);
             request.setAttribute("listaProyectos", listarProyectos(busquedaProyecto));
             request.setAttribute("estados", estadosNegocio.consultarEstados(null, null, null));
+            request.setAttribute("listaComentarios", comentariosNegocio.listaComentarios("PROYECTOS", 1));
             request.getRequestDispatcher(redireccion).forward(request, response);
         }
     }

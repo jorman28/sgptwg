@@ -4,7 +4,7 @@
             <div class="modal-body">
                 <div class="form-group">
                     <label for="comentario">Comentario:</label>
-                    <textarea class="form-control" id="comentario"></textarea>
+                    <textarea class="form-control" id="comentario" name="comentario"></textarea>
                 </div>
             </div>
             <div class="modal-footer">
