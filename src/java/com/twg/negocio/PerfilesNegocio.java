@@ -108,13 +108,13 @@ public class PerfilesNegocio {
         }
         return result;
     }
-    
-    public Map<String, Object> guardarPermisos(Integer idPerfil, String[] permisos){
+
+    public Map<String, Object> guardarPermisos(Integer idPerfil, String[] permisos) {
         String mensajeExito = "";
         String mensajeError = "";
 
         List<Integer> listaPermisos = new ArrayList<>();
-        if(permisos != null){
+        if (permisos != null) {
             for (String permiso : permisos) {
                 try {
                     listaPermisos.add(Integer.valueOf(permiso));
@@ -122,8 +122,8 @@ public class PerfilesNegocio {
                 }
             }
         }
-        
-        if(!listaPermisos.isEmpty()){
+
+        if (!listaPermisos.isEmpty()) {
             try {
                 int insercion = perfilesDao.insertarPermisos(idPerfil, listaPermisos);
                 if (insercion > 0) {
@@ -138,7 +138,7 @@ public class PerfilesNegocio {
         } else {
             mensajeError = "No se seleccionó ningún permiso para agregar al perfil";
         }
-        
+
         Map<String, Object> result = new HashMap<>();
         if (!mensajeError.isEmpty()) {
             result.put("mensajeError", mensajeError);
@@ -226,6 +226,13 @@ public class PerfilesNegocio {
                 paginasAgregadas.add(entry.getKey());
             }
         }
+        menu.append("               <li class=\"dropdown\">\n");
+        menu.append("                   <a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\" role=\"button\" aria-haspopup=\"true\" aria-expanded=\"false\">").append("Ayuda").append(" <span class=\"caret\"></span></a>\n");
+        menu.append("                   <ul class=\"dropdown-menu\">\n");
+        menu.append("                       <li><a href=\"").append("#").append("\" data-toggle=\"modal\" data-target=\"#administracionPersonas\">").append("Administración de personas").append("</a></li>\n");
+        menu.append("                       <li><a href=\"").append("#").append("\" data-toggle=\"modal\" data-target=\"#acerca\">").append("Acerca de").append("</a></li>\n");
+        menu.append("                   </ul>\n");
+        menu.append("               </li>\n");
         menu.append("               <li><a href=\"").append(context).append("/InicioSesionController\">Cerrar sesión</a></li>\n");
         menu.append("           </ul>\n");
         menu.append("       </div>\n");
@@ -241,7 +248,7 @@ public class PerfilesNegocio {
             List<Integer> permisos = perfilesDao.obtenerPermisosPerfil(idPerfil);
             if (permisos != null && !permisos.isEmpty()) {
                 for (Integer permiso : permisos) {
-                    resultado.put("permiso_"+permiso, true);
+                    resultado.put("permiso_" + permiso, true);
                 }
             }
         } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {

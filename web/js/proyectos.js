@@ -154,6 +154,12 @@ function eliminarVersion(idVersion) {
     $("#confirmationMessage").modal("show");
 }
 
+function eliminarComentario(idComentario) {
+    $("#tipoEliminacion").val("COMENTARIO");
+    $("#idComentario").val(idComentario);
+    $("#confirmationMessage").modal("show");
+}
+
 function pintarListaPersonas(listaPersonas) {
     var html = "";
     for (var persona in listaPersonas) {
