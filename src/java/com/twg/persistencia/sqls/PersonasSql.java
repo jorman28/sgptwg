@@ -88,6 +88,11 @@ public class PersonasSql {
     }
 
     public String consultarIdPersona(String documento, String tipoDocumento) {
-        return "SELECT id FROM personas WHERE documento = '" + documento + "' AND tipo_documento = '" + tipoDocumento + "'";
+        String sql="";
+        sql += "SELECT id FROM personas WHERE documento = '" + documento + "'";
+        if (tipoDocumento != null && !tipoDocumento.isEmpty() && !tipoDocumento.equals("0")) {
+            sql += "AND tipo_documento = '" + tipoDocumento + "' ";
+        }
+        return sql;
     }
 }
