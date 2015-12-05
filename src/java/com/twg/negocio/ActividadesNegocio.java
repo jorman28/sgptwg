@@ -1,7 +1,10 @@
 package com.twg.negocio;
 
 import com.twg.persistencia.beans.ActividadesBean;
+import com.twg.persistencia.beans.Actividades_EmpleadosBean;
 import com.twg.persistencia.daos.ActividadesDao;
+import com.twg.persistencia.daos.Actividades_EmpleadosDao;
+import com.twg.persistencia.daos.PersonasDao;
 import com.twg.persistencia.daos.VersionesDao;
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -48,14 +51,8 @@ public class ActividadesNegocio {
             actividad.setFecha_real_terminacion(sdf.parse(fecha_real_terminacion));
         } catch (ParseException ex) {
         }
-        try {
-            actividad.setTiempo_estimado(stf.parse(tiempo_estimado));
-        } catch (ParseException ex) {
-        }
-        try {
-            actividad.setTiempo_invertido(stf.parse(tiempo_invertido));
-        } catch (ParseException ex) {
-        }
+        actividad.setTiempo_estimado(Integer.valueOf(tiempo_estimado));
+        actividad.setTiempo_invertido(Integer.valueOf(tiempo_invertido));
         actividad.setEstado(Integer.valueOf(estado));
         try {
             int guardado = 0;
@@ -92,10 +89,61 @@ public class ActividadesNegocio {
         return validacion;
     }
 
-    public List<ActividadesBean> consultarActividades(Integer id, Integer version, String descripcion, Date fecha_estimada_inicio, Date fecha_estimada_terminacion, Date fecha_real_inicio, Date fecha_real_terminacion, Date tiempo_estimado, Date tiempo_invertido, Integer estado) {
+    public List<ActividadesBean> consultarActividades(Integer id, Integer version, String descripcion, Date fecha_estimada_inicio, Date fecha_estimada_terminacion, Date fecha_real_inicio, Date fecha_real_terminacion, Integer tiempo_estimado, Integer tiempo_invertido, Integer estado) {
         List<ActividadesBean> listaActividades = new ArrayList<>();
         try {
             listaActividades = actividadesDao.consultarActividades(id, version, descripcion, fecha_estimada_inicio, fecha_estimada_terminacion, fecha_real_inicio, fecha_real_terminacion, tiempo_estimado, tiempo_invertido, estado);
+        } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
+            Logger.getLogger(ActividadesNegocio.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return listaActividades;
+    }
+    
+    public List<ActividadesBean> consultarActividades2(Integer id, String versionStr, String descripcion, String fecha_estimada_inicio, 
+            String fecha_estimada_terminacion, String fecha_real_inicio, String fecha_real_terminacion, String estadoStr, String responsable) {
+        List<ActividadesBean> listaActividades = new ArrayList<>();
+        try {
+            String idsActividades="";
+            if(responsable!=null && !responsable.equals("")){
+                PersonasDao perDao = new PersonasDao();
+                int persona = perDao.consultarIdPersona(responsable, null);
+                Actividades_EmpleadosDao actiDao = new Actividades_EmpleadosDao();
+                List<Actividades_EmpleadosBean> actiList = actiDao.consultarActividadesEmpleados(persona);
+                
+                for (Actividades_EmpleadosBean actiList1 : actiList) {
+                    idsActividades += actiList1.getActividad()+",";
+                }
+                if(!idsActividades.equals("")){
+                    idsActividades=idsActividades.substring(0, idsActividades.length()-1);
+                }
+            }
+
+            Integer version = null;
+            try {
+                version = Integer.valueOf(versionStr);
+            } catch (Exception e) {
+            }
+            Integer estado = null;
+            try {
+                estado = Integer.valueOf(estadoStr);
+            } catch (Exception e) {
+            }
+
+            Date fecha_estimada_inicioD = null;
+            Date fecha_estimada_terminacionD = null;
+            Date fecha_real_inicioD = null;
+            Date fecha_real_terminacionD = null;
+            try {
+                fecha_estimada_inicioD = sdf.parse(fecha_estimada_inicio);
+                fecha_estimada_terminacionD = sdf.parse(fecha_estimada_terminacion);
+                fecha_real_inicioD = sdf.parse(fecha_real_inicio);
+                fecha_real_terminacionD = sdf.parse(fecha_real_terminacion);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            listaActividades = actividadesDao.consultarActividades2(idsActividades, version, descripcion, 
+                fecha_estimada_inicioD, fecha_estimada_terminacionD, fecha_real_inicioD, fecha_real_terminacionD, estado, responsable);
+            
         } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
             Logger.getLogger(ActividadesNegocio.class.getName()).log(Level.SEVERE, null, ex);
         }
