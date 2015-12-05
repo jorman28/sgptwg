@@ -20,8 +20,8 @@ public class ActividadesBean {
     private Date fecha_estimada_terminacion;
     private Date fecha_real_inicio;
     private Date fecha_real_terminacion;
-    private Date tiempo_estimado;
-    private Date tiempo_invertido;
+    private Integer tiempo_estimado;
+    private Integer tiempo_invertido;
     private Integer estado;
     private Date fecha_eliminacion;
 
@@ -81,19 +81,19 @@ public class ActividadesBean {
         this.fecha_real_terminacion = fecha_real_terminacion;
     }
 
-    public Date getTiempo_estimado() {
+    public Integer getTiempo_estimado() {
         return tiempo_estimado;
     }
 
-    public void setTiempo_estimado(Date tiempo_estimado) {
+    public void setTiempo_estimado(Integer tiempo_estimado) {
         this.tiempo_estimado = tiempo_estimado;
     }
 
-    public Date getTiempo_invertido() {
+    public Integer getTiempo_invertido() {
         return tiempo_invertido;
     }
 
-    public void setTiempo_invertido(Date tiempo_invertido) {
+    public void setTiempo_invertido(Integer tiempo_invertido) {
         this.tiempo_invertido = tiempo_invertido;
     }
 

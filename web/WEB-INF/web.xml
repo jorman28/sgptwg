@@ -32,6 +32,10 @@
         <servlet-name>ProyectosController</servlet-name>
         <servlet-class>com.twg.controladores.ProyectosController</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>ActividadesController</servlet-name>
+        <servlet-class>com.twg.controladores.ActividadesController</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>UsuariosController</servlet-name>
         <url-pattern>/UsuariosController</url-pattern>
@@ -63,6 +67,10 @@
     <servlet-mapping>
         <servlet-name>ProyectosController</servlet-name>
         <url-pattern>/ProyectosController</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ActividadesController</servlet-name>
+        <url-pattern>/ActividadesController</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
