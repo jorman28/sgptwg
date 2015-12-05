@@ -14,9 +14,10 @@
     </head>
     <body>
         <div class="container-fluid">
+            <div>${menu}</div>
             <div class="row">
-                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" id="contenido">
-                    <div>${menu}</div>
+                <c:import url="/jsp/general/about.jsp"/>
+                <div class="col-xs-12 col-sm-9 col-md-10 col-lg-10" id="contenido">
                     <div align="center">
                         <!--<h2>PÁGINA DE INICIO</h2>-->
                         <img src="images/navegacional.png" class="img-responsive img-thumbnail">
