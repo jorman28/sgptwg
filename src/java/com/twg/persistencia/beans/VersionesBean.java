@@ -18,6 +18,7 @@ public class VersionesBean {
     private Integer estado;
     private String nombreEstado;
     private Date fechaEliminacion;
+    private Date fechaInicioProyecto;
 
     public Integer getId() {
         return id;
@@ -99,4 +100,11 @@ public class VersionesBean {
         this.fechaEliminacion = fechaEliminacion;
     }
 
+    public Date getFechaInicioProyecto() {
+        return fechaInicioProyecto;
+    }
+
+    public void setFechaInicioProyecto(Date fechaInicioProyecto) {
+        this.fechaInicioProyecto = fechaInicioProyecto;
+    }
 }

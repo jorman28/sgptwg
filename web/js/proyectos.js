@@ -72,13 +72,17 @@ function nuevoProyecto() {
     empleadosSeleccionados = 0;
 }
 
-function nuevaVersion(idProyecto) {
+function nuevaVersion(idProyecto, fechaInicio) {
     $("#idProyectoVersion").val(idProyecto);
     $("#nombreVersion").val('');
     $("#estado").val("0");
     $("#fechaInicioVersion").val('');
     $("#fechaFinVersion").val('');
     $("#alcance").val('');
+    $('#fechaInicioVersion').datetimepicker('setStartDate', fechaInicio);
+    $('#fechaFinVersion').datetimepicker('setStartDate', fechaInicio);
+    $('#fechaInicioVersion').datetimepicker('setEndDate', null);
+    $('#fechaFinVersion').datetimepicker('setEndDate', null);
     $("#modalVersiones").modal("show");
 }
 
@@ -133,6 +137,7 @@ function editarVersion(idVersion) {
                 if (data.fechaFin !== undefined) {
                     $('#fechaInicioVersion').datetimepicker('setEndDate', data.fechaFin);
                 }
+                $('#fechaInicioVersion').datetimepicker('setStartDate', data.fechaProyecto);
                 $("#alcance").val(data.alcance !== undefined ? data.alcance : "");
                 $("#modalVersiones").modal("show");
             }

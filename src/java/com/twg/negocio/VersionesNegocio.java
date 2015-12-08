@@ -127,6 +127,7 @@ public class VersionesNegocio {
             object.put("estado", listaVersiones.get(0).getEstado());
             object.put("fechaInicio", listaVersiones.get(0).getFechaInicio() != null ? sdf.format(listaVersiones.get(0).getFechaInicio()) : "");
             object.put("fechaFin", listaVersiones.get(0).getFechaTerminacion() != null ? sdf.format(listaVersiones.get(0).getFechaTerminacion()) : "");
+            object.put("fechaProyecto", listaVersiones.get(0).getFechaInicioProyecto()!= null ? sdf.format(listaVersiones.get(0).getFechaInicioProyecto()) : "");
             object.put("alcance", listaVersiones.get(0).getAlcance());
         }
         return object;

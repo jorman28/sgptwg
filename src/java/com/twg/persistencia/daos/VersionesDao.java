@@ -39,6 +39,7 @@ public class VersionesDao {
             version.setEstado(rs.getInt("estado"));
             version.setNombreEstado(rs.getString("nombre_estado"));
             version.setFechaEliminacion(rs.getDate("fecha_eliminacion"));
+            version.setFechaInicioProyecto(rs.getDate("fecha_proyecto"));
 
             listaVersiones.add(version);
         }
@@ -46,6 +47,25 @@ public class VersionesDao {
         ps.close();
         con.close();
         return listaVersiones;
+    }
+
+    public boolean versionesPorFecha(Integer idProyecto, java.util.Date fecha) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
+        Connection con;
+        con = new ConexionBaseDatos().obtenerConexion();
+        PreparedStatement ps;
+        ps = con.prepareStatement(sql.versionesPorFecha());
+        ps.setInt(1, idProyecto);
+        ps.setDate(2, new Date(fecha.getTime()));
+        ResultSet rs;
+        rs = ps.executeQuery();
+        boolean versionesExistentes = false;
+        if (rs.next()) {
+            versionesExistentes = true;
+        }
+        rs.close();
+        ps.close();
+        con.close();
+        return versionesExistentes;
     }
 
     public int crearVersion(VersionesBean version) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
