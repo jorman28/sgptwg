@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -88,7 +89,16 @@ public class ProyectosNegocio {
             validacion += "El campo 'Fecha de inicio' no debe estar vacío \n";
         } else {
             try {
-                sdf.parse(fechaInicio);
+                Date fechaInicioProyecto = sdf.parse(fechaInicio);
+                if (idProyecto != null) {
+                    try {
+                        if (versionesDao.versionesPorFecha(idProyecto, fechaInicioProyecto)) {
+                            validacion += "La fecha de inicio del proyecto es mayor que alguna de sus versiones \n";
+                        }
+                    } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
+                        Logger.getLogger(ProyectosNegocio.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
             } catch (ParseException e) {
                 validacion += "El valor ingresado en el campo 'Fecha de inicio' no se encuentra en el formato 'día/mes/año' \n";
             }

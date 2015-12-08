@@ -8,6 +8,7 @@ import com.twg.negocio.VersionesNegocio;
 import com.twg.persistencia.beans.ProyectosBean;
 import com.twg.persistencia.beans.VersionesBean;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -27,6 +28,7 @@ public class ProyectosController extends HttpServlet {
     private final EstadosNegocio estadosNegocio = new EstadosNegocio();
     private final PersonasNegocio personasNegocio = new PersonasNegocio();
     private final ComentariosNegocio comentariosNegocio = new ComentariosNegocio();
+    private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -130,7 +132,8 @@ public class ProyectosController extends HttpServlet {
                         if (mensajeError.isEmpty()) {
                             mensajeExito = "La versión ha sido eliminada con éxito";
                         }
-                    } if (tipoEliminacion.equals("COMENTARIO")) {
+                    }
+                    if (tipoEliminacion.equals("COMENTARIO")) {
                         Integer idComentario = Integer.valueOf(request.getParameter("idComentario"));
                         mensajeError = comentariosNegocio.eliminarComentario(idComentario);
                         if (mensajeError.isEmpty()) {
@@ -222,7 +225,7 @@ public class ProyectosController extends HttpServlet {
                         + "                         <div class=\"col-xs-11 col-sm-11 col-md-11 col-lg-11\">\n"
                         + "                         </div>\n"
                         + "                         <div class=\"col-xs-1 col-sm-1 col-md-1 col-lg-1\">\n"
-                        + "                             <span class=\"glyphicon glyphicon-plus\" onclick=\"nuevaVersion(" + proyecto.getId() + ");\"></span>\n"
+                        + "                             <span class=\"glyphicon glyphicon-plus\" onclick=\"nuevaVersion(" + proyecto.getId() + ", '" + sdf.format(proyecto.getFechaInicio()) + "');\"></span>\n"
                         + "                         </div>\n"
                         + "                     </div>\n"
                         + "                 </li>\n"

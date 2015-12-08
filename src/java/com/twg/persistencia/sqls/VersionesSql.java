@@ -1,5 +1,7 @@
 package com.twg.persistencia.sqls;
 
+import java.util.Date;
+
 /**
  *
  * @author Pipe
@@ -21,7 +23,8 @@ public class VersionesSql {
                 + "         ver.fecha_eliminacion, "
                 + "         pro.nombre AS nombre_proyecto, "
                 + "         ver.estado, "
-                + "         est.nombre AS nombre_estado "
+                + "         est.nombre AS nombre_estado, "
+                + "         pro.fecha_inicio AS fecha_proyecto "
                 + "     FROM "
                 + "         versiones ver "
                 + "             INNER JOIN "
@@ -62,5 +65,9 @@ public class VersionesSql {
             sql += "AND proyecto = " + idProyecto + " ";
         }
         return sql;
+    }
+
+    public String versionesPorFecha() {
+        return "SELECT id, nombre FROM versiones WHERE proyecto = ? AND fecha_inicio < ?";
     }
 }
