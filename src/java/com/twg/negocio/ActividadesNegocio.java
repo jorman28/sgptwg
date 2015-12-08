@@ -23,7 +23,6 @@ import org.json.simple.JSONObject;
 public class ActividadesNegocio {
 
     private final ActividadesDao actividadesDao = new ActividadesDao();
-    private final VersionesDao versionesDao = new VersionesDao();
     private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");    
     private final SimpleDateFormat stf = new SimpleDateFormat("HH:mm:ss.SSS");
 
@@ -99,8 +98,8 @@ public class ActividadesNegocio {
         return listaActividades;
     }
     
-    public List<ActividadesBean> consultarActividades2(Integer id, String versionStr, String descripcion, String fecha_estimada_inicio, 
-            String fecha_estimada_terminacion, String fecha_real_inicio, String fecha_real_terminacion, String estadoStr, String responsable) {
+    public List<ActividadesBean> consultarActividades2(Integer id, String versionStr, String descripcion, String fecha, 
+            String estadoStr, String responsable) {
         List<ActividadesBean> listaActividades = new ArrayList<>();
         try {
             String idsActividades="";
@@ -129,20 +128,7 @@ public class ActividadesNegocio {
             } catch (Exception e) {
             }
 
-            Date fecha_estimada_inicioD = null;
-            Date fecha_estimada_terminacionD = null;
-            Date fecha_real_inicioD = null;
-            Date fecha_real_terminacionD = null;
-            try {
-                fecha_estimada_inicioD = sdf.parse(fecha_estimada_inicio);
-                fecha_estimada_terminacionD = sdf.parse(fecha_estimada_terminacion);
-                fecha_real_inicioD = sdf.parse(fecha_real_inicio);
-                fecha_real_terminacionD = sdf.parse(fecha_real_terminacion);
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-            listaActividades = actividadesDao.consultarActividades2(idsActividades, version, descripcion, 
-                fecha_estimada_inicioD, fecha_estimada_terminacionD, fecha_real_inicioD, fecha_real_terminacionD, estado, responsable);
+            listaActividades = actividadesDao.consultarActiv2(idsActividades, version, descripcion, fecha, estado, responsable);
             
         } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
             Logger.getLogger(ActividadesNegocio.class.getName()).log(Level.SEVERE, null, ex);
@@ -161,8 +147,8 @@ public class ActividadesNegocio {
             object.put("fecha_estimada_terminacion", listaActividades.get(0).getFecha_estimada_terminacion()!= null ? sdf.format(listaActividades.get(0).getFecha_estimada_terminacion()) : "");
             object.put("fecha_real_inicio", listaActividades.get(0).getFecha_real_inicio()!= null ? sdf.format(listaActividades.get(0).getFecha_real_inicio()) : "");
             object.put("fecha_real_terminacion", listaActividades.get(0).getFecha_real_terminacion()!= null ? sdf.format(listaActividades.get(0).getFecha_real_terminacion()) : "");
-            object.put("tiempo_estimado", listaActividades.get(0).getTiempo_estimado()!= null ? stf.format(listaActividades.get(0).getTiempo_estimado()) : "");
-            object.put("tiempo_invertido", listaActividades.get(0).getTiempo_invertido()!= null ? stf.format(listaActividades.get(0).getTiempo_invertido()) : "");
+            object.put("tiempo_estimado", listaActividades.get(0).getTiempo_estimado());
+            object.put("tiempo_invertido", listaActividades.get(0).getTiempo_invertido());
             object.put("estado", listaActividades.get(0).getEstado());
         }
         return object;

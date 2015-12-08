@@ -17,6 +17,6 @@ public class Actividades_EmpleadosSql {
     }
     
     public String consultarEmpleadosxAtividad(Integer empleado) {
-        return "SELECT actividad FROM actividades_empleados WHERE 1 = 1 AND empleado = "+empleado;
+        return "SELECT actividad, empleado FROM actividades_empleados WHERE 1 = 1 AND empleado = "+empleado;
     }
 }

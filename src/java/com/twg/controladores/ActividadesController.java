@@ -6,25 +6,17 @@
 package com.twg.controladores;
 
 import com.twg.negocio.ActividadesNegocio;
-import com.twg.persistencia.beans.EstadosBean;
+import com.twg.negocio.EstadosNegocio;
+import com.twg.negocio.ProyectosNegocio;
+import com.twg.negocio.VersionesNegocio;
 import com.twg.persistencia.beans.ActividadesBean;
-import com.twg.persistencia.beans.VersionesBean;
-import com.twg.persistencia.beans.ProyectosBean;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Map;
-import static javax.print.attribute.Size2DSyntax.MM;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.json.simple.JSONObject;
 
 /**
  *
@@ -33,6 +25,9 @@ import org.json.simple.JSONObject;
 public class ActividadesController extends HttpServlet {
 
     private final ActividadesNegocio actividadesNegocio = new ActividadesNegocio();
+    private final ProyectosNegocio proyectos = new ProyectosNegocio();
+    private final VersionesNegocio versiones = new VersionesNegocio();
+    private final EstadosNegocio estados = new EstadosNegocio();
     
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -73,25 +68,25 @@ public class ActividadesController extends HttpServlet {
             case "consultar":
                 cargarTabla(response, id, proyecto, versionStr, descripcion, estadoStr, fechaStr, responsable);
                 break;
-//            case "guardar":
-//                //REDIRIGIR A LA PANTALLA DE JORMAN
-//                break;
-//            case "eliminar":
-//                Map<String, Object> result = actividadesNegocio.eliminarEstado(id);
-//                if(result.get("mensajeError") != null){
-//                    enviarDatos(request, id, proyecto, version, descripcion, estado, fecha, responsable);
-//                }
-//                if(result.get("mensajeExito") != null){
-//                    enviarDatos(request, id, proyecto, version, descripcion, estado, fecha, responsable);
-//                }
-//                break;
+            case "guardar":
+                //REDIRIGIR A LA PANTALLA DE JORMAN
+                break;
+            case "eliminar":
+                mensajeError = actividadesNegocio.eliminarActividad(id);
+                if (mensajeError.isEmpty()) {
+                    mensajeExito = "La actividad ha sido eliminada con éxito";
+                }
+                break;
             default:
-//                enviarDatos(request, id, proyecto, versionStr, descripcion, estado, fecha, responsable);
                 break;
         }
         request.setAttribute("mensajeAlerta", mensajeAlerta);
         request.setAttribute("mensajeExito", mensajeExito);
         request.setAttribute("mensajeError", mensajeError);
+        request.setAttribute("proyectos", proyectos.consultarProyectos(null, null, false));
+        //pendiente enviar el Id del proyecto para consultar las versiones
+        request.setAttribute("versiones", versiones.consultarVersiones(null, null, null, false));
+        request.setAttribute("estados", estados.consultarEstados(null, null, null));
         if(!accion.equals("consultar") && !accion.equals("editar")){
             request.getRequestDispatcher("jsp/actividades.jsp").forward(request, response);
         }
@@ -112,7 +107,7 @@ public class ActividadesController extends HttpServlet {
             String estado, String fecha, String responsable) throws ServletException, IOException {
         response.setContentType("text/html; charset=iso-8859-1");
         
-        List<ActividadesBean> listaActividades = actividadesNegocio.consultarActividades2(id, version, descripcion, fecha, fecha, fecha, fecha, estado, responsable);
+        List<ActividadesBean> listaActividades = actividadesNegocio.consultarActividades2(id, version, descripcion, fecha, estado, responsable);
 
         PrintWriter out = response.getWriter();
         out.println("<table class=\"table table-striped table-hover table-condensed bordo-tablas\">");
@@ -120,8 +115,9 @@ public class ActividadesController extends HttpServlet {
         out.println(        "<tr>");			
         out.println(            "<th>Descripción</th>");
         out.println(            "<th>Versión</th>");
-        out.println(            "<th>Fecha estimada</th>");
-        out.println(            "<th>Tiempo estimado</th>");
+        out.println(            "<th>Fecha estimada inicio</th>");
+        out.println(            "<th>Fecha estimada fin</th>");
+        out.println(            "<th>Tiempo estimado (h)</th>");
         out.println(            "<th>Estado</th>");
         out.println(            "<th>Acciones</th>");
         out.println(        "</tr>");
@@ -131,13 +127,13 @@ public class ActividadesController extends HttpServlet {
             for (ActividadesBean actividad : listaActividades) {
                 out.println("<tr>");			
                 out.println(    "<td>"+actividad.getDescripcion()+"</td>");
-                out.println(    "<td>"+actividad.getVersion()+"</td>");
+                out.println(    "<td>"+actividad.getNombreV()+"</td>");
                 out.println(    "<td>"+actividad.getFecha_estimada_inicio()+"</td>");
+                out.println(    "<td>"+actividad.getFecha_estimada_terminacion()+"</td>");
                 out.println(    "<td>"+actividad.getTiempo_estimado()+"</td>");
-                out.println(    "<td>"+actividad.getEstado()+"</td>");
+                out.println(    "<td>"+actividad.getNombreE()+"</td>");
                 out.println(    "<td>");
-//              out.println(        "<button class=\"btn btn-default\" type=\"button\" data-toggle=\"modal\" data-target=\"#confirmationMessage\" onclick=\"jQuery('#id').val('"+actividad.getId()+"');\">Eliminar</button>");
-                //AGREAR BOTÓN PARA IR A LA PANTALLA DE JORMAN:
+              out.println(        "<button class=\"btn btn-default\" type=\"button\" data-toggle=\"modal\" data-target=\"#confirmationMessage\" onclick=\"jQuery('#id').val('"+actividad.getId()+"');\">Eliminar</button>");
                 out.println(        "<button class=\"btn btn-default\" type=\"button\" data-toggle=\"modal\";\">Gestionar</button>");
                 out.println(    "</td>");
                 out.println("</tr>");

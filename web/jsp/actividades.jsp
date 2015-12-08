@@ -32,18 +32,22 @@
                                 <div class="row">
                                     <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
                                         <label for="proyecto">Proyecto</label>
-                                        <select id="proyecto" name="proyecto" class="form-control">
-                                            <option value ="0">SELECCIONE</option>
-                                            <option value="PROYECTOS">PROYECTOS</option>
-                                        </select>                                        
+                                        <select class="form-control" id="proyecto" name="proyecto">
+                                            <option value="0">SELECCIONE</option>
+                                            <c:forEach items="${proyectos}" var="tipo">
+                                                <option value="${tipo.id}" <c:if test="${proyecto == tipo.id}">selected</c:if> >${tipo.nombre}</option>
+                                            </c:forEach>
+                                        </select>                                         
                                     </div>
                                     
                                     <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
                                         <label for="version">Versión</label>
-                                        <select id="version" name="version" class="form-control">
-                                            <option value ="0">SELECCIONE</option>
-                                            <option value="VERSIONES">VERSIONES</option>
-                                        </select>                                        
+                                        <select class="form-control" id="version" name="version">
+                                            <option value="0">SELECCIONE</option>
+                                            <c:forEach items="${versiones}" var="tipo">
+                                                <option value="${tipo.id}" <c:if test="${version == tipo.id}">selected</c:if> >${tipo.nombre}</option>
+                                            </c:forEach>
+                                        </select>                                     
                                     </div>
                                     
                                     <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
@@ -54,10 +58,12 @@
                                 <div class="row">
                                     <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
                                         <label for="estado">Estado</label>
-                                        <select id="estado" name="estado" class="form-control">
-                                            <option value ="0">SELECCIONE</option>
-                                            <option value="ESTADOS">ESTADOS</option>
-                                        </select>                                        
+                                        <select class="form-control" id="estado" name="estado">
+                                            <option value="0">SELECCIONE</option>
+                                            <c:forEach items="${estados}" var="tipo">
+                                                <option value="${tipo.id}" <c:if test="${estado == tipo.id}">selected</c:if> >${tipo.nombre}</option>
+                                            </c:forEach>
+                                        </select>                                       
                                     </div>
                                     
                                     <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
