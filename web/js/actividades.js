@@ -27,7 +27,7 @@ function llenarTablaActividades(){
     var descripcion = $('#descripcion').val() !== undefined && $('#descripcion').val() !== "" ? $('#descripcion').val() : null;
     var estado = $('#estado').val() !== undefined && $('#estado').val() !== "0" ? $('#estado').val() : null;
     var fecha = $('#fecha').val() !== undefined && $('#fecha').val() !== "" ? $('#fecha').val() : null;
-    var responsable = $('#nombre').val() !== undefined && $('#nombre').val() !== "" ? $('#nombre').val() : null;
+    var responsable = $('#responsable').val() !== undefined && $('#responsable').val() !== "" ? $('#responsable').val() : null;
     $.ajax({
         type    :"POST",
         url     :"ActividadesController",

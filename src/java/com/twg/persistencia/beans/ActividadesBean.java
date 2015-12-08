@@ -15,14 +15,16 @@ public class ActividadesBean {
 
     private Integer id;
     private Integer version;
+    private String nombreV;
     private String descripcion;
     private Date fecha_estimada_inicio;
     private Date fecha_estimada_terminacion;
     private Date fecha_real_inicio;
     private Date fecha_real_terminacion;
-    private Integer tiempo_estimado;
-    private Integer tiempo_invertido;
+    private double tiempo_estimado;
+    private double tiempo_invertido;
     private Integer estado;
+    private String nombreE;
     private Date fecha_eliminacion;
 
     public Integer getId() {
@@ -39,6 +41,14 @@ public class ActividadesBean {
 
     public void setVersion(Integer version) {
         this.version = version;
+    }
+
+    public String getNombreV() {
+        return nombreV;
+    }
+
+    public void setNombreV(String nombreV) {
+        this.nombreV = nombreV;
     }
 
     public String getDescripcion() {
@@ -81,19 +91,19 @@ public class ActividadesBean {
         this.fecha_real_terminacion = fecha_real_terminacion;
     }
 
-    public Integer getTiempo_estimado() {
+    public double getTiempo_estimado() {
         return tiempo_estimado;
     }
 
-    public void setTiempo_estimado(Integer tiempo_estimado) {
+    public void setTiempo_estimado(double tiempo_estimado) {
         this.tiempo_estimado = tiempo_estimado;
     }
 
-    public Integer getTiempo_invertido() {
+    public double getTiempo_invertido() {
         return tiempo_invertido;
     }
 
-    public void setTiempo_invertido(Integer tiempo_invertido) {
+    public void setTiempo_invertido(double tiempo_invertido) {
         this.tiempo_invertido = tiempo_invertido;
     }
 
@@ -111,6 +121,14 @@ public class ActividadesBean {
 
     public void setFecha_eliminacion(Date fecha_eliminacion) {
         this.fecha_eliminacion = fecha_eliminacion;
+    }
+
+    public String getNombreE() {
+        return nombreE;
+    }
+
+    public void setNombreE(String nombreE) {
+        this.nombreE = nombreE;
     }
 
 }
