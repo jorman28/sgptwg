@@ -85,7 +85,7 @@
 
                                     <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
                                         <label for="tiempo_estimado">*Tiempo estimado (horas):</label>
-                                        <input class="form-control" type="number" min="0" step="0.1" id="tiempo_estimado" name="tiempo_estimado" value="${tiempo_estimado}"/>
+                                        <input class="form-control" type="number" min="0" step="0.1" pattern="[0-9]+([,\.][0-9]+)?" id="tiempo_estimado" name="tiempo_estimado" value="${tiempo_estimado}"/>
                                     </div>
 
                                     <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
