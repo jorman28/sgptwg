@@ -92,7 +92,7 @@
 
                                     <div class="col-xs-12 col-sm-9 col-md-9 col-lg-9">
                                         <label for="participante">*Participante:</label> 
-                                        <input class="form-control" type="text" id="participante" name="participante" />
+                                        <input class="form-control" id="participante" name="participante" />
                                     </div>
                                 </div>
                                 <br>

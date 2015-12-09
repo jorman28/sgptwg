@@ -10,6 +10,7 @@ import com.twg.negocio.EstadosNegocio;
 import com.twg.negocio.ProyectosNegocio;
 import com.twg.negocio.VersionesNegocio;
 import com.twg.persistencia.beans.ActividadesBean;
+import com.twg.persistencia.beans.Actividades_EmpleadosBean;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
@@ -74,7 +75,8 @@ public class ActividadesController extends HttpServlet {
         String descripcion = request.getParameter("descripcion"); //consulta y creacion Er
         String estadoStr = request.getParameter("estado"); //consulta y creacion Er
         String fechaStr = request.getParameter("fecha"); //consulta Er
-        String responsableStr = request.getParameter("responsable"); //consulta y creacion Er
+        String responsableStr = request.getParameter("responsable"); //consulta y creacion Er en creación se recibe el objeto hidden
+        String participanteStr = request.getParameter("participante"); //consulta y creacion Er en creación se recibe el valor que hay en el campo participante
 
         String fecha_estimada_inicioStr = request.getParameter("fecha_estimada_inicio");//creacion
         String fecha_estimada_terminacionStr = request.getParameter("fecha_estimada_terminacion");//creacion
@@ -166,8 +168,11 @@ public class ActividadesController extends HttpServlet {
                 if (idStr != null && !idStr.isEmpty()) {
                     ActividadesBean actividad = new ActividadesBean();
                     actividad = actividadesNegocio.consultarActividadI(id);
+//                    Actividades_EmpleadosBean actividad_empleado = new Actividades_EmpleadosBean();
+//                    actividad_empleado = actividadesNegocio.consultarActividad_Empleado();
                     request.setAttribute("id", actividad.getId().toString());
                     request.setAttribute("responsable", responsable);
+                    request.setAttribute("participante", participanteStr);
                     request.setAttribute("version", actividad.getVersion().toString());
                     request.setAttribute("descripcion", actividad.getDescripcion());
                     request.setAttribute("fecha_estimada_inicio", actividad.getFecha_estimada_inicio() != null ? sdf.format(actividad.getFecha_estimada_inicio()) : "");
@@ -182,18 +187,19 @@ public class ActividadesController extends HttpServlet {
                 break;
 
             case "guardar":
-                Map<String, Object> result = actividadesNegocio.guardarActividad(idStr, versionStr, descripcion, fecha_estimada_inicioStr, fecha_estimada_terminacionStr, fecha_real_inicioStr, fecha_real_terminacionStr, tiempo_estimadoStr, tiempo_invertidoStr, estadoStr);
+                Map<String, Object> result = actividadesNegocio.guardarActividad(idStr, versionStr, participanteStr, responsableStr, descripcion, fecha_estimada_inicioStr, fecha_estimada_terminacionStr, fecha_real_inicioStr, fecha_real_terminacionStr, tiempo_estimadoStr, tiempo_invertidoStr, estadoStr);
                 if (result.get("mensajeError") != null) {
                     mensajeError = (String) result.get("mensajeError");
                     request.setAttribute("mensajeError", mensajeError);
                     request.setAttribute("estados", estadosNegocio.consultarEstados(null, null, null));
                     request.setAttribute("versiones", versionesNegocio.consultarVersiones(null, null, null, false));
-                    enviarDatosCreacionEdicion(request, idStr, responsableStr, versionStr, descripcion, fecha_estimada_inicioStr, fecha_estimada_terminacionStr, fecha_real_inicioStr, fecha_real_terminacionStr, tiempo_estimadoStr, tiempo_invertidoStr, estadoStr);
+                    enviarDatosCreacionEdicion(request, idStr, responsableStr, participanteStr, versionStr, descripcion, fecha_estimada_inicioStr, fecha_estimada_terminacionStr, fecha_real_inicioStr, fecha_real_terminacionStr, tiempo_estimadoStr, tiempo_invertidoStr, estadoStr);
                     request.getRequestDispatcher(INSERTAR_O_EDITAR).forward(request, response);
+                    break;
                 }
                 if (result.get("mensajeExito") != null) {
                     mensajeExito = (String) result.get("mensajeExito");
-                    enviarDatosCreacionEdicion(request, null, null, null, null, null, null, null, null, null, null, null);
+                    enviarDatosCreacionEdicion(request, null, null, null, null, null, null, null, null, null, null, null, null);
                 }
                 break;
             case "eliminar":
@@ -218,7 +224,7 @@ public class ActividadesController extends HttpServlet {
     }
 
     private void enviarDatos(HttpServletRequest request, Integer id, String proyecto, String version, String descripcion,
-            String estado, String fecha, String responsable) {
+        String estado, String fecha, String responsable) {
         request.setAttribute("id", id);
         request.setAttribute("proyecto", proyecto);
         request.setAttribute("version", version);
@@ -228,9 +234,10 @@ public class ActividadesController extends HttpServlet {
         request.setAttribute("responsable", responsable);
     }
 
-    private void enviarDatosCreacionEdicion(HttpServletRequest request, String id, String responsable, String version, String descripcion, String fecha_estimada_inicio, String fecha_estimada_terminacion, String fecha_real_inicio, String fecha_real_terminacion, String tiempo_estimado, String tiempo_invertido, String estado) {
+    private void enviarDatosCreacionEdicion(HttpServletRequest request, String id, String responsable, String participante, String version, String descripcion, String fecha_estimada_inicio, String fecha_estimada_terminacion, String fecha_real_inicio, String fecha_real_terminacion, String tiempo_estimado, String tiempo_invertido, String estado) {
         request.setAttribute("id", id);
         request.setAttribute("responsable", responsable);
+        request.setAttribute("participante", participante);
         request.setAttribute("version", version);
         request.setAttribute("descripcion", descripcion);
         request.setAttribute("fecha_estimada_inicio", fecha_estimada_inicio);

@@ -26,19 +26,26 @@ public class ActividadesNegocio {
 
     private final ActividadesDao actividadesDao = new ActividadesDao();
     private final ActividadesBean actividadesBean = new ActividadesBean();
+    private final Actividades_EmpleadosDao actividades_empleadosDao = new Actividades_EmpleadosDao();
+
     private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
-    public Map<String, Object> guardarActividad(String id, String version, String descripcion, String fecha_estimada_inicio, String fecha_estimada_terminacion, String fecha_real_inicio, String fecha_real_terminacion, String tiempo_estimado, String tiempo_invertido, String estado) {
+    public Map<String, Object> guardarActividad(String id, String version, String responsable, String idResponsable, String descripcion, String fecha_estimada_inicio, String fecha_estimada_terminacion, String fecha_real_inicio, String fecha_real_terminacion, String tiempo_estimado, String tiempo_invertido, String estado) {
 
         String mensajeExito = "";
-        String mensajeError = validarDatos(id, version, descripcion, fecha_estimada_inicio, fecha_estimada_terminacion, fecha_real_inicio, fecha_real_terminacion, tiempo_estimado, tiempo_invertido, estado);
+        String mensajeError = validarDatos(id, version, responsable, idResponsable, descripcion, fecha_estimada_inicio, fecha_estimada_terminacion, fecha_real_inicio, fecha_real_terminacion, tiempo_estimado, tiempo_invertido, estado);
 
         if (mensajeError.isEmpty()) {
             try {
                 int guardado = 0;
+                int guardadoAct_Emp = 0;
+                int ultActividad = 0;
 
                 ActividadesBean actividad = new ActividadesBean();
-
+                Actividades_EmpleadosBean actividadEmpleadoBean = new Actividades_EmpleadosBean();
+                
+                actividadEmpleadoBean.setEmpleado(Integer.valueOf(idResponsable));
+                
                 actividad.setVersion(Integer.valueOf(version));
                 actividad.setDescripcion(descripcion);
                 try {
@@ -72,10 +79,13 @@ public class ActividadesNegocio {
                     guardado = actividadesDao.actualizarActividad(actividad);
                 } else {
                     guardado = actividadesDao.crearActividad(actividad);
+                    ultActividad = actividadesDao.consultarUtimaActividad();
+                    actividadEmpleadoBean.setActividad(ultActividad);
+                    guardadoAct_Emp = actividades_empleadosDao.insertarActividadEmpleado(actividadEmpleadoBean);
                 }
-                if (guardado == 0) {
+                if (guardado == 0 && guardadoAct_Emp == 0) {
                     mensajeError += "La actividad no pudo ser guardada";
-                } else if (guardado == 1) {
+                } else if (guardado == 1 && guardadoAct_Emp == 1) {
                     mensajeExito += "La actividad fue registrada correctamente";
                 }
             } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
@@ -93,7 +103,7 @@ public class ActividadesNegocio {
         return result;
     }
 
-    public String validarDatos(String id, String version, String descripcion, String fecha_estimada_inicio, String fecha_estimada_terminacion, String fecha_real_inicio, String fecha_real_terminacion, String tiempo_estimado, String tiempo_invertido, String estado) {
+    public String validarDatos(String id, String version, String responsable, String idResponsable, String descripcion, String fecha_estimada_inicio, String fecha_estimada_terminacion, String fecha_real_inicio, String fecha_real_terminacion, String tiempo_estimado, String tiempo_invertido, String estado) {
         String validacion = "";
 
         if (version == null || version.equals("0")) {
@@ -160,6 +170,10 @@ public class ActividadesNegocio {
             }
         }
 
+        if (responsable == null || responsable.isEmpty() || idResponsable == null || idResponsable.isEmpty()) {
+            validacion += "El campo 'Participante' no debe estar vacío <br />";
+        }
+
         if (fecha_real_inicio == null || fecha_real_inicio.isEmpty()) {
         } else {
             try {
@@ -194,6 +208,16 @@ public class ActividadesNegocio {
             Logger.getLogger(ActividadesNegocio.class.getName()).log(Level.SEVERE, null, ex);
         }
         return listaActividades;
+    }
+
+    public List<Actividades_EmpleadosBean> consultarActividadesEmpleados(Integer idActividad, Integer idEmpleado) {
+        List<Actividades_EmpleadosBean> listaActividadesEmpleados = new ArrayList<>();
+        try {
+            listaActividadesEmpleados = actividades_empleadosDao.consultarActividadEmpleado(idActividad, idEmpleado);
+        } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
+            Logger.getLogger(ActividadesNegocio.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return listaActividadesEmpleados;
     }
 
     public List<ActividadesBean> consultarActividades2(Integer id, String versionStr, String descripcion, String fecha,
@@ -268,6 +292,16 @@ public class ActividadesNegocio {
             actividad.setEstado(listaActividades.get(0).getEstado());
         }
         return actividad;
+    }
+
+    public Actividades_EmpleadosBean consultarActividad_Empleado(Integer idActividad, Integer idEmpleado) {
+        Actividades_EmpleadosBean actividad_empleado = new Actividades_EmpleadosBean();
+        List<Actividades_EmpleadosBean> listaActividadesEmpleados = consultarActividadesEmpleados(idActividad, idEmpleado);
+        if (listaActividadesEmpleados != null && !listaActividadesEmpleados.isEmpty()) {
+            actividad_empleado.setActividad(listaActividadesEmpleados.get(0).getActividad());
+            actividad_empleado.setEmpleado(listaActividadesEmpleados.get(0).getEmpleado());
+        }
+        return actividad_empleado;
     }
 
     public String eliminarActividad(Integer idActividad) {
