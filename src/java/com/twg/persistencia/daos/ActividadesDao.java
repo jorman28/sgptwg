@@ -52,24 +52,6 @@ public class ActividadesDao {
         return listaActividades;
     }
     
-    public int consultarUtimaActividad() throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
-        int ultimaActividad = 0;
-        Connection con;
-        con = new ConexionBaseDatos().obtenerConexion();
-        PreparedStatement ps;
-        ps = con.prepareStatement(sql.consultarUtimaActividad());
-        ResultSet rs;
-        rs = ps.executeQuery();
-        while (rs.next()) {
-            ultimaActividad = rs.getInt("id");
-        }
-        rs.close();
-        ps.close();
-        con.close();
-        return ultimaActividad;
-    }
-    
-    
     public List<ActividadesBean> consultarActiv2(String id, Integer version, String descripcion, String fecha, 
             Integer estado, String responsable) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         List<ActividadesBean> listaActividades = new ArrayList();
