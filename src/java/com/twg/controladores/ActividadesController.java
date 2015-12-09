@@ -138,15 +138,19 @@ public class ActividadesController extends HttpServlet {
         }
 
         Double tiempo_estimado = null;
-        try {
-            tiempo_estimado = Double.valueOf(tiempo_estimadoStr);
-        } catch (NumberFormatException e) {
+        if (tiempo_estimadoStr != null) {
+            try {
+                tiempo_estimado = Double.valueOf(tiempo_estimadoStr);
+            } catch (NumberFormatException e) {
+            }
         }
 
         Double tiempo_invertido = null;
-        try {
-            tiempo_invertido = Double.valueOf(tiempo_invertidoStr);
-        } catch (NumberFormatException e) {
+        if (tiempo_invertidoStr != null) {
+            try {
+                tiempo_invertido = Double.valueOf(tiempo_invertidoStr);
+            } catch (NumberFormatException e) {
+            }
         }
 
         String tipoEliminacion = request.getParameter("tipoEliminacion");
@@ -166,10 +170,10 @@ public class ActividadesController extends HttpServlet {
                     request.setAttribute("responsable", responsable);
                     request.setAttribute("version", actividad.getVersion().toString());
                     request.setAttribute("descripcion", actividad.getDescripcion());
-                    request.setAttribute("fecha_estimada_inicio", actividad.getFecha_estimada_inicio()!= null ? sdf.format(actividad.getFecha_estimada_inicio()) : "");
-                    request.setAttribute("fecha_estimada_terminacion", actividad.getFecha_estimada_terminacion()!= null ? sdf.format(actividad.getFecha_estimada_terminacion()) : "");
-                    request.setAttribute("fecha_real_inicio", actividad.getFecha_real_inicio()!= null ? sdf.format(actividad.getFecha_real_inicio()) : "");
-                    request.setAttribute("fecha_real_terminacion", actividad.getFecha_real_terminacion()!= null ? sdf.format(actividad.getFecha_real_terminacion()) : "");
+                    request.setAttribute("fecha_estimada_inicio", actividad.getFecha_estimada_inicio() != null ? sdf.format(actividad.getFecha_estimada_inicio()) : "");
+                    request.setAttribute("fecha_estimada_terminacion", actividad.getFecha_estimada_terminacion() != null ? sdf.format(actividad.getFecha_estimada_terminacion()) : "");
+                    request.setAttribute("fecha_real_inicio", actividad.getFecha_real_inicio() != null ? sdf.format(actividad.getFecha_real_inicio()) : "");
+                    request.setAttribute("fecha_real_terminacion", actividad.getFecha_real_terminacion() != null ? sdf.format(actividad.getFecha_real_terminacion()) : "");
                     request.setAttribute("tiempo_estimado", actividad.getTiempo_estimado());
                     request.setAttribute("tiempo_invertido", actividad.getTiempo_invertido());
                     request.setAttribute("estado", actividad.getEstado());

@@ -90,7 +90,7 @@
 
                                     <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
                                         <label for="tiempo_invertido">Tiempo invertido (horas):</label>
-                                        <input class="form-control" type="number" min="0" step="0.1" id="tiempo_invertido" name="tiempo_invertido" value="${tiempo_invertido}"/>
+                                        <input class="form-control" type="number" min="0" step="any" id="tiempo_invertido" name="tiempo_invertido" value="${tiempo_invertido}"/>
                                     </div> 
 
                                     <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
