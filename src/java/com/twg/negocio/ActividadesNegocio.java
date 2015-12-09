@@ -11,7 +11,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.json.simple.JSONObject;
@@ -24,67 +26,162 @@ public class ActividadesNegocio {
 
     private final ActividadesDao actividadesDao = new ActividadesDao();
     private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");    
-    private final SimpleDateFormat stf = new SimpleDateFormat("HH:mm:ss.SSS");
 
 
-    public String guardarActividad(String id, String version, String descripcion, String fecha_estimada_inicio, String fecha_estimada_terminacion, String fecha_real_inicio, String fecha_real_terminacion, String tiempo_estimado, String tiempo_invertido, String estado) {
-        String error = "";
-        ActividadesBean actividad = new ActividadesBean();
-        
-        actividad.setId(Integer.valueOf(id));        
-        actividad.setVersion(Integer.valueOf(version));
-        actividad.setDescripcion(descripcion);
-        try {
-            actividad.setFecha_estimada_inicio(sdf.parse(fecha_estimada_inicio));
-        } catch (ParseException ex) {
-        }
-        try {
-            actividad.setFecha_estimada_terminacion(sdf.parse(fecha_estimada_terminacion));
-        } catch (ParseException ex) {
-        }
-        try {
-            actividad.setFecha_real_inicio(sdf.parse(fecha_real_inicio));
-        } catch (ParseException ex) {
-        }
-        try {
-            actividad.setFecha_real_terminacion(sdf.parse(fecha_real_terminacion));
-        } catch (ParseException ex) {
-        }
-        actividad.setTiempo_estimado(Integer.valueOf(tiempo_estimado));
-        actividad.setTiempo_invertido(Integer.valueOf(tiempo_invertido));
-        actividad.setEstado(Integer.valueOf(estado));
-        try {
-            int guardado = 0;
-            if (id != null && !id.isEmpty()) {
-                actividad.setId(Integer.valueOf(id));
-                guardado = actividadesDao.actualizarActividad(actividad);
-            } else {
-                guardado = actividadesDao.crearActividad(actividad);
+    public Map<String, Object> guardarActividad(String id, String version, String descripcion, String fecha_estimada_inicio, String fecha_estimada_terminacion, String fecha_real_inicio, String fecha_real_terminacion, String tiempo_estimado, String tiempo_invertido, String estado) {
+
+        String mensajeExito = "";
+        String mensajeError = validarDatos(id, version, descripcion, fecha_estimada_inicio, fecha_estimada_terminacion, fecha_real_inicio, fecha_real_terminacion, tiempo_estimado, tiempo_invertido, estado);
+
+        if (mensajeError.isEmpty()) {
+            try {
+                int guardado = 0;
+
+                ActividadesBean actividad = new ActividadesBean();
+
+                actividad.setVersion(Integer.valueOf(version));
+                actividad.setDescripcion(descripcion);
+                try {
+                    actividad.setFecha_estimada_inicio(sdf.parse(fecha_estimada_inicio));
+                } catch (ParseException ex) {
+                }
+                try {
+                    actividad.setFecha_estimada_terminacion(sdf.parse(fecha_estimada_terminacion));
+                } catch (ParseException ex) {
+                }
+                try {
+                    actividad.setFecha_real_inicio(sdf.parse(fecha_real_inicio));
+                } catch (ParseException ex) {
+                }
+                try {
+                    actividad.setFecha_real_terminacion(sdf.parse(fecha_real_terminacion));
+                } catch (ParseException ex) {
+                }
+                actividad.setEstado(Integer.valueOf(estado));
+                if (tiempo_estimado.equals("")) {
+                    tiempo_estimado = "0";
+                }
+                if (tiempo_invertido.equals("")) {
+                    tiempo_invertido = "0";
+                }
+                actividad.setTiempo_estimado(Integer.valueOf(tiempo_estimado));
+                actividad.setTiempo_invertido(Integer.valueOf(tiempo_invertido));
+
+                if (id != null && !id.isEmpty()) {
+                    actividad.setId(Integer.valueOf(id));
+                    guardado = actividadesDao.actualizarActividad(actividad);
+                } else {
+                    guardado = actividadesDao.crearActividad(actividad);
+                }
+                if (guardado == 0) {
+                    mensajeError += "La actividad no pudo ser guardada";
+                }
+            } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
+                Logger.getLogger(ActividadesNegocio.class.getName()).log(Level.SEVERE, null, ex);
+                mensajeError += "La actividad no pudo ser guardada";
             }
-            if (guardado == 0) {
-                error += "La actividad no pudo ser guardada";
-            }
-        } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
-            Logger.getLogger(ActividadesNegocio.class.getName()).log(Level.SEVERE, null, ex);
-            error += "La actividad no pudo ser guardada";
         }
-        return error;
+        Map<String, Object> result = new HashMap<>();
+        if (!mensajeError.isEmpty()) {
+            result.put("mensajeError", mensajeError);
+        }
+        if (!mensajeExito.isEmpty()) {
+            result.put("mensajeExito", mensajeExito);
+        }
+        return result;
     }
 
-    public String validarDatos(String nombre, String fechaInicio) {
+    public String validarDatos(String id, String version, String descripcion, String fecha_estimada_inicio, String fecha_estimada_terminacion, String fecha_real_inicio, String fecha_real_terminacion, String tiempo_estimado, String tiempo_invertido, String estado) {
         String validacion = "";
-        if (nombre == null || nombre.isEmpty()) {
-            validacion += "El campo 'Nombre' no debe estar vacío \n";
+
+        if (version == null || version.equals("0")) {
+            validacion += "El campo 'Versión' no debe estar vacío <br />";
         }
-        if (fechaInicio == null || fechaInicio.isEmpty()) {
-            validacion += "El campo 'Fecha de inicio' no debe estar vacío \n";
+
+        if (descripcion == null || descripcion.isEmpty()) {
+            validacion += "El campo 'Descripción' no debe estar vacío <br />";
+        }
+
+        if (fecha_estimada_inicio == null || fecha_estimada_inicio.isEmpty()) {
+            validacion += "El campo 'Fecha estimada de inicio' no debe estar vacío <br />";
         } else {
             try {
-                sdf.parse(fechaInicio);
+                sdf.parse(fecha_estimada_inicio);
             } catch (ParseException e) {
-                validacion += "El valor ingresado en el campo 'Fecha de inicio' no se encuentra en el formato 'día/mes/año' \n";
+                validacion += "El valor ingresado en el campo 'Fecha estimada de inicio' no se encuentra en el formato 'día/mes/año' <br />";
             }
         }
+
+        if (fecha_estimada_terminacion == null || fecha_estimada_terminacion.isEmpty()) {
+            validacion += "El campo 'Fecha estimada de terminación' no debe estar vacío <br />";
+        } else {
+            try {
+                sdf.parse(fecha_estimada_terminacion);
+            } catch (ParseException e) {
+                validacion += "El valor ingresado en el campo 'Fecha estimada de terminación' no se encuentra en el formato 'día/mes/año' <br />";
+            }
+        }
+
+        if (tiempo_estimado == null || tiempo_estimado.equals("")) {
+            validacion += "El campo 'Tiempo estimado' no debe estar vacío <br />";
+        } else if (!tiempo_estimado.matches("[0-9]*")) {
+            validacion += "El valor ingresado en el campo 'Tiempo estimado' solo debe contener números' <br />";
+        }
+
+        if (estado == null || estado.equals("0")) {
+            validacion += "El campo 'Estado' no debe estar vacío <br />";
+        }
+
+        if ((fecha_estimada_inicio == null || fecha_estimada_inicio.isEmpty()) && (fecha_estimada_terminacion == null || fecha_estimada_terminacion.isEmpty())) {
+        } else {
+            try {
+                Date inicio = sdf.parse(fecha_estimada_inicio);
+                Date fin = sdf.parse(fecha_estimada_terminacion);
+                if (inicio.after(fin)) {
+                    validacion += "La fecha estimada de inicio no debe ser mayor que la fecha estimada de terminación <br />";
+                }
+            } catch (ParseException e) {
+                validacion += "El valor ingresado en el campo 'Fecha estimada de inicio ó Fecha estimada terminacion' no se encuentra en el formato 'día/mes/año' <br />";
+            }
+        }
+
+        if ((fecha_real_inicio == null || fecha_real_inicio.isEmpty()) && (fecha_real_terminacion == null || fecha_real_terminacion.isEmpty())) {
+        } else {
+            try {
+                Date inicio = sdf.parse(fecha_real_inicio);
+                Date fin = sdf.parse(fecha_real_terminacion);
+                if (inicio.after(fin)) {
+                    validacion += "La fecha real de inicio no debe ser mayor que la fecha real de terminación <br />";
+                }
+            } catch (ParseException e) {
+                validacion += "El valor ingresado en el campo 'Fecha real de inicio ó Fecha real terminacion' no se encuentra en el formato 'día/mes/año' <br />";
+            }
+        }
+
+        if (fecha_real_inicio == null || fecha_real_inicio.isEmpty()) {
+        } else {
+            try {
+                sdf.parse(fecha_real_inicio);
+            } catch (ParseException e) {
+                validacion += "El valor ingresado en el campo 'Fecha real de inicio' no se encuentra en el formato 'día/mes/año' <br />";
+            }
+        }
+
+        if (fecha_real_terminacion == null || fecha_real_terminacion.isEmpty()) {
+        } else {
+            try {
+                sdf.parse(fecha_real_terminacion);
+            } catch (ParseException e) {
+                validacion += "El valor ingresado en el campo 'Fecha real de terminación' no se encuentra en el formato 'día/mes/año' <br />";
+            }
+        }
+
+        if (tiempo_invertido != null && !tiempo_invertido.equals("0")) {
+            if (!tiempo_invertido.matches("[0-9]*")) {
+                validacion += "El valor ingresado en el campo 'Tiempo invertido' solo debe contener números' <br />";
+            }
+        }
+
         return validacion;
     }
 
