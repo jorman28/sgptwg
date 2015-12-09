@@ -25,8 +25,8 @@ import org.json.simple.JSONObject;
 public class ActividadesNegocio {
 
     private final ActividadesDao actividadesDao = new ActividadesDao();
-    private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");    
-
+    private final ActividadesBean actividadesBean = new ActividadesBean();
+    private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
     public Map<String, Object> guardarActividad(String id, String version, String descripcion, String fecha_estimada_inicio, String fecha_estimada_terminacion, String fecha_real_inicio, String fecha_real_terminacion, String tiempo_estimado, String tiempo_invertido, String estado) {
 
@@ -64,8 +64,8 @@ public class ActividadesNegocio {
                 if (tiempo_invertido.equals("")) {
                     tiempo_invertido = "0";
                 }
-                actividad.setTiempo_estimado(Integer.valueOf(tiempo_estimado));
-                actividad.setTiempo_invertido(Integer.valueOf(tiempo_invertido));
+                actividad.setTiempo_estimado(Double.valueOf(tiempo_estimado));
+                actividad.setTiempo_invertido(Double.valueOf(tiempo_invertido));
 
                 if (id != null && !id.isEmpty()) {
                     actividad.setId(Integer.valueOf(id));
@@ -75,6 +75,8 @@ public class ActividadesNegocio {
                 }
                 if (guardado == 0) {
                     mensajeError += "La actividad no pudo ser guardada";
+                } else if (guardado == 1) {
+                    mensajeExito += "La actividad fue registrada correctamente";
                 }
             } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
                 Logger.getLogger(ActividadesNegocio.class.getName()).log(Level.SEVERE, null, ex);
@@ -124,7 +126,7 @@ public class ActividadesNegocio {
 
         if (tiempo_estimado == null || tiempo_estimado.equals("")) {
             validacion += "El campo 'Tiempo estimado' no debe estar vacío <br />";
-        } else if (!tiempo_estimado.matches("[0-9]*")) {
+        } else if (!tiempo_estimado.matches("[0-9]+(\\.[0-9][0-9]?)?")) {
             validacion += "El valor ingresado en el campo 'Tiempo estimado' solo debe contener números' <br />";
         }
 
@@ -176,10 +178,9 @@ public class ActividadesNegocio {
             }
         }
 
-        if (tiempo_invertido != null && !tiempo_invertido.equals("0")) {
-            if (!tiempo_invertido.matches("[0-9]*")) {
-                validacion += "El valor ingresado en el campo 'Tiempo invertido' solo debe contener números' <br />";
-            }
+        if (tiempo_invertido == null || tiempo_invertido.equals("")) {
+        } else if (!tiempo_invertido.matches("[0-9]+(\\.[0-9][0-9]?)?")) {
+            validacion += "El valor ingresado en el campo 'Tiempo invertido' solo debe contener números' <br />";
         }
 
         return validacion;
@@ -194,23 +195,23 @@ public class ActividadesNegocio {
         }
         return listaActividades;
     }
-    
-    public List<ActividadesBean> consultarActividades2(Integer id, String versionStr, String descripcion, String fecha, 
+
+    public List<ActividadesBean> consultarActividades2(Integer id, String versionStr, String descripcion, String fecha,
             String estadoStr, String responsable) {
         List<ActividadesBean> listaActividades = new ArrayList<>();
         try {
-            String idsActividades="";
-            if(responsable!=null && !responsable.equals("")){
+            String idsActividades = "";
+            if (responsable != null && !responsable.equals("")) {
                 PersonasDao perDao = new PersonasDao();
                 int persona = perDao.consultarIdPersona(responsable, null);
                 Actividades_EmpleadosDao actiDao = new Actividades_EmpleadosDao();
                 List<Actividades_EmpleadosBean> actiList = actiDao.consultarActividadesEmpleados(persona);
-                
+
                 for (Actividades_EmpleadosBean actiList1 : actiList) {
-                    idsActividades += actiList1.getActividad()+",";
+                    idsActividades += actiList1.getActividad() + ",";
                 }
-                if(!idsActividades.equals("")){
-                    idsActividades=idsActividades.substring(0, idsActividades.length()-1);
+                if (!idsActividades.equals("")) {
+                    idsActividades = idsActividades.substring(0, idsActividades.length() - 1);
                 }
             }
 
@@ -226,7 +227,7 @@ public class ActividadesNegocio {
             }
 
             listaActividades = actividadesDao.consultarActiv2(idsActividades, version, descripcion, fecha, estado, responsable);
-            
+
         } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
             Logger.getLogger(ActividadesNegocio.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -240,10 +241,10 @@ public class ActividadesNegocio {
             object.put("id", listaActividades.get(0).getId());
             object.put("version", listaActividades.get(0).getVersion());
             object.put("descripcion", listaActividades.get(0).getDescripcion());
-            object.put("fecha_estimada_inicio", listaActividades.get(0).getFecha_estimada_inicio()!= null ? sdf.format(listaActividades.get(0).getFecha_estimada_inicio()) : "");
-            object.put("fecha_estimada_terminacion", listaActividades.get(0).getFecha_estimada_terminacion()!= null ? sdf.format(listaActividades.get(0).getFecha_estimada_terminacion()) : "");
-            object.put("fecha_real_inicio", listaActividades.get(0).getFecha_real_inicio()!= null ? sdf.format(listaActividades.get(0).getFecha_real_inicio()) : "");
-            object.put("fecha_real_terminacion", listaActividades.get(0).getFecha_real_terminacion()!= null ? sdf.format(listaActividades.get(0).getFecha_real_terminacion()) : "");
+            object.put("fecha_estimada_inicio", listaActividades.get(0).getFecha_estimada_inicio() != null ? sdf.format(listaActividades.get(0).getFecha_estimada_inicio()) : "");
+            object.put("fecha_estimada_terminacion", listaActividades.get(0).getFecha_estimada_terminacion() != null ? sdf.format(listaActividades.get(0).getFecha_estimada_terminacion()) : "");
+            object.put("fecha_real_inicio", listaActividades.get(0).getFecha_real_inicio() != null ? sdf.format(listaActividades.get(0).getFecha_real_inicio()) : "");
+            object.put("fecha_real_terminacion", listaActividades.get(0).getFecha_real_terminacion() != null ? sdf.format(listaActividades.get(0).getFecha_real_terminacion()) : "");
             object.put("tiempo_estimado", listaActividades.get(0).getTiempo_estimado());
             object.put("tiempo_invertido", listaActividades.get(0).getTiempo_invertido());
             object.put("estado", listaActividades.get(0).getEstado());
@@ -251,14 +252,31 @@ public class ActividadesNegocio {
         return object;
     }
 
+    public ActividadesBean consultarActividadI(Integer idActividad) {
+        ActividadesBean actividad = new ActividadesBean();
+        List<ActividadesBean> listaActividades = consultarActividades(idActividad, null, null, null, null, null, null, null, null, null);
+        if (listaActividades != null && !listaActividades.isEmpty()) {
+            actividad.setId(listaActividades.get(0).getId());
+            actividad.setVersion(listaActividades.get(0).getVersion());
+            actividad.setDescripcion(listaActividades.get(0).getDescripcion());
+            actividad.setFecha_estimada_inicio(listaActividades.get(0).getFecha_estimada_inicio());
+            actividad.setFecha_estimada_terminacion(listaActividades.get(0).getFecha_estimada_terminacion());
+            actividad.setFecha_real_inicio(listaActividades.get(0).getFecha_real_inicio());
+            actividad.setFecha_real_terminacion(listaActividades.get(0).getFecha_real_terminacion());
+            actividad.setTiempo_estimado(listaActividades.get(0).getTiempo_estimado());
+            actividad.setTiempo_invertido(listaActividades.get(0).getTiempo_invertido());
+            actividad.setEstado(listaActividades.get(0).getEstado());
+        }
+        return actividad;
+    }
+
     public String eliminarActividad(Integer idActividad) {
         String error = "";
         try {
             int eliminacion = actividadesDao.eliminarActividad(idActividad);
-            if(eliminacion == 0){
+            if (eliminacion == 0) {
                 error = "La actividad no pudo ser eliminada";
             }
-            //versionesDao.eliminarVersion(null, id);
         } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
             Logger.getLogger(ActividadesNegocio.class.getName()).log(Level.SEVERE, null, ex);
             error = "Ocurrió un error eliminando la actividad";

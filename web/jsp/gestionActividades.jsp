@@ -32,7 +32,7 @@
                             <div class="panel-heading">INFORMACIÓN DE LA ACTIVIDAD</div>
                             <div class="panel-body">
                                 <div class="row">
-                                    <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3"></div>
+                                    
                                     <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
                                         <label for="empleado:">*Empleado:</label>
                                         <select id="empleado" name="empleado" class="form-control">
@@ -41,6 +41,7 @@
                                             <option value="2">Persona2</option>
                                         </select>      
                                     </div>
+                                    <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3"></div>
                                     <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3"></div>
                                 </div>
                                 <div class="row">
@@ -83,13 +84,13 @@
                                 <div class="row">
 
                                     <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
-                                        <label for="tiempo_estimado">*Tiempo estimado:</label>
-                                        <input class="form-control" type="number" min="0" id="tiempo_estimado" name="tiempo_estimado" value="${tiempo_estimado}"/>
+                                        <label for="tiempo_estimado">*Tiempo estimado (horas):</label>
+                                        <input class="form-control" type="number" min="0" step="0.1" id="tiempo_estimado" name="tiempo_estimado" value="${tiempo_estimado}"/>
                                     </div>
 
                                     <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
-                                        <label for="tiempo_invertido">Tiempo invertido:</label>
-                                        <input class="form-control" type="number" min="0" id="tiempo_invertido" name="tiempo_invertido" value="${tiempo_invertido}"/>
+                                        <label for="tiempo_invertido">Tiempo invertido (horas):</label>
+                                        <input class="form-control" type="number" min="0" step="0.1" id="tiempo_invertido" name="tiempo_invertido" value="${tiempo_invertido}"/>
                                     </div> 
 
                                     <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">

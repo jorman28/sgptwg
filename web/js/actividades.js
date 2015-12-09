@@ -11,8 +11,8 @@ function consultarActividad(id){
         success: function(data) {
             if(data !== undefined){
                 $("#id").val(data.id !== undefined ? data.id : "");
-                $("#tipoEstado").val(data.tipoEstado !== undefined ? data.tipoEstado : "");
-                $("#nombre").val(data.nombre !== undefined ? data.nombre : "");
+                $("#descripcion").val(data.descripcion !== undefined ? data.descripcion : "");
+                //$("#nombre").val(data.nombre !== undefined ? data.nombre : "");
             }
         },
         error: function(){

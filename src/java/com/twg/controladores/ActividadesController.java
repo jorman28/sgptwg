@@ -20,6 +20,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.json.simple.JSONObject;
 
 /**
  *
@@ -32,7 +33,7 @@ public class ActividadesController extends HttpServlet {
     private final VersionesNegocio versionesNegocio = new VersionesNegocio();
     private final EstadosNegocio estadosNegocio = new EstadosNegocio();
 
-    SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
     private static final String INSERTAR_O_EDITAR = "./jsp/gestionActividades.jsp";
     private static final String LISTAR_ACTIVIDADES = "./jsp/actividades.jsp";
@@ -54,11 +55,20 @@ public class ActividadesController extends HttpServlet {
         String mensajeError = "";
 
         String accion = request.getParameter("accion");
-        if (accion == null) {
-            accion = "";
-        }
 
         String idStr = request.getParameter("id"); //consulta y creacion Er
+        if (accion == null) {
+            accion = "";
+        } else if (accion.indexOf("_") != -1) { //esto se hace por tema de modificación, para poder extraer el id del registro
+            Integer index = accion.indexOf("_");
+            String[] arrayGetId = accion.split("_");
+            if (arrayGetId[1] != null) {
+                idStr = arrayGetId[1];
+                accion = arrayGetId[0];
+            }
+        }
+
+        //String idStr = request.getParameter("id"); //consulta y creacion Er
         String proyectoStr = request.getParameter("proyecto"); //consulta y creacion Er
         String versionStr = request.getParameter("version"); //consulta y creacion Er
         String descripcion = request.getParameter("descripcion"); //consulta y creacion Er
@@ -105,37 +115,37 @@ public class ActividadesController extends HttpServlet {
 
         Date fecha_estimada_inicio = null;
         try {
-            fecha_estimada_inicio = formatter.parse(fecha_estimada_inicioStr);
+            fecha_estimada_inicio = sdf.parse(fecha_estimada_inicioStr);
         } catch (Exception e) {
         }
 
         Date fecha_estimada_terminacion = null;
         try {
-            fecha_estimada_terminacion = formatter.parse(fecha_estimada_terminacionStr);
+            fecha_estimada_terminacion = sdf.parse(fecha_estimada_terminacionStr);
         } catch (Exception e) {
         }
 
         Date fecha_real_inicio = null;
         try {
-            fecha_real_inicio = formatter.parse(fecha_real_inicioStr);
+            fecha_real_inicio = sdf.parse(fecha_real_inicioStr);
         } catch (Exception e) {
         }
 
         Date fecha_real_terminacion = null;
         try {
-            fecha_real_terminacion = formatter.parse(fecha_real_terminacionStr);
+            fecha_real_terminacion = sdf.parse(fecha_real_terminacionStr);
         } catch (Exception e) {
         }
 
-        Integer tiempo_estimado = null;
+        Double tiempo_estimado = null;
         try {
-            tiempo_estimado = Integer.valueOf(tiempo_estimadoStr);
+            tiempo_estimado = Double.valueOf(tiempo_estimadoStr);
         } catch (NumberFormatException e) {
         }
 
-        Integer tiempo_invertido = null;
+        Double tiempo_invertido = null;
         try {
-            tiempo_invertido = Integer.valueOf(tiempo_invertidoStr);
+            tiempo_invertido = Double.valueOf(tiempo_invertidoStr);
         } catch (NumberFormatException e) {
         }
 
@@ -149,6 +159,21 @@ public class ActividadesController extends HttpServlet {
             case "limpiarGestion":
                 request.setAttribute("estados", estadosNegocio.consultarEstados(null, null, null));
                 request.setAttribute("versiones", versionesNegocio.consultarVersiones(null, null, null, false));
+                if (idStr != null && !idStr.isEmpty()) {
+                    ActividadesBean actividad = new ActividadesBean();
+                    actividad = actividadesNegocio.consultarActividadI(id);
+                    request.setAttribute("id", actividad.getId().toString());
+                    request.setAttribute("responsable", responsable);
+                    request.setAttribute("version", actividad.getVersion().toString());
+                    request.setAttribute("descripcion", actividad.getDescripcion());
+                    request.setAttribute("fecha_estimada_inicio", actividad.getFecha_estimada_inicio()!= null ? sdf.format(actividad.getFecha_estimada_inicio()) : "");
+                    request.setAttribute("fecha_estimada_terminacion", actividad.getFecha_estimada_terminacion()!= null ? sdf.format(actividad.getFecha_estimada_terminacion()) : "");
+                    request.setAttribute("fecha_real_inicio", actividad.getFecha_real_inicio()!= null ? sdf.format(actividad.getFecha_real_inicio()) : "");
+                    request.setAttribute("fecha_real_terminacion", actividad.getFecha_real_terminacion()!= null ? sdf.format(actividad.getFecha_real_terminacion()) : "");
+                    request.setAttribute("tiempo_estimado", actividad.getTiempo_estimado());
+                    request.setAttribute("tiempo_invertido", actividad.getTiempo_invertido());
+                    request.setAttribute("estado", actividad.getEstado());
+                }
                 request.getRequestDispatcher(INSERTAR_O_EDITAR).forward(request, response);
                 break;
 
@@ -212,7 +237,7 @@ public class ActividadesController extends HttpServlet {
         request.setAttribute("tiempo_invertido", tiempo_invertido);
         request.setAttribute("estado", estado);
     }
-    
+
     private void cargarTabla(HttpServletResponse response, Integer id, String proyecto, String version, String descripcion,
             String estado, String fecha, String responsable) throws ServletException, IOException {
         response.setContentType("text/html; charset=iso-8859-1");
@@ -235,6 +260,7 @@ public class ActividadesController extends HttpServlet {
         out.println("<tbody>");
         if (listaActividades != null && !listaActividades.isEmpty()) {
             for (ActividadesBean actividad : listaActividades) {
+                out.println("<input type=\"hidden\" id=\"id\" name=\"id\" value=" + actividad.getId() + " />");
                 out.println("<tr>");
                 out.println("<td>" + actividad.getDescripcion() + "</td>");
                 out.println("<td>" + actividad.getNombreV() + "</td>");
@@ -243,8 +269,11 @@ public class ActividadesController extends HttpServlet {
                 out.println("<td>" + actividad.getTiempo_estimado() + "</td>");
                 out.println("<td>" + actividad.getNombreE() + "</td>");
                 out.println("<td>");
+
+                //out.println("<button class=\"btn btn-default\" type=\"submit\" name=\"accion\" id= '"+ actividad.getId() + "' value=\"gestionarActividad\"> Gestionar2</button>");
+                out.println("<button class=\"btn btn-default\" type=\"submit\" name=\"accion\" id=\"gestionarActividad\" value='gestionarActividad_" + actividad.getId() + "'> Gestionar</button>");
+                //out.println("<button class=\"btn btn-default\" type=\"button\" name=\"accion\" id="+ actividad.getId() +">Gestionar</button>");
                 out.println("<button class=\"btn btn-default\" type=\"button\" data-toggle=\"modal\" data-target=\"#confirmationMessage\" onclick=\"jQuery('#id').val('" + actividad.getId() + "');\">Eliminar</button>");
-                out.println("<button class=\"btn btn-default\" type=\"button\" data-toggle=\"modal\";\">Gestionar</button>");
                 out.println("</td>");
                 out.println("</tr>");
             }
