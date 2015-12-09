@@ -41,8 +41,8 @@ public class ActividadesDao {
             actividad.setFecha_estimada_terminacion(rs.getDate("fecha_estimada_terminacion"));
             actividad.setFecha_real_inicio(rs.getDate("fecha_real_inicio"));
             actividad.setFecha_real_terminacion(rs.getDate("fecha_real_terminacion"));
-            actividad.setTiempo_estimado(rs.getInt("tiempo_estimado"));
-            actividad.setTiempo_invertido(rs.getInt("tiempo_invertido"));
+            actividad.setTiempo_estimado(rs.getDouble("tiempo_estimado"));
+            actividad.setTiempo_invertido(rs.getDouble("tiempo_invertido"));
             actividad.setEstado(rs.getInt("estado"));
             listaActividades.add(actividad);
         }
