@@ -26,24 +26,11 @@
                             <h2>GESTIÓN DE ACTIVIDADES</h2>
                             Los campos marcados con (*) son obligatorios
                         </center>
-
+                        <div id="persona" name="persona"></div>
                         <input type="hidden" id="id" name="id" value="${id}" />
                         <div class="panel panel-info">
                             <div class="panel-heading">INFORMACIÓN DE LA ACTIVIDAD</div>
                             <div class="panel-body">
-                                <div class="row">
-                                    
-                                    <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
-                                        <label for="empleado:">*Empleado:</label>
-                                        <select id="empleado" name="empleado" class="form-control">
-                                            <option value ="0">SELECCIONE</option>
-                                            <option value="1">Persona1</option>
-                                            <option value="2">Persona2</option>
-                                        </select>      
-                                    </div>
-                                    <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3"></div>
-                                    <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3"></div>
-                                </div>
                                 <div class="row">
                                     <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
                                         <label for="version">*Version</label>
@@ -101,6 +88,11 @@
                                                 <option value="${esta.id}" <c:if test="${esta.id == estado}">selected</c:if>>${esta.nombre}</option>
                                             </c:forEach>
                                         </select>
+                                    </div>
+
+                                    <div class="col-xs-12 col-sm-9 col-md-9 col-lg-9">
+                                        <label for="participante">*Participante:</label> 
+                                        <input class="form-control" type="text" id="participante" name="participante" />
                                     </div>
                                 </div>
                                 <br>

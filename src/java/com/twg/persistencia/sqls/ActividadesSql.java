@@ -79,10 +79,14 @@ public class ActividadesSql {
         return sql;
     }
 
+    public String consultarUtimaActividad() {
+        return "SELECT MAX(id) AS id FROM actividades";
+    }
+    
     public String insertarActividad() {
         return "INSERT INTO actividades (version, descripcion, fecha_estimada_inicio, fecha_estimada_terminacion, fecha_real_inicio, fecha_real_terminacion, tiempo_estimado, tiempo_invertido, estado) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
     }
-
+    
     public String actualizarActividad() {
         return "UPDATE actividades SET version=?, descripcion = ?, fecha_estimada_inicio=?, fecha_estimada_terminacion=?, fecha_real_inicio=?, fecha_real_terminacion=?, tiempo_estimado=?, tiempo_invertido=?, estado=?  WHERE id = ?";
     }
