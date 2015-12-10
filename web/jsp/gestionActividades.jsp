@@ -26,13 +26,13 @@
                             <h2>GESTIÓN DE ACTIVIDADES</h2>
                             Los campos marcados con (*) son obligatorios
                         </center>
-                        <div id="persona" name="persona"></div>
+                        <input type="hidden" id="responsable" name="responsable" value="${responsable}" />
                         <input type="hidden" id="id" name="id" value="${id}" />
                         <div class="panel panel-info">
                             <div class="panel-heading">INFORMACIÓN DE LA ACTIVIDAD</div>
                             <div class="panel-body">
                                 <div class="row">
-                                    <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
+                                    <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
                                         <label for="version">*Version</label>
                                         <select id="version" name="version" class="form-control">
                                             <option value="0">SELECCIONE</option>
@@ -42,45 +42,45 @@
                                         </select>                                      
                                     </div>
 
-                                    <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
+                                    <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
                                         <label for="descripcion">*Descripción:</label>
                                         <input class="form-control" type="text" id="descripcion" name="descripcion" value="${descripcion}"/>
                                     </div>
 
-                                    <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
+                                    <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
                                         <label for="fecha_estimada_inicio">*Fecha estimada inicio:</label>
                                         <input class="form-control" type="text" id="fecha_estimada_inicio" name="fecha_estimada_inicio" value="${fecha_estimada_inicio}" readonly="true"/>
                                     </div> 
                                 </div>
                                 <div class="row">
-                                    <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
+                                    <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
                                         <label for="fecha_estimada_terminacion">*Fecha estimada fin:</label>
                                         <input class="form-control" type="text" id="fecha_estimada_terminacion" name="fecha_estimada_terminacion" value="${fecha_estimada_terminacion}" readonly="true"/>
                                     </div> 
 
-                                    <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
+                                    <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
                                         <label for="fecha_real_inicio">Fecha real de inicio:</label>
                                         <input class="form-control" type="text" id="fecha_real_inicio" name="fecha_real_inicio" value="${fecha_real_inicio}" readonly="true"/>
                                     </div>
 
-                                    <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
+                                    <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
                                         <label for="fecha_real_terminacion">Fecha real de terminacion:</label>
                                         <input class="form-control" type="text" id="fecha_real_terminacion" name="fecha_real_terminacion" value="${fecha_real_terminacion}" readonly="true"/>
                                     </div>
                                 </div>
                                 <div class="row">
 
-                                    <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
+                                    <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
                                         <label for="tiempo_estimado">*Tiempo estimado (horas):</label>
                                         <input class="form-control" type="number" min="0" step="0.1" pattern="[0-9]+([,\.][0-9]+)?" id="tiempo_estimado" name="tiempo_estimado" value="${tiempo_estimado}"/>
                                     </div>
 
-                                    <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
+                                    <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
                                         <label for="tiempo_invertido">Tiempo invertido (horas):</label>
                                         <input class="form-control" type="number" min="0" step="any" id="tiempo_invertido" name="tiempo_invertido" value="${tiempo_invertido}"/>
                                     </div> 
 
-                                    <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
+                                    <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
                                         <label for="estado">*Estado</label>
                                         <select id="estado" name="estado" class="form-control">
                                             <option value="0">SELECCIONE</option>
@@ -90,9 +90,9 @@
                                         </select>
                                     </div>
 
-                                    <div class="col-xs-12 col-sm-9 col-md-9 col-lg-9">
-                                        <label for="participante">*Participante:</label> 
-                                        <input class="form-control" id="participante" name="participante" />
+                                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                        <label for="participante">*Participante:</label>
+                                        <input class="form-control" type="text" id="participante" name="participante" value="${participante}" />
                                     </div>
                                 </div>
                                 <br>
