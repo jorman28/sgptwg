@@ -168,11 +168,11 @@ public class ActividadesController extends HttpServlet {
                 if (idStr != null && !idStr.isEmpty()) {
                     ActividadesBean actividad = new ActividadesBean();
                     actividad = actividadesNegocio.consultarActividadI(id);
-//                    Actividades_EmpleadosBean actividad_empleado = new Actividades_EmpleadosBean();
-//                    actividad_empleado = actividadesNegocio.consultarActividad_Empleado();
+                    Actividades_EmpleadosBean actividad_empleado = new Actividades_EmpleadosBean();
+                    actividad_empleado = actividadesNegocio.consultarActividad_Empleado(actividad.getId(), responsable);
                     request.setAttribute("id", actividad.getId().toString());
-                    request.setAttribute("responsable", responsable);
-                    request.setAttribute("participante", participanteStr);
+                    request.setAttribute("responsable", actividad_empleado.getEmpleado());
+                    request.setAttribute("participante", actividad_empleado.getActividad());
                     request.setAttribute("version", actividad.getVersion().toString());
                     request.setAttribute("descripcion", actividad.getDescripcion());
                     request.setAttribute("fecha_estimada_inicio", actividad.getFecha_estimada_inicio() != null ? sdf.format(actividad.getFecha_estimada_inicio()) : "");
