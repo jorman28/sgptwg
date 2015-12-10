@@ -36,8 +36,8 @@ jQuery(function () {
                 onSelect: function (item) {
                     if ($("#persona" + item.value)[0] === undefined) {
                         var persona = personasProyecto[item.value];
-                        var html = pintarPersona(persona);
-                        $("#persona").html(html);
+                        var html = persona.id;
+                        $("#responsable").val(html);
                     }
                 },
                 ajax: {
@@ -62,18 +62,18 @@ jQuery(function () {
             });
 });
 
-function pintarPersona(persona) {
-//    var html = '    <li class="list-group-item" id="persona' + persona.id + '">'
-//            + '         <div class="row">'
-//            + '             <input type="hidden" id="idPersona' + persona.id + '" name="idPersonas" value="' + persona.id + '" />'
-//            + '             <div class="col-xs-10 col-sm-11 col-md-11 col-lg-11">'
-//            + '                 ' + persona.nombre
-//            + '             </div>'
-//            + '         </div>'
-//            + '     </li>';
-var html = '<input type="hidden" id="responsable" name="responsable" value="'+ persona.id +'" />';
-    return html;
-}
+//function pintarPersona(persona) {
+////    var html = '    <li class="list-group-item" id="persona' + persona.id + '">'
+////            + '         <div class="row">'
+////            + '             <input type="hidden" id="idPersona' + persona.id + '" name="idPersonas" value="' + persona.id + '" />'
+////            + '             <div class="col-xs-10 col-sm-11 col-md-11 col-lg-11">'
+////            + '                 ' + persona.nombre
+////            + '             </div>'
+////            + '         </div>'
+////            + '     </li>';
+//var html = '<input type="hidden" id="responsable" name="responsable" value="'+ persona.id +'" />';
+//    return html;
+//}
 
 function nuevaActividad() {
     $("#id").val('');
