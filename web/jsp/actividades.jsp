@@ -32,7 +32,7 @@
                                 <div class="row">
                                     <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
                                         <label for="proyecto">Proyecto</label>
-                                        <select class="form-control" id="proyecto" name="proyecto">
+                                        <select class="form-control" id="proyecto" name="proyecto" onchange="consultarVersiones(this.value);">
                                             <option value="0">SELECCIONE</option>
                                             <c:forEach items="${proyectos}" var="tipo">
                                                 <option value="${tipo.id}" <c:if test="${proyecto == tipo.id}">selected</c:if> >${tipo.nombre}</option>
@@ -43,10 +43,6 @@
                                     <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
                                         <label for="version">Versión</label>
                                         <select class="form-control" id="version" name="version">
-                                            <option value="0">SELECCIONE</option>
-                                            <c:forEach items="${versiones}" var="tipo">
-                                                <option value="${tipo.id}" <c:if test="${version == tipo.id}">selected</c:if> >${tipo.nombre}</option>
-                                            </c:forEach>
                                         </select>                                     
                                     </div>
                                     
@@ -68,7 +64,7 @@
                                     
                                     <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
                                         <label for="fecha">Fecha</label>
-                                        <input type="date" id="fecha" name="fecha" class="form form-control"/>
+                                        <input type="text" id="fecha" name="fecha" class="form form-control" readonly="true"/>
                                     </div>
                                         
                                     <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">

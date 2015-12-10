@@ -1,4 +1,5 @@
 $(document).ready(function() {
+    $('#fecha').datetimepicker({format: 'dd/mm/yyyy', language: 'es', weekStart: true, todayBtn: true, autoclose: true, todayHighlight: true, startView: 2, minView: 2});
     llenarTablaActividades();
 });
 
@@ -40,6 +41,28 @@ function llenarTablaActividades(){
         },
         error: function(){
             console.log('Error al cargar la tabla');
+        }
+    });
+}
+
+function consultarVersiones(idProyecto){
+    $.ajax({
+        type    :"POST",
+        url     :"ActividadesController",
+        dataType:"json",
+        data    :{proyecto: idProyecto, accion: "consultarVersiones"},
+        success: function(data) {
+            if(data !== undefined){
+                var html = "<option value='0'>SELECCIONE</option>";
+                for(var version in data){
+                    version = data[version];
+                    html += "<option value='"+version.id+"'>"+version.nombre+"</option>";
+                }
+                $("#version").html(html);
+            }
+        },
+        error: function(err){
+            alert(err);
         }
     });
 }

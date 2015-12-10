@@ -11,16 +11,21 @@ import com.twg.negocio.ProyectosNegocio;
 import com.twg.negocio.VersionesNegocio;
 import com.twg.persistencia.beans.ActividadesBean;
 import com.twg.persistencia.beans.Actividades_EmpleadosBean;
+import com.twg.persistencia.beans.VersionesBean;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 /**
@@ -97,68 +102,28 @@ public class ActividadesController extends HttpServlet {
         } catch (NumberFormatException e) {
         }
 
-        Integer responsable = null;
-        try {
-            responsable = Integer.valueOf(responsableStr);
-        } catch (NumberFormatException e) {
-        }
-
         Integer version = null;
         try {
             version = Integer.valueOf(versionStr);
         } catch (NumberFormatException e) {
         }
 
-        Integer estado = null;
+        Integer responsable = null;
         try {
-            estado = Integer.valueOf(estadoStr);
+            responsable = Integer.valueOf(responsableStr);
         } catch (NumberFormatException e) {
         }
 
-        Date fecha_estimada_inicio = null;
-        try {
-            fecha_estimada_inicio = sdf.parse(fecha_estimada_inicioStr);
-        } catch (Exception e) {
-        }
-
-        Date fecha_estimada_terminacion = null;
-        try {
-            fecha_estimada_terminacion = sdf.parse(fecha_estimada_terminacionStr);
-        } catch (Exception e) {
-        }
-
-        Date fecha_real_inicio = null;
-        try {
-            fecha_real_inicio = sdf.parse(fecha_real_inicioStr);
-        } catch (Exception e) {
-        }
-
-        Date fecha_real_terminacion = null;
-        try {
-            fecha_real_terminacion = sdf.parse(fecha_real_terminacionStr);
-        } catch (Exception e) {
-        }
-
-        Double tiempo_estimado = null;
-        if (tiempo_estimadoStr != null) {
-            try {
-                tiempo_estimado = Double.valueOf(tiempo_estimadoStr);
-            } catch (NumberFormatException e) {
-            }
-        }
-
-        Double tiempo_invertido = null;
-        if (tiempo_invertidoStr != null) {
-            try {
-                tiempo_invertido = Double.valueOf(tiempo_invertidoStr);
-            } catch (NumberFormatException e) {
-            }
-        }
-
-        String tipoEliminacion = request.getParameter("tipoEliminacion");
-
         switch (accion) {
             case "consultar":
+                if (fechaStr != null && !fechaStr.isEmpty()) {
+                    try {
+                        SimpleDateFormat filtroFecha = new SimpleDateFormat("yyyy-MM-dd");
+                        fechaStr = filtroFecha.format(sdf.parse(fechaStr));
+                    } catch (ParseException ex) {
+                        Logger.getLogger(ActividadesController.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
                 cargarTabla(response, id, proyectoStr, versionStr, descripcion, estadoStr, fechaStr, responsableStr);
                 break;
             case "gestionarActividad":
@@ -208,6 +173,19 @@ public class ActividadesController extends HttpServlet {
                     mensajeExito = "La actividad ha sido eliminada con éxito";
                 }
                 break;
+            case "consultarVersiones":
+                JSONArray array = new JSONArray();
+                List<VersionesBean> listaVersiones = versionesNegocio.consultarVersiones(null, proyecto, null, false);
+                if (listaVersiones != null && !listaVersiones.isEmpty()) {
+                    for (VersionesBean versionBean : listaVersiones) {
+                        JSONObject object = new JSONObject();
+                        object.put("id", versionBean.getId());
+                        object.put("nombre", versionBean.getNombre());
+                        array.add(object);
+                    }
+                }
+                response.getWriter().write(array.toString());
+                break;
             default:
                 break;
         }
@@ -218,13 +196,13 @@ public class ActividadesController extends HttpServlet {
         //pendiente enviar el Id del proyecto para consultar las versiones
         request.setAttribute("versiones", versionesNegocio.consultarVersiones(null, null, null, false));
         request.setAttribute("estados", estadosNegocio.consultarEstados(null, null, null));
-        if (!accion.equals("consultar") && !accion.equals("editar")) {
+        if (!accion.equals("consultar") && !accion.equals("editar") && !accion.equals("consultarVersiones")) {
             request.getRequestDispatcher(LISTAR_ACTIVIDADES).forward(request, response);
         }
     }
 
     private void enviarDatos(HttpServletRequest request, Integer id, String proyecto, String version, String descripcion,
-        String estado, String fecha, String responsable) {
+            String estado, String fecha, String responsable) {
         request.setAttribute("id", id);
         request.setAttribute("proyecto", proyecto);
         request.setAttribute("version", version);
