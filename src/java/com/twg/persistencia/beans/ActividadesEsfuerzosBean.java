@@ -11,7 +11,7 @@ import java.util.Date;
  *
  * @author Jorman Rincón
  */
-public class Actividades_EsfuerzosBean {
+public class ActividadesEsfuerzosBean {
 
     private Integer id;
     private Integer actividad;

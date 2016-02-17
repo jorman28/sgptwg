@@ -10,7 +10,7 @@ import com.twg.negocio.EstadosNegocio;
 import com.twg.negocio.ProyectosNegocio;
 import com.twg.negocio.VersionesNegocio;
 import com.twg.persistencia.beans.ActividadesBean;
-import com.twg.persistencia.beans.Actividades_EmpleadosBean;
+import com.twg.persistencia.beans.ActividadesEmpleadosBean;
 import com.twg.persistencia.beans.VersionesBean;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -133,7 +133,7 @@ public class ActividadesController extends HttpServlet {
                 if (idStr != null && !idStr.isEmpty()) {
                     ActividadesBean actividad = new ActividadesBean();
                     actividad = actividadesNegocio.consultarActividadI(id);
-                    Actividades_EmpleadosBean actividad_empleado = new Actividades_EmpleadosBean();
+                    ActividadesEmpleadosBean actividad_empleado = new ActividadesEmpleadosBean();
                     actividad_empleado = actividadesNegocio.consultarActividad_Empleado(actividad.getId(), responsable);
                     request.setAttribute("id", actividad.getId().toString());
                     request.setAttribute("responsable", actividad_empleado.getEmpleado());

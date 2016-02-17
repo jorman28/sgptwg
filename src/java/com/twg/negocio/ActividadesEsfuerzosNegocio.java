@@ -1,6 +1,6 @@
 package com.twg.negocio;
 
-import com.twg.persistencia.beans.Actividades_EsfuerzosBean;
+import com.twg.persistencia.beans.ActividadesEsfuerzosBean;
 import com.twg.persistencia.daos.ActividadesEsfuerzosDao;
 import com.twg.persistencia.daos.PersonasDao;
 import java.sql.SQLException;
@@ -16,7 +16,7 @@ import org.json.simple.JSONObject;
  *
  * @author Jorman Rincón
  */
-public class Actividades_EsfuerzosNegocio {
+public class ActividadesEsfuerzosNegocio {
 
     private final ActividadesEsfuerzosDao actividadesEsfuerzosDao = new ActividadesEsfuerzosDao();
     private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");    
@@ -25,7 +25,7 @@ public class Actividades_EsfuerzosNegocio {
 
     public String guardarActividadEsfuerzo(String id, String actividad, String empleado, String fecha, String tiempo, String descripcion) {
         String error = "";
-        Actividades_EsfuerzosBean actividadEsfuerzo = new Actividades_EsfuerzosBean();
+        ActividadesEsfuerzosBean actividadEsfuerzo = new ActividadesEsfuerzosBean();
         
         actividadEsfuerzo.setActividad(Integer.valueOf(actividad));
         actividadEsfuerzo.setEmpleado(Integer.valueOf(empleado));
@@ -52,7 +52,7 @@ public class Actividades_EsfuerzosNegocio {
                 error += "El registro no pudo ser guardado";
             }
         } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
-            Logger.getLogger(Actividades_EsfuerzosNegocio.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ActividadesEsfuerzosNegocio.class.getName()).log(Level.SEVERE, null, ex);
             error += "El registro no pudo ser guardado";
         }
         return error;
@@ -95,19 +95,19 @@ public class Actividades_EsfuerzosNegocio {
         return validacion;
     }
 
-    public List<Actividades_EsfuerzosBean> consultarActividadesEsfuerzo(Integer id) {
-        List<Actividades_EsfuerzosBean> listaActividadesEsfuerzo = new ArrayList<>();
+    public List<ActividadesEsfuerzosBean> consultarActividadesEsfuerzo(Integer id) {
+        List<ActividadesEsfuerzosBean> listaActividadesEsfuerzo = new ArrayList<>();
         try {
             listaActividadesEsfuerzo = actividadesEsfuerzosDao.consultarActividadesEsfuerzos(id);
         } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
-            Logger.getLogger(Actividades_EsfuerzosNegocio.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ActividadesEsfuerzosNegocio.class.getName()).log(Level.SEVERE, null, ex);
         }
         return listaActividadesEsfuerzo;
     }
 
     public JSONObject consultarActividadEsfuerzo(Integer id) {
         JSONObject object = new JSONObject();
-        List<Actividades_EsfuerzosBean> listaActividadesEsfuerzo = consultarActividadesEsfuerzo(id);
+        List<ActividadesEsfuerzosBean> listaActividadesEsfuerzo = consultarActividadesEsfuerzo(id);
         if (listaActividadesEsfuerzo != null && !listaActividadesEsfuerzo.isEmpty()) {
             object.put("id", listaActividadesEsfuerzo.get(0).getId());
             object.put("actividad", listaActividadesEsfuerzo.get(0).getActividad());
@@ -127,7 +127,7 @@ public class Actividades_EsfuerzosNegocio {
                 error = "El registro no pudo ser eliminado";
             }
         } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
-            Logger.getLogger(Actividades_EsfuerzosNegocio.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ActividadesEsfuerzosNegocio.class.getName()).log(Level.SEVERE, null, ex);
             error = "Ocurrió un error eliminando el registro";
         }
         return error;

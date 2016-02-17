@@ -1,7 +1,7 @@
 package com.twg.persistencia.daos;
 
-import com.twg.persistencia.beans.Actividades_EsfuerzosBean;
-import com.twg.persistencia.sqls.Actividades_EsfuerzosSql;
+import com.twg.persistencia.beans.ActividadesEsfuerzosBean;
+import com.twg.persistencia.sqls.ActividadesEsfuerzosSql;
 import com.twg.utilidades.ConexionBaseDatos;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -22,10 +22,10 @@ import java.util.List;
  * @author Jorman
  */
 public class ActividadesEsfuerzosDao {
-    private final Actividades_EsfuerzosSql sql = new Actividades_EsfuerzosSql();
+    private final ActividadesEsfuerzosSql sql = new ActividadesEsfuerzosSql();
 
-    public List<Actividades_EsfuerzosBean> consultarActividadesEsfuerzos(Integer id) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
-        List<Actividades_EsfuerzosBean> listaActividadesEsfuerzos = new ArrayList();
+    public List<ActividadesEsfuerzosBean> consultarActividadesEsfuerzos(Integer id) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
+        List<ActividadesEsfuerzosBean> listaActividadesEsfuerzos = new ArrayList();
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;
@@ -33,7 +33,7 @@ public class ActividadesEsfuerzosDao {
         ResultSet rs;
         rs = ps.executeQuery();
         while (rs.next()) {
-            Actividades_EsfuerzosBean actividadEsfuerzo = new Actividades_EsfuerzosBean();
+            ActividadesEsfuerzosBean actividadEsfuerzo = new ActividadesEsfuerzosBean();
             actividadEsfuerzo.setId(rs.getInt("id"));
             actividadEsfuerzo.setActividad(rs.getInt("actividad"));
             actividadEsfuerzo.setEmpleado(rs.getInt("empleado"));
@@ -50,7 +50,7 @@ public class ActividadesEsfuerzosDao {
         return listaActividadesEsfuerzos;
     }
     
-    public int crearActividadEsfuerzo(Actividades_EsfuerzosBean actividadEsfuerzo) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
+    public int crearActividadEsfuerzo(ActividadesEsfuerzosBean actividadEsfuerzo) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;
@@ -66,7 +66,7 @@ public class ActividadesEsfuerzosDao {
         return insercion;
     }
     
-    public int actualizarActividadEsfuerzo(Actividades_EsfuerzosBean actividadEsfuerzo) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
+    public int actualizarActividadEsfuerzo(ActividadesEsfuerzosBean actividadEsfuerzo) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;

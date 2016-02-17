@@ -11,9 +11,9 @@ import java.util.List;
  *
  * @author erikasta07
  */
-public class Actividades_EmpleadosSql {
+public class ActividadesEmpleadosSql {
     
-    public Actividades_EmpleadosSql(){
+    public ActividadesEmpleadosSql(){
     }
     
     public String consultarEmpleadosxAtividad(Integer empleado) {

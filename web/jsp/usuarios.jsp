@@ -68,13 +68,17 @@
                                     <option value="">SELECCIONE</option>
                                     <option value="T" <c:if test="${activo == 'T'}">selected</c:if> >Activo</option>
                                     <option value="F" <c:if test="${activo == 'F'}">selected</c:if> >Inactivo</option>
-                                </select>
+                                    </select>
+                                </div>
                             </div>
-                        </div>
-                        <br>
-                        <div class="row" align="center">
-                            <button class="btn btn-default" type="button" name="accion" id="consultar" value="consultar" onclick="llenarTabla()">Consultar</button>
-                            <button class="btn btn-default" type="submit" name="accion" id="guardar" value="guardar">Guardar</button>
+                            <br>
+                            <div class="row" align="center">
+                            <c:if test="${opcionConsultar == 'T'}">
+                                <button class="btn btn-default" type="button" name="accion" id="consultar" value="consultar" onclick="llenarTabla()">Consultar</button>
+                            </c:if>
+                            <c:if test="${opcionGuardar == 'T'}">
+                                <button class="btn btn-default" type="submit" name="accion" id="guardar" value="guardar">Guardar</button>
+                            </c:if>
                             <button class="btn btn-default" type="submit" name="accion" id="limpiar" value="limpiar">Limpiar</button>
                         </div>
                         <br/>
