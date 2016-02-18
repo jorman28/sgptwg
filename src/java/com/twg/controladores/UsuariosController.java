@@ -79,7 +79,7 @@ public class UsuariosController extends HttpServlet {
                 Map<String, Object> result = usuariosNegocio.crearUsuario(idPersona, nombreUsuario, clave, clave2, perfil, activo, documento, tipoDocumento);
                 if (result.get("mensajeError") != null) {
                     mensajeError = (String) result.get("mensajeError");
-                    enviarDatos(request, idPersona, nombreUsuario, perfil, activo, documento, tipoDocumento);
+                    enviarDatos(request, idPersona, nombreUsuario, perfil, activo, (String)result.get("documento"), (String)result.get("tipoDocumento"));
                 }
                 if (result.get("mensajeExito") != null) {
                     mensajeExito = (String) result.get("mensajeExito");

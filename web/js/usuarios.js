@@ -20,7 +20,9 @@ function consultarUsuario(idPersona){
             if(data !== undefined){
                 $("#idPersona").val(data.idPersona !== undefined ? data.idPersona : "");
                 $("#documento").val(data.documento !== undefined ? data.documento : "");
+                $("#documento").attr('disabled', true);
                 $("#tipoDocumento").val(data.tipoDocumento !== undefined ? data.tipoDocumento : 0);
+                $("#tipoDocumento").attr('disabled', true);
                 $("#usuario").val(data.usuario !== undefined ? data.usuario : "");
                 $("#perfil").val(data.perfil !== undefined ? data.perfil : "");
                 $("#activo").val(data.activo !== undefined ? data.activo : "F");
