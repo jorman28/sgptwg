@@ -78,8 +78,12 @@
                         </div>
                         <div class="row form-group" align="center">
                             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                <button class="btn btn-default" type="button" name="accion" id="consultar" value="consultar" onclick="consultarDatos()">Consultar</button>
-                                <button class="btn btn-default" type="submit" name="accion" id="nuevo" value="nuevo">Crear</button>
+                                <c:if test="${opcionConsultar == 'T'}">
+                                    <button class="btn btn-default" type="button" name="accion" id="consultar" value="consultar" onclick="consultarDatos()">Consultar</button>
+                                </c:if>
+                                <c:if test="${opcionCrear == 'T'}">
+                                    <button class="btn btn-default" type="submit" name="accion" id="nuevo" value="nuevo">Crear</button>
+                                </c:if>
                                 <button class="hidden btn btn-default" type="submit" name="accion" id="editar" value="editar">Editar</button>
                             </div>
                         </div>

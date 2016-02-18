@@ -1,5 +1,6 @@
 package com.twg.negocio;
 
+import com.twg.persistencia.beans.Paginas;
 import com.twg.persistencia.beans.PerfilesBean;
 import com.twg.persistencia.beans.UsuariosBean;
 import com.twg.persistencia.daos.PerfilesDao;
@@ -12,6 +13,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.servlet.http.HttpServletRequest;
 import org.json.simple.JSONObject;
 
 public class PerfilesNegocio {
@@ -255,5 +257,17 @@ public class PerfilesNegocio {
             Logger.getLogger(PerfilesNegocio.class.getName()).log(Level.SEVERE, null, ex);
         }
         return resultado;
+    }
+
+    public static List<String> permisosPorPagina(HttpServletRequest request, Paginas pagina) {
+        List<String> permisos = null;
+        Map<Integer, Map<String, Object>> datosPagina = (Map<Integer, Map<String, Object>>) request.getSession().getAttribute("permisos");
+        if (datosPagina != null) {
+            Map<String, Object> accesos = datosPagina.get(pagina.getIdPagina());
+            if (accesos != null) {
+                permisos = (List<String>) accesos.get("permisos");
+            }
+        }
+        return permisos;
     }
 }

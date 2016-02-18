@@ -314,19 +314,27 @@
                                                                             </label>
                                                                             &nbsp;
                                                                             <label>
-                                                                                <input type="checkbox" name="permisos" id="permiso_16_3" value="34" onclick="encenderPermisoPadre('permiso_16');" /> Eliminar proyecto
+                                                                                <input type="checkbox" name="permisos" id="permiso_16_3" value="34" onclick="encenderPermisoPadre('permiso_16');" /> Guardar proyecto
                                                                             </label>
                                                                             &nbsp;
                                                                             <label>
-                                                                                <input type="checkbox" name="permisos" id="permiso_16_4" value="35" onclick="encenderPermisoPadre('permiso_16');" /> Crear versión
+                                                                                <input type="checkbox" name="permisos" id="permiso_16_4" value="35" onclick="encenderPermisoPadre('permiso_16');" /> Eliminar proyecto
                                                                             </label>
                                                                             &nbsp;
                                                                             <label>
-                                                                                <input type="checkbox" name="permisos" id="permiso_16_5" value="36" onclick="encenderPermisoPadre('permiso_16');" /> Eliminar versión
+                                                                                <input type="checkbox" name="permisos" id="permiso_16_5" value="36" onclick="encenderPermisoPadre('permiso_16');" /> Crear versión
                                                                             </label>
                                                                             &nbsp;
                                                                             <label>
-                                                                                <input type="checkbox" name="permisos" id="permiso_16_6" value="37" onclick="encenderPermisoPadre('permiso_16');" /> Comentar
+                                                                                <input type="checkbox" name="permisos" id="permiso_16_6" value="37" onclick="encenderPermisoPadre('permiso_16');" /> Guardar versión
+                                                                            </label>
+                                                                            &nbsp;
+                                                                            <label>
+                                                                                <input type="checkbox" name="permisos" id="permiso_16_7" value="38" onclick="encenderPermisoPadre('permiso_16');" /> Eliminar versión
+                                                                            </label>
+                                                                            &nbsp;
+                                                                            <label>
+                                                                                <input type="checkbox" name="permisos" id="permiso_16_8" value="39" onclick="encenderPermisoPadre('permiso_16');" /> Comentar
                                                                             </label>
                                                                         </div>
                                                                     </div>
@@ -353,23 +361,23 @@
                                                                     <div class="panel-body">
                                                                         <div class="checkbox">
                                                                             <label>
-                                                                                <input type="checkbox" name="permisos" id="permiso_1_1" value="38" onclick="encenderPermisoPadre('permiso_1');" /> Consultar
+                                                                                <input type="checkbox" name="permisos" id="permiso_1_1" value="40" onclick="encenderPermisoPadre('permiso_1');" /> Consultar
                                                                             </label>
                                                                             &nbsp;
                                                                             <label>
-                                                                                <input type="checkbox" name="permisos" id="permiso_1_2" value="39" onclick="encenderPermisoPadre('permiso_1');" /> Crear
+                                                                                <input type="checkbox" name="permisos" id="permiso_1_2" value="41" onclick="encenderPermisoPadre('permiso_1');" /> Crear
                                                                             </label>
                                                                             &nbsp;
                                                                             <label>
-                                                                                <input type="checkbox" name="permisos" id="permiso_1_3" value="40" onclick="encenderPermisoPadre('permiso_1');" /> Eliminar
+                                                                                <input type="checkbox" name="permisos" id="permiso_1_3" value="42" onclick="encenderPermisoPadre('permiso_1');" /> Eliminar
                                                                             </label>
                                                                             &nbsp;
                                                                             <label>
-                                                                                <input type="checkbox" name="permisos" id="permiso_1_4" value="41" onclick="encenderPermisoPadre('permiso_1');" /> Guardar
+                                                                                <input type="checkbox" name="permisos" id="permiso_1_4" value="43" onclick="encenderPermisoPadre('permiso_1');" /> Guardar
                                                                             </label>
                                                                             &nbsp;
                                                                             <label>
-                                                                                <input type="checkbox" name="permisos" id="permiso_1_5" value="42" onclick="encenderPermisoPadre('permiso_1');" /> Comentar
+                                                                                <input type="checkbox" name="permisos" id="permiso_1_5" value="44" onclick="encenderPermisoPadre('permiso_1');" /> Comentar
                                                                             </label>
                                                                         </div>
                                                                     </div>
@@ -452,8 +460,12 @@
                         </div>
                         <br>
                         <div class="row" align="center">
-                            <button class="btn btn-default" type="button" name="accion" id="consultar" value="consultar" onclick="llenarTabla();">Consultar</button>
-                            <button class="btn btn-default" type="submit" name="accion" id="guardar" value="guardar">Guardar</button>
+                            <c:if test="${opcionConsultar == 'T'}">
+                                <button class="btn btn-default" type="button" name="accion" id="consultar" value="consultar" onclick="llenarTabla();">Consultar</button>
+                            </c:if>
+                            <c:if test="${opcionGuardar == 'T'}">
+                                <button class="btn btn-default" type="submit" name="accion" id="guardar" value="guardar">Guardar</button>
+                            </c:if>
                             <button class="btn btn-default" type="button" name="accion" id="limpiar" value="limpiar" onclick="nuevoPerfil();">Limpiar</button>
                         </div>
                         <br/>

@@ -65,18 +65,11 @@ public class UsuariosController extends HttpServlet {
         } catch (NumberFormatException e) {
         }
 
-        List<String> permisos = null;
-        Map<Integer, Map<String, Object>> datosPagina = (Map<Integer, Map<String, Object>>) request.getSession().getAttribute("permisos");
-        if (datosPagina != null) {
-            Map<String, Object> accesos = datosPagina.get(Paginas.USUARIOS.getIdPagina());
-            if (accesos != null) {
-                permisos = (List<String>) accesos.get("permisos");
-            }
-        }
+        List<String> permisosPagina = PerfilesNegocio.permisosPorPagina(request, Paginas.USUARIOS);
 
         switch (accion) {
             case "consultar":
-                cargarTabla(response, permisos, idPersona, nombreUsuario, perfil, activo, documento, tipoDocumento);
+                cargarTabla(response, permisosPagina, idPersona, nombreUsuario, perfil, activo, documento, tipoDocumento);
                 break;
             case "editar":
                 JSONObject object = usuariosNegocio.consultarUsuario(idPersona);
@@ -115,11 +108,11 @@ public class UsuariosController extends HttpServlet {
         request.setAttribute("tiposDocumentos", tiposDocumentoNegocio.consultarTiposDocumentos());
         request.setAttribute("perfiles", perfilesNegocio.consultarPerfiles());
         if (!accion.equals("consultar") && !accion.equals("editar")) {
-            if (permisos != null && !permisos.isEmpty()) {
-                if (permisos.contains(Permisos.CONSULTAR.getNombre())) {
+            if (permisosPagina != null && !permisosPagina.isEmpty()) {
+                if (permisosPagina.contains(Permisos.CONSULTAR.getNombre())) {
                     request.setAttribute("opcionConsultar", "T");
                 }
-                if (permisos.contains(Permisos.GUARDAR.getNombre())) {
+                if (permisosPagina.contains(Permisos.GUARDAR.getNombre())) {
                     request.setAttribute("opcionGuardar", "T");
                 }
             }

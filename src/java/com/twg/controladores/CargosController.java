@@ -1,7 +1,10 @@
 package com.twg.controladores;
 
 import com.twg.negocio.CargosNegocio;
+import com.twg.negocio.PerfilesNegocio;
 import com.twg.persistencia.beans.CargosBean;
+import com.twg.persistencia.beans.Paginas;
+import com.twg.persistencia.beans.Permisos;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
@@ -49,9 +52,11 @@ public class CargosController extends HttpServlet {
         } catch (NumberFormatException e) {
         }
 
+        List<String> permisosPagina = PerfilesNegocio.permisosPorPagina(request, Paginas.CARGOS);
+
         switch (accion) {
             case "consultar":
-                cargarTabla(response, descripcion);
+                cargarTabla(response, permisosPagina, descripcion);
                 break;
             case "editar":
                 JSONObject object = cargosNegocio.consultarCargo(idCargo);
@@ -80,41 +85,53 @@ public class CargosController extends HttpServlet {
             request.setAttribute("mensajeExito", mensajeExito);
             request.setAttribute("mensajeError", mensajeError);
             request.setAttribute("mensajeAlerta", mensajeAlerta);
+
+            if (permisosPagina != null && !permisosPagina.isEmpty()) {
+                if (permisosPagina.contains(Permisos.CONSULTAR.getNombre())) {
+                    request.setAttribute("opcionConsultar", "T");
+                }
+                if (permisosPagina.contains(Permisos.GUARDAR.getNombre())) {
+                    request.setAttribute("opcionGuardar", "T");
+                }
+            }
+
             request.getRequestDispatcher("jsp/cargos.jsp").forward(request, response);
         }
     }
 
-    private void cargarTabla(HttpServletResponse response, String nombre) throws ServletException, IOException {
+    private void cargarTabla(HttpServletResponse response, List<String> permisos, String nombre) throws ServletException, IOException {
         response.setContentType("text/html; charset=iso-8859-1");
         List<CargosBean> listaCargos = cargosNegocio.consultarCargos(nombre, false);
         PrintWriter out = response.getWriter();
         out.println("<table class=\"table table-striped table-hover table-condensed bordo-tablas\">");
-        out.println(    "<thead>");
-        out.println(        "<tr>");			
-        out.println(            "<th>Cargo</th>");
-        out.println(            "<th>Acciones</th>");
-        out.println(        "</tr>");
-        out.println(    "</thead>");
-        out.println(    "<tbody>");
-        if(listaCargos != null && !listaCargos.isEmpty()){
+        out.println("<thead>");
+        out.println("<tr>");
+        out.println("<th>Cargo</th>");
+        out.println("<th>Acciones</th>");
+        out.println("</tr>");
+        out.println("</thead>");
+        out.println("<tbody>");
+        if (listaCargos != null && !listaCargos.isEmpty()) {
             for (CargosBean cargo : listaCargos) {
-                out.println("<tr>");			
-                out.println(    "<td>"+cargo.getNombre()+"</td>");
-                out.println(    "<td>");
-                out.println(        "<button class=\"btn btn-default\" type=\"button\" onclick=\"consultarCargo("+cargo.getId()+")\">Editar</button>");
-                out.println(        "<button class=\"btn btn-default\" type=\"button\" data-toggle=\"modal\" data-target=\"#confirmationMessage\" onclick=\"jQuery('#idCargo').val('"+cargo.getId()+"');\">Eliminar</button>");
-                out.println(    "</td>");
+                out.println("<tr>");
+                out.println("<td>" + cargo.getNombre() + "</td>");
+                out.println("<td>");
+                out.println("<button class=\"btn btn-default\" type=\"button\" onclick=\"consultarCargo(" + cargo.getId() + ")\">Detalle</button>");
+                if (permisos != null && !permisos.isEmpty() && permisos.contains(Permisos.ELIMINAR.getNombre())) {
+                    out.println("<button class=\"btn btn-default\" type=\"button\" data-toggle=\"modal\" data-target=\"#confirmationMessage\" onclick=\"jQuery('#idCargo').val('" + cargo.getId() + "');\">Eliminar</button>");
+                }
+                out.println("</td>");
                 out.println("</tr>");
             }
         } else {
-            out.println("   <tr>");			
-            out.println(        "<td colspan=\"2\">No se encontraron registros</td>");
-            out.println(    "</tr>");
+            out.println("   <tr>");
+            out.println("<td colspan=\"2\">No se encontraron registros</td>");
+            out.println("</tr>");
         }
-        out.println(    "</tbody>");
+        out.println("</tbody>");
         out.println("</table>");
     }
-    
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

@@ -2,9 +2,12 @@ package com.twg.controladores;
 
 import com.twg.negocio.ComentariosNegocio;
 import com.twg.negocio.EstadosNegocio;
+import com.twg.negocio.PerfilesNegocio;
 import com.twg.negocio.PersonasNegocio;
 import com.twg.negocio.ProyectosNegocio;
 import com.twg.negocio.VersionesNegocio;
+import com.twg.persistencia.beans.Paginas;
+import com.twg.persistencia.beans.Permisos;
 import com.twg.persistencia.beans.ProyectosBean;
 import com.twg.persistencia.beans.VersionesBean;
 import java.io.IOException;
@@ -80,6 +83,8 @@ public class ProyectosController extends HttpServlet {
         String tipoEliminacion = request.getParameter("tipoEliminacion");
         String busqueda = request.getParameter("search");
         String busquedaProyecto = request.getParameter("busquedaProyecto");
+
+        List<String> permisosPagina = PerfilesNegocio.permisosPorPagina(request, Paginas.VERSIONES);
 
         switch (accion) {
             case "editarProyecto":
@@ -173,14 +178,28 @@ public class ProyectosController extends HttpServlet {
             request.setAttribute("mensajeError", mensajeError);
             request.setAttribute("mensajeExito", mensajeExito);
             request.setAttribute("mensajeAlerta", mensajeAlerta);
-            request.setAttribute("listaProyectos", listarProyectos(busquedaProyecto));
+            request.setAttribute("listaProyectos", listarProyectos(busquedaProyecto, permisosPagina));
             request.setAttribute("estados", estadosNegocio.consultarEstados(null, null, null));
             request.setAttribute("listaComentarios", comentariosNegocio.listaComentarios("PROYECTOS", 1));
+            if (permisosPagina != null && !permisosPagina.isEmpty()) {
+                if (permisosPagina.contains(Permisos.CONSULTAR.getNombre())) {
+                    request.setAttribute("opcionConsultar", "T");
+                }
+                if (permisosPagina.contains(Permisos.CREAR_PROYECTO.getNombre())) {
+                    request.setAttribute("opcionCrearProyecto", "T");
+                }
+                if (permisosPagina.contains(Permisos.GUARDAR_PROYECTO.getNombre())) {
+                    request.setAttribute("opcionGuardarProyecto", "T");
+                }
+                if (permisosPagina.contains(Permisos.GUARDAR_VERSION.getNombre())) {
+                    request.setAttribute("opcionGuardarVersion", "T");
+                }
+            }
             request.getRequestDispatcher(redireccion).forward(request, response);
         }
     }
 
-    private String listarProyectos(String nombre) {
+    private String listarProyectos(String nombre, List<String> permisos) {
         String lista = "";
         List<ProyectosBean> listaProyectos = proyectosNegocio.consultarProyectos(null, nombre, false);
         if (listaProyectos != null && !listaProyectos.isEmpty()) {
@@ -196,9 +215,11 @@ public class ProyectosController extends HttpServlet {
                         + "                         </div>\n"
                         + "                     </a>\n"
                         + "                     <div class=\"col-xs-2 col-sm-1 col-md-1 col-lg-1\">\n"
-                        + "                         <span class=\"glyphicon glyphicon-pencil\" onclick=\"editarProyecto(" + proyecto.getId() + ");\"></span>\n"
-                        + "                         <span class=\"glyphicon glyphicon-remove\" onclick=\"eliminarProyecto(" + proyecto.getId() + ");\"></span>\n"
-                        + "                     </div>\n"
+                        + "                         <span class=\"glyphicon glyphicon-pencil\" onclick=\"editarProyecto(" + proyecto.getId() + ");\"></span>\n";
+                if (permisos != null && !permisos.isEmpty() && permisos.contains(Permisos.ELIMINAR_PROYECTO.getNombre())) {
+                    lista += "                         <span class=\"glyphicon glyphicon-remove\" onclick=\"eliminarProyecto(" + proyecto.getId() + ");\"></span>\n";
+                }
+                lista += "                     </div>\n"
                         + "                 </div>\n"
                         + "             </h4>\n"
                         + "         </div>\n"
@@ -213,23 +234,27 @@ public class ProyectosController extends HttpServlet {
                                 + "                             " + version.getNombre() + "\n"
                                 + "                         </div>\n"
                                 + "                         <div class=\"col-xs-2 col-sm-1 col-md-1 col-lg-1\">\n"
-                                + "                             <span class=\"glyphicon glyphicon-pencil\" onclick=\"editarVersion(" + version.getId() + ")\"></span>\n"
-                                + "                             <span class=\"glyphicon glyphicon-remove\" onclick=\"eliminarVersion(" + version.getId() + ");\"></span>\n"
-                                + "                         </div>\n"
+                                + "                             <span class=\"glyphicon glyphicon-pencil\" onclick=\"editarVersion(" + version.getId() + ")\"></span>\n";
+                        if (permisos != null && !permisos.isEmpty() && permisos.contains(Permisos.ELIMINAR_VERSION.getNombre())) {
+                            lista += "                             <span class=\"glyphicon glyphicon-remove\" onclick=\"eliminarVersion(" + version.getId() + ");\"></span>\n";
+                        }
+                        lista += "                         </div>\n"
                                 + "                     </div>\n"
                                 + "                 </li>\n";
                     }
                 }
-                lista += "                 <li class=\"list-group-item\">\n"
-                        + "                     <div class=\"row\">\n"
-                        + "                         <div class=\"col-xs-11 col-sm-11 col-md-11 col-lg-11\">\n"
-                        + "                         </div>\n"
-                        + "                         <div class=\"col-xs-1 col-sm-1 col-md-1 col-lg-1\">\n"
-                        + "                             <span class=\"glyphicon glyphicon-plus\" onclick=\"nuevaVersion(" + proyecto.getId() + ", '" + sdf.format(proyecto.getFechaInicio()) + "');\"></span>\n"
-                        + "                         </div>\n"
-                        + "                     </div>\n"
-                        + "                 </li>\n"
-                        + "             </ul>\n"
+                if (permisos != null && !permisos.isEmpty() && permisos.contains(Permisos.CREAR_VERSION.getNombre())) {
+                    lista += "                 <li class=\"list-group-item\">\n"
+                            + "                     <div class=\"row\">\n"
+                            + "                         <div class=\"col-xs-11 col-sm-11 col-md-11 col-lg-11\">\n"
+                            + "                         </div>\n"
+                            + "                         <div class=\"col-xs-1 col-sm-1 col-md-1 col-lg-1\">\n"
+                            + "                             <span class=\"glyphicon glyphicon-plus\" onclick=\"nuevaVersion(" + proyecto.getId() + ", '" + sdf.format(proyecto.getFechaInicio()) + "');\"></span>\n"
+                            + "                         </div>\n"
+                            + "                     </div>\n"
+                            + "                 </li>\n";
+                }
+                lista += "             </ul>\n"
                         + "         </div>\n"
                         + "     </div>\n"
                         + " </div>";

@@ -51,11 +51,11 @@ function obtenerPermisos(idPerfil) {
         success: function(data) {
             if (data !== undefined) {
                 $("#permiso_1").prop("checked", data.permiso_1 !== undefined ? data.permiso_1 : false);
-                $("#permiso_1_1").prop("checked", data.permiso_38 !== undefined ? data.permiso_38 : false);
-                $("#permiso_1_2").prop("checked", data.permiso_39 !== undefined ? data.permiso_39 : false);
-                $("#permiso_1_3").prop("checked", data.permiso_40 !== undefined ? data.permiso_40 : false);
-                $("#permiso_1_4").prop("checked", data.permiso_41 !== undefined ? data.permiso_41 : false);
-                $("#permiso_1_5").prop("checked", data.permiso_42 !== undefined ? data.permiso_42 : false);
+                $("#permiso_1_1").prop("checked", data.permiso_40 !== undefined ? data.permiso_40 : false);
+                $("#permiso_1_2").prop("checked", data.permiso_41 !== undefined ? data.permiso_41 : false);
+                $("#permiso_1_3").prop("checked", data.permiso_42 !== undefined ? data.permiso_42 : false);
+                $("#permiso_1_4").prop("checked", data.permiso_43 !== undefined ? data.permiso_43 : false);
+                $("#permiso_1_5").prop("checked", data.permiso_44 !== undefined ? data.permiso_44 : false);
                 $("#permiso_2").prop("checked", data.permiso_2 !== undefined ? data.permiso_2 : false);
                 $("#permiso_3").prop("checked", data.permiso_3 !== undefined ? data.permiso_3 : false);
                 $("#permiso_3_1").prop("checked", data.permiso_28 !== undefined ? data.permiso_28 : false);
@@ -90,6 +90,8 @@ function obtenerPermisos(idPerfil) {
                 $("#permiso_16_4").prop("checked", data.permiso_35 !== undefined ? data.permiso_35 : false);
                 $("#permiso_16_5").prop("checked", data.permiso_36 !== undefined ? data.permiso_36 : false);
                 $("#permiso_16_6").prop("checked", data.permiso_37 !== undefined ? data.permiso_37 : false);
+                $("#permiso_16_7").prop("checked", data.permiso_38 !== undefined ? data.permiso_38 : false);
+                $("#permiso_16_8").prop("checked", data.permiso_39 !== undefined ? data.permiso_39 : false);
 
                 $("#perfilPermiso").val(idPerfil);
                 $("#modalPermisos").modal('show');
@@ -105,14 +107,14 @@ function encenderPermisosHijos(permiso) {
     if ($('#' + permiso).is(':checked')) {
         value = true;
     }
-    for (var i = 1; i <= 6; i++) {
+    for (var i = 1; i <= 8; i++) {
         $("#" + permiso + "_" + i).prop("checked", value);
     }
 }
 
 function encenderPermisoPadre(permiso) {
     var value = false;
-    for (var i = 1; i <= 6; i++) {
+    for (var i = 1; i <= 8; i++) {
         if ($("#" + permiso + "_" + i).is(':checked')) {
             value = true;
             break;

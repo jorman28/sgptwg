@@ -83,7 +83,9 @@
                                         </div>
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="submit" class="btn btn-primary" name="accion" id="guardarProyecto" value="guardarProyecto">Guardar</button>
+                                        <c:if test="${opcionGuardarProyecto == 'T'}">
+                                            <button type="submit" class="btn btn-primary" name="accion" id="guardarProyecto" value="guardarProyecto">Guardar</button>
+                                        </c:if>
                                         <button type="button" class="btn btn-primary" data-dismiss="modal">Cancelar</button>
                                     </div>
                                 </div>
@@ -128,7 +130,9 @@
                                         </div>
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="submit" class="btn btn-primary" name="accion" id="guardarVersion" value="guardarVersion">Guardar</button>
+                                        <c:if test="${opcionGuardarVersion == 'T'}">
+                                            <button type="submit" class="btn btn-primary" name="accion" id="guardarVersion" value="guardarVersion">Guardar</button>
+                                        </c:if>
                                         <button type="button" class="btn btn-primary" data-dismiss="modal">Cancelar</button>
                                     </div>
                                 </div>
@@ -137,8 +141,12 @@
                         <h2>PROYECTOS</h2>
                         <div id="listaProyectos">${listaProyectos}</div>
                         <div class="row form-group" align="center">
-                            <button class="btn btn-default" type="button" data-toggle="modal" data-target="#modalConsulta">Consultar</button>
-                            <button class="btn btn-default" type="button" name="accion" id="crearProyecto" value="crearProyecto" onclick="nuevoProyecto();">Nuevo</button>
+                            <c:if test="${opcionConsultar == 'T'}">
+                                <button class="btn btn-default" type="button" data-toggle="modal" data-target="#modalConsulta">Consultar</button>
+                            </c:if>
+                            <c:if test="${opcionCrearProyecto == 'T'}">
+                                <button class="btn btn-default" type="button" name="accion" id="crearProyecto" value="crearProyecto" onclick="nuevoProyecto();">Nuevo</button>
+                            </c:if>
                             <button class="btn btn-default" type="submit" name="accion" id="limpiarProyecto" value="limpiarProyecto">Limpiar</button>
                         </div>
                         <c:import url="/jsp/general/comentarios.jsp"/>
