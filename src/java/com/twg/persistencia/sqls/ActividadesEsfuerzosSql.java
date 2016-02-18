@@ -4,7 +4,7 @@ package com.twg.persistencia.sqls;
  *
  * @author Jorman
  */
-public class Actividades_EsfuerzosSql {
+public class ActividadesEsfuerzosSql {
 
     public String contarActividades_Esfuerzos() {
         return "SELECT COUNT(*) FROM actividades_esfuerzos";

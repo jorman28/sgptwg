@@ -115,8 +115,10 @@
                         </div>
                         <div class="row" align="center">
                             <div class="col-lg-12">
-                                <button class="btn btn-default" type="submit" name="accion" id="guardar" value="guardar">Guardar</button>
-                                <button class="btn btn-default" type="submit" name="accion" id="cancelar" value="cancelar">Cancelar</button>
+                                <c:if test="${opcionGuardar == 'T'}">
+                                    <button class="btn btn-default" type="submit" name="accion" id="guardar" value="guardar">Guardar</button>
+                                </c:if>
+                                <button class="btn btn-default" type="submit" name="accion" id="cancelar" value="cancelar">Atrás</button>
                             </div>
                         </div>
                     </form>

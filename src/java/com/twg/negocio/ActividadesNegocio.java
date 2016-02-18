@@ -1,9 +1,9 @@
 package com.twg.negocio;
 
 import com.twg.persistencia.beans.ActividadesBean;
-import com.twg.persistencia.beans.Actividades_EmpleadosBean;
+import com.twg.persistencia.beans.ActividadesEmpleadosBean;
 import com.twg.persistencia.daos.ActividadesDao;
-import com.twg.persistencia.daos.Actividades_EmpleadosDao;
+import com.twg.persistencia.daos.ActividadesEmpleadosDao;
 import com.twg.persistencia.daos.PersonasDao;
 import com.twg.persistencia.daos.VersionesDao;
 import java.sql.SQLException;
@@ -26,7 +26,7 @@ public class ActividadesNegocio {
 
     private final ActividadesDao actividadesDao = new ActividadesDao();
     private final ActividadesBean actividadesBean = new ActividadesBean();
-    private final Actividades_EmpleadosDao actividades_empleadosDao = new Actividades_EmpleadosDao();
+    private final ActividadesEmpleadosDao actividades_empleadosDao = new ActividadesEmpleadosDao();
 
     private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
@@ -42,7 +42,7 @@ public class ActividadesNegocio {
                 int ultActividad = 0;
 
                 ActividadesBean actividad = new ActividadesBean();
-                Actividades_EmpleadosBean actividadEmpleadoBean = new Actividades_EmpleadosBean();
+                ActividadesEmpleadosBean actividadEmpleadoBean = new ActividadesEmpleadosBean();
                 
                 actividadEmpleadoBean.setEmpleado(Integer.valueOf(idResponsable));
                 
@@ -210,8 +210,8 @@ public class ActividadesNegocio {
         return listaActividades;
     }
 
-    public List<Actividades_EmpleadosBean> consultarActividadesEmpleados(Integer idActividad, Integer idEmpleado) {
-        List<Actividades_EmpleadosBean> listaActividadesEmpleados = new ArrayList<>();
+    public List<ActividadesEmpleadosBean> consultarActividadesEmpleados(Integer idActividad, Integer idEmpleado) {
+        List<ActividadesEmpleadosBean> listaActividadesEmpleados = new ArrayList<>();
         try {
             listaActividadesEmpleados = actividades_empleadosDao.consultarActividadEmpleado(idActividad, idEmpleado);
         } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
@@ -228,10 +228,10 @@ public class ActividadesNegocio {
             if (responsable != null && !responsable.equals("")) {
                 PersonasDao perDao = new PersonasDao();
                 int persona = perDao.consultarIdPersona(responsable, null);
-                Actividades_EmpleadosDao actiDao = new Actividades_EmpleadosDao();
-                List<Actividades_EmpleadosBean> actiList = actiDao.consultarActividadesEmpleados(persona);
+                ActividadesEmpleadosDao actiDao = new ActividadesEmpleadosDao();
+                List<ActividadesEmpleadosBean> actiList = actiDao.consultarActividadesEmpleados(persona);
 
-                for (Actividades_EmpleadosBean actiList1 : actiList) {
+                for (ActividadesEmpleadosBean actiList1 : actiList) {
                     idsActividades += actiList1.getActividad() + ",";
                 }
                 if (!idsActividades.equals("")) {
@@ -294,9 +294,9 @@ public class ActividadesNegocio {
         return actividad;
     }
 
-    public Actividades_EmpleadosBean consultarActividad_Empleado(Integer idActividad, Integer idEmpleado) {
-        Actividades_EmpleadosBean actividad_empleado = new Actividades_EmpleadosBean();
-        List<Actividades_EmpleadosBean> listaActividadesEmpleados = consultarActividadesEmpleados(idActividad, idEmpleado);
+    public ActividadesEmpleadosBean consultarActividad_Empleado(Integer idActividad, Integer idEmpleado) {
+        ActividadesEmpleadosBean actividad_empleado = new ActividadesEmpleadosBean();
+        List<ActividadesEmpleadosBean> listaActividadesEmpleados = consultarActividadesEmpleados(idActividad, idEmpleado);
         if (listaActividadesEmpleados != null && !listaActividadesEmpleados.isEmpty()) {
             actividad_empleado.setActividad(listaActividadesEmpleados.get(0).getActividad());
             actividad_empleado.setEmpleado(listaActividadesEmpleados.get(0).getEmpleado());

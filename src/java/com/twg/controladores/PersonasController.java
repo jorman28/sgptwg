@@ -4,6 +4,8 @@ import com.twg.negocio.CargosNegocio;
 import com.twg.negocio.PerfilesNegocio;
 import com.twg.negocio.PersonasNegocio;
 import com.twg.negocio.TiposDocumentoNegocio;
+import com.twg.persistencia.beans.Paginas;
+import com.twg.persistencia.beans.Permisos;
 import com.twg.persistencia.beans.PersonasBean;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -69,9 +71,11 @@ public class PersonasController extends HttpServlet {
 
         String redireccion = "jsp/consultaPersonas.jsp";
 
+        List<String> permisosPagina = PerfilesNegocio.permisosPorPagina(request, Paginas.PERSONAS);
+
         switch (accion) {
             case "consultar":
-                cargarTabla(response, documento, tipoDocumento, nombres, apellidos, correo, usuario, perfil, cargo);
+                cargarTabla(response, permisosPagina, documento, tipoDocumento, nombres, apellidos, correo, usuario, perfil, cargo);
                 break;
             case "editar":
                 PersonasBean persona = personasNegocio.consultarPersona(idPersonaStr, null, null);
@@ -130,6 +134,17 @@ public class PersonasController extends HttpServlet {
         }
 
         if (!accion.equals("consultar")) {
+            if (permisosPagina != null && !permisosPagina.isEmpty()) {
+                if (permisosPagina.contains(Permisos.CONSULTAR.getNombre())) {
+                    request.setAttribute("opcionConsultar", "T");
+                }
+                if (permisosPagina.contains(Permisos.CREAR.getNombre())) {
+                    request.setAttribute("opcionCrear", "T");
+                }
+                if (permisosPagina.contains(Permisos.GUARDAR.getNombre())) {
+                    request.setAttribute("opcionGuardar", "T");
+                }
+            }
             request.setAttribute("mensajeExito", mensajeExito);
             request.setAttribute("mensajeError", mensajeError);
             request.setAttribute("mensajeAlerta", mensajeAlerta);
@@ -140,7 +155,7 @@ public class PersonasController extends HttpServlet {
         }
     }
 
-    private void cargarTabla(HttpServletResponse response, String documento, String tipoDocumento, String nombres, String apellidos, String correo, String usuario, String perfil, String cargo) throws ServletException, IOException {
+    private void cargarTabla(HttpServletResponse response, List<String> permisos, String documento, String tipoDocumento, String nombres, String apellidos, String correo, String usuario, String perfil, String cargo) throws ServletException, IOException {
         response.setContentType("text/html; charset=iso-8859-1");
         List<PersonasBean> listaPersonas = personasNegocio.consultarPersonas(documento, tipoDocumento, nombres, apellidos, correo, usuario, perfil, cargo, null);
         PrintWriter out = response.getWriter();
@@ -167,8 +182,10 @@ public class PersonasController extends HttpServlet {
                 out.println("<td>" + persona.getCorreo() + "</td>");
                 out.println("<td>" + persona.getNombreCargo() + "</td>");
                 out.println("<td>");
-                out.println("<button class=\"btn btn-default\" type=\"button\" onclick=\"editarPersona(" + persona.getId() + ")\">Editar</button>");
-                out.println("<button class=\"btn btn-default\" type=\"button\" data-toggle=\"modal\" data-target=\"#confirmationMessage\" onclick=\"jQuery('#idPersona').val('" + persona.getId() + "');\">Eliminar</button>");
+                out.println("<button class=\"btn btn-default\" type=\"button\" onclick=\"editarPersona(" + persona.getId() + ")\">Detalle</button>");
+                if (permisos != null && !permisos.isEmpty() && permisos.contains(Permisos.ELIMINAR.getNombre())) {
+                    out.println("<button class=\"btn btn-default\" type=\"button\" data-toggle=\"modal\" data-target=\"#confirmationMessage\" onclick=\"jQuery('#idPersona').val('" + persona.getId() + "');\">Eliminar</button>");
+                }
                 out.println("</td>");
                 out.println("</tr>");
             }

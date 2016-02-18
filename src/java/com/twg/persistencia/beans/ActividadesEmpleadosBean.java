@@ -9,7 +9,7 @@ package com.twg.persistencia.beans;
  *
  * @author erikasta07
  */
-public class Actividades_EmpleadosBean {
+public class ActividadesEmpleadosBean {
     
     private Integer actividad;
     private Integer empleado;

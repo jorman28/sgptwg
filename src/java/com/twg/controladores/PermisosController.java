@@ -1,7 +1,9 @@
 package com.twg.controladores;
 
 import com.twg.negocio.PerfilesNegocio;
+import com.twg.persistencia.beans.Paginas;
 import com.twg.persistencia.beans.PerfilesBean;
+import com.twg.persistencia.beans.Permisos;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
@@ -49,9 +51,11 @@ public class PermisosController extends HttpServlet {
             accion = "";
         }
 
+        List<String> permisosPagina = PerfilesNegocio.permisosPorPagina(request, Paginas.PERMISOS);
+
         switch (accion) {
             case "consultar":
-                cargarTabla(response, nombrePerfil);
+                cargarTabla(response, permisosPagina, nombrePerfil);
                 break;
             case "editar":
                 JSONObject perfil = perfilesNegocio.consultarPerfil(idPerfil, null);
@@ -101,11 +105,19 @@ public class PermisosController extends HttpServlet {
         request.setAttribute("mensajeExito", mensajeExito);
         request.setAttribute("mensajeError", mensajeError);
         if (!accion.equals("consultar") && !accion.equals("editar") && !accion.equals("consultarPermisos")) {
+            if (permisosPagina != null && !permisosPagina.isEmpty()) {
+                if (permisosPagina.contains(Permisos.CONSULTAR.getNombre())) {
+                    request.setAttribute("opcionConsultar", "T");
+                }
+                if (permisosPagina.contains(Permisos.GUARDAR.getNombre())) {
+                    request.setAttribute("opcionGuardar", "T");
+                }
+            }
             request.getRequestDispatcher("jsp/permisos.jsp").forward(request, response);
         }
     }
 
-    private void cargarTabla(HttpServletResponse response, String nombrePerfil) throws ServletException, IOException {
+    private void cargarTabla(HttpServletResponse response, List<String> permisos, String nombrePerfil) throws ServletException, IOException {
         response.setContentType("text/html; charset=iso-8859-1");
 
         List<PerfilesBean> listaPerfiles = perfilesNegocio.consultarPerfiles(null, nombrePerfil);
@@ -123,9 +135,13 @@ public class PermisosController extends HttpServlet {
                 out.println("<tr>");
                 out.println("<td>" + perfil.getNombre() + "</td>");
                 out.println("<td>");
-                out.println("<button class=\"btn btn-default\" type=\"button\" onclick=\"consultarPerfil(" + perfil.getId() + ")\">Editar</button>");
-                out.println("<button class=\"btn btn-default\" type=\"button\" data-toggle=\"modal\" data-target=\"#confirmationMessage\" onclick=\"jQuery('#idPerfil').val('" + perfil.getId() + "');\">Eliminar</button>");
-                out.println("<button class=\"btn btn-default\" type=\"button\" onclick=\"obtenerPermisos(" + perfil.getId() + ");\">Permisos</button>");
+                out.println("<button class=\"btn btn-default\" type=\"button\" onclick=\"consultarPerfil(" + perfil.getId() + ")\">Detalle</button>");
+                if (permisos != null && !permisos.isEmpty() && permisos.contains(Permisos.ELIMINAR.getNombre())) {
+                    out.println("<button class=\"btn btn-default\" type=\"button\" data-toggle=\"modal\" data-target=\"#confirmationMessage\" onclick=\"jQuery('#idPerfil').val('" + perfil.getId() + "');\">Eliminar</button>");
+                }
+                if (permisos != null && !permisos.isEmpty() && permisos.contains(Permisos.PERMISOS.getNombre())) {
+                    out.println("<button class=\"btn btn-default\" type=\"button\" onclick=\"obtenerPermisos(" + perfil.getId() + ");\">Permisos</button>");
+                }
                 out.println("</td>");
                 out.println("</tr>");
             }

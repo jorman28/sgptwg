@@ -3,6 +3,8 @@ package com.twg.controladores;
 import com.twg.negocio.PerfilesNegocio;
 import com.twg.negocio.TiposDocumentoNegocio;
 import com.twg.negocio.UsuariosNegocio;
+import com.twg.persistencia.beans.Paginas;
+import com.twg.persistencia.beans.Permisos;
 import com.twg.persistencia.beans.UsuariosBean;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -19,7 +21,6 @@ public class UsuariosController extends HttpServlet {
     private final PerfilesNegocio perfilesNegocio = new PerfilesNegocio();
     private final TiposDocumentoNegocio tiposDocumentoNegocio = new TiposDocumentoNegocio();
     private final UsuariosNegocio usuariosNegocio = new UsuariosNegocio();
-    
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -33,6 +34,7 @@ public class UsuariosController extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8");
+
         String mensajeAlerta = "";
         String mensajeExito = "";
         String mensajeError = "";
@@ -63,9 +65,11 @@ public class UsuariosController extends HttpServlet {
         } catch (NumberFormatException e) {
         }
 
+        List<String> permisosPagina = PerfilesNegocio.permisosPorPagina(request, Paginas.USUARIOS);
+
         switch (accion) {
             case "consultar":
-                cargarTabla(response, idPersona, nombreUsuario, perfil, activo, documento, tipoDocumento);
+                cargarTabla(response, permisosPagina, idPersona, nombreUsuario, perfil, activo, documento, tipoDocumento);
                 break;
             case "editar":
                 JSONObject object = usuariosNegocio.consultarUsuario(idPersona);
@@ -73,23 +77,23 @@ public class UsuariosController extends HttpServlet {
                 break;
             case "guardar":
                 Map<String, Object> result = usuariosNegocio.crearUsuario(idPersona, nombreUsuario, clave, clave2, perfil, activo, documento, tipoDocumento);
-                if(result.get("mensajeError") != null){
-                    mensajeError = (String)result.get("mensajeError");
+                if (result.get("mensajeError") != null) {
+                    mensajeError = (String) result.get("mensajeError");
                     enviarDatos(request, idPersona, nombreUsuario, perfil, activo, documento, tipoDocumento);
                 }
-                if(result.get("mensajeExito") != null){
-                    mensajeExito = (String)result.get("mensajeExito");
+                if (result.get("mensajeExito") != null) {
+                    mensajeExito = (String) result.get("mensajeExito");
                     enviarDatos(request, null, null, null, null, null, null);
                 }
                 break;
             case "eliminar":
                 result = usuariosNegocio.eliminarUsuario(idPersona);
-                if(result.get("mensajeError") != null){
-                    mensajeError = (String)result.get("mensajeError");
+                if (result.get("mensajeError") != null) {
+                    mensajeError = (String) result.get("mensajeError");
                     enviarDatos(request, idPersona, nombreUsuario, perfil, activo, documento, tipoDocumento);
                 }
-                if(result.get("mensajeExito") != null){
-                    mensajeExito = (String)result.get("mensajeExito");
+                if (result.get("mensajeExito") != null) {
+                    mensajeExito = (String) result.get("mensajeExito");
                     enviarDatos(request, null, null, null, null, null, null);
                 }
                 break;
@@ -103,7 +107,15 @@ public class UsuariosController extends HttpServlet {
         request.setAttribute("mensajeError", mensajeError);
         request.setAttribute("tiposDocumentos", tiposDocumentoNegocio.consultarTiposDocumentos());
         request.setAttribute("perfiles", perfilesNegocio.consultarPerfiles());
-        if(!accion.equals("consultar") && !accion.equals("editar")){
+        if (!accion.equals("consultar") && !accion.equals("editar")) {
+            if (permisosPagina != null && !permisosPagina.isEmpty()) {
+                if (permisosPagina.contains(Permisos.CONSULTAR.getNombre())) {
+                    request.setAttribute("opcionConsultar", "T");
+                }
+                if (permisosPagina.contains(Permisos.GUARDAR.getNombre())) {
+                    request.setAttribute("opcionGuardar", "T");
+                }
+            }
             request.getRequestDispatcher("jsp/usuarios.jsp").forward(request, response);
         }
     }
@@ -118,47 +130,49 @@ public class UsuariosController extends HttpServlet {
         request.setAttribute("activo", activo);
     }
 
-    private void cargarTabla(HttpServletResponse response, Integer idPersona, String nombreUsuario, Integer perfil, String activo, String documento, String tipoDocumento) throws ServletException, IOException {
+    private void cargarTabla(HttpServletResponse response, List<String> permisos, Integer idPersona, String nombreUsuario, Integer perfil, String activo, String documento, String tipoDocumento) throws ServletException, IOException {
         response.setContentType("text/html; charset=iso-8859-1");
-        
+
         List<UsuariosBean> listaUsuarios = usuariosNegocio.consultarUsuarios(idPersona, nombreUsuario, perfil, activo, documento, tipoDocumento);
         PrintWriter out = response.getWriter();
         out.println("<table class=\"table table-striped table-hover table-condensed bordo-tablas\">");
-        out.println(    "<thead>");
-        out.println(        "<tr>");			
-        out.println(            "<th>Tipo documento</th>");
-        out.println(            "<th>Documento</th>");
-        out.println(            "<th>Usuario</th>");
-        out.println(            "<th>Perfil</th>");
-        out.println(            "<th>Estado</th>");
-        out.println(            "<th>Acciones</th>");
-        out.println(        "</tr>");
-        out.println(    "</thead>");
-        out.println(    "<tbody>");
-        if(listaUsuarios != null && !listaUsuarios.isEmpty()){
+        out.println("<thead>");
+        out.println("<tr>");
+        out.println("<th>Tipo documento</th>");
+        out.println("<th>Documento</th>");
+        out.println("<th>Usuario</th>");
+        out.println("<th>Perfil</th>");
+        out.println("<th>Estado</th>");
+        out.println("<th>Acciones</th>");
+        out.println("</tr>");
+        out.println("</thead>");
+        out.println("<tbody>");
+        if (listaUsuarios != null && !listaUsuarios.isEmpty()) {
             for (UsuariosBean usuario : listaUsuarios) {
-                out.println("<tr>");			
-                out.println(    "<td>"+usuario.getDescripcionTipoDocumento()+"</td>");
-                out.println(    "<td>"+usuario.getDocumento()+"</td>");
-                out.println(    "<td>"+usuario.getUsuario()+"</td>");
-                out.println(    "<td>"+usuario.getDescripcionPerfil()+"</td>");
-                if(usuario.getActivo().equals("T")){
-                    out.println(    "<td>Activo</td>");
+                out.println("<tr>");
+                out.println("<td>" + usuario.getDescripcionTipoDocumento() + "</td>");
+                out.println("<td>" + usuario.getDocumento() + "</td>");
+                out.println("<td>" + usuario.getUsuario() + "</td>");
+                out.println("<td>" + usuario.getDescripcionPerfil() + "</td>");
+                if (usuario.getActivo().equals("T")) {
+                    out.println("<td>Activo</td>");
                 } else {
-                    out.println(    "<td>Inactivo</td>");
+                    out.println("<td>Inactivo</td>");
                 }
-                out.println(    "<td>");
-                out.println(        "<button class=\"btn btn-default\" type=\"button\" onclick=\"consultarUsuario("+usuario.getIdPersona()+")\">Editar</button>");
-                out.println(        "<button class=\"btn btn-default\" type=\"button\" data-toggle=\"modal\" data-target=\"#confirmationMessage\" onclick=\"jQuery('#idPersona').val('"+usuario.getIdPersona()+"');\">Eliminar</button>");
-                out.println(    "</td>");
+                out.println("<td>");
+                out.println("<button class=\"btn btn-default\" type=\"button\" onclick=\"consultarUsuario(" + usuario.getIdPersona() + ")\">Detalle</button>");
+                if (permisos != null && !permisos.isEmpty() && permisos.contains(Permisos.ELIMINAR.getNombre())) {
+                    out.println("<button class=\"btn btn-default\" type=\"button\" data-toggle=\"modal\" data-target=\"#confirmationMessage\" onclick=\"jQuery('#idPersona').val('" + usuario.getIdPersona() + "');\">Eliminar</button>");
+                }
+                out.println("</td>");
                 out.println("</tr>");
             }
         } else {
-            out.println("   <tr>");			
-            out.println(        "<td colspan=\"6\">No se encontraron registros</td>");
-            out.println(    "</tr>");
+            out.println("   <tr>");
+            out.println("<td colspan=\"6\">No se encontraron registros</td>");
+            out.println("</tr>");
         }
-        out.println(    "</tbody>");
+        out.println("</tbody>");
         out.println("</table>");
     }
 

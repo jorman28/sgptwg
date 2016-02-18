@@ -5,8 +5,8 @@
  */
 package com.twg.persistencia.daos;
 
-import com.twg.persistencia.beans.Actividades_EmpleadosBean;
-import com.twg.persistencia.sqls.Actividades_EmpleadosSql;
+import com.twg.persistencia.beans.ActividadesEmpleadosBean;
+import com.twg.persistencia.sqls.ActividadesEmpleadosSql;
 import com.twg.utilidades.ConexionBaseDatos;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -19,14 +19,14 @@ import java.util.List;
  *
  * @author erikasta07
  */
-public class Actividades_EmpleadosDao {
-    private final Actividades_EmpleadosSql sql = new Actividades_EmpleadosSql();
+public class ActividadesEmpleadosDao {
+    private final ActividadesEmpleadosSql sql = new ActividadesEmpleadosSql();
 
-    public Actividades_EmpleadosDao(){
+    public ActividadesEmpleadosDao(){
     }
     
-    public List<Actividades_EmpleadosBean> consultarActividadesEmpleados(Integer empleado) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
-        List<Actividades_EmpleadosBean> listaEmpleados = new ArrayList<>();
+    public List<ActividadesEmpleadosBean> consultarActividadesEmpleados(Integer empleado) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
+        List<ActividadesEmpleadosBean> listaEmpleados = new ArrayList<>();
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;
@@ -34,7 +34,7 @@ public class Actividades_EmpleadosDao {
         ResultSet rs;
         rs = ps.executeQuery();
         while(rs.next()){
-            Actividades_EmpleadosBean acti = new Actividades_EmpleadosBean();
+            ActividadesEmpleadosBean acti = new ActividadesEmpleadosBean();
             acti.setActividad(rs.getInt("actividad"));
             acti.setEmpleado(rs.getInt("empleado"));
             listaEmpleados.add(acti);
@@ -46,8 +46,8 @@ public class Actividades_EmpleadosDao {
     }
     
     
-    public List<Actividades_EmpleadosBean> consultarActividadEmpleado(Integer idActividad, Integer idEmpleado) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
-        List<Actividades_EmpleadosBean> listaActividadEmpleado = new ArrayList<>();
+    public List<ActividadesEmpleadosBean> consultarActividadEmpleado(Integer idActividad, Integer idEmpleado) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
+        List<ActividadesEmpleadosBean> listaActividadEmpleado = new ArrayList<>();
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;
@@ -55,7 +55,7 @@ public class Actividades_EmpleadosDao {
         ResultSet rs;
         rs = ps.executeQuery();
         while(rs.next()){
-            Actividades_EmpleadosBean acti = new Actividades_EmpleadosBean();
+            ActividadesEmpleadosBean acti = new ActividadesEmpleadosBean();
             acti.setActividad(rs.getInt("actividad"));
             acti.setEmpleado(rs.getInt("empleado"));
             listaActividadEmpleado.add(acti);
@@ -67,7 +67,7 @@ public class Actividades_EmpleadosDao {
     }
     
     
-    public int insertarActividadEmpleado(Actividades_EmpleadosBean actividad_empleado) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
+    public int insertarActividadEmpleado(ActividadesEmpleadosBean actividad_empleado) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;

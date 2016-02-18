@@ -32,8 +32,12 @@
                             </div>
                         </div>
                         <div class="row form-group" align="center">
-                            <button class="btn btn-default" type="button" name="accion" id="consultar" value="consultar" onclick="llenarTabla()">Consultar</button>
-                            <button class="btn btn-default" type="submit" name="accion" id="guardar" value="guardar">Guardar</button>
+                            <c:if test="${opcionConsultar == 'T'}">
+                                <button class="btn btn-default" type="button" name="accion" id="consultar" value="consultar" onclick="llenarTabla()">Consultar</button>
+                            </c:if>
+                            <c:if test="${opcionGuardar == 'T'}">
+                                <button class="btn btn-default" type="submit" name="accion" id="guardar" value="guardar">Guardar</button>
+                            </c:if>
                             <button class="btn btn-default" type="button" name="accion" id="limpiar" value="limpiar" onclick="nuevoCargo();">Limpiar</button>
                         </div>
                         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
