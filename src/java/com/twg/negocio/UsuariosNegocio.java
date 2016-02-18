@@ -109,6 +109,8 @@ public class UsuariosNegocio {
         if (!mensajeExito.isEmpty()) {
             result.put("mensajeExito", mensajeExito);
         }
+        result.put("documento", usuario.getDocumento());
+        result.put("tipoDocumento", usuario.getTipoDocumento());
         return result;
     }
 
@@ -142,11 +144,11 @@ public class UsuariosNegocio {
 
     private String validarDatos(UsuariosBean usuario, String clave2) {
         String error = "";
-        if (usuario.getDocumento() == null || usuario.getDocumento().isEmpty()) {
+        if (usuario.getIdPersona() == null && (usuario.getDocumento() == null || usuario.getDocumento().isEmpty())) {
             error += "El campo 'Documento' es obligatorio \n";
         }
 
-        if (usuario.getTipoDocumento() == null || usuario.getTipoDocumento().isEmpty() || usuario.getTipoDocumento().equals("0")) {
+        if (usuario.getIdPersona() == null && (usuario.getTipoDocumento() == null || usuario.getTipoDocumento().isEmpty() || usuario.getTipoDocumento().equals("0"))) {
             error += "El campo 'Tipo de documento' es obligatorio \n";
         }
 
@@ -170,12 +172,23 @@ public class UsuariosNegocio {
         }
 
         UsuariosBean objetoUsuario = null;
-        if (usuario.getDocumento() != null && !usuario.getDocumento().isEmpty()
+        if (usuario.getIdPersona() == null && usuario.getDocumento() != null && !usuario.getDocumento().isEmpty()
                 && usuario.getTipoDocumento() != null && !usuario.getTipoDocumento().equals("0")) {
             try {
                 List<UsuariosBean> listaUsuarios = usuariosDao.consultarUsuarios(null, null, null, null, usuario.getDocumento(), usuario.getTipoDocumento());
                 if (listaUsuarios != null && !listaUsuarios.isEmpty()) {
                     objetoUsuario = listaUsuarios.get(0);
+                }
+            } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
+                Logger.getLogger(PersonasNegocio.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } else if (usuario.getIdPersona() != null) {
+            try {
+                List<UsuariosBean> listaUsuarios = usuariosDao.consultarUsuarios(usuario.getIdPersona());
+                if (listaUsuarios != null && !listaUsuarios.isEmpty()) {
+                    objetoUsuario = listaUsuarios.get(0);
+                    usuario.setDocumento(objetoUsuario.getDocumento());
+                    usuario.setTipoDocumento(objetoUsuario.getTipoDocumento());
                 }
             } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
                 Logger.getLogger(PersonasNegocio.class.getName()).log(Level.SEVERE, null, ex);

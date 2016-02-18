@@ -30,7 +30,7 @@
                         <div class="row">
                             <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                 <label for="tipoDocumento">*Tipo de documento:</label>
-                                <select class="form-control" id="tipoDocumento" name="tipoDocumento" value="${tipoDocumento}">
+                                <select class="form-control" id="tipoDocumento" name="tipoDocumento" value="${tipoDocumento}" <c:if test="${not empty idPersona}">disabled</c:if>>
                                     <option value="0">SELECCIONE</option>
                                     <c:forEach items="${tiposDocumentos}" var="tipo">
                                         <option value="${tipo.tipo}" <c:if test="${tipoDocumento == tipo.tipo}">selected</c:if> >${tipo.nombre}</option>
@@ -39,7 +39,7 @@
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                 <label for="documento">*Documento:</label> 
-                                <input class="form-control" type="text" id="documento" name="documento" value="${documento}"/>
+                                <input class="form-control" type="text" id="documento" name="documento" value="${documento}" <c:if test="${not empty idPersona}">disabled</c:if>/>
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                 <label for="usuario">*Usuario:</label> 
