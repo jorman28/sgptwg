@@ -88,3 +88,25 @@ function nuevaActividad() {
     $("#tiempo_invertido").val('');
     $("#estado").val('0');
 }
+
+function consultarVersiones(idProyecto){
+    $.ajax({
+        type    :"POST",
+        url     :"ActividadesController",
+        dataType:"json",
+        data    :{proyecto: idProyecto, accion: "consultarVersiones"},
+        success: function(data) {
+            if(data !== undefined){
+                var html = "<option value='0'>SELECCIONE</option>";
+                for(var version in data){
+                    version = data[version];
+                    html += "<option value='"+version.id+"'>"+version.nombre+"</option>";
+                }
+                $("#version").html(html);
+            }
+        },
+        error: function(err){
+            alert(err);
+        }
+    });
+}

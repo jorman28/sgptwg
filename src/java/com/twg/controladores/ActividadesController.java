@@ -73,8 +73,7 @@ public class ActividadesController extends HttpServlet {
                 accion = arrayGetId[0];
             }
         }
-
-        //String idStr = request.getParameter("id"); //consulta y creacion Er
+        
         String proyectoStr = request.getParameter("proyecto"); //consulta y creacion Er
         String versionStr = request.getParameter("version"); //consulta y creacion Er
         String descripcion = request.getParameter("descripcion"); //consulta y creacion Er
@@ -129,12 +128,17 @@ public class ActividadesController extends HttpServlet {
             case "gestionarActividad":
             case "limpiarGestion":
                 request.setAttribute("estados", estadosNegocio.consultarEstados(null, null, null));
-                request.setAttribute("versiones", versionesNegocio.consultarVersiones(null, null, null, false));
+                //request.setAttribute("versiones", versionesNegocio.consultarVersiones(null, null, null, false));
+                request.setAttribute("proyectos", proyectosNegocio.consultarProyectos(null, null, false));
                 if (idStr != null && !idStr.isEmpty()) {
                     ActividadesBean actividad = new ActividadesBean();
                     actividad = actividadesNegocio.consultarActividadI(id);
                     ActividadesEmpleadosBean actividad_empleado = new ActividadesEmpleadosBean();
                     actividad_empleado = actividadesNegocio.consultarActividad_Empleado(actividad.getId(), responsable);
+                    
+                    proyecto = proyectosNegocio.consultarProyectoPorVersion(actividad.getVersion()).getId();
+                    request.setAttribute("proyecto", proyecto.toString());
+                    request.setAttribute("versiones", versionesNegocio.consultarVersiones(null, proyecto, null, false));
                     request.setAttribute("id", actividad.getId().toString());
                     request.setAttribute("responsable", actividad_empleado.getEmpleado());
                     request.setAttribute("participante", actividad_empleado.getActividad());
@@ -152,19 +156,21 @@ public class ActividadesController extends HttpServlet {
                 break;
 
             case "guardar":
-                Map<String, Object> result = actividadesNegocio.guardarActividad(idStr, versionStr, participanteStr, responsableStr, descripcion, fecha_estimada_inicioStr, fecha_estimada_terminacionStr, fecha_real_inicioStr, fecha_real_terminacionStr, tiempo_estimadoStr, tiempo_invertidoStr, estadoStr);
+                Map<String, Object> result = actividadesNegocio.guardarActividad(idStr, proyectoStr, versionStr, participanteStr, responsableStr, descripcion, fecha_estimada_inicioStr, fecha_estimada_terminacionStr, fecha_real_inicioStr, fecha_real_terminacionStr, tiempo_estimadoStr, tiempo_invertidoStr, estadoStr);
                 if (result.get("mensajeError") != null) {
                     mensajeError = (String) result.get("mensajeError");
                     request.setAttribute("mensajeError", mensajeError);
                     request.setAttribute("estados", estadosNegocio.consultarEstados(null, null, null));
-                    request.setAttribute("versiones", versionesNegocio.consultarVersiones(null, null, null, false));
-                    enviarDatosCreacionEdicion(request, idStr, responsableStr, participanteStr, versionStr, descripcion, fecha_estimada_inicioStr, fecha_estimada_terminacionStr, fecha_real_inicioStr, fecha_real_terminacionStr, tiempo_estimadoStr, tiempo_invertidoStr, estadoStr);
+                    request.setAttribute("proyectos", proyectosNegocio.consultarProyectos(null, null, false));
+                    request.setAttribute("versiones", versionesNegocio.consultarVersiones(null, Integer.parseInt(proyectoStr), null, false));
+                    //request.setAttribute("versiones", versionesNegocio.consultarVersiones(null, null, null, false));
+                    enviarDatosCreacionEdicion(request, idStr, responsableStr, participanteStr, proyectoStr, versionStr, descripcion, fecha_estimada_inicioStr, fecha_estimada_terminacionStr, fecha_real_inicioStr, fecha_real_terminacionStr, tiempo_estimadoStr, tiempo_invertidoStr, estadoStr);
                     request.getRequestDispatcher(INSERTAR_O_EDITAR).forward(request, response);
                     break;
                 }
                 if (result.get("mensajeExito") != null) {
                     mensajeExito = (String) result.get("mensajeExito");
-                    enviarDatosCreacionEdicion(request, null, null, null, null, null, null, null, null, null, null, null, null);
+                    enviarDatosCreacionEdicion(request, null, null, null, null, null, null, null, null, null, null, null, null, null);
                 }
                 break;
             case "eliminar":
@@ -196,13 +202,13 @@ public class ActividadesController extends HttpServlet {
         //pendiente enviar el Id del proyecto para consultar las versiones
         request.setAttribute("versiones", versionesNegocio.consultarVersiones(null, null, null, false));
         request.setAttribute("estados", estadosNegocio.consultarEstados(null, null, null));
-        if (!accion.equals("consultar") && !accion.equals("editar") && !accion.equals("consultarVersiones")) {
+        if (!accion.equals("consultar") && !accion.equals("editar") && !accion.equals("consultarVersiones") && !accion.equals("gestionarActividad") && !accion.equals("limpiarGestion") && !accion.equals("guardar")) {
             request.getRequestDispatcher(LISTAR_ACTIVIDADES).forward(request, response);
         }
     }
 
     private void enviarDatos(HttpServletRequest request, Integer id, String proyecto, String version, String descripcion,
-            String estado, String fecha, String responsable) {
+        String estado, String fecha, String responsable) {
         request.setAttribute("id", id);
         request.setAttribute("proyecto", proyecto);
         request.setAttribute("version", version);
@@ -212,10 +218,11 @@ public class ActividadesController extends HttpServlet {
         request.setAttribute("responsable", responsable);
     }
 
-    private void enviarDatosCreacionEdicion(HttpServletRequest request, String id, String responsable, String participante, String version, String descripcion, String fecha_estimada_inicio, String fecha_estimada_terminacion, String fecha_real_inicio, String fecha_real_terminacion, String tiempo_estimado, String tiempo_invertido, String estado) {
+    private void enviarDatosCreacionEdicion(HttpServletRequest request, String id, String responsable, String participante, String proyecto, String version, String descripcion, String fecha_estimada_inicio, String fecha_estimada_terminacion, String fecha_real_inicio, String fecha_real_terminacion, String tiempo_estimado, String tiempo_invertido, String estado) {
         request.setAttribute("id", id);
         request.setAttribute("responsable", responsable);
         request.setAttribute("participante", participante);
+        request.setAttribute("proyecto", proyecto);
         request.setAttribute("version", version);
         request.setAttribute("descripcion", descripcion);
         request.setAttribute("fecha_estimada_inicio", fecha_estimada_inicio);

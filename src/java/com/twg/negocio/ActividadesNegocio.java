@@ -30,10 +30,10 @@ public class ActividadesNegocio {
 
     private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
-    public Map<String, Object> guardarActividad(String id, String version, String responsable, String idResponsable, String descripcion, String fecha_estimada_inicio, String fecha_estimada_terminacion, String fecha_real_inicio, String fecha_real_terminacion, String tiempo_estimado, String tiempo_invertido, String estado) {
+    public Map<String, Object> guardarActividad(String id, String proyecto, String version, String responsable, String idResponsable, String descripcion, String fecha_estimada_inicio, String fecha_estimada_terminacion, String fecha_real_inicio, String fecha_real_terminacion, String tiempo_estimado, String tiempo_invertido, String estado) {
 
         String mensajeExito = "";
-        String mensajeError = validarDatos(id, version, responsable, idResponsable, descripcion, fecha_estimada_inicio, fecha_estimada_terminacion, fecha_real_inicio, fecha_real_terminacion, tiempo_estimado, tiempo_invertido, estado);
+        String mensajeError = validarDatos(id, proyecto, version, responsable, idResponsable, descripcion, fecha_estimada_inicio, fecha_estimada_terminacion, fecha_real_inicio, fecha_real_terminacion, tiempo_estimado, tiempo_invertido, estado);
 
         if (mensajeError.isEmpty()) {
             try {
@@ -103,9 +103,13 @@ public class ActividadesNegocio {
         return result;
     }
 
-    public String validarDatos(String id, String version, String responsable, String idResponsable, String descripcion, String fecha_estimada_inicio, String fecha_estimada_terminacion, String fecha_real_inicio, String fecha_real_terminacion, String tiempo_estimado, String tiempo_invertido, String estado) {
+    public String validarDatos(String id, String proyecto, String version, String responsable, String idResponsable, String descripcion, String fecha_estimada_inicio, String fecha_estimada_terminacion, String fecha_real_inicio, String fecha_real_terminacion, String tiempo_estimado, String tiempo_invertido, String estado) {
         String validacion = "";
 
+        if (proyecto == null || proyecto.equals("0")) {
+            validacion += "El campo 'Proyecto' no debe estar vacío <br />";
+        }
+        
         if (version == null || version.equals("0")) {
             validacion += "El campo 'Versión' no debe estar vacío <br />";
         }
@@ -220,6 +224,7 @@ public class ActividadesNegocio {
         return listaActividadesEmpleados;
     }
 
+    //metodo para obtener el listado de actividades que seran cargados en la tabla de consulta
     public List<ActividadesBean> consultarActividades2(Integer id, String versionStr, String descripcion, String fecha,
             String estadoStr, String responsable) {
         List<ActividadesBean> listaActividades = new ArrayList<>();
