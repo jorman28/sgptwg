@@ -265,16 +265,13 @@ public class ActividadesController extends HttpServlet {
                 out.println("<td>" + actividad.getTiempo_estimado() + "</td>");
                 out.println("<td>" + actividad.getNombreE() + "</td>");
                 out.println("<td>");
-
-                //out.println("<button class=\"btn btn-default\" type=\"submit\" name=\"accion\" id= '"+ actividad.getId() + "' value=\"gestionarActividad\"> Gestionar2</button>");
                 out.println("<button class=\"btn btn-default\" type=\"submit\" name=\"accion\" id=\"gestionarActividad\" value='gestionarActividad_" + actividad.getId() + "'> Gestionar</button>");
-                //out.println("<button class=\"btn btn-default\" type=\"button\" name=\"accion\" id="+ actividad.getId() +">Gestionar</button>");
                 out.println("<button class=\"btn btn-default\" type=\"button\" data-toggle=\"modal\" data-target=\"#confirmationMessage\" onclick=\"jQuery('#id').val('" + actividad.getId() + "');\">Eliminar</button>");
                 out.println("</td>");
                 out.println("</tr>");
             }
         } else {
-            out.println("   <tr>");
+            out.println("<tr>");
             out.println("<td colspan=\"6\">No se encontraron registros</td>");
             out.println("</tr>");
         }
