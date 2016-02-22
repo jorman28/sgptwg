@@ -127,7 +127,7 @@ public class ActividadesController extends HttpServlet {
                 break;
             case "gestionarActividad":
             case "limpiarGestion":
-                request.setAttribute("estados", estadosNegocio.consultarEstados(null, null, null));
+                request.setAttribute("estados", estadosNegocio.consultarEstados(null, "ACTIVIDADES", null));
                 //request.setAttribute("versiones", versionesNegocio.consultarVersiones(null, null, null, false));
                 request.setAttribute("proyectos", proyectosNegocio.consultarProyectos(null, null, false));
                 if (idStr != null && !idStr.isEmpty()) {
@@ -160,7 +160,7 @@ public class ActividadesController extends HttpServlet {
                 if (result.get("mensajeError") != null) {
                     mensajeError = (String) result.get("mensajeError");
                     request.setAttribute("mensajeError", mensajeError);
-                    request.setAttribute("estados", estadosNegocio.consultarEstados(null, null, null));
+                    request.setAttribute("estados", estadosNegocio.consultarEstados(null, "ACTIVIDADES", null));
                     request.setAttribute("proyectos", proyectosNegocio.consultarProyectos(null, null, false));
                     request.setAttribute("versiones", versionesNegocio.consultarVersiones(null, Integer.parseInt(proyectoStr), null, false));
                     //request.setAttribute("versiones", versionesNegocio.consultarVersiones(null, null, null, false));
@@ -201,8 +201,8 @@ public class ActividadesController extends HttpServlet {
         request.setAttribute("proyectos", proyectosNegocio.consultarProyectos(null, null, false));
         //pendiente enviar el Id del proyecto para consultar las versiones
         request.setAttribute("versiones", versionesNegocio.consultarVersiones(null, null, null, false));
-        request.setAttribute("estados", estadosNegocio.consultarEstados(null, null, null));
-        if (!accion.equals("consultar") && !accion.equals("editar") && !accion.equals("consultarVersiones") && !accion.equals("gestionarActividad") && !accion.equals("limpiarGestion") && !accion.equals("guardar")) {
+        request.setAttribute("estados", estadosNegocio.consultarEstados(null, "ACTIVIDADES", null));
+        if (!accion.equals("consultar") && !accion.equals("editar") && !accion.equals("consultarVersiones") && !accion.equals("gestionarActividad") && !accion.equals("limpiarGestion")) {
             request.getRequestDispatcher(LISTAR_ACTIVIDADES).forward(request, response);
         }
     }

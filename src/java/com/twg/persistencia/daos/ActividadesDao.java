@@ -106,14 +106,24 @@ public class ActividadesDao {
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;
         ps = con.prepareStatement(sql.insertarActividad());
-        ps.setInt(1, actividad.getVersion());
-        ps.setString(2, actividad.getDescripcion());
-        ps.setDate(3, new Date(actividad.getFecha_estimada_inicio().getTime()));
-        ps.setDate(4, new Date(actividad.getFecha_estimada_terminacion().getTime()));
-        ps.setDate(5, new Date(actividad.getFecha_real_inicio().getTime()));
-        ps.setDate(6, new Date(actividad.getFecha_real_terminacion().getTime()));
-        ps.setDouble(7, actividad.getTiempo_estimado());
-        ps.setDouble(8, actividad.getTiempo_invertido());
+        ps.setString(1, actividad.getDescripcion());
+        ps.setDate(2, new Date(actividad.getFecha_estimada_inicio().getTime()));
+        ps.setDate(3, new Date(actividad.getFecha_estimada_terminacion().getTime()));
+        if (actividad.getFecha_real_inicio() != null) {
+            ps.setDate(4, new Date(actividad.getFecha_real_inicio().getTime()));
+        }else{
+            ps.setDate(4, null);
+        }
+        
+        if (actividad.getFecha_real_terminacion() != null) {
+            ps.setDate(5, new Date(actividad.getFecha_real_terminacion().getTime()));
+        }else{
+            ps.setDate(5, null);
+        }
+        
+        ps.setDouble(6, actividad.getTiempo_estimado());
+        ps.setDouble(7, actividad.getTiempo_invertido());
+        ps.setInt(8, actividad.getVersion());
         ps.setInt(9, actividad.getEstado());
         int insercion = ps.executeUpdate();
         ps.close();
