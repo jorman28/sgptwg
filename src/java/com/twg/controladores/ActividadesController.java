@@ -128,7 +128,7 @@ public class ActividadesController extends HttpServlet {
                 break;
             case "gestionarActividad":
             case "limpiarGestion":
-                request.setAttribute("estados", estadosNegocio.consultarEstados(null, null, null));
+                request.setAttribute("estados", estadosNegocio.consultarEstados(null, null, null, null, null, null));
                 request.setAttribute("versiones", versionesNegocio.consultarVersiones(null, null, null, false));
                 if (idStr != null && !idStr.isEmpty()) {
                     ActividadesBean actividad = new ActividadesBean();
@@ -156,7 +156,7 @@ public class ActividadesController extends HttpServlet {
                 if (result.get("mensajeError") != null) {
                     mensajeError = (String) result.get("mensajeError");
                     request.setAttribute("mensajeError", mensajeError);
-                    request.setAttribute("estados", estadosNegocio.consultarEstados(null, null, null));
+                    request.setAttribute("estados", estadosNegocio.consultarEstados(null, null, null, null, null, null));
                     request.setAttribute("versiones", versionesNegocio.consultarVersiones(null, null, null, false));
                     enviarDatosCreacionEdicion(request, idStr, responsableStr, participanteStr, versionStr, descripcion, fecha_estimada_inicioStr, fecha_estimada_terminacionStr, fecha_real_inicioStr, fecha_real_terminacionStr, tiempo_estimadoStr, tiempo_invertidoStr, estadoStr);
                     request.getRequestDispatcher(INSERTAR_O_EDITAR).forward(request, response);
@@ -195,7 +195,7 @@ public class ActividadesController extends HttpServlet {
         request.setAttribute("proyectos", proyectosNegocio.consultarProyectos(null, null, false));
         //pendiente enviar el Id del proyecto para consultar las versiones
         request.setAttribute("versiones", versionesNegocio.consultarVersiones(null, null, null, false));
-        request.setAttribute("estados", estadosNegocio.consultarEstados(null, null, null));
+        request.setAttribute("estados", estadosNegocio.consultarEstados(null, null, null, null, null, null));
         if (!accion.equals("consultar") && !accion.equals("editar") && !accion.equals("consultarVersiones")) {
             request.getRequestDispatcher(LISTAR_ACTIVIDADES).forward(request, response);
         }

@@ -43,10 +43,25 @@ public class EstadosController extends HttpServlet {
         String idStr = request.getParameter("id");
         String tipoEstado = request.getParameter("tipoEstado");
         String nombre = request.getParameter("nombre");
+        String estadoPrevStr = request.getParameter("estadoPrev");
+        String estadoSigStr = request.getParameter("estadoSig");
+        String eFinal = request.getParameter("eFinal");
 
         Integer id = null;
         try {
             id = Integer.valueOf(idStr);
+        } catch (NumberFormatException e) {
+        }
+        
+        Integer estadoPrev = null;
+        try {
+            estadoPrev = Integer.valueOf(estadoPrevStr);
+        } catch (NumberFormatException e) {
+        }
+        
+        Integer estadoSig = null;
+        try {
+            estadoSig = Integer.valueOf(estadoSigStr);
         } catch (NumberFormatException e) {
         }
 
@@ -54,39 +69,44 @@ public class EstadosController extends HttpServlet {
 
         switch (accion) {
             case "consultar":
-                cargarTabla(response, permisosPagina, id, tipoEstado, nombre);
+                cargarTabla(response, permisosPagina, id, tipoEstado, nombre, estadoPrev, estadoSig, eFinal);
                 break;
             case "editar":
                 JSONObject object = estadosNegocio.consultarEstado(id);
                 response.getWriter().write(object.toString());
+                
                 break;
             case "guardar":
-                Map<String, Object> result = estadosNegocio.crearEstado(id, tipoEstado, nombre);
+                Map<String, Object> result = estadosNegocio.crearEstado(id, tipoEstado, nombre, estadoPrev, estadoSig, eFinal);
                 if (result.get("mensajeError") != null) {
                     mensajeError = (String) result.get("mensajeError");
-                    enviarDatos(request, id, tipoEstado, nombre);
+                    enviarDatos(request, id, tipoEstado, nombre, estadoPrev, estadoSig, eFinal);
                 }
                 if (result.get("mensajeExito") != null) {
                     mensajeExito = (String) result.get("mensajeExito");
-                    enviarDatos(request, null, null, null);
+                    enviarDatos(request, null, null, null, null, null, null);
                 }
                 break;
             case "eliminar":
                 result = estadosNegocio.eliminarEstado(id);
                 if (result.get("mensajeError") != null) {
-                    enviarDatos(request, id, tipoEstado, nombre);
+                    mensajeError = (String) result.get("mensajeError");
+                    enviarDatos(request, null, null, null, null, null, null);
                 }
                 if (result.get("mensajeExito") != null) {
-                    enviarDatos(request, null, null, null);
+                    mensajeExito = (String) result.get("mensajeExito");
+                    enviarDatos(request, null, null, null, null, null, null);
                 }
                 break;
             default:
-                enviarDatos(request, null, null, null);
+                enviarDatos(request, null, null, null, null, null, null);
                 break;
         }
         request.setAttribute("mensajeAlerta", mensajeAlerta);
         request.setAttribute("mensajeExito", mensajeExito);
         request.setAttribute("mensajeError", mensajeError);
+        request.setAttribute("estadosPrev", estadosNegocio.consultarEstados(null, null, null, null, null, null));
+        request.setAttribute("estadosSig", estadosNegocio.consultarEstados(null, null, null, null, null, null));
         if (!accion.equals("consultar") && !accion.equals("editar")) {
             if (permisosPagina != null && !permisosPagina.isEmpty()) {
                 if (permisosPagina.contains(Permisos.CONSULTAR.getNombre())) {
@@ -100,22 +120,30 @@ public class EstadosController extends HttpServlet {
         }
     }
 
-    private void enviarDatos(HttpServletRequest request, Integer id, String tipoEstado, String nombre) {
-        //.setAttribute("id", id);
+    private void enviarDatos(HttpServletRequest request, Integer id, String tipoEstado, String nombre, Integer estadoPrev,
+            Integer estadoSig, String eFinal) {
+        request.setAttribute("id", id);
         request.setAttribute("tipoEstado", tipoEstado);
         request.setAttribute("nombre", nombre);
+        request.setAttribute("estadoPrev", estadoPrev);
+        request.setAttribute("estadoSig", estadoSig);
+        request.setAttribute("eFinal", eFinal);
     }
 
-    private void cargarTabla(HttpServletResponse response, List<String> permisos, Integer id, String tipoEstado, String nombre) throws ServletException, IOException {
+    private void cargarTabla(HttpServletResponse response, List<String> permisos, Integer id, String tipoEstado, String nombre, 
+            Integer estadoPrev, Integer estadoSig, String eFinal) throws ServletException, IOException {
         response.setContentType("text/html; charset=iso-8859-1");
 
-        List<EstadosBean> listaEstados = estadosNegocio.consultarEstados(id, tipoEstado, nombre);
+        List<EstadosBean> listaEstados = estadosNegocio.consultarEstados(id, tipoEstado, nombre, estadoPrev, estadoSig, eFinal);
         PrintWriter out = response.getWriter();
         out.println("<table class=\"table table-striped table-hover table-condensed bordo-tablas\">");
         out.println("<thead>");
         out.println("<tr>");
         out.println("<th>Tipo Estado</th>");
         out.println("<th>Nombre</th>");
+        out.println("<th>Previo</th>");
+        out.println("<th>Siguiente</th>");
+        out.println("<th>Final</th>");
         out.println("<th>Acciones</th>");
         out.println("</tr>");
         out.println("</thead>");
@@ -126,6 +154,23 @@ public class EstadosController extends HttpServlet {
 //                out.println(    "<td>"+estado.getId()+"</td>");                
                 out.println("<td>" + estado.getTipo_estado() + "</td>");
                 out.println("<td>" + estado.getNombre() + "</td>");
+                List<EstadosBean> estadoP = estadosNegocio.consultarEstados(estado.getEstadoPrev(), null, null, null, null, null);
+                if(estadoP!=null&&estadoP.size()>0){
+                    out.println("<td>" + estadoP.get(0).getNombre() + "</td>");
+                }else{
+                    out.println("<td>" + "" + "</td>");
+                }
+                List<EstadosBean> estadoS = estadosNegocio.consultarEstados(estado.getEstadoSig(), null, null, null, null, null);
+                if(estadoS!=null&&estadoS.size()>0){
+                    out.println("<td>" + estadoS.get(0).getNombre() + "</td>");
+                }else{
+                    out.println("<td>" + "" + "</td>");
+                }
+                if(estado.geteFinal()!=null && !estado.geteFinal().isEmpty() && estado.geteFinal().equals("T")){
+                    out.println("<td>Sí</td>");
+                }else{
+                    out.println("<td>No</td>");
+                }
                 out.println("<td>");
                 out.println("<button class=\"btn btn-default\" type=\"button\" onclick=\"consultarEstado(" + estado.getId() + ")\">Detalle</button>");
                 if (permisos != null && !permisos.isEmpty() && permisos.contains(Permisos.ELIMINAR.getNombre())) {

@@ -16,8 +16,10 @@ public class EstadosBean {
     private String nombre;    
     private String fecha_eliminacion;
     private String tipo_estado;
+    private Integer estadoPrev;
+    private Integer estadoSig;
+    private String eFinal;
 
-    
     public EstadosBean(){
     }
 
@@ -51,5 +53,29 @@ public class EstadosBean {
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
-    }   
+    }
+    
+    public Integer getEstadoPrev() {
+        return estadoPrev;
+    }
+
+    public void setEstadoPrev(Integer estadoPrev) {
+        this.estadoPrev = estadoPrev;
+    }
+
+    public Integer getEstadoSig() {
+        return estadoSig;
+    }
+
+    public void setEstadoSig(Integer estadoSig) {
+        this.estadoSig = estadoSig;
+    }
+
+    public String geteFinal() {
+        return eFinal;
+    }
+
+    public void seteFinal(String eFinal) {
+        this.eFinal = eFinal;
+    }
 }

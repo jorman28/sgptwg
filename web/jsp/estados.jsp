@@ -32,17 +32,47 @@
                             <div class="panel-body">
                                 <div class="row">
                                     <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                                        <label for="nombre">*Tipo de Estado:</label>
+                                        <label for="tipoEstado">*Tipo de Estado:</label>
                                         <select id="tipoEstado" name="tipoEstado" class="form-control">
                                             <option value ="0">SELECCIONE</option>
-                                            <option value="ACTIVIDADES">ACTIVIDADES</option>
-                                            <option value="VERSIONES">VERSIONES</option>
+                                            <option value="ACTIVIDADES" <c:if test="${tipoEstado == 'ACTIVIDADES'}">selected</c:if>>ACTIVIDADES</option>
+                                            <option value="VERSIONES" <c:if test="${tipoEstado == 'VERSIONES'}">selected</c:if>>VERSIONES</option>
                                         </select>                                        
                                     </div>
 
                                     <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                         <label for="nombre">*Nombre:</label>
                                         <input class="form-control" type="text" id="nombre" name="nombre" value="${nombre}"/>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                        <label for="estadoPrev">Estado previo:</label>
+                                        <select id="estadoPrev" name="estadoPrev" class="form-control">
+                                            <option value ="0">SELECCIONE</option>
+                                            <c:forEach items="${estadosPrev}" var="tipoPrev">
+                                                <option value="${tipoPrev.id}" <c:if test="${estadoPrev == tipoPrev.id}">selected</c:if> >${tipoPrev.nombre}</option>
+                                            </c:forEach>
+                                        </select>                                        
+                                    </div>
+                                    <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                        <label for="estadoSig">Estado siguiente:</label>
+                                        <select id="estadoSig" name="estadoSig" class="form-control">
+                                            <option value ="0">SELECCIONE</option>
+                                            <c:forEach items="${estadosSig}" var="tipoSig">
+                                                <option value="${tipoSig.id}" <c:if test="${estadoSig == tipoSig.id}">selected</c:if> >${tipoSig.nombre}</option>
+                                            </c:forEach>
+                                        </select>                                        
+                                    </div>
+                                </div>
+                                    <div class="row">
+                                    <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                        <label for="eFinal">Estado final:</label>
+                                        <select id="eFinal" name="eFinal" class="form-control">
+                                            <option value ="0">SELECCIONE</option>
+                                            <option value="T">Sí</option>
+                                            <option value="F">No</option>
+                                        </select>                                        
                                     </div>
                                 </div>
                                 <br>
