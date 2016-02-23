@@ -20,13 +20,18 @@ public class VersionesNegocio {
     private final VersionesDao versionesDao = new VersionesDao();
     private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
-    public String guardarVersion(String id, String nombre, String fechaInicio, String fechaTerminacion, String alcance, String proyecto, String estado) {
+    public String guardarVersion(String id, String nombre, String fechaInicio, String fechaTerminacion, String alcance, String proyecto, String estado, String costo) {
         String error = "";
         VersionesBean version = new VersionesBean();
         version.setNombre(nombre);
         version.setAlcance(alcance);
         version.setProyecto(Integer.valueOf(proyecto));
         version.setEstado(Integer.valueOf(estado));
+        if (costo != null) {
+            version.setCosto(Double.valueOf(costo));
+        }else{
+            version.setCosto(0.0);
+        }
         try {
             version.setFechaInicio(sdf.parse(fechaInicio));
         } catch (ParseException ex) {
@@ -119,12 +124,13 @@ public class VersionesNegocio {
 
     public JSONObject consultarVersion(Integer idVersion) {
         JSONObject object = new JSONObject();
-        List<VersionesBean> listaVersiones = consultarVersiones(idVersion, null, null, false);
+        List<VersionesBean> listaVersiones = consultarVersiones(idVersion, null, null,false);
         if (listaVersiones != null && !listaVersiones.isEmpty()) {
             object.put("idVersion", listaVersiones.get(0).getId());
             object.put("idProyecto", listaVersiones.get(0).getProyecto());
             object.put("nombreVersion", listaVersiones.get(0).getNombre());
             object.put("estado", listaVersiones.get(0).getEstado());
+            object.put("costo", listaVersiones.get(0).getCosto());
             object.put("fechaInicio", listaVersiones.get(0).getFechaInicio() != null ? sdf.format(listaVersiones.get(0).getFechaInicio()) : "");
             object.put("fechaFin", listaVersiones.get(0).getFechaTerminacion() != null ? sdf.format(listaVersiones.get(0).getFechaTerminacion()) : "");
             object.put("fechaProyecto", listaVersiones.get(0).getFechaInicioProyecto()!= null ? sdf.format(listaVersiones.get(0).getFechaInicioProyecto()) : "");

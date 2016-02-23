@@ -37,6 +37,7 @@ public class VersionesDao {
             version.setProyecto(rs.getInt("proyecto"));
             version.setNombreProyecto(rs.getString("nombre_proyecto"));
             version.setEstado(rs.getInt("estado"));
+            version.setCosto(rs.getDouble("costo"));
             version.setNombreEstado(rs.getString("nombre_estado"));
             version.setFechaEliminacion(rs.getDate("fecha_eliminacion"));
             version.setFechaInicioProyecto(rs.getDate("fecha_proyecto"));
@@ -79,6 +80,7 @@ public class VersionesDao {
         ps.setString(4, version.getAlcance());
         ps.setInt(5, version.getProyecto());
         ps.setInt(6, version.getEstado());
+        ps.setDouble(7, version.getCosto());
         int insercion = ps.executeUpdate();
         ps.close();
         con.close();
@@ -96,7 +98,8 @@ public class VersionesDao {
         ps.setString(4, version.getAlcance());
         ps.setInt(5, version.getProyecto());
         ps.setInt(6, version.getEstado());
-        ps.setInt(7, version.getId());
+        ps.setDouble(7, version.getCosto());
+        ps.setInt(8, version.getId());
         int actualizacion = ps.executeUpdate();
         ps.close();
         con.close();

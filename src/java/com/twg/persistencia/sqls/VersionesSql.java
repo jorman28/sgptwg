@@ -21,6 +21,7 @@ public class VersionesSql {
                 + "         ver.alcance, "
                 + "         ver.proyecto, "
                 + "         ver.fecha_eliminacion, "
+                + "         ver.costo, "
                 + "         pro.nombre AS nombre_proyecto, "
                 + "         ver.estado, "
                 + "         est.nombre AS nombre_estado, "
@@ -49,11 +50,11 @@ public class VersionesSql {
     }
 
     public String insertarVersion() {
-        return "INSERT INTO versiones (nombre,fecha_inicio,fecha_terminacion,alcance,proyecto,estado) VALUES (?,?,?,?,?,?)";
+        return "INSERT INTO versiones (nombre,fecha_inicio,fecha_terminacion,alcance,proyecto,estado,costo) VALUES (?,?,?,?,?,?,?)";
     }
 
     public String actualizarVersion() {
-        return "UPDATE versiones SET nombre = ?, fecha_inicio = ?, fecha_terminacion = ?, alcance = ?, proyecto = ?, estado = ? WHERE id = ?";
+        return "UPDATE versiones SET nombre = ?, fecha_inicio = ?, fecha_terminacion = ?, alcance = ?, proyecto = ?, estado = ?, costo = ? WHERE id = ?";
     }
 
     public String eliminarVersion(Integer idVersion, Integer idProyecto) {

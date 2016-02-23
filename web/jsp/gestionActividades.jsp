@@ -101,8 +101,28 @@
                                     </div>
 
                                     <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
-                                        <label for="participante">*Participante:</label>
+                                        <label for="participante">Añadir Participante:</label>
                                         <input class="form-control" type="text" id="participante" name="participante" value="${participante}" />
+                                    </div>
+                                </div>
+                                <br />
+                                <div class="panel panel-info">
+                                    <div align="center" class="row form-group">
+                                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                            <label >Participantes</label> 
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 form-group">
+                                            <p>Clientes</p>
+                                            <ul class="list-group" id="clientesProyecto"></ul>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                            <p>Empleados</p>
+                                            <ul class="list-group" id="empleadosProyecto"></ul>
+                                        </div>
                                     </div>
                                 </div>
                                 <br>

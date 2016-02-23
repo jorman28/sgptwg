@@ -19,6 +19,15 @@ public class VersionesBean {
     private String nombreEstado;
     private Date fechaEliminacion;
     private Date fechaInicioProyecto;
+    private Double costo;
+
+    public Double getCosto() {
+        return costo;
+    }
+
+    public void setCosto(Double costo) {
+        this.costo = costo;
+    }
 
     public Integer getId() {
         return id;
