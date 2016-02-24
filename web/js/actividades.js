@@ -64,5 +64,5 @@ function consultarVersiones(idProyecto){
         error: function(err){
             alert(err);
         }
-    });
+    });   
 }

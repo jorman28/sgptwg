@@ -182,3 +182,25 @@ function eliminarPersona(idPersona, cargo) {
         }
     }
 }
+
+function consultarPersonasProyecto(idProyecto){
+    $.ajax({
+        type    :"POST",
+        url     :"ActividadesController",
+        dataType:"json",
+        data    :{proyecto: idProyecto, accion: "consultarPersonasProyecto"},
+        success: function(data) {
+            if(data !== undefined){
+                var html = "<option value='0'>SELECCIONE</option>";
+                for(var persona in data){
+                    persona = data[persona];
+                    html += "<option value='"+persona.id+"'>"+persona.nombre+"</option>";
+                }
+                $("#persona").html(html);
+            }
+        },
+        error: function(err){
+            alert(err);
+        }
+    });   
+}

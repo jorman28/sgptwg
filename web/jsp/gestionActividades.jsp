@@ -104,6 +104,17 @@
                                         <label for="participante">Añadir Participante:</label>
                                         <input class="form-control" type="text" id="participante" name="participante" value="${participante}" />
                                     </div>
+                                    
+                                    <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
+                                        <label for="persona">*Persona</label>
+                                        <select id="version" name="version" class="form-control">
+                                            <option value="0">SELECCIONE</option>
+                                            <c:forEach items="${personas}" var="per">
+                                                <option value="${per.id}" <c:if test="${per.id == persona}">selected</c:if>>${per.nombre}</option>
+                                            </c:forEach>
+                                        </select>                                      
+                                    </div>
+                                    
                                 </div>
                                 <br />
                                 <div class="panel panel-info">
