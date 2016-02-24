@@ -43,6 +43,27 @@ public class ProyectosDao {
         return listaProyectos;
     }
 
+    public List<ProyectosBean> consultarProyectosPorVersion(Integer id) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
+        List<ProyectosBean> listaProyectos = new ArrayList<>();
+        Connection con;
+        con = new ConexionBaseDatos().obtenerConexion();
+        PreparedStatement ps;
+        ps = con.prepareStatement(sql.consultarProyectosPorVersion(id));
+        ResultSet rs;
+        rs = ps.executeQuery();
+        while(rs.next()){
+            ProyectosBean proyectoBean = new ProyectosBean();
+            proyectoBean.setId(rs.getInt("id"));
+            proyectoBean.setNombre(rs.getString("nombre"));            
+            proyectoBean.setFechaInicio(rs.getDate("fecha_inicio"));
+            listaProyectos.add(proyectoBean);
+        }
+        rs.close();
+        ps.close();
+        con.close();
+        return listaProyectos;
+    }
+    
     public int crearProyecto(ProyectosBean proyecto) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();

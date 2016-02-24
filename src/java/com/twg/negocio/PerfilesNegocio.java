@@ -235,7 +235,7 @@ public class PerfilesNegocio {
         menu.append("                       <li><a href=\"").append("#").append("\" data-toggle=\"modal\" data-target=\"#acerca\">").append("Acerca de").append("</a></li>\n");
         menu.append("                   </ul>\n");
         menu.append("               </li>\n");
-        menu.append("               <li><a href=\"").append(context).append("/InicioSesionController\">Cerrar sesión</a></li>\n");
+        menu.append("               <li><a href=\"").append(context).append("/CerrarSesionController\">Cerrar sesión</a></li>\n");
         menu.append("           </ul>\n");
         menu.append("       </div>\n");
         menu.append("   </div>\n");

@@ -129,6 +129,7 @@ function editarVersion(idVersion) {
                 $("#idVersion").val(data.idVersion !== undefined ? data.idVersion : "");
                 $("#nombreVersion").val(data.nombreVersion !== undefined ? data.nombreVersion : "");
                 $("#estado").val(data.estado !== undefined ? data.estado : "0");
+                $("#costo").val(data.costo !== undefined ? data.costo : "0");
                 $("#fechaInicioVersion").val(data.fechaInicio !== undefined ? data.fechaInicio : "");
                 if (data.fechaInicio !== undefined) {
                     $('#fechaFinVersion').datetimepicker('setStartDate', data.fechaInicio);

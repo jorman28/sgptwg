@@ -58,4 +58,10 @@ public class ProyectosSql {
     public String insertarPersonaProyecto() {
         return "INSERT INTO personas_proyectos (id_proyecto, id_persona) VALUES (?,?)";
     }
+    
+    public String consultarProyectosPorVersion(int idVersion) {
+        return "SELECT DISTINCT p.id, p.nombre, p.fecha_inicio \n" +
+               "FROM proyectos as p INNER JOIN versiones AS v ON (v.proyecto = p.id)\n" +
+               "WHERE v.id = " + idVersion;
+    }
 }

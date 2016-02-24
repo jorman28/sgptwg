@@ -72,6 +72,7 @@ public class ProyectosController extends HttpServlet {
         String fechaFinVersion = request.getParameter("fechaFinVersion");
         String nombreVersion = request.getParameter("nombreVersion");
         String estado = request.getParameter("estado");
+        String costo = request.getParameter("costo");
         String alcance = request.getParameter("alcance");
         Integer idVersion;
         try {
@@ -112,7 +113,7 @@ public class ProyectosController extends HttpServlet {
             case "guardarVersion":
                 mensajeAlerta = versionesNegocio.validarDatos(idVersion, nombreVersion, fechaInicioVersion, fechaFinVersion, alcance, idProyectoVersion, estado);
                 if (mensajeAlerta.isEmpty()) {
-                    mensajeError = versionesNegocio.guardarVersion(idVersionStr, nombreVersion, fechaInicioVersion, fechaFinVersion, alcance, idProyectoVersion, estado);
+                    mensajeError = versionesNegocio.guardarVersion(idVersionStr, nombreVersion, fechaInicioVersion, fechaFinVersion, alcance, idProyectoVersion, estado, costo);
                     if (mensajeError.isEmpty()) {
                         mensajeExito = "La versión ha sido guardada con éxito";
                         break;
@@ -125,6 +126,7 @@ public class ProyectosController extends HttpServlet {
                 request.setAttribute("fechaFinVersion", fechaFinVersion);
                 request.setAttribute("alcance", alcance);
                 request.setAttribute("estado", estado);
+                request.setAttribute("costo", costo);
                 break;
             case "completarPersonas":
                 JSONArray array = personasNegocio.completarPersonas(busqueda);
@@ -179,7 +181,7 @@ public class ProyectosController extends HttpServlet {
             request.setAttribute("mensajeExito", mensajeExito);
             request.setAttribute("mensajeAlerta", mensajeAlerta);
             request.setAttribute("listaProyectos", listarProyectos(busquedaProyecto, permisosPagina));
-            request.setAttribute("estados", estadosNegocio.consultarEstados(null, null, null, null, null, null));
+            request.setAttribute("estados", estadosNegocio.consultarEstados(null, "VERSIONES", null, null, null, null));
             request.setAttribute("listaComentarios", comentariosNegocio.listaComentarios("PROYECTOS", 1));
             if (permisosPagina != null && !permisosPagina.isEmpty()) {
                 if (permisosPagina.contains(Permisos.CONSULTAR.getNombre())) {

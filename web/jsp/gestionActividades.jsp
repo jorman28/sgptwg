@@ -33,6 +33,16 @@
                             <div class="panel-body">
                                 <div class="row">
                                     <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
+                                        <label for="proyecto">*Proyecto</label>
+                                        <select class="form-control" id="proyecto" name="proyecto" onchange="consultarVersiones(this.value);">
+                                            <option value="0">SELECCIONE</option>
+                                            <c:forEach items="${proyectos}" var="tipo">
+                                                <option value="${tipo.id}" <c:if test="${proyecto == tipo.id}">selected</c:if> >${tipo.nombre}</option>
+                                            </c:forEach>
+                                        </select>                                      
+                                    </div>
+
+                                    <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
                                         <label for="version">*Version</label>
                                         <select id="version" name="version" class="form-control">
                                             <option value="0">SELECCIONE</option>
@@ -45,14 +55,14 @@
                                     <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
                                         <label for="descripcion">*Descripción:</label>
                                         <input class="form-control" type="text" id="descripcion" name="descripcion" value="${descripcion}"/>
-                                    </div>
-
-                                    <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
-                                        <label for="fecha_estimada_inicio">*Fecha estimada inicio:</label>
-                                        <input class="form-control" type="text" id="fecha_estimada_inicio" name="fecha_estimada_inicio" value="${fecha_estimada_inicio}" readonly="true"/>
                                     </div> 
                                 </div>
                                 <div class="row">
+                                    <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
+                                        <label for="fecha_estimada_inicio">*Fecha estimada inicio:</label>
+                                        <input class="form-control" type="text" id="fecha_estimada_inicio" name="fecha_estimada_inicio" value="${fecha_estimada_inicio}" readonly="true"/>
+                                    </div>
+
                                     <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
                                         <label for="fecha_estimada_terminacion">*Fecha estimada fin:</label>
                                         <input class="form-control" type="text" id="fecha_estimada_terminacion" name="fecha_estimada_terminacion" value="${fecha_estimada_terminacion}" readonly="true"/>
@@ -62,13 +72,12 @@
                                         <label for="fecha_real_inicio">Fecha real de inicio:</label>
                                         <input class="form-control" type="text" id="fecha_real_inicio" name="fecha_real_inicio" value="${fecha_real_inicio}" readonly="true"/>
                                     </div>
-
+                                </div>
+                                <div class="row">
                                     <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
                                         <label for="fecha_real_terminacion">Fecha real de terminacion:</label>
                                         <input class="form-control" type="text" id="fecha_real_terminacion" name="fecha_real_terminacion" value="${fecha_real_terminacion}" readonly="true"/>
                                     </div>
-                                </div>
-                                <div class="row">
 
                                     <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
                                         <label for="tiempo_estimado">*Tiempo estimado (horas):</label>
@@ -79,7 +88,8 @@
                                         <label for="tiempo_invertido">Tiempo invertido (horas):</label>
                                         <input class="form-control" type="number" min="0" step="any" id="tiempo_invertido" name="tiempo_invertido" value="${tiempo_invertido}"/>
                                     </div> 
-
+                                </div> 
+                                <div class="row">
                                     <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
                                         <label for="estado">*Estado</label>
                                         <select id="estado" name="estado" class="form-control">
@@ -90,9 +100,29 @@
                                         </select>
                                     </div>
 
-                                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                        <label for="participante">*Participante:</label>
+                                    <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
+                                        <label for="participante">Añadir Participante:</label>
                                         <input class="form-control" type="text" id="participante" name="participante" value="${participante}" />
+                                    </div>
+                                </div>
+                                <br />
+                                <div class="panel panel-info">
+                                    <div align="center" class="row form-group">
+                                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                            <label >Participantes</label> 
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 form-group">
+                                            <p>Clientes</p>
+                                            <ul class="list-group" id="clientesProyecto"></ul>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                            <p>Empleados</p>
+                                            <ul class="list-group" id="empleadosProyecto"></ul>
+                                        </div>
                                     </div>
                                 </div>
                                 <br>
@@ -105,9 +135,6 @@
                         </div>
                         <br>
                         <br>
-                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                            <div id="tablaEstados"></div>
-                        </div>
                     </form>
                 </div>
             </div>
