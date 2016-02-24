@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -127,8 +126,7 @@ public class ActividadesController extends HttpServlet {
                 break;
             case "gestionarActividad":
             case "limpiarGestion":
-                request.setAttribute("estados", estadosNegocio.consultarEstados(null, "ACTIVIDADES", null));
-                //request.setAttribute("versiones", versionesNegocio.consultarVersiones(null, null, null, false));
+                request.setAttribute("estados", estadosNegocio.consultarEstados(null, "ACTIVIDADES", null, null, null, null));
                 request.setAttribute("proyectos", proyectosNegocio.consultarProyectos(null, null, false));
                 if (idStr != null && !idStr.isEmpty()) {
                     ActividadesBean actividad = new ActividadesBean();
@@ -160,10 +158,9 @@ public class ActividadesController extends HttpServlet {
                 if (result.get("mensajeError") != null) {
                     mensajeError = (String) result.get("mensajeError");
                     request.setAttribute("mensajeError", mensajeError);
-                    request.setAttribute("estados", estadosNegocio.consultarEstados(null, "ACTIVIDADES", null));
+                    request.setAttribute("estados", estadosNegocio.consultarEstados(null, "ACTIVIDADES", null, null, null, null));
                     request.setAttribute("proyectos", proyectosNegocio.consultarProyectos(null, null, false));
                     request.setAttribute("versiones", versionesNegocio.consultarVersiones(null, Integer.parseInt(proyectoStr), null, false));
-                    //request.setAttribute("versiones", versionesNegocio.consultarVersiones(null, null, null, false));
                     enviarDatosCreacionEdicion(request, idStr, responsableStr, participanteStr, proyectoStr, versionStr, descripcion, fecha_estimada_inicioStr, fecha_estimada_terminacionStr, fecha_real_inicioStr, fecha_real_terminacionStr, tiempo_estimadoStr, tiempo_invertidoStr, estadoStr);
                     request.getRequestDispatcher(INSERTAR_O_EDITAR).forward(request, response);
                     break;
@@ -201,21 +198,10 @@ public class ActividadesController extends HttpServlet {
         request.setAttribute("proyectos", proyectosNegocio.consultarProyectos(null, null, false));
         //pendiente enviar el Id del proyecto para consultar las versiones
         request.setAttribute("versiones", versionesNegocio.consultarVersiones(null, null, null, false));
-        request.setAttribute("estados", estadosNegocio.consultarEstados(null, "ACTIVIDADES", null));
+        request.setAttribute("estados", estadosNegocio.consultarEstados(null, "ACTIVIDADES", null, null, null, null));
         if (!accion.equals("consultar") && !accion.equals("editar") && !accion.equals("consultarVersiones") && !accion.equals("gestionarActividad") && !accion.equals("limpiarGestion")) {
             request.getRequestDispatcher(LISTAR_ACTIVIDADES).forward(request, response);
         }
-    }
-
-    private void enviarDatos(HttpServletRequest request, Integer id, String proyecto, String version, String descripcion,
-        String estado, String fecha, String responsable) {
-        request.setAttribute("id", id);
-        request.setAttribute("proyecto", proyecto);
-        request.setAttribute("version", version);
-        request.setAttribute("descripcion", descripcion);
-        request.setAttribute("estado", estado);
-        request.setAttribute("fecha", fecha);
-        request.setAttribute("responsable", responsable);
     }
 
     private void enviarDatosCreacionEdicion(HttpServletRequest request, String id, String responsable, String participante, String proyecto, String version, String descripcion, String fecha_estimada_inicio, String fecha_estimada_terminacion, String fecha_real_inicio, String fecha_real_terminacion, String tiempo_estimado, String tiempo_invertido, String estado) {

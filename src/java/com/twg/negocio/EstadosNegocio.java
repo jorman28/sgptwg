@@ -1,6 +1,8 @@
 package com.twg.negocio;
 import com.twg.controladores.EstadosController;
+import com.twg.persistencia.beans.ActividadesBean;
 import com.twg.persistencia.beans.EstadosBean;
+import com.twg.persistencia.daos.ActividadesDao;
 import com.twg.persistencia.daos.EstadosDao;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -17,14 +19,18 @@ public class EstadosNegocio {
 
     public JSONObject consultarEstado(Integer id) {
         JSONObject jsonEstado = new JSONObject();
+        List<EstadosBean> listaEstados = new ArrayList<>();
         if (id != null) {
             try {
-                List<EstadosBean> listaEstados = estadosDao.consultarEstados(id);
+                listaEstados = estadosDao.consultarEstados(id);
                 if (listaEstados != null && !listaEstados.isEmpty()) {
                     EstadosBean estado = listaEstados.get(0);
                     jsonEstado.put("id", estado.getId());
                     jsonEstado.put("tipoEstado", estado.getTipo_estado());
                     jsonEstado.put("nombre", estado.getNombre());
+                    jsonEstado.put("estadoPrev", estado.getEstadoPrev());
+                    jsonEstado.put("estadoSig", estado.getEstadoSig());
+                    jsonEstado.put("eFinal", estado.geteFinal() );
                 }
             } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
                 Logger.getLogger(EstadosNegocio.class.getName()).log(Level.SEVERE, null, ex);
@@ -33,21 +39,26 @@ public class EstadosNegocio {
         return jsonEstado;
     }
 
-    public List<EstadosBean> consultarEstados(Integer id, String tipoEstado,String nombre) {
+    public List<EstadosBean> consultarEstados(Integer id, String tipoEstado,String nombre, Integer estadoPrev, 
+            Integer estadoSig, String eFinal) {
         List<EstadosBean> listaEstados = new ArrayList<>();
         try {
-            listaEstados = estadosDao.consultarEstados(id, tipoEstado, nombre);
+            listaEstados = estadosDao.consultarEstados(id, tipoEstado, nombre, estadoPrev, estadoSig, eFinal);
         } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
             Logger.getLogger(TiposDocumentoNegocio.class.getName()).log(Level.SEVERE, null, ex);
         }
         return listaEstados;
     }
 
-    public Map<String, Object> crearEstado(Integer id, String tipoEstado, String nombre) {
+    public Map<String, Object> crearEstado(Integer id, String tipoEstado, String nombre, Integer estadoPrev, 
+            Integer estadoSig, String eFinal) {
         EstadosBean estadoBean = new EstadosBean();
         estadoBean.setTipo_estado(tipoEstado);        
         estadoBean.setNombre(nombre);
         estadoBean.setId(id);
+        estadoBean.setEstadoPrev(estadoPrev);
+        estadoBean.setEstadoSig(estadoSig);
+        estadoBean.seteFinal(eFinal);
 
         String mensajeExito = "";
         String mensajeError = validarDatos(estadoBean);
@@ -104,11 +115,19 @@ public class EstadosNegocio {
         String mensajeError = "";
         if (id != null) {
             try {
-                int eliminacion = estadosDao.eliminarEstado(id);
-                if (eliminacion > 0) {
-                    mensajeExito = "El estado fue eliminado con éxito";
-                } else {
-                    mensajeError = "El estado no pudo ser eliminado";
+                ActividadesDao act = new ActividadesDao();
+                List<ActividadesBean> actList = act.consultarActiv2(null, null, null, null, id, null);
+                List<EstadosBean> estList = estadosDao.consultarEstadosPS(id);
+                if((actList!=null && actList.size()>0) || (estList!=null && estList.size()>0)){
+                    mensajeError = "El estado no puede ser eliminado porque ya tiene actividades asociadas o está ligado a "
+                            + "otro estado.";
+                }else{
+                    int eliminacion = estadosDao.eliminarEstado(id);
+                    if (eliminacion > 0) {
+                        mensajeExito = "El estado fue eliminado con éxito";
+                    } else {
+                        mensajeError = "El estado no pudo ser eliminado";
+                    }
                 }
             } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
                 Logger.getLogger(EstadosNegocio.class.getName()).log(Level.SEVERE, null, ex);
@@ -134,6 +153,9 @@ public class EstadosNegocio {
         }
         if (estado.getNombre() == null || estado.getNombre().isEmpty()) {
             error += "El campo 'Nombre' es obligatorio <br/>";
+        }
+        if (estado.getEstadoPrev() != null && estado.getEstadoSig() != null && estado.getEstadoPrev() == estado.getEstadoSig()) {
+            error += "El estado previo y siguiente no pueden ser iguales <br/>";
         }
 //        try {
 //            List<EstadosBean> lstEstados = estadosDao.consultarEstados(estado.getNombre());

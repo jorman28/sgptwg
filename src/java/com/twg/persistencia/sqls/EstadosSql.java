@@ -15,29 +15,44 @@ public class EstadosSql {
     }
 
     public String consultarEstados() {
-        return "SELECT * FROM estados WHERE fecha_eliminacion IS NULL ";
+        return "SELECT * FROM estados WHERE fecha_eliminacion IS NULL ORDER BY nombre";
+    }
+    
+    public String consultarEstadosPS(Integer id) {
+        return "SELECT * FROM estados WHERE estadoPrev = " + id + " OR estadoSig = " + id;
     }
 
-    public String consultarEstados(Integer id, String tipoEstado, String nombre) {
+    public String consultarEstados(Integer id, String tipoEstado, String nombre, Integer estadoPrev, 
+            Integer estadoSig, String eFinal) {
         String sql = "SELECT * FROM estados WHERE fecha_eliminacion IS NULL ";
         if (id != null) {
-            sql += "AND id = " + id + " ";
+            sql += " AND id = " + id + " ";
         }
         if (tipoEstado != null && !tipoEstado.isEmpty()) {
-            sql += "AND tipo_estado = '" + tipoEstado + "' ";
+            sql += " AND tipo_estado = '" + tipoEstado + "' ";
         }
         if (nombre != null && !nombre.isEmpty()) {
-            sql += "AND nombre LIKE '%" + nombre + "%'";
+            sql += " AND nombre LIKE '%" + nombre + "%'";
         }
+        if (estadoPrev != null && estadoPrev != 0) {
+            sql += " AND estadoPrev = " + estadoPrev;
+        }
+        if (estadoSig != null && estadoSig != 0) {
+            sql += " AND estadoSig = " + estadoSig;
+        }
+        if (eFinal != null && !eFinal.isEmpty() && !eFinal.equals("0")) {
+            sql += " AND eFinal = '" + eFinal + "'";
+        }
+        sql += " ORDER BY nombre";
         return sql;
     }
 
     public String insertarEstado() {
-        return "INSERT INTO estados (tipo_estado, nombre) VALUES (?, ?)";
+        return "INSERT INTO estados (tipo_estado, nombre, estadoPrev, estadoSig, eFinal) VALUES (?, ?, ?, ?, ?)";
     }
 
     public String actualizarEstado() {
-        return "UPDATE estados SET tipo_estado=?, nombre = ? WHERE id = ?";
+        return "UPDATE estados SET tipo_estado=?, nombre = ?, estadoPrev = ?, estadoSig = ?, eFinal = ? WHERE id = ?";
     }
 
     public String eliminarEstado() {

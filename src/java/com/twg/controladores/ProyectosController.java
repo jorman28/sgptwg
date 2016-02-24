@@ -181,7 +181,7 @@ public class ProyectosController extends HttpServlet {
             request.setAttribute("mensajeExito", mensajeExito);
             request.setAttribute("mensajeAlerta", mensajeAlerta);
             request.setAttribute("listaProyectos", listarProyectos(busquedaProyecto, permisosPagina));
-            request.setAttribute("estados", estadosNegocio.consultarEstados(null, "VERSIONES", null));
+            request.setAttribute("estados", estadosNegocio.consultarEstados(null, "VERSIONES", null, null, null, null));
             request.setAttribute("listaComentarios", comentariosNegocio.listaComentarios("PROYECTOS", 1));
             if (permisosPagina != null && !permisosPagina.isEmpty()) {
                 if (permisosPagina.contains(Permisos.CONSULTAR.getNombre())) {
