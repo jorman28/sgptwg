@@ -124,7 +124,7 @@
                                                 <input class="form-control" type="text" id="fechaFinVersion" name="fechaFinVersion" value="${fechaFinVersion}" readonly="true"/>
                                             </div>
                                             <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                                                <label for="costo">Costo:</label>
+                                                <label for="costo">Costo ($):</label>
                                                 <input class="form-control" type="number" min ="0" id="costo" name="costo" value="${costo}"/>
                                             </div> 
                                             <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
