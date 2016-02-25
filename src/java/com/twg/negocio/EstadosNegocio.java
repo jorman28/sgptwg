@@ -154,8 +154,11 @@ public class EstadosNegocio {
         if (estado.getNombre() == null || estado.getNombre().isEmpty()) {
             error += "El campo 'Nombre' es obligatorio <br/>";
         }
-        if (estado.getEstadoPrev() != null && estado.getEstadoSig() != null && estado.getEstadoPrev() == estado.getEstadoSig()) {
-            error += "El estado previo y siguiente no pueden ser iguales <br/>";
+        if (estado.getEstadoPrev() != null && estado.getEstadoPrev().intValue() != 0 && estado.getEstadoSig() != null && 
+                estado.getEstadoSig().intValue() != 0){
+            if( estado.getEstadoPrev().intValue() == estado.getEstadoSig().intValue()){
+                error += "El estado previo y siguiente no pueden ser iguales <br/>";
+            }
         }
 //        try {
 //            List<EstadosBean> lstEstados = estadosDao.consultarEstados(estado.getNombre());
