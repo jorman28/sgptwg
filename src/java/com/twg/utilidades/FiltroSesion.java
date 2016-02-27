@@ -23,7 +23,7 @@ public class FiltroSesion implements Filter {
         HttpSession sesion = req.getSession(false);
         String context = req.getContextPath();
         String uri = req.getRequestURI();
-        if (uri.endsWith("Controller") && !uri.equals(context + "/CerrarSesionController")) {
+        if ((uri.endsWith("Controller") && !uri.equals(context + "/CerrarSesionController")) || uri.equals(context + "/")) {
             System.out.println("Se ingresa al filtro con URI: " + uri + ". Contexto: " + context);
             if (uri.equals(context + "/") || uri.equals(context + "/InicioSesionController")) {
                 if (sesion != null && sesion.getAttribute("permisos") != null) {
