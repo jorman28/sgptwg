@@ -34,7 +34,7 @@
                                 <div class="row">
                                     <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
                                         <label for="proyecto">*Proyecto</label>
-                                        <select class="form-control" id="proyecto" name="proyecto" onchange="consultarVersiones(this.value);">
+                                        <select class="form-control" id="proyecto" name="proyecto" onchange="consultarVersiones(this.value);consultarPersonasProyecto(this.value);">
                                             <option value="0">SELECCIONE</option>
                                             <c:forEach items="${proyectos}" var="tipo">
                                                 <option value="${tipo.id}" <c:if test="${proyecto == tipo.id}">selected</c:if> >${tipo.nombre}</option>
@@ -99,44 +99,34 @@
                                             </c:forEach>
                                         </select>
                                     </div>
-
-                                    <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
-                                        <label for="participante">Añadir Participante:</label>
-                                        <input class="form-control" type="text" id="participante" name="participante" value="${participante}" />
-                                    </div>
-                                    
-                                    <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
-                                        <label for="persona">*Persona</label>
-                                        <select id="version" name="version" class="form-control">
-                                            <option value="0">SELECCIONE</option>
+                                </div>
+                                <div class="row">
+                                    <div class="col-xs-12 col-sm-5 col-md-5 col-lg-5">
+                                        <label for="persona">Personas involucradas en el proyecto</label>
+                                        <select multiple id="persona" name="persona" class="form-control" style = "height:135px;">
+                                            <!--                                            <optgroup label="Empleados"></optgroup>
+                                                                                        <optgroup label="Clientes"></optgroup>-->
                                             <c:forEach items="${personas}" var="per">
                                                 <option value="${per.id}" <c:if test="${per.id == persona}">selected</c:if>>${per.nombre}</option>
                                             </c:forEach>
                                         </select>                                      
                                     </div>
-                                    
+                                    <div align="center" class="col-xs-12 col-sm-2 col-md-2 col-lg-2">
+                                        <input type="button" class="btn btn-primary" value=">>" id="EnviarTodo" onclick="addallItems();" /><br />
+                                        <input type="button" class="btn btn-primary" value="&nbsp; > " id="EnviarSeleccion" onclick="addItem();" /><br />
+                                        <input type="button" class="btn btn-primary" value=" < &nbsp;" id="RegresarSeleccion" onclick="removeItem();" /><br />
+                                        <input type="button" class="btn btn-primary" value="<<" id="RegresarTodo" onclick="removeallItems();" />
+                                    </div>
+                                    <div class="col-xs-12 col-sm-5 col-md-5 col-lg-5">
+                                        <label for="personaActividad">Personas a asignar está actividad</label>
+                                        <select multiple id="personaActividad" name="personaActividad" class="form-control" style = "height:135px;">
+                                            <c:forEach items="${personasActividad}" var="perAct">
+                                                <option value="${per.id}" <c:if test="${perAct.id == persona}">selected</c:if>>${perAct.nombre}</option>
+                                            </c:forEach>
+                                        </select>                                      
+                                    </div>
                                 </div>
                                 <br />
-                                <div class="panel panel-info">
-                                    <div align="center" class="row form-group">
-                                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                            <label >Participantes</label> 
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 form-group">
-                                            <p>Clientes</p>
-                                            <ul class="list-group" id="clientesProyecto"></ul>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                            <p>Empleados</p>
-                                            <ul class="list-group" id="empleadosProyecto"></ul>
-                                        </div>
-                                    </div>
-                                </div>
-                                <br>
                             </div>                            
                         </div>
                         <div class="row">

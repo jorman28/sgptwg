@@ -30,38 +30,8 @@ jQuery(function () {
             .datetimepicker({format: 'dd/mm/yyyy', language: 'es', weekStart: true, todayBtn: true, autoclose: true, todayHighlight: true, startView: 2, minView: 2})
             .on('changeDate', function () {
                 $('#fecha_real_inicio').datetimepicker('setEndDate', $('#fecha_real_terminacion').val());
-            });
+    });
 
-
-//    $("#participante")
-//            .typeahead({
-//                onSelect: function (item) {
-//                    if ($("#persona" + item.value)[0] === undefined) {
-//                        var persona = personasProyecto[item.value];
-//                        var html = persona.id;
-//                        $("#responsable").val(html);
-//                    }
-//                },
-//                ajax: {
-//                    url: "ProyectosController",
-//                    timeout: 500,
-//                    displayField: "nombre",
-//                    valueField: 'id',
-//                    triggerLength: 1,
-//                    items: 10,
-//                    method: "POST",
-//                    preDispatch: function (query) {
-//                        return {search: query, accion: "completarPersonas"};
-//                    },
-//                    preProcess: function (data) {
-//                        for (var i = 0; i < data.length; i++) {
-//                            var persona = data[i];
-//                            personasProyecto[persona.id] = persona;
-//                        }
-//                        return data;
-//                    }
-//                }
-//            });
 
 $("#participante")
             .typeahead({
@@ -183,24 +153,64 @@ function eliminarPersona(idPersona, cargo) {
     }
 }
 
-function consultarPersonasProyecto(idProyecto){
+function consultarPersonasProyecto(idProyecto) {
     $.ajax({
-        type    :"POST",
-        url     :"ActividadesController",
-        dataType:"json",
-        data    :{proyecto: idProyecto, accion: "consultarPersonasProyecto"},
-        success: function(data) {
-            if(data !== undefined){
-                var html = "<option value='0'>SELECCIONE</option>";
-                for(var persona in data){
+        type: "POST",
+        url: "ActividadesController",
+        dataType: "json",
+        data: {proyecto: idProyecto, accion: "consultarPersonasProyecto"},
+        success: function (data) {
+            if (data !== undefined) {
+                var html = "";
+                var varEmpleados = "<optgroup label='Empleado(s)'>";
+                var varClientes = "<optgroup label='Cliente(s)'>";
+                for (var persona in data) {
                     persona = data[persona];
-                    html += "<option value='"+persona.id+"'>"+persona.nombre+"</option>";
+                    if (persona.cargo.toLowerCase() !== "CLIENTE".toLowerCase()) {
+                        varEmpleados += "<option value='" + persona.id + "'>" + persona.nombre + "</option>";
+                    } else {
+                        varClientes += "<option value='" + persona.id + "'>" + persona.nombre + "</option>";
+                    }
                 }
+                if (varEmpleados !== "<optgroup label='Empleados'>") {
+                    varEmpleados = "";
+                } else {
+                    varEmpleados += "</optgroup>";
+                }
+
+                if (varClientes !== "<optgroup label='Clientes'>") {
+                    varClientes = "";
+                } else {
+                    varClientes += "</optgroup>";
+                }
+                html = varEmpleados + varClientes;
                 $("#persona").html(html);
+                $("#personaActividad").html("");
             }
         },
-        error: function(err){
+        error: function (err) {
             alert(err);
         }
-    });   
+    });
+}
+
+
+function addItem() {
+    $("#persona optgroup:selected").appendTo("#personaActividad");
+    $("#persona option:selected").appendTo("#personaActividad");
+    $("#personaActividad option").attr("selected", false);
+}
+function addallItems() {
+    $("#persona optgroup").appendTo("#personaActividad");
+    $("#persona option").appendTo("#personaActividad");
+    $("#personaActividad option").attr("selected", false);
+}
+function removeItem() {
+    $("#personaActividad option:selected").appendTo("#persona");
+    $("#persona option").attr("selected", false);
+}
+function removeallItems() {
+    $("#personaActividad optgroup").appendTo("#persona");
+    $("#personaActividad option").appendTo("#persona");
+    $("#persona option").attr("selected", false);
 }

@@ -7,6 +7,7 @@ package com.twg.controladores;
 
 import com.twg.negocio.ActividadesNegocio;
 import com.twg.negocio.EstadosNegocio;
+import com.twg.negocio.PersonasNegocio;
 import com.twg.negocio.ProyectosNegocio;
 import com.twg.negocio.VersionesNegocio;
 import com.twg.persistencia.beans.ActividadesBean;
@@ -37,6 +38,7 @@ public class ActividadesController extends HttpServlet {
     private final ProyectosNegocio proyectosNegocio = new ProyectosNegocio();
     private final VersionesNegocio versionesNegocio = new VersionesNegocio();
     private final EstadosNegocio estadosNegocio = new EstadosNegocio();
+    private final PersonasNegocio personasNegocio = new PersonasNegocio();
 
     SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
@@ -72,7 +74,7 @@ public class ActividadesController extends HttpServlet {
                 accion = arrayGetId[0];
             }
         }
-        
+
         String proyectoStr = request.getParameter("proyecto"); //consulta y creacion Er
         String versionStr = request.getParameter("version"); //consulta y creacion Er
         String descripcion = request.getParameter("descripcion"); //consulta y creacion Er
@@ -133,7 +135,7 @@ public class ActividadesController extends HttpServlet {
                     actividad = actividadesNegocio.consultarActividadI(id);
                     ActividadesEmpleadosBean actividad_empleado = new ActividadesEmpleadosBean();
                     actividad_empleado = actividadesNegocio.consultarActividad_Empleado(actividad.getId(), responsable);
-                    
+
                     proyecto = proyectosNegocio.consultarProyectoPorVersion(actividad.getVersion()).getId();
                     request.setAttribute("proyecto", proyecto.toString());
                     request.setAttribute("versiones", versionesNegocio.consultarVersiones(null, proyecto, null, false));
@@ -189,6 +191,10 @@ public class ActividadesController extends HttpServlet {
                 }
                 response.getWriter().write(array.toString());
                 break;
+            case "consultarPersonasProyecto":
+                JSONArray arrayP = personasNegocio.consultarPersonasProyecto(proyectoStr);
+                response.getWriter().write(arrayP.toString());
+                break;
             default:
                 break;
         }
@@ -196,10 +202,9 @@ public class ActividadesController extends HttpServlet {
         request.setAttribute("mensajeExito", mensajeExito);
         request.setAttribute("mensajeError", mensajeError);
         request.setAttribute("proyectos", proyectosNegocio.consultarProyectos(null, null, false));
-        //pendiente enviar el Id del proyecto para consultar las versiones
         request.setAttribute("versiones", versionesNegocio.consultarVersiones(null, null, null, false));
         request.setAttribute("estados", estadosNegocio.consultarEstados(null, "ACTIVIDADES", null, null, null, null));
-        if (!accion.equals("consultar") && !accion.equals("editar") && !accion.equals("consultarVersiones") && !accion.equals("gestionarActividad") && !accion.equals("limpiarGestion")) {
+        if (!accion.equals("consultar") && !accion.equals("editar") && !accion.equals("consultarVersiones") && !accion.equals("gestionarActividad") && !accion.equals("limpiarGestion") && !accion.equals("consultarPersonasProyecto")) {
             request.getRequestDispatcher(LISTAR_ACTIVIDADES).forward(request, response);
         }
     }
