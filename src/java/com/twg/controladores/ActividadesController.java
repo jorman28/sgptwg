@@ -75,6 +75,8 @@ public class ActividadesController extends HttpServlet {
             }
         }
 
+        String[] idPersonas = request.getParameterValues("personaActividad");
+        
         String proyectoStr = request.getParameter("proyecto"); //consulta y creacion Er
         String versionStr = request.getParameter("version"); //consulta y creacion Er
         String descripcion = request.getParameter("descripcion"); //consulta y creacion Er
@@ -156,20 +158,20 @@ public class ActividadesController extends HttpServlet {
                 break;
 
             case "guardar":
-                Map<String, Object> result = actividadesNegocio.guardarActividad(idStr, proyectoStr, versionStr, participanteStr, responsableStr, descripcion, fecha_estimada_inicioStr, fecha_estimada_terminacionStr, fecha_real_inicioStr, fecha_real_terminacionStr, tiempo_estimadoStr, tiempo_invertidoStr, estadoStr);
+                Map<String, Object> result = actividadesNegocio.guardarActividad(idStr, proyectoStr, versionStr, idPersonas, descripcion, fecha_estimada_inicioStr, fecha_estimada_terminacionStr, fecha_real_inicioStr, fecha_real_terminacionStr, tiempo_estimadoStr, tiempo_invertidoStr, estadoStr);
                 if (result.get("mensajeError") != null) {
                     mensajeError = (String) result.get("mensajeError");
                     request.setAttribute("mensajeError", mensajeError);
                     request.setAttribute("estados", estadosNegocio.consultarEstados(null, "ACTIVIDADES", null, null, null, null));
                     request.setAttribute("proyectos", proyectosNegocio.consultarProyectos(null, null, false));
                     request.setAttribute("versiones", versionesNegocio.consultarVersiones(null, Integer.parseInt(proyectoStr), null, false));
-                    enviarDatosCreacionEdicion(request, idStr, responsableStr, participanteStr, proyectoStr, versionStr, descripcion, fecha_estimada_inicioStr, fecha_estimada_terminacionStr, fecha_real_inicioStr, fecha_real_terminacionStr, tiempo_estimadoStr, tiempo_invertidoStr, estadoStr);
+                    enviarDatosCreacionEdicion(request, idStr, idPersonas, proyectoStr, versionStr, descripcion, fecha_estimada_inicioStr, fecha_estimada_terminacionStr, fecha_real_inicioStr, fecha_real_terminacionStr, tiempo_estimadoStr, tiempo_invertidoStr, estadoStr);
                     request.getRequestDispatcher(INSERTAR_O_EDITAR).forward(request, response);
                     break;
                 }
                 if (result.get("mensajeExito") != null) {
                     mensajeExito = (String) result.get("mensajeExito");
-                    enviarDatosCreacionEdicion(request, null, null, null, null, null, null, null, null, null, null, null, null, null);
+                    enviarDatosCreacionEdicion(request, null, null, null, null, null, null, null, null, null, null, null, null);
                 }
                 break;
             case "eliminar":
@@ -192,8 +194,8 @@ public class ActividadesController extends HttpServlet {
                 response.getWriter().write(array.toString());
                 break;
             case "consultarPersonasProyecto":
-                JSONArray arrayP = personasNegocio.consultarPersonasProyecto(proyectoStr);
-                response.getWriter().write(arrayP.toString());
+                JSONArray arrayPersonas = personasNegocio.consultarPersonasProyecto(proyectoStr);
+                response.getWriter().write(arrayPersonas.toString());
                 break;
             default:
                 break;
@@ -209,10 +211,11 @@ public class ActividadesController extends HttpServlet {
         }
     }
 
-    private void enviarDatosCreacionEdicion(HttpServletRequest request, String id, String responsable, String participante, String proyecto, String version, String descripcion, String fecha_estimada_inicio, String fecha_estimada_terminacion, String fecha_real_inicio, String fecha_real_terminacion, String tiempo_estimado, String tiempo_invertido, String estado) {
+    private void enviarDatosCreacionEdicion(HttpServletRequest request, String id, String[] participantes, String proyecto, String version, String descripcion, String fecha_estimada_inicio, String fecha_estimada_terminacion, String fecha_real_inicio, String fecha_real_terminacion, String tiempo_estimado, String tiempo_invertido, String estado) {
         request.setAttribute("id", id);
-        request.setAttribute("responsable", responsable);
-        request.setAttribute("participante", participante);
+        //request.setAttribute("responsable", responsable);
+        //request.setAttribute("participante", participante);
+        request.setAttribute("personaActividad", participantes);
         request.setAttribute("proyecto", proyecto);
         request.setAttribute("version", version);
         request.setAttribute("descripcion", descripcion);

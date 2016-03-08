@@ -26,7 +26,6 @@
                             <h2>GESTIÓN DE ACTIVIDADES</h2>
                             Los campos marcados con (*) son obligatorios
                         </center>
-                        <input type="hidden" id="responsable" name="responsable" value="${responsable}" />
                         <input type="hidden" id="id" name="id" value="${id}" />
                         <div class="panel panel-info">
                             <div class="panel-heading">INFORMACIÓN DE LA ACTIVIDAD</div>
@@ -34,7 +33,8 @@
                                 <div class="row">
                                     <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
                                         <label for="proyecto">*Proyecto</label>
-                                        <select class="form-control" id="proyecto" name="proyecto" onchange="consultarVersiones(this.value);consultarPersonasProyecto(this.value);">
+                                        <select class="form-control" id="proyecto" name="proyecto" onchange="consultarVersiones(this.value);
+                                                consultarPersonasProyecto(this.value);">
                                             <option value="0">SELECCIONE</option>
                                             <c:forEach items="${proyectos}" var="tipo">
                                                 <option value="${tipo.id}" <c:if test="${proyecto == tipo.id}">selected</c:if> >${tipo.nombre}</option>
@@ -104,22 +104,23 @@
                                     <div class="col-xs-12 col-sm-5 col-md-5 col-lg-5">
                                         <label for="persona">Personas involucradas en el proyecto</label>
                                         <select multiple id="persona" name="persona" class="form-control" style = "height:135px;">
-                                            <!--                                            <optgroup label="Empleados"></optgroup>
-                                                                                        <optgroup label="Clientes"></optgroup>-->
+                                            <!--<optgroup label="Empleados"></optgroup>
+                                            <optgroup label="Clientes"></optgroup>-->
                                             <c:forEach items="${personas}" var="per">
                                                 <option value="${per.id}" <c:if test="${per.id == persona}">selected</c:if>>${per.nombre}</option>
                                             </c:forEach>
                                         </select>                                      
                                     </div>
                                     <div align="center" class="col-xs-12 col-sm-2 col-md-2 col-lg-2">
+                                        <br />
                                         <input type="button" class="btn btn-primary" value=">>" id="EnviarTodo" onclick="addallItems();" /><br />
                                         <input type="button" class="btn btn-primary" value="&nbsp; > " id="EnviarSeleccion" onclick="addItem();" /><br />
                                         <input type="button" class="btn btn-primary" value=" < &nbsp;" id="RegresarSeleccion" onclick="removeItem();" /><br />
                                         <input type="button" class="btn btn-primary" value="<<" id="RegresarTodo" onclick="removeallItems();" />
                                     </div>
                                     <div class="col-xs-12 col-sm-5 col-md-5 col-lg-5">
-                                        <label for="personaActividad">Personas a asignar está actividad</label>
-                                        <select multiple id="personaActividad" name="personaActividad" class="form-control" style = "height:135px;">
+                                        <label for="personaActividad">Participantes en la actividad</label>
+                                        <select multiple id="personaActividad" name="personaActividad" class="form-control" style = "height:135px;" value="all">
                                             <c:forEach items="${personasActividad}" var="perAct">
                                                 <option value="${per.id}" <c:if test="${perAct.id == persona}">selected</c:if>>${perAct.nombre}</option>
                                             </c:forEach>
@@ -130,12 +131,12 @@
                             </div>                            
                         </div>
                         <div class="row">
-                            <button class="btn btn-default" type="submit" name="accion" id="guardar" value="guardar">Guardar</button>
+                            <button class="btn btn-default" type="submit" name="accion" id="guardar" value="guardar" onclick="allValues();">Guardar</button>
                             <button class="btn btn-default" type="submit" name="accion" id="limpiarGestion" value="limpiarGestion">Limpiar</button>
                             <button class="btn btn-default" type="submit" name="accion" id="limpiar" value="limpiar">Volver a Actividades</button>
                         </div>
-                        <br>
-                        <br>
+                        <br />
+                        <br />
                     </form>
                 </div>
             </div>

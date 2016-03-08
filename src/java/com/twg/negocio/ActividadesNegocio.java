@@ -2,10 +2,11 @@ package com.twg.negocio;
 
 import com.twg.persistencia.beans.ActividadesBean;
 import com.twg.persistencia.beans.ActividadesEmpleadosBean;
+import com.twg.persistencia.beans.ActividadesEsfuerzosBean;
 import com.twg.persistencia.daos.ActividadesDao;
 import com.twg.persistencia.daos.ActividadesEmpleadosDao;
+import com.twg.persistencia.daos.ActividadesEsfuerzosDao;
 import com.twg.persistencia.daos.PersonasDao;
-import com.twg.persistencia.daos.VersionesDao;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -25,15 +26,15 @@ import org.json.simple.JSONObject;
 public class ActividadesNegocio {
 
     private final ActividadesDao actividadesDao = new ActividadesDao();
-    private final ActividadesBean actividadesBean = new ActividadesBean();
     private final ActividadesEmpleadosDao actividades_empleadosDao = new ActividadesEmpleadosDao();
+    private final ActividadesEsfuerzosDao actividades_esfuerzosDao = new ActividadesEsfuerzosDao();
 
     private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
-    public Map<String, Object> guardarActividad(String id, String proyecto, String version, String responsable, String idResponsable, String descripcion, String fecha_estimada_inicio, String fecha_estimada_terminacion, String fecha_real_inicio, String fecha_real_terminacion, String tiempo_estimado, String tiempo_invertido, String estado) {
+    public Map<String, Object> guardarActividad(String id, String proyecto, String version, String[] participantes, String descripcion, String fecha_estimada_inicio, String fecha_estimada_terminacion, String fecha_real_inicio, String fecha_real_terminacion, String tiempo_estimado, String tiempo_invertido, String estado) {
 
         String mensajeExito = "";
-        String mensajeError = validarDatos(id, proyecto, version, responsable, idResponsable, descripcion, fecha_estimada_inicio, fecha_estimada_terminacion, fecha_real_inicio, fecha_real_terminacion, tiempo_estimado, tiempo_invertido, estado);
+        String mensajeError = validarDatos(id, proyecto, version, participantes, descripcion, fecha_estimada_inicio, fecha_estimada_terminacion, fecha_real_inicio, fecha_real_terminacion, tiempo_estimado, tiempo_invertido, estado);
 
         if (mensajeError.isEmpty()) {
             try {
@@ -42,10 +43,7 @@ public class ActividadesNegocio {
                 int ultActividad = 0;
 
                 ActividadesBean actividad = new ActividadesBean();
-                ActividadesEmpleadosBean actividadEmpleadoBean = new ActividadesEmpleadosBean();
-                
-                actividadEmpleadoBean.setEmpleado(Integer.valueOf(idResponsable));
-                
+
                 actividad.setVersion(Integer.valueOf(version));
                 actividad.setDescripcion(descripcion);
                 try {
@@ -80,12 +78,32 @@ public class ActividadesNegocio {
                 } else {
                     guardado = actividadesDao.crearActividad(actividad);
                     ultActividad = actividadesDao.consultarUtimaActividad();
-                    actividadEmpleadoBean.setActividad(ultActividad);
-                    guardadoAct_Emp = actividades_empleadosDao.insertarActividadEmpleado(actividadEmpleadoBean);
+                    for (String item : participantes) {
+                        //las siguientes líneas es para insertar los datos en la tabla actividades_empleados
+                        ActividadesEmpleadosBean actividadEmpleadoBean = new ActividadesEmpleadosBean();
+                        actividadEmpleadoBean.setEmpleado(Integer.valueOf(item));
+                        actividadEmpleadoBean.setActividad(ultActividad);
+
+                        //las siguientes líneas es para insertar los datos en la tabla actividades_esfuerzos
+                        ActividadesEsfuerzosBean actividadEsfuerzoBean = new ActividadesEsfuerzosBean();
+                        actividadEsfuerzoBean.setActividad(ultActividad);
+                        actividadEsfuerzoBean.setEmpleado(Integer.valueOf(item));
+                        try {
+                            actividadEsfuerzoBean.setFecha(sdf.parse(fecha_estimada_terminacion));
+                        } catch (ParseException ex) {
+                            Logger.getLogger(ActividadesNegocio.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                        actividadEsfuerzoBean.setTiempo(Double.valueOf(tiempo_estimado));
+                        actividadEsfuerzoBean.setDescripcion(descripcion);
+
+                        actividades_esfuerzosDao.crearActividadEsfuerzo(actividadEsfuerzoBean);
+                        actividades_empleadosDao.insertarActividadEmpleado(actividadEmpleadoBean);
+                        guardadoAct_Emp += 1;
+                    }
                 }
                 if (guardado == 0 && guardadoAct_Emp == 0) {
                     mensajeError += "La actividad no pudo ser guardada";
-                } else if (guardado == 1 && guardadoAct_Emp == 1) {
+                } else if (guardado == 1 && guardadoAct_Emp > 0) {
                     mensajeExito += "La actividad fue registrada correctamente";
                 }
             } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
@@ -103,13 +121,17 @@ public class ActividadesNegocio {
         return result;
     }
 
-    public String validarDatos(String id, String proyecto, String version, String responsable, String idResponsable, String descripcion, String fecha_estimada_inicio, String fecha_estimada_terminacion, String fecha_real_inicio, String fecha_real_terminacion, String tiempo_estimado, String tiempo_invertido, String estado) {
+    public String validarDatos(String id, String proyecto, String version, String[] participantes, String descripcion, String fecha_estimada_inicio, String fecha_estimada_terminacion, String fecha_real_inicio, String fecha_real_terminacion, String tiempo_estimado, String tiempo_invertido, String estado) {
         String validacion = "";
 
         if (proyecto == null || proyecto.equals("0")) {
             validacion += "El campo 'Proyecto' no debe estar vacío <br />";
         }
-        
+
+        if (proyecto == null || proyecto.equals("0")) {
+            validacion += "El campo 'Proyecto' no debe estar vacío <br />";
+        }
+
         if (version == null || version.equals("0")) {
             validacion += "El campo 'Versión' no debe estar vacío <br />";
         }
@@ -174,8 +196,8 @@ public class ActividadesNegocio {
             }
         }
 
-        if (responsable == null || responsable.isEmpty() || idResponsable == null || idResponsable.isEmpty()) {
-            validacion += "El campo 'Participante' no debe estar vacío <br />";
+        if (participantes == null || participantes.length == 0) {
+            validacion += "La lista de participantes en la actividad no debe estar vacía. <br />";
         }
 
         if (fecha_real_inicio == null || fecha_real_inicio.isEmpty()) {

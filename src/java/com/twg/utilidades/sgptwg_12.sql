@@ -1,0 +1,1 @@
+ALTER TABLE actividades_esfuerzos MODIFY COLUMN tiempo DOUBLE NOT NULL;
