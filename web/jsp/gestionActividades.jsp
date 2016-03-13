@@ -4,6 +4,9 @@
     Author     : Jorman Rincón
 --%>
 
+<%@page import="com.twg.persistencia.beans.UsuariosBean"%>
+<%@page import="java.util.ArrayList"%>
+<%@page import="java.util.ArrayList"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html>
@@ -13,8 +16,9 @@
         <script type="text/javascript" src="js/gestionActividades.js"></script>
         <title>Gestionar Actividades</title>
     </head>
-    
-    <body onload="cargarFrm();">
+
+    <!--<body onload="cargarFrm();">-->
+    <body>
         <div class="container-fluid">
             <div>${menu}</div>
             <c:import url="/jsp/general/alertas.jsp"/>
@@ -115,13 +119,51 @@
                                 <div class="row">
                                     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 form-group">
                                         <p><b>Clientes</b></p>
-                                        <ul class="list-group" id="clientesActividad" name="clientesActividad"></ul>
+                                        <ul class="list-group" id="clientesActividad">
+                                            <c:choose>
+                                                <c:when test="${clientesActividad  == null}">
+                                                    No se han agregado clientes al proyecto
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <c:forEach items="${clientesActividad}" var="item">
+                                                        <li class="list-group-item" id="persona${item.id}">
+                                                            <div class="row">
+                                                                <input type="hidden" id="idPersona${item.id}" name="idPersonas" value="${item.id}" />
+                                                                <div class="col-xs-10 col-sm-11 col-md-11 col-lg-11"> ${item.nombre}</div>
+                                                                <div class="col-xs-2 col-sm-1 col-md-1 col-lg-1">
+                                                                    <span class="glyphicon glyphicon-remove" onclick="eliminarPersona(${item.id}, '${item.nombreCargo}');"></span>
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                    </c:forEach> 
+                                                </c:otherwise>
+                                            </c:choose>                                             
+                                        </ul>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                         <p><b>Empleados</b></p>
-                                        <ul class="list-group" id="empleadosActividad" name="empleadosActividad"></ul>
+                                        <ul class="list-group" id="empleadosActividad">
+                                            <c:choose>
+                                                <c:when test="${empleadosActividad  == null}">
+                                                    No se han agregado empleados al proyecto
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <c:forEach items="${empleadosActividad}" var="item">
+                                                        <li class="list-group-item" id="persona${item.id}">
+                                                            <div class="row">
+                                                                <input type="hidden" id="idPersona${item.id}" name="idPersonas" value="${item.id}" />
+                                                                <div class="col-xs-10 col-sm-11 col-md-11 col-lg-11"> ${item.nombre}</div>
+                                                                <div class="col-xs-2 col-sm-1 col-md-1 col-lg-1">
+                                                                    <span class="glyphicon glyphicon-remove" onclick="eliminarPersona(${item.id}, '${item.nombreCargo}');"></span>
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                    </c:forEach>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </ul>
                                     </div>
                                 </div>
                             </div>                          

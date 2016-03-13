@@ -6,7 +6,7 @@
 
 var personasActividades = {};
 var clientesSeleccionados = 0;
-var empleadosSeleccionados = false;
+var empleadosSeleccionados = 0;
 
 jQuery(function () {
     $('#fecha_estimada_inicio')
@@ -38,7 +38,7 @@ jQuery(function () {
                     if ($("#persona" + item.value)[0] === undefined) {
                         var persona = personasActividades[item.value];
                         var html = pintarPersonas(persona);
-                        if (persona.cargo === 'Cliente') {
+                        if (persona.cargo.toLowerCase() === "cliente") {
                             if (clientesSeleccionados === 0) {
                                 $("#clientesActividad").html(html);
                             } else {
@@ -77,16 +77,6 @@ jQuery(function () {
                 }
             });
 });
-
-
-function cargarFrm() {
-    var idActividad = document.getElementById("id").value;
-    if (idActividad !== undefined && idActividad !== null && idActividad !== "") {
-        nuevaActividad();
-    } else {
-        editarActividad(idActividad);
-    }
-}
 
 function nuevaActividad() {
     $("#id").val('');
@@ -155,7 +145,7 @@ function pintarPersonas(persona) {
 
 function eliminarPersona(idPersona, cargo) {
     $("#persona" + idPersona).remove();
-    if (cargo === "Cliente") {
+    if (cargo.toLowerCase() === "cliente") {
         clientesSeleccionados--;
         if (clientesSeleccionados === 0) {
             $("#clientesActividad").html('No se han agregado clientes al proyecto');
@@ -175,6 +165,7 @@ function editarActividad(idActividad) {
         dataType: "json",
         data: {idProyecto: idActividad, accion: "gestionarActividad"},
         success: function (data) {
+            alert("data");
             personasActividades = {};
             clientesSeleccionados = 0;
             empleadosSeleccionados = 0;
@@ -191,7 +182,7 @@ function editarActividad(idActividad) {
                     empleadosSeleccionados = data.empleados.length;
                 }
                 $("#participante").val('');
-                $("#modalProyectos").modal("show");
+                //$("#modalProyectos").modal("show");
             }
         },
         error: function () {

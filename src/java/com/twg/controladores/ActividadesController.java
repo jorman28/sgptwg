@@ -12,15 +12,19 @@ import com.twg.negocio.ProyectosNegocio;
 import com.twg.negocio.VersionesNegocio;
 import com.twg.persistencia.beans.ActividadesBean;
 import com.twg.persistencia.beans.ActividadesEmpleadosBean;
+import com.twg.persistencia.beans.PersonasBean;
 import com.twg.persistencia.beans.VersionesBean;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.AbstractList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -73,9 +77,9 @@ public class ActividadesController extends HttpServlet {
                 accion = arrayGetId[0];
             }
         }
-        
+
         String[] idPersonasActividad = request.getParameterValues("idPersonas");// Personas que estan en la lista 2 Participantes en la actividad
-        
+
         String proyectoStr = request.getParameter("proyecto"); //consulta y creacion Er
         String versionStr = request.getParameter("version"); //consulta y creacion Er
         String descripcion = request.getParameter("descripcion"); //consulta y creacion Er
@@ -131,18 +135,29 @@ public class ActividadesController extends HttpServlet {
             case "limpiarGestion":
                 request.setAttribute("estados", estadosNegocio.consultarEstados(null, "ACTIVIDADES", null, null, null, null));
                 request.setAttribute("proyectos", proyectosNegocio.consultarProyectos(null, null, false));
-                //request.setAttribute("participante", "ABCD");
-                request.setAttribute("clientesActividad", "ABCDEFGH");
-                //request.setAttribute("clientesActividad", personasNegocio.consultarPersonasActividad(idStr));
+                request.setAttribute("clientesActividad", null);
+                request.setAttribute("empleadosActividad", null);
                 if (idStr != null && !idStr.isEmpty()) {
                     ActividadesBean actividad = new ActividadesBean();
                     actividad = actividadesNegocio.consultarActividadI(id);
                     ActividadesEmpleadosBean actividad_empleado = new ActividadesEmpleadosBean();
                     actividad_empleado = actividadesNegocio.consultarActividad_Empleado(actividad.getId(), responsable);
                     proyecto = proyectosNegocio.consultarProyectoPorVersion(actividad.getVersion()).getId();
+                    List<PersonasBean> personas = personasNegocio.consultarPersonasActividad(idStr);
+                    List<PersonasBean> empleados = new ArrayList<>();
+                    List<PersonasBean> clientes = new ArrayList<>();
+                    personas.stream().forEach((persona) -> {
+                        if (persona.getNombreCargo().toLowerCase().equalsIgnoreCase("cliente")) {
+                            clientes.add(persona);
+                        } else {
+                            empleados.add(persona);
+                        }
+                    });
+                    request.setAttribute("clientesActividad", clientes);
+                    request.setAttribute("empleadosActividad", empleados);
+                    request.setAttribute("id", actividad.getId().toString());
                     request.setAttribute("proyecto", proyecto.toString());
                     request.setAttribute("versiones", versionesNegocio.consultarVersiones(null, proyecto, null, false));
-                    request.setAttribute("id", actividad.getId().toString());
                     request.setAttribute("version", actividad.getVersion().toString());
                     request.setAttribute("descripcion", actividad.getDescripcion());
                     request.setAttribute("fecha_estimada_inicio", actividad.getFecha_estimada_inicio() != null ? sdf.format(actividad.getFecha_estimada_inicio()) : "");
@@ -205,15 +220,13 @@ public class ActividadesController extends HttpServlet {
         request.setAttribute("proyectos", proyectosNegocio.consultarProyectos(null, null, false));
         request.setAttribute("versiones", versionesNegocio.consultarVersiones(null, null, null, false));
         request.setAttribute("estados", estadosNegocio.consultarEstados(null, "ACTIVIDADES", null, null, null, null));
-        if (!accion.equals("consultar") && !accion.equals("editar") && !accion.equals("consultarVersiones") && !accion.equals("gestionarActividad") && !accion.equals("limpiarGestion") && !accion.equals("consultarPersonasProyecto")) {
+        if (!accion.equals("consultar") && !accion.equals("editar") && !accion.equals("consultarVersiones") && !accion.equals("gestionarActividad") && !accion.equals("limpiarGestion") && !accion.equals("guardar") && !accion.equals("consultarPersonasProyecto")) {
             request.getRequestDispatcher(LISTAR_ACTIVIDADES).forward(request, response);
         }
     }
 
     private void enviarDatosCreacionEdicion(HttpServletRequest request, String id, String[] participantes, String proyecto, String version, String descripcion, String fecha_estimada_inicio, String fecha_estimada_terminacion, String fecha_real_inicio, String fecha_real_terminacion, String tiempo_estimado, String tiempo_invertido, String estado) {
         request.setAttribute("id", id);
-        //request.setAttribute("responsable", responsable);
-        //request.setAttribute("participante", participante);
         //request.setAttribute("empleadosActividad", participantes);
         request.setAttribute("proyecto", proyecto);
         request.setAttribute("version", version);
