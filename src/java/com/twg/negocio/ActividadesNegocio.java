@@ -197,7 +197,7 @@ public class ActividadesNegocio {
         }
 
         if (participantes == null || participantes.length == 0) {
-            validacion += "La lista de participantes en la actividad no debe estar vacía. <br />";
+            validacion += "Se debe añadir al menos 1 participante en la actividad. <br />";
         }
 
         if (fecha_real_inicio == null || fecha_real_inicio.isEmpty()) {

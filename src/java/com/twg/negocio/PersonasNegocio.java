@@ -238,4 +238,15 @@ public class PersonasNegocio {
         }
         return listaPersonas;
     }
+    
+    
+    public List<PersonasBean> consultarPersonasActividad(String idActividad) {
+        List<PersonasBean> listaPersonas = new ArrayList<>();
+        try {
+            listaPersonas = personasDao.consultarPersonasActividad(idActividad);
+        } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
+            Logger.getLogger(PersonasNegocio.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return listaPersonas;
+    }
 }

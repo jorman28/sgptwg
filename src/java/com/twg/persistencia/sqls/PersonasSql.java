@@ -75,28 +75,55 @@ public class PersonasSql {
     public String consultarPersonasProyecto(String idProyecto) {
         String sql = "";
         sql += "SELECT p.id,\n"
-            + "        p.documento,\n"
-            + "        p.tipo_documento,\n"
-            + "        d.nombre AS nombre_tipo_documento,\n"
-            + "        p.nombres,\n"
-            + "        p.apellidos, \n"
-            + "        p.telefono, \n"
-            + "        p.celular, \n"
-            + "        p.correo, \n"
-            + "        p.direccion, \n"
-            + "        p.cargo, \n"
-            + "        car.nombre nombre_cargo, \n"
-            + "        u.usuario, \n"
-            + "        u.perfil AS id_perfil, \n"
-            + "        pf.nombre AS nombre_perfil \n"
-            + "FROM    personas p \n"
-            + "		INNER JOIN personas_proyectos pro ON pro.id_persona = p.id \n"
-            + "		INNER JOIN tipos_documentos d ON d.tipo = p.tipo_documento \n"
-            + "        INNER JOIN cargos car ON car.id = p.cargo \n"
-            + "        LEFT JOIN usuarios u ON p.id = u.id_persona AND u.fecha_eliminacion IS NULL \n"
-            + "        LEFT JOIN perfiles pf ON pf.id = u.perfil AND pf.fecha_eliminacion IS NULL \n"
-            + "WHERE   1 = 1 AND p.fecha_eliminacion IS NULL AND pro.id_proyecto = "+ idProyecto +"";
+                + "        p.documento,\n"
+                + "        p.tipo_documento,\n"
+                + "        d.nombre AS nombre_tipo_documento,\n"
+                + "        p.nombres,\n"
+                + "        p.apellidos, \n"
+                + "        p.telefono, \n"
+                + "        p.celular, \n"
+                + "        p.correo, \n"
+                + "        p.direccion, \n"
+                + "        p.cargo, \n"
+                + "        car.nombre nombre_cargo, \n"
+                + "        u.usuario, \n"
+                + "        u.perfil AS id_perfil, \n"
+                + "        pf.nombre AS nombre_perfil \n"
+                + "FROM    personas p \n"
+                + "		INNER JOIN personas_proyectos pro ON pro.id_persona = p.id \n"
+                + "		INNER JOIN tipos_documentos d ON d.tipo = p.tipo_documento \n"
+                + "        INNER JOIN cargos car ON car.id = p.cargo \n"
+                + "        LEFT JOIN usuarios u ON p.id = u.id_persona AND u.fecha_eliminacion IS NULL \n"
+                + "        LEFT JOIN perfiles pf ON pf.id = u.perfil AND pf.fecha_eliminacion IS NULL \n"
+                + "WHERE   1 = 1 AND p.fecha_eliminacion IS NULL AND pro.id_proyecto = " + idProyecto + "";
 
+        return sql;
+    }
+
+    public String consultarPersonasActividad(String idActividad) {
+        String sql = "";
+        sql += "SELECT  p.id,\n"
+                + "		p.documento,\n"
+                + "		p.tipo_documento,\n"
+                + "		d.nombre AS nombre_tipo_documento,\n"
+                + "		p.nombres,\n"
+                + "		p.apellidos, \n"
+                + "		p.telefono, \n"
+                + "		p.celular, \n"
+                + "		p.correo, \n"
+                + "		p.direccion, \n"
+                + "		p.cargo, \n"
+                + "		car.nombre nombre_cargo, \n"
+                + "		u.usuario, \n"
+                + "		u.perfil AS id_perfil, \n"
+                + "		pf.nombre AS nombre_perfil \n"
+                + "FROM    personas p \n"
+                + "		INNER JOIN actividades_empleados ae ON ae.empleado = p.id \n"
+                + "		INNER JOIN tipos_documentos d ON d.tipo = p.tipo_documento \n"
+                + "		INNER JOIN cargos car ON car.id = p.cargo \n"
+                + "		LEFT JOIN usuarios u ON p.id = u.id_persona AND u.fecha_eliminacion IS NULL \n"
+                + "		LEFT JOIN perfiles pf ON pf.id = u.perfil AND pf.fecha_eliminacion IS NULL \n"
+                + "WHERE   1 = 1 AND p.fecha_eliminacion IS NULL AND ae.actividad = " + idActividad + "";
         return sql;
     }
 
