@@ -12,11 +12,13 @@ import com.twg.negocio.ProyectosNegocio;
 import com.twg.negocio.VersionesNegocio;
 import com.twg.persistencia.beans.ActividadesBean;
 import com.twg.persistencia.beans.ActividadesEmpleadosBean;
+import com.twg.persistencia.beans.PersonasBean;
 import com.twg.persistencia.beans.VersionesBean;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -62,7 +64,6 @@ public class ActividadesController extends HttpServlet {
         String mensajeError = "";
 
         String accion = request.getParameter("accion");
-
         String idStr = request.getParameter("id"); //consulta y creacion Er
         if (accion == null) {
             accion = "";
@@ -75,6 +76,7 @@ public class ActividadesController extends HttpServlet {
             }
         }
 
+        String[] idPersonasActividad = request.getParameterValues("idPersonas");// Personas que estan en la lista 2 Participantes en la actividad
         String proyectoStr = request.getParameter("proyecto"); //consulta y creacion Er
         String versionStr = request.getParameter("version"); //consulta y creacion Er
         String descripcion = request.getParameter("descripcion"); //consulta y creacion Er
@@ -130,18 +132,29 @@ public class ActividadesController extends HttpServlet {
             case "limpiarGestion":
                 request.setAttribute("estados", estadosNegocio.consultarEstados(null, "ACTIVIDADES", null, null, null, null));
                 request.setAttribute("proyectos", proyectosNegocio.consultarProyectos(null, null, false));
+                request.setAttribute("clientesActividad", null);
+                request.setAttribute("empleadosActividad", null);
                 if (idStr != null && !idStr.isEmpty()) {
                     ActividadesBean actividad = new ActividadesBean();
                     actividad = actividadesNegocio.consultarActividadI(id);
                     ActividadesEmpleadosBean actividad_empleado = new ActividadesEmpleadosBean();
                     actividad_empleado = actividadesNegocio.consultarActividad_Empleado(actividad.getId(), responsable);
-
                     proyecto = proyectosNegocio.consultarProyectoPorVersion(actividad.getVersion()).getId();
+                    List<PersonasBean> personas = personasNegocio.consultarPersonasActividad(idStr);
+                    List<PersonasBean> empleados = new ArrayList<>();
+                    List<PersonasBean> clientes = new ArrayList<>();
+                    personas.stream().forEach((persona) -> {
+                        if (persona.getNombreCargo().toLowerCase().equalsIgnoreCase("cliente")) {
+                            clientes.add(persona);
+                        } else {
+                            empleados.add(persona);
+                        }
+                    });
+                    request.setAttribute("clientesActividad", clientes);
+                    request.setAttribute("empleadosActividad", empleados);
+                    request.setAttribute("id", actividad.getId().toString());
                     request.setAttribute("proyecto", proyecto.toString());
                     request.setAttribute("versiones", versionesNegocio.consultarVersiones(null, proyecto, null, false));
-                    request.setAttribute("id", actividad.getId().toString());
-                    request.setAttribute("responsable", actividad_empleado.getEmpleado());
-                    request.setAttribute("participante", actividad_empleado.getActividad());
                     request.setAttribute("version", actividad.getVersion().toString());
                     request.setAttribute("descripcion", actividad.getDescripcion());
                     request.setAttribute("fecha_estimada_inicio", actividad.getFecha_estimada_inicio() != null ? sdf.format(actividad.getFecha_estimada_inicio()) : "");
@@ -156,20 +169,42 @@ public class ActividadesController extends HttpServlet {
                 break;
 
             case "guardar":
-                Map<String, Object> result = actividadesNegocio.guardarActividad(idStr, proyectoStr, versionStr, participanteStr, responsableStr, descripcion, fecha_estimada_inicioStr, fecha_estimada_terminacionStr, fecha_real_inicioStr, fecha_real_terminacionStr, tiempo_estimadoStr, tiempo_invertidoStr, estadoStr);
+                Map<String, Object> result = actividadesNegocio.guardarActividad(idStr, proyectoStr, versionStr, idPersonasActividad, descripcion, fecha_estimada_inicioStr, fecha_estimada_terminacionStr, fecha_real_inicioStr, fecha_real_terminacionStr, tiempo_estimadoStr, tiempo_invertidoStr, estadoStr);
                 if (result.get("mensajeError") != null) {
                     mensajeError = (String) result.get("mensajeError");
                     request.setAttribute("mensajeError", mensajeError);
                     request.setAttribute("estados", estadosNegocio.consultarEstados(null, "ACTIVIDADES", null, null, null, null));
                     request.setAttribute("proyectos", proyectosNegocio.consultarProyectos(null, null, false));
                     request.setAttribute("versiones", versionesNegocio.consultarVersiones(null, Integer.parseInt(proyectoStr), null, false));
-                    enviarDatosCreacionEdicion(request, idStr, responsableStr, participanteStr, proyectoStr, versionStr, descripcion, fecha_estimada_inicioStr, fecha_estimada_terminacionStr, fecha_real_inicioStr, fecha_real_terminacionStr, tiempo_estimadoStr, tiempo_invertidoStr, estadoStr);
+                    if (idPersonasActividad != null) {
+                        List<PersonasBean> personas = new ArrayList<>();
+                        for (String idPersona : idPersonasActividad) {
+                            personas.add(personasNegocio.consultarPersona(idPersona, null, null));
+                        }
+                        List<PersonasBean> empleados = new ArrayList<>();
+                        List<PersonasBean> clientes = new ArrayList<>();
+                        personas.stream().forEach((persona) -> {
+                            if (persona.getNombreCargo().toLowerCase().equalsIgnoreCase("cliente")) {
+                                clientes.add(persona);
+                            } else {
+                                empleados.add(persona);
+                            }
+                        });
+                        
+                        request.setAttribute("clientesActividad", clientes);
+                        request.setAttribute("empleadosActividad", empleados);
+                    } else {
+                        request.setAttribute("clientesActividad", null);
+                        request.setAttribute("empleadosActividad", null);
+                    }
+                    enviarDatosCreacionEdicion(request, idStr, proyectoStr, versionStr, descripcion, fecha_estimada_inicioStr, fecha_estimada_terminacionStr, fecha_real_inicioStr, fecha_real_terminacionStr, tiempo_estimadoStr, tiempo_invertidoStr, estadoStr);
+                    accion = "gestionarActividad";
                     request.getRequestDispatcher(INSERTAR_O_EDITAR).forward(request, response);
                     break;
                 }
                 if (result.get("mensajeExito") != null) {
                     mensajeExito = (String) result.get("mensajeExito");
-                    enviarDatosCreacionEdicion(request, null, null, null, null, null, null, null, null, null, null, null, null, null);
+                    enviarDatosCreacionEdicion(request, null, null, null, null, null, null, null, null, null, null, null);
                 }
                 break;
             case "eliminar":
@@ -192,8 +227,10 @@ public class ActividadesController extends HttpServlet {
                 response.getWriter().write(array.toString());
                 break;
             case "consultarPersonasProyecto":
-                JSONArray arrayP = personasNegocio.consultarPersonasProyecto(proyectoStr);
-                response.getWriter().write(arrayP.toString());
+                String strParticipante = request.getParameter("search"); 
+                String strProyecto = request.getParameter("search1");
+                JSONArray arrayPersonas = personasNegocio.consultarPersonasProyecto(strProyecto, strParticipante);
+                response.getWriter().write(arrayPersonas.toString());
                 break;
             default:
                 break;
@@ -209,10 +246,8 @@ public class ActividadesController extends HttpServlet {
         }
     }
 
-    private void enviarDatosCreacionEdicion(HttpServletRequest request, String id, String responsable, String participante, String proyecto, String version, String descripcion, String fecha_estimada_inicio, String fecha_estimada_terminacion, String fecha_real_inicio, String fecha_real_terminacion, String tiempo_estimado, String tiempo_invertido, String estado) {
+    private void enviarDatosCreacionEdicion(HttpServletRequest request, String id, String proyecto, String version, String descripcion, String fecha_estimada_inicio, String fecha_estimada_terminacion, String fecha_real_inicio, String fecha_real_terminacion, String tiempo_estimado, String tiempo_invertido, String estado) {
         request.setAttribute("id", id);
-        request.setAttribute("responsable", responsable);
-        request.setAttribute("participante", participante);
         request.setAttribute("proyecto", proyecto);
         request.setAttribute("version", version);
         request.setAttribute("descripcion", descripcion);

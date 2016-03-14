@@ -31,7 +31,11 @@ public class ActividadesEmpleadosSql {
         return sql;
     }
     
-    public String insertarEmpleadoxAtividad() {
+    public String insertarActividad_Empleado() {
         return "INSERT INTO actividades_empleados (actividad, empleado) VALUES (? , ?)";
+    }
+    
+    public String eliminarActividad_Empleado() {
+        return "UPDATE actividades_empleados SET fecha_eliminacion = now() WHERE actividad = ?";
     }
 }

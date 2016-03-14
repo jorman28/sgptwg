@@ -22,6 +22,8 @@ public class PersonasBean {
     private String nombrePerfil;
     private Integer cargo;
     private String nombreCargo;
+    
+    private String nombre; //utilizada para cargar las listas en actividades
 
     public PersonasBean() {
     }
@@ -154,4 +156,13 @@ public class PersonasBean {
         this.nombreCargo = nombreCargo;
     }
 
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+    
+    
 }

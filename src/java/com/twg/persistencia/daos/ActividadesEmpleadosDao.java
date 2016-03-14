@@ -71,7 +71,7 @@ public class ActividadesEmpleadosDao {
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;
-        ps = con.prepareStatement(sql.insertarEmpleadoxAtividad());
+        ps = con.prepareStatement(sql.insertarActividad_Empleado());
         //ps.setInt(1, estado.getId());
         ps.setInt(1, actividad_empleado.getActividad());        
         ps.setInt(2, actividad_empleado.getEmpleado());
@@ -81,4 +81,15 @@ public class ActividadesEmpleadosDao {
         return insercion;
     }
     
+    public int eliminarActividadEmpleado(Integer idActividad) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
+        Connection con;
+        con = new ConexionBaseDatos().obtenerConexion();
+        PreparedStatement ps;
+        ps = con.prepareStatement(sql.eliminarActividad_Empleado());
+        ps.setInt(1, idActividad);
+        int eliminacion = ps.executeUpdate();
+        ps.close();
+        con.close();
+        return eliminacion;
+    }
 }

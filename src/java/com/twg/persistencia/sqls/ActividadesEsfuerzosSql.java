@@ -27,6 +27,6 @@ public class ActividadesEsfuerzosSql {
     }
 
     public String eliminarActividad_Esfuerzo() {
-        return "UPDATE actividades_esfuerzos SET fecha_eliminacion = now() WHERE id = ?";
+        return "UPDATE actividades_esfuerzos SET fecha_eliminacion = now() WHERE actividad = ?";
     }
 }

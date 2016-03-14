@@ -197,11 +197,11 @@ public class PersonasNegocio {
         }
         return error;
     }
-    
-    public JSONArray completarPersonas(String busqueda){
+
+    public JSONArray completarPersonas(String busqueda) {
         JSONArray array = new JSONArray();
         List<PersonasBean> listaPersonas = consultarPersonas(null, null, null, null, null, null, null, null, busqueda);
-        if(listaPersonas != null && !listaPersonas.isEmpty()){
+        if (listaPersonas != null && !listaPersonas.isEmpty()) {
             for (PersonasBean persona : listaPersonas) {
                 JSONObject object = new JSONObject();
                 object.put("id", persona.getId());
@@ -212,12 +212,12 @@ public class PersonasNegocio {
         }
         return array;
     }
-    
+
     //Jara 23/02/2015 - Método para consultar el grupo de personas en determinado proyecto
-    public JSONArray consultarPersonasProyecto(String idProyecto){
+    public JSONArray consultarPersonasProyecto(String idProyecto, String Busqueda) {
         JSONArray array = new JSONArray();
-        List<PersonasBean> listaPersonas = consultarPersonasxProyecto(idProyecto);
-        if(listaPersonas != null && !listaPersonas.isEmpty()){
+        List<PersonasBean> listaPersonas = consultarPersonasxProyecto(idProyecto, Busqueda);
+        if (listaPersonas != null && !listaPersonas.isEmpty()) {
             for (PersonasBean persona : listaPersonas) {
                 JSONObject object = new JSONObject();
                 object.put("id", persona.getId());
@@ -228,11 +228,22 @@ public class PersonasNegocio {
         }
         return array;
     }
-    
-    public List<PersonasBean> consultarPersonasxProyecto(String idProyecto) {
+
+    public List<PersonasBean> consultarPersonasxProyecto(String idProyecto, String Busqueda) {
         List<PersonasBean> listaPersonas = new ArrayList<>();
         try {
-            listaPersonas = personasDao.consultarPersonasProyecto(idProyecto);
+            listaPersonas = personasDao.consultarPersonasProyecto(idProyecto, Busqueda);
+        } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
+            Logger.getLogger(PersonasNegocio.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return listaPersonas;
+    }
+    
+    
+    public List<PersonasBean> consultarPersonasActividad(String idActividad) {
+        List<PersonasBean> listaPersonas = new ArrayList<>();
+        try {
+            listaPersonas = personasDao.consultarPersonasActividad(idActividad);
         } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
             Logger.getLogger(PersonasNegocio.class.getName()).log(Level.SEVERE, null, ex);
         }

@@ -38,7 +38,7 @@ public class ActividadesEsfuerzosDao {
             actividadEsfuerzo.setActividad(rs.getInt("actividad"));
             actividadEsfuerzo.setEmpleado(rs.getInt("empleado"));
             actividadEsfuerzo.setFecha(rs.getDate("fecha"));            
-            actividadEsfuerzo.setTiempo(rs.getDate("tiempo"));
+            actividadEsfuerzo.setTiempo(rs.getDouble("tiempo"));
             actividadEsfuerzo.setDescripcion(rs.getString("descripcion"));
             actividadEsfuerzo.setFechaEliminacion(rs.getDate("fecha_eliminacion"));
 
@@ -57,8 +57,8 @@ public class ActividadesEsfuerzosDao {
         ps = con.prepareStatement(sql.insertarActividad_Esfuerzo());
         ps.setInt(1, actividadEsfuerzo.getActividad());
         ps.setInt(2, actividadEsfuerzo.getEmpleado());
-        ps.setDate(3, (java.sql.Date)actividadEsfuerzo.getFecha());
-        ps.setDate(4, (java.sql.Date) new Date(actividadEsfuerzo.getTiempo().getTime()));
+        ps.setDate(3, new java.sql.Date(actividadEsfuerzo.getFecha().getTime()));
+        ps.setDouble(4, actividadEsfuerzo.getTiempo());
         ps.setString(5, actividadEsfuerzo.getDescripcion());
         int insercion = ps.executeUpdate();
         ps.close();
@@ -74,7 +74,7 @@ public class ActividadesEsfuerzosDao {
         ps.setInt(1, actividadEsfuerzo.getActividad());
         ps.setInt(2, actividadEsfuerzo.getEmpleado());
         ps.setDate(3, (java.sql.Date)actividadEsfuerzo.getFecha());
-        ps.setDate(4, (java.sql.Date) new Date(actividadEsfuerzo.getTiempo().getTime()));
+        ps.setDouble(4, actividadEsfuerzo.getTiempo());
         ps.setString(5, actividadEsfuerzo.getDescripcion());
         ps.setInt(6, actividadEsfuerzo.getId());
         int actualizacion = ps.executeUpdate();
