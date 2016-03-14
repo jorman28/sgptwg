@@ -128,10 +128,6 @@ public class ActividadesNegocio {
             validacion += "El campo 'Proyecto' no debe estar vacío <br />";
         }
 
-        if (proyecto == null || proyecto.equals("0")) {
-            validacion += "El campo 'Proyecto' no debe estar vacío <br />";
-        }
-
         if (version == null || version.equals("0")) {
             validacion += "El campo 'Versión' no debe estar vacío <br />";
         }
@@ -334,8 +330,10 @@ public class ActividadesNegocio {
     public String eliminarActividad(Integer idActividad) {
         String error = "";
         try {
+            int eliminacionAct_Esf = actividades_empleadosDao.eliminarActividadEmpleado(idActividad);
+            int eliminacionAct_Empl = actividades_esfuerzosDao.eliminarActividadEsfuerzo(idActividad);
             int eliminacion = actividadesDao.eliminarActividad(idActividad);
-            if (eliminacion == 0) {
+            if (eliminacion == 0 && eliminacionAct_Esf == 0 && eliminacionAct_Empl == 0) {
                 error = "La actividad no pudo ser eliminada";
             }
         } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {

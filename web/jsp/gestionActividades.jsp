@@ -16,8 +16,6 @@
         <script type="text/javascript" src="js/gestionActividades.js"></script>
         <title>Gestionar Actividades</title>
     </head>
-
-    <!--<body onload="cargarFrm();">-->
     <body>
         <div class="container-fluid">
             <div>${menu}</div>
@@ -121,7 +119,7 @@
                                         <p><b>Clientes</b></p>
                                         <ul class="list-group" id="clientesActividad">
                                             <c:choose>
-                                                <c:when test="${clientesActividad  == null}">
+                                                <c:when test="${clientesActividad  == null || clientesActividad.size() == 0}">
                                                     No se han agregado clientes al proyecto
                                                 </c:when>
                                                 <c:otherwise>
@@ -135,7 +133,10 @@
                                                                 </div>
                                                             </div>
                                                         </li>
-                                                    </c:forEach> 
+                                                    </c:forEach>
+                                                    <script type="text/javascript">
+                                                        clientesSeleccionados = ${clientesActividad.size()};
+                                                    </script>
                                                 </c:otherwise>
                                             </c:choose>                                             
                                         </ul>
@@ -146,7 +147,7 @@
                                         <p><b>Empleados</b></p>
                                         <ul class="list-group" id="empleadosActividad">
                                             <c:choose>
-                                                <c:when test="${empleadosActividad  == null}">
+                                                <c:when test="${empleadosActividad  == null || empleadosActividad.size() == 0}">
                                                     No se han agregado empleados al proyecto
                                                 </c:when>
                                                 <c:otherwise>
@@ -161,6 +162,9 @@
                                                             </div>
                                                         </li>
                                                     </c:forEach>
+                                                    <script type="text/javascript">
+                                                        empleadosSeleccionados = ${empleadosActividad.size()};
+                                                    </script>
                                                 </c:otherwise>
                                             </c:choose>
                                         </ul>

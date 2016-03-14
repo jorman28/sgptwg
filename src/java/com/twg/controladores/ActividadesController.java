@@ -179,7 +179,29 @@ public class ActividadesController extends HttpServlet {
                     request.setAttribute("estados", estadosNegocio.consultarEstados(null, "ACTIVIDADES", null, null, null, null));
                     request.setAttribute("proyectos", proyectosNegocio.consultarProyectos(null, null, false));
                     request.setAttribute("versiones", versionesNegocio.consultarVersiones(null, Integer.parseInt(proyectoStr), null, false));
+                    if (idPersonasActividad != null) {
+                        List<PersonasBean> personas = new ArrayList<>();
+                        for (String idPersona : idPersonasActividad) {
+                            personas.add(personasNegocio.consultarPersona(idPersona, null, null));
+                        }
+                        List<PersonasBean> empleados = new ArrayList<>();
+                        List<PersonasBean> clientes = new ArrayList<>();
+                        personas.stream().forEach((persona) -> {
+                            if (persona.getNombreCargo().toLowerCase().equalsIgnoreCase("cliente")) {
+                                clientes.add(persona);
+                            } else {
+                                empleados.add(persona);
+                            }
+                        });
+                        
+                        request.setAttribute("clientesActividad", clientes);
+                        request.setAttribute("empleadosActividad", empleados);
+                    } else {
+                        request.setAttribute("clientesActividad", null);
+                        request.setAttribute("empleadosActividad", null);
+                    }
                     enviarDatosCreacionEdicion(request, idStr, idPersonasActividad, proyectoStr, versionStr, descripcion, fecha_estimada_inicioStr, fecha_estimada_terminacionStr, fecha_real_inicioStr, fecha_real_terminacionStr, tiempo_estimadoStr, tiempo_invertidoStr, estadoStr);
+                    accion = "gestionarActividad";
                     request.getRequestDispatcher(INSERTAR_O_EDITAR).forward(request, response);
                     break;
                 }
@@ -220,7 +242,7 @@ public class ActividadesController extends HttpServlet {
         request.setAttribute("proyectos", proyectosNegocio.consultarProyectos(null, null, false));
         request.setAttribute("versiones", versionesNegocio.consultarVersiones(null, null, null, false));
         request.setAttribute("estados", estadosNegocio.consultarEstados(null, "ACTIVIDADES", null, null, null, null));
-        if (!accion.equals("consultar") && !accion.equals("editar") && !accion.equals("consultarVersiones") && !accion.equals("gestionarActividad") && !accion.equals("limpiarGestion") && !accion.equals("guardar") && !accion.equals("consultarPersonasProyecto")) {
+        if (!accion.equals("consultar") && !accion.equals("editar") && !accion.equals("consultarVersiones") && !accion.equals("gestionarActividad") && !accion.equals("limpiarGestion") && !accion.equals("consultarPersonasProyecto")) {
             request.getRequestDispatcher(LISTAR_ACTIVIDADES).forward(request, response);
         }
     }

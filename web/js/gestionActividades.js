@@ -78,25 +78,6 @@ jQuery(function () {
             });
 });
 
-function nuevaActividad() {
-    $("#id").val('');
-    $("#persona").val('0');
-    $("#version").val('0');
-    $("#descripcion").val('');
-    $("#fecha_estimada_inicio").val('');
-    $("#fecha_estimada_terminacion").val('');
-    $("#fecha_real_inicio").val('');
-    $("#fecha_real_terminacion").val('');
-    $("#tiempo_estimado").val('');
-    $("#tiempo_invertido").val('');
-    $("#estado").val('0');
-    $("#clientesActividad").html('No se han agregado clientes al proyecto');
-    $("#empleadosActividad").html('No se han agregado empleados al proyecto');
-    personasActividades = {};
-    clientesSeleccionados = 0;
-    empleadosSeleccionados = 0;
-}
-
 function consultarVersiones(idProyecto) {
     $.ajax({
         type: "POST",
@@ -158,40 +139,7 @@ function eliminarPersona(idPersona, cargo) {
     }
 }
 
-function editarActividad(idActividad) {
-    $.ajax({
-        type: "POST",
-        url: "ActividadesController",
-        dataType: "json",
-        data: {idProyecto: idActividad, accion: "gestionarActividad"},
-        success: function (data) {
-            alert("data");
-            personasActividades = {};
-            clientesSeleccionados = 0;
-            empleadosSeleccionados = 0;
-            if (data !== undefined) {
-                $("#id").val(data.idActividad !== undefined ? data.idActividad : "");
-                $("#nombreProyecto").val(data.nombreProyecto !== undefined ? data.nombreProyecto : "");
-                $("#fechaInicioProyecto").val(data.fechaInicio !== undefined ? data.fechaInicio : "");
-                $("#clientesProyecto").html(data.clientes !== undefined ? pintarListaPersonas(data.clientes) : 'No se han agregado clientes al proyecto');
-                if (data.clientes !== undefined) {
-                    clientesSeleccionados = data.clientes.length;
-                }
-                $("#empleadosProyecto").html(data.empleados !== undefined ? pintarListaPersonas(data.empleados) : 'No se han agregado empleados al proyecto');
-                if (data.empleados !== undefined) {
-                    empleadosSeleccionados = data.empleados.length;
-                }
-                $("#participante").val('');
-                //$("#modalProyectos").modal("show");
-            }
-        },
-        error: function () {
-        }
-    });
-}
-
-
-
+//Cuando se utilizaron las listas
 //function consultarPersonasProyecto(idProyecto) {
 //    $.ajax({
 //        type: "POST",

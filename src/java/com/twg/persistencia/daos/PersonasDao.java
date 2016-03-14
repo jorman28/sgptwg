@@ -46,6 +46,7 @@ public class PersonasDao {
             persona.setNombrePerfil(rs.getString("nombre_perfil"));
             persona.setCargo(rs.getInt("cargo"));
             persona.setNombreCargo(rs.getString("nombre_cargo"));
+            persona.setNombre(persona.getTipoDocumento() + persona.getDocumento() + " " + persona.getNombres() + " " + persona.getApellidos());
             listaPersonas.add(persona);
         }
         rs.close();
