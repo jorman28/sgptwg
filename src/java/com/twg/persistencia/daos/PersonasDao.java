@@ -55,12 +55,12 @@ public class PersonasDao {
         return listaPersonas;
     }
     
-    public List<PersonasBean> consultarPersonasProyecto(String idProyecto) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
+    public List<PersonasBean> consultarPersonasProyecto(String idProyecto, String Busqueda) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         List<PersonasBean> listaPersonas = new ArrayList<>();
         PreparedStatement ps;
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
-        ps = con.prepareStatement(sql.consultarPersonasProyecto(idProyecto));
+        ps = con.prepareStatement(sql.consultarPersonasProyecto(idProyecto, Busqueda));
         ResultSet rs;
         rs = ps.executeQuery();
         while (rs.next()) {

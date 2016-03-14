@@ -18,13 +18,11 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -79,7 +77,6 @@ public class ActividadesController extends HttpServlet {
         }
 
         String[] idPersonasActividad = request.getParameterValues("idPersonas");// Personas que estan en la lista 2 Participantes en la actividad
-
         String proyectoStr = request.getParameter("proyecto"); //consulta y creacion Er
         String versionStr = request.getParameter("version"); //consulta y creacion Er
         String descripcion = request.getParameter("descripcion"); //consulta y creacion Er
@@ -200,14 +197,14 @@ public class ActividadesController extends HttpServlet {
                         request.setAttribute("clientesActividad", null);
                         request.setAttribute("empleadosActividad", null);
                     }
-                    enviarDatosCreacionEdicion(request, idStr, idPersonasActividad, proyectoStr, versionStr, descripcion, fecha_estimada_inicioStr, fecha_estimada_terminacionStr, fecha_real_inicioStr, fecha_real_terminacionStr, tiempo_estimadoStr, tiempo_invertidoStr, estadoStr);
+                    enviarDatosCreacionEdicion(request, idStr, proyectoStr, versionStr, descripcion, fecha_estimada_inicioStr, fecha_estimada_terminacionStr, fecha_real_inicioStr, fecha_real_terminacionStr, tiempo_estimadoStr, tiempo_invertidoStr, estadoStr);
                     accion = "gestionarActividad";
                     request.getRequestDispatcher(INSERTAR_O_EDITAR).forward(request, response);
                     break;
                 }
                 if (result.get("mensajeExito") != null) {
                     mensajeExito = (String) result.get("mensajeExito");
-                    enviarDatosCreacionEdicion(request, null, null, null, null, null, null, null, null, null, null, null, null);
+                    enviarDatosCreacionEdicion(request, null, null, null, null, null, null, null, null, null, null, null);
                 }
                 break;
             case "eliminar":
@@ -230,7 +227,9 @@ public class ActividadesController extends HttpServlet {
                 response.getWriter().write(array.toString());
                 break;
             case "consultarPersonasProyecto":
-                JSONArray arrayPersonas = personasNegocio.consultarPersonasProyecto(proyectoStr);
+                String strParticipante = request.getParameter("search"); 
+                String strProyecto = request.getParameter("search1");
+                JSONArray arrayPersonas = personasNegocio.consultarPersonasProyecto(strProyecto, strParticipante);
                 response.getWriter().write(arrayPersonas.toString());
                 break;
             default:
@@ -247,9 +246,8 @@ public class ActividadesController extends HttpServlet {
         }
     }
 
-    private void enviarDatosCreacionEdicion(HttpServletRequest request, String id, String[] participantes, String proyecto, String version, String descripcion, String fecha_estimada_inicio, String fecha_estimada_terminacion, String fecha_real_inicio, String fecha_real_terminacion, String tiempo_estimado, String tiempo_invertido, String estado) {
+    private void enviarDatosCreacionEdicion(HttpServletRequest request, String id, String proyecto, String version, String descripcion, String fecha_estimada_inicio, String fecha_estimada_terminacion, String fecha_real_inicio, String fecha_real_terminacion, String tiempo_estimado, String tiempo_invertido, String estado) {
         request.setAttribute("id", id);
-        //request.setAttribute("empleadosActividad", participantes);
         request.setAttribute("proyecto", proyecto);
         request.setAttribute("version", version);
         request.setAttribute("descripcion", descripcion);

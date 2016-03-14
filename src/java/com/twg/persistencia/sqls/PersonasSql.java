@@ -72,7 +72,7 @@ public class PersonasSql {
         return sql;
     }
 
-    public String consultarPersonasProyecto(String idProyecto) {
+    public String consultarPersonasProyecto(String idProyecto, String Busqueda) {
         String sql = "";
         sql += "SELECT p.id,\n"
                 + "        p.documento,\n"
@@ -95,7 +95,15 @@ public class PersonasSql {
                 + "        INNER JOIN cargos car ON car.id = p.cargo \n"
                 + "        LEFT JOIN usuarios u ON p.id = u.id_persona AND u.fecha_eliminacion IS NULL \n"
                 + "        LEFT JOIN perfiles pf ON pf.id = u.perfil AND pf.fecha_eliminacion IS NULL \n"
-                + "WHERE   1 = 1 AND p.fecha_eliminacion IS NULL AND pro.id_proyecto = " + idProyecto + "";
+                + "WHERE   1 = 1 AND p.fecha_eliminacion IS NULL ";
+
+        if (idProyecto != null && !idProyecto.isEmpty()) {
+            sql += "AND pro.id_proyecto = " + idProyecto + " ";
+        }
+
+        if (Busqueda != null && !Busqueda.isEmpty()) {
+            sql += "AND (CONCAT(p.nombres, ' ', p.apellidos) LIKE '%" + Busqueda + "%' OR p.documento like '%" + Busqueda + "%')";
+        }
 
         return sql;
     }

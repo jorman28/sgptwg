@@ -214,9 +214,9 @@ public class PersonasNegocio {
     }
 
     //Jara 23/02/2015 - Método para consultar el grupo de personas en determinado proyecto
-    public JSONArray consultarPersonasProyecto(String idProyecto) {
+    public JSONArray consultarPersonasProyecto(String idProyecto, String Busqueda) {
         JSONArray array = new JSONArray();
-        List<PersonasBean> listaPersonas = consultarPersonasxProyecto(idProyecto);
+        List<PersonasBean> listaPersonas = consultarPersonasxProyecto(idProyecto, Busqueda);
         if (listaPersonas != null && !listaPersonas.isEmpty()) {
             for (PersonasBean persona : listaPersonas) {
                 JSONObject object = new JSONObject();
@@ -229,10 +229,10 @@ public class PersonasNegocio {
         return array;
     }
 
-    public List<PersonasBean> consultarPersonasxProyecto(String idProyecto) {
+    public List<PersonasBean> consultarPersonasxProyecto(String idProyecto, String Busqueda) {
         List<PersonasBean> listaPersonas = new ArrayList<>();
         try {
-            listaPersonas = personasDao.consultarPersonasProyecto(idProyecto);
+            listaPersonas = personasDao.consultarPersonasProyecto(idProyecto, Busqueda);
         } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
             Logger.getLogger(PersonasNegocio.class.getName()).log(Level.SEVERE, null, ex);
         }

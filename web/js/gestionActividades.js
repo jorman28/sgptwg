@@ -56,7 +56,7 @@ jQuery(function () {
                     }
                 },
                 ajax: {
-                    url: "ProyectosController",
+                    url: "ActividadesController",
                     timeout: 500,
                     displayField: "nombre",
                     valueField: 'id',
@@ -64,7 +64,8 @@ jQuery(function () {
                     items: 10,
                     method: "POST",
                     preDispatch: function (query) {
-                        return {search: query, accion: "completarPersonas"};
+                        var proyecto = $("#proyecto").val();
+                        return {search: query, search1: proyecto, accion: "consultarPersonasProyecto"};
                     },
                     preProcess: function (data) {
                         for (var i = 0; i < data.length; i++) {
@@ -72,10 +73,19 @@ jQuery(function () {
                             personasActividades[persona.id] = persona;
                         }
                         return data;
-                        $("#participante").val("");
                     }
                 }
             });
+
+    $('#proyecto').change(function () {
+        var dato = $('#proyecto').val();
+        if (dato !== undefined && dato !== "" && dato !== "0") {
+            $("#participante").prop("disabled", false);
+        } else {
+            $("#participante").prop("disabled", true);
+        }
+    });
+
 });
 
 function consultarVersiones(idProyecto) {

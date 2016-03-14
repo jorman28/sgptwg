@@ -103,7 +103,14 @@
                                     </div>
                                     <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
                                         <label for="participante">Añadir Participante:</label>
-                                        <input class="form-control" type="text" id="participante" name="participante" value="${participante}" />
+                                        <c:choose>
+                                            <c:when test="${proyecto == null || proyecto == 0}">
+                                                <input class="form-control" type="text" id="participante" name="participante" value="${participante}" disabled="disabled"/>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <input class="form-control" type="text" id="participante" name="participante" value="${participante}"/>
+                                            </c:otherwise>
+                                        </c:choose>
                                     </div>
                                 </div>
                             </div>  
