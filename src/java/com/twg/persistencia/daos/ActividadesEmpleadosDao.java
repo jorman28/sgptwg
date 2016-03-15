@@ -25,12 +25,12 @@ public class ActividadesEmpleadosDao {
     public ActividadesEmpleadosDao(){
     }
     
-    public List<ActividadesEmpleadosBean> consultarActividadesEmpleados(Integer empleado) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
+    public List<ActividadesEmpleadosBean> consultarActividadesEmpleados(Integer actividad, Integer empleado) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
         List<ActividadesEmpleadosBean> listaEmpleados = new ArrayList<>();
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;
-        ps = con.prepareStatement(sql.consultarEmpleadosxAtividad(empleado));
+        ps = con.prepareStatement(sql.consultarEmpleadosxActividad(actividad, empleado));
         ResultSet rs;
         rs = ps.executeQuery();
         while(rs.next()){
@@ -51,7 +51,7 @@ public class ActividadesEmpleadosDao {
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;
-        ps = con.prepareStatement(sql.consultarEmpleadosxAtividad(idActividad, idEmpleado));
+        ps = con.prepareStatement(sql.consultarEmpleadosxActividad(idActividad, idEmpleado));
         ResultSet rs;
         rs = ps.executeQuery();
         while(rs.next()){

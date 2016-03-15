@@ -36,22 +36,46 @@
                                 <div class="row">
                                     <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
                                         <label for="proyecto">*Proyecto</label>
-                                        <select class="form-control" id="proyecto" name="proyecto" onchange="consultarVersiones(this.value);">
-                                            <option value="0">SELECCIONE</option>
-                                            <c:forEach items="${proyectos}" var="tipo">
-                                                <option value="${tipo.id}" <c:if test="${proyecto == tipo.id}">selected</c:if> >${tipo.nombre}</option>
-                                            </c:forEach>
-                                        </select>                                      
+                                        <c:choose>
+                                            <c:when test="${id == null || id == ''}">
+                                                <select class="form-control" id="proyecto" name="proyecto" onchange="consultarVersiones(this.value);">
+                                                    <option value="0">SELECCIONE</option>
+                                                    <c:forEach items="${proyectos}" var="tipo">
+                                                        <option value="${tipo.id}" <c:if test="${proyecto == tipo.id}">selected</c:if> >${tipo.nombre}</option>
+                                                    </c:forEach>
+                                                </select>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <select class="form-control" id="proyecto" name="proyecto" onchange="consultarVersiones(this.value);" disabled="disabled">
+                                                    <option value="0">SELECCIONE</option>
+                                                    <c:forEach items="${proyectos}" var="tipo">
+                                                        <option value="${tipo.id}" <c:if test="${proyecto == tipo.id}">selected</c:if> >${tipo.nombre}</option>
+                                                    </c:forEach>
+                                                </select>
+                                            </c:otherwise>
+                                        </c:choose>                                      
                                     </div>
 
                                     <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
                                         <label for="version">*Version</label>
-                                        <select id="version" name="version" class="form-control">
-                                            <option value="0">SELECCIONE</option>
-                                            <c:forEach items="${versiones}" var="ver">
-                                                <option value="${ver.id}" <c:if test="${ver.id == version}">selected</c:if>>${ver.nombre}</option>
-                                            </c:forEach>
-                                        </select>                                      
+                                        <c:choose>
+                                            <c:when test="${id == null || id == ''}">
+                                                <select id="version" name="version" class="form-control">
+                                                    <option value="0">SELECCIONE</option>
+                                                    <c:forEach items="${versiones}" var="ver">
+                                                        <option value="${ver.id}" <c:if test="${ver.id == version}">selected</c:if>>${ver.nombre}</option>
+                                                    </c:forEach>
+                                                </select>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <select id="version" name="version" class="form-control" disabled="disabled">
+                                                    <option value="0">SELECCIONE</option>
+                                                    <c:forEach items="${versiones}" var="ver">
+                                                        <option value="${ver.id}" <c:if test="${ver.id == version}">selected</c:if>>${ver.nombre}</option>
+                                                    </c:forEach>
+                                                </select>
+                                            </c:otherwise>
+                                        </c:choose>                                      
                                     </div>
 
                                     <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">

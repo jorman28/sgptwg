@@ -24,12 +24,12 @@ import java.util.List;
 public class ActividadesEsfuerzosDao {
     private final ActividadesEsfuerzosSql sql = new ActividadesEsfuerzosSql();
 
-    public List<ActividadesEsfuerzosBean> consultarActividadesEsfuerzos(Integer id) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
+    public List<ActividadesEsfuerzosBean> consultarActividadesEsfuerzos(Integer id, Integer actividad, Integer empleado, String fecha, Double tiempo, String descripcion) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         List<ActividadesEsfuerzosBean> listaActividadesEsfuerzos = new ArrayList();
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;
-        ps = con.prepareStatement(sql.consultarActividades_Esfuerzos(id));
+        ps = con.prepareStatement(sql.consultarActividades_Esfuerzos(id, actividad, empleado, fecha, tiempo, descripcion));
         ResultSet rs;
         rs = ps.executeQuery();
         while (rs.next()) {
@@ -89,6 +89,18 @@ public class ActividadesEsfuerzosDao {
         PreparedStatement ps;
         ps = con.prepareStatement(sql.eliminarActividad_Esfuerzo());
         ps.setInt(1, idActividadEsfuerzo);
+        int eliminacion = ps.executeUpdate();
+        ps.close();
+        con.close();
+        return eliminacion;
+    }
+    
+    public int eliminarActividadEsfuerzo(Integer idActividadEsfuerzo, Integer idActividad, Integer idEmpleado) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
+        Connection con;
+        con = new ConexionBaseDatos().obtenerConexion();
+        PreparedStatement ps;
+        ps = con.prepareStatement(sql.eliminarActividad_Esfuerzo(idActividadEsfuerzo, idActividad, idEmpleado));
+        //ps.setInt(1, idActividadEsfuerzo);
         int eliminacion = ps.executeUpdate();
         ps.close();
         con.close();

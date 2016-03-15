@@ -93,7 +93,7 @@ public class ActividadesEsfuerzosNegocio {
     public List<ActividadesEsfuerzosBean> consultarActividadesEsfuerzo(Integer id) {
         List<ActividadesEsfuerzosBean> listaActividadesEsfuerzo = new ArrayList<>();
         try {
-            listaActividadesEsfuerzo = actividadesEsfuerzosDao.consultarActividadesEsfuerzos(id);
+            listaActividadesEsfuerzo = actividadesEsfuerzosDao.consultarActividadesEsfuerzos(id, null, null, null, null, null);
         } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
             Logger.getLogger(ActividadesEsfuerzosNegocio.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -117,7 +117,7 @@ public class ActividadesEsfuerzosNegocio {
     public String eliminarActividadEsfuerzo(Integer id) {
         String error = "";
         try {
-            int eliminacion = actividadesEsfuerzosDao.eliminarActividadEsfuerzo(id);
+            int eliminacion = actividadesEsfuerzosDao.eliminarActividadEsfuerzo(id, null, null);
             if (eliminacion == 0) {
                 error = "El registro no pudo ser eliminado";
             }
