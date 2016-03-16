@@ -5,7 +5,6 @@ import com.twg.persistencia.beans.ActividadesEmpleadosBean;
 import com.twg.persistencia.daos.ActividadesDao;
 import com.twg.persistencia.daos.ActividadesEmpleadosDao;
 import com.twg.persistencia.daos.PersonasDao;
-import com.twg.persistencia.daos.VersionesDao;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -16,6 +15,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.sf.dynamicreports.report.datasource.DRDataSource;
+import net.sf.jasperreports.engine.JRDataSource;
 import org.json.simple.JSONObject;
 
 /**
@@ -43,9 +44,9 @@ public class ActividadesNegocio {
 
                 ActividadesBean actividad = new ActividadesBean();
                 ActividadesEmpleadosBean actividadEmpleadoBean = new ActividadesEmpleadosBean();
-                
+
                 actividadEmpleadoBean.setEmpleado(Integer.valueOf(idResponsable));
-                
+
                 actividad.setVersion(Integer.valueOf(version));
                 actividad.setDescripcion(descripcion);
                 try {
@@ -109,7 +110,7 @@ public class ActividadesNegocio {
         if (proyecto == null || proyecto.equals("0")) {
             validacion += "El campo 'Proyecto' no debe estar vacío <br />";
         }
-        
+
         if (version == null || version.equals("0")) {
             validacion += "El campo 'Versión' no debe estar vacío <br />";
         }
@@ -321,5 +322,26 @@ public class ActividadesNegocio {
             error = "Ocurrió un error eliminando la actividad";
         }
         return error;
+    }
+
+    public JRDataSource actividadesPorEstado() {
+        DRDataSource datos = new DRDataSource("estado", "actividades", "porcentaje");
+        try {
+            Map<String, Integer> actividadesPorEstado = actividadesDao.actividadesPorEstado();
+            double totalActividades = 0;
+            for (Map.Entry<String, Integer> entry : actividadesPorEstado.entrySet()) {
+                try {
+                    totalActividades += entry.getValue();
+                } catch (Exception e) {
+                }
+            }
+            for (Map.Entry<String, Integer> entry : actividadesPorEstado.entrySet()) {
+                double actividades = entry.getValue();
+                datos.add(entry.getKey(), entry.getValue(), actividades / totalActividades);
+            }
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | SQLException ex) {
+            Logger.getLogger(ActividadesNegocio.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return datos;
     }
 }

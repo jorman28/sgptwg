@@ -1,0 +1,20 @@
+ALTER TABLE actividades_empleados DROP COLUMN fecha_eliminacion;
+ALTER TABLE permisos DROP COLUMN fecha_eliminacion;
+ALTER TABLE permisos_perfiles DROP COLUMN fecha_eliminacion;
+ALTER TABLE comentarios_archivos DROP COLUMN fecha_eliminacion;
+ALTER TABLE comentarios_referenciados DROP COLUMN fecha_eliminacion;
+
+ALTER TABLE actividades MODIFY fecha_eliminacion DATETIME DEFAULT NULL;
+ALTER TABLE actividades_esfuerzos MODIFY fecha_eliminacion DATETIME DEFAULT NULL;
+ALTER TABLE archivos MODIFY fecha_eliminacion DATETIME DEFAULT NULL;
+ALTER TABLE auditorias MODIFY fecha_eliminacion DATETIME DEFAULT NULL;
+ALTER TABLE cargos MODIFY fecha_eliminacion DATETIME DEFAULT NULL;
+ALTER TABLE comentarios MODIFY fecha_eliminacion DATETIME DEFAULT NULL;
+ALTER TABLE estados MODIFY fecha_eliminacion DATETIME DEFAULT NULL;
+ALTER TABLE paginas MODIFY fecha_eliminacion DATETIME DEFAULT NULL;
+ALTER TABLE perfiles MODIFY fecha_eliminacion DATETIME DEFAULT NULL;
+ALTER TABLE personas MODIFY fecha_eliminacion DATETIME DEFAULT NULL;
+ALTER TABLE proyectos MODIFY fecha_eliminacion DATETIME DEFAULT NULL;
+ALTER TABLE tipos_documentos MODIFY fecha_eliminacion DATETIME DEFAULT NULL;
+ALTER TABLE usuarios MODIFY fecha_eliminacion DATETIME DEFAULT NULL;
+ALTER TABLE versiones MODIFY fecha_eliminacion DATETIME DEFAULT NULL;

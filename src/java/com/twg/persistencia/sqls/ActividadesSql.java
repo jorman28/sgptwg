@@ -54,7 +54,7 @@ public class ActividadesSql {
         }
         return sql;
     }
-    
+
     public String consultarActividades(String id, Integer version, String descripcion, String fecha, Integer estado) {
         String sql = "SELECT a.id, a.version, a.descripcion, a.fecha_estimada_inicio, a.fecha_estimada_terminacion, "
                 + "a.fecha_real_inicio, a.fecha_real_terminacion, a.tiempo_estimado, a.tiempo_invertido, a.estado, e.nombre as nombree, v.nombre as nombrev "
@@ -70,8 +70,8 @@ public class ActividadesSql {
             sql += "AND a.descripcion LIKE '%" + descripcion + "%' ";
         }
         if (fecha != null && !fecha.isEmpty()) {
-            sql += "AND (a.fecha_estimada_inicio = '" + fecha + "' OR a.fecha_estimada_terminacion = '" + 
-                fecha + "' OR a.fecha_real_inicio = '" + fecha + "' OR a.fecha_real_terminacion = '" + fecha + "')";
+            sql += "AND (a.fecha_estimada_inicio = '" + fecha + "' OR a.fecha_estimada_terminacion = '"
+                    + fecha + "' OR a.fecha_real_inicio = '" + fecha + "' OR a.fecha_real_terminacion = '" + fecha + "')";
         }
         if (estado != null && !estado.toString().isEmpty()) {
             sql += "AND a.estado = '" + estado + "' ";
@@ -82,11 +82,11 @@ public class ActividadesSql {
     public String consultarUtimaActividad() {
         return "SELECT MAX(id) AS id FROM actividades";
     }
-    
+
     public String insertarActividad() {
         return "INSERT INTO actividades (descripcion, fecha_estimada_inicio, fecha_estimada_terminacion, fecha_real_inicio, fecha_real_terminacion, tiempo_estimado, tiempo_invertido, version, estado) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
     }
-    
+
     public String actualizarActividad() {
         return "UPDATE actividades SET  descripcion = ?, fecha_estimada_inicio=?, fecha_estimada_terminacion=?, fecha_real_inicio=?, fecha_real_terminacion=?, tiempo_estimado=?, tiempo_invertido=?, version=?, estado=?  WHERE id = ?";
     }
@@ -95,4 +95,30 @@ public class ActividadesSql {
         return "UPDATE actividades SET fecha_eliminacion = now() WHERE id = ?";
     }
 
+    public String actividadesPorEstados() {
+        String sql = "SELECT \n"
+                + "    est.nombre AS estado, COUNT(act.id) AS actividades\n"
+                + "FROM\n"
+                + "    actividades act\n"
+                + "        INNER JOIN\n"
+                + "    estados est ON act.estado = est.id\n"
+                + "WHERE\n"
+                + "    est.eFinal != 'T'\n"
+                + "GROUP BY act.estado";
+        return sql;
+    }
+
+    public String estadosPorActividades() {
+        String sql = "SELECT \n"
+                + "    est.nombre AS estado, COUNT(DISTINCT act.id) AS actividades\n"
+                + "FROM\n"
+                + "    estados est\n"
+                + "        LEFT JOIN\n"
+                + "    actividades act ON act.estado = est.id\n"
+                + "WHERE\n"
+                + "    est.eFinal != 'T'\n"
+                + "        AND est.tipo_estado = 'ACTIVIDADES'\n"
+                + "GROUP BY act.estado;";
+        return sql;
+    }
 }
