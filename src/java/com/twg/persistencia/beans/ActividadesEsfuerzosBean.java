@@ -17,7 +17,7 @@ public class ActividadesEsfuerzosBean {
     private Integer actividad;
     private Integer empleado;
     private Date fecha;
-    private Date tiempo;
+    private Double tiempo;
     private String descripcion;
     private Date fechaEliminacion;
 
@@ -53,11 +53,11 @@ public class ActividadesEsfuerzosBean {
         this.fecha = fecha;
     }
 
-    public Date getTiempo() {
+    public Double getTiempo() {
         return tiempo;
     }
 
-    public void setTiempo(Date tiempo) {
+    public void setTiempo(Double tiempo) {
         this.tiempo = tiempo;
     }
 

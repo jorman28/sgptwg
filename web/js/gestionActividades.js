@@ -4,9 +4,9 @@
  * and open the template in the editor.
  */
 
-var personasProyecto = {};
+var personasActividades = {};
 var clientesSeleccionados = 0;
-var empleadosSeleccionados = false;
+var empleadosSeleccionados = 0;
 
 jQuery(function () {
     $('#fecha_estimada_inicio')
@@ -32,96 +32,69 @@ jQuery(function () {
                 $('#fecha_real_inicio').datetimepicker('setEndDate', $('#fecha_real_terminacion').val());
             });
 
-
-//    $("#participante")
-//            .typeahead({
-//                onSelect: function (item) {
-//                    if ($("#persona" + item.value)[0] === undefined) {
-//                        var persona = personasProyecto[item.value];
-//                        var html = persona.id;
-//                        $("#responsable").val(html);
-//                    }
-//                },
-//                ajax: {
-//                    url: "ProyectosController",
-//                    timeout: 500,
-//                    displayField: "nombre",
-//                    valueField: 'id',
-//                    triggerLength: 1,
-//                    items: 10,
-//                    method: "POST",
-//                    preDispatch: function (query) {
-//                        return {search: query, accion: "completarPersonas"};
-//                    },
-//                    preProcess: function (data) {
-//                        for (var i = 0; i < data.length; i++) {
-//                            var persona = data[i];
-//                            personasProyecto[persona.id] = persona;
-//                        }
-//                        return data;
-//                    }
-//                }
-//            });
-
-$("#participante")
+    $("#participante")
             .typeahead({
-                onSelect: function(item) {
+                onSelect: function (item) {
                     if ($("#persona" + item.value)[0] === undefined) {
-                        var persona = personasProyecto[item.value];
-                        var html = pintarPersona(persona);
-                        if (persona.cargo === 'Cliente') {
+                        var persona = personasActividades[item.value];
+                        var html = pintarPersonas(persona);
+                        if (persona.cargo.toLowerCase() === "cliente") {
                             if (clientesSeleccionados === 0) {
-                                $("#clientesProyecto").html(html);
+                                $("#clientesActividad").html(html);
                             } else {
-                                $("#clientesProyecto").append(html);
+                                $("#clientesActividad").append(html);
                             }
                             clientesSeleccionados++;
                         } else {
                             if (empleadosSeleccionados === 0) {
-                                $("#empleadosProyecto").html(html);
+                                $("#empleadosActividad").html(html);
                             } else {
-                                $("#empleadosProyecto").append(html);
+                                $("#empleadosActividad").append(html);
                             }
                             empleadosSeleccionados++;
                         }
                     }
                 },
                 ajax: {
-                    url: "ProyectosController",
+                    url: "ActividadesController",
                     timeout: 500,
                     displayField: "nombre",
                     valueField: 'id',
                     triggerLength: 1,
                     items: 10,
                     method: "POST",
-                    preDispatch: function(query) {
-                        return {search: query, accion: "completarPersonas"};
+                    preDispatch: function (query) {
+                        var proyecto = $("#proyecto").val();
+                        return {search: query, search1: proyecto, accion: "consultarPersonasProyecto"};
                     },
-                    preProcess: function(data) {
+                    preProcess: function (data) {
                         for (var i = 0; i < data.length; i++) {
                             var persona = data[i];
-                            personasProyecto[persona.id] = persona;
+                            personasActividades[persona.id] = persona;
                         }
                         return data;
                     }
                 }
             });
 
-});
+    $('#proyecto').change(function () {
+        var dato = $('#proyecto').val();
+        if (dato !== undefined && dato !== "" && dato !== "0") {
+            $("#participante").val("");
+            $("#participante").prop("disabled", false);
+        } else {
+            $("#participante").val("");
+            $("#participante").prop("disabled", true);
+        }
+        
+        $("#clientesActividad").html('No se han agregado clientes al proyecto');
+        clientesSeleccionados = 0;
 
-function nuevaActividad() {
-    $("#id").val('');
-    $("#persona").val('0');
-    $("#version").val('0');
-    $("#descripcion").val('');
-    $("#fecha_estimada_inicio").val('');
-    $("#fecha_estimada_terminacion").val('');
-    $("#fecha_real_inicio").val('');
-    $("#fecha_real_terminacion").val('');
-    $("#tiempo_estimado").val('');
-    $("#tiempo_invertido").val('');
-    $("#estado").val('0');
-}
+        $("#empleadosActividad").html('No se han agregado empleados al proyecto');
+        empleadosSeleccionados = 0;
+    });
+
+});
 
 function consultarVersiones(idProyecto) {
     $.ajax({
@@ -145,15 +118,16 @@ function consultarVersiones(idProyecto) {
     });
 }
 
+
 function pintarListaPersonas(listaPersonas) {
     var html = "";
     for (var persona in listaPersonas) {
-        html += pintarPersona(listaPersonas[persona]);
+        html += pintarPersonas(listaPersonas[persona]);
     }
     return html;
 }
 
-function pintarPersona(persona) {
+function pintarPersonas(persona) {
     var html = '    <li class="list-group-item" id="persona' + persona.id + '">'
             + '         <div class="row">'
             + '             <input type="hidden" id="idPersona' + persona.id + '" name="idPersonas" value="' + persona.id + '" />'
@@ -170,37 +144,58 @@ function pintarPersona(persona) {
 
 function eliminarPersona(idPersona, cargo) {
     $("#persona" + idPersona).remove();
-    if (cargo === "Cliente") {
+    if (cargo.toLowerCase() === "cliente") {
         clientesSeleccionados--;
         if (clientesSeleccionados === 0) {
-            $("#clientesProyecto").html('No se han agregado clientes al proyecto');
+            $("#clientesActividad").html('No se han agregado clientes al proyecto');
         }
     } else {
         empleadosSeleccionados--;
         if (empleadosSeleccionados === 0) {
-            $("#empleadosProyecto").html('No se han agregado empleados al proyecto');
+            $("#empleadosActividad").html('No se han agregado empleados al proyecto');
         }
     }
 }
 
-function consultarPersonasProyecto(idProyecto){
-    $.ajax({
-        type    :"POST",
-        url     :"ActividadesController",
-        dataType:"json",
-        data    :{proyecto: idProyecto, accion: "consultarPersonasProyecto"},
-        success: function(data) {
-            if(data !== undefined){
-                var html = "<option value='0'>SELECCIONE</option>";
-                for(var persona in data){
-                    persona = data[persona];
-                    html += "<option value='"+persona.id+"'>"+persona.nombre+"</option>";
-                }
-                $("#persona").html(html);
-            }
-        },
-        error: function(err){
-            alert(err);
-        }
-    });   
-}
+//Cuando se utilizaron las listas
+//function consultarPersonasProyecto(idProyecto) {
+//    $.ajax({
+//        type: "POST",
+//        url: "ActividadesController",
+//        dataType: "json",
+//        data: {proyecto: idProyecto, accion: "consultarPersonasProyecto"},
+//        success: function (data) {
+//            if (data !== undefined) {
+//                var varEmpleados = "<optgroup label='Empleado(s)'>";
+//                var varClientes = "<optgroup label='Cliente(s)'>";
+//                var varCargoCliente = "CLIENTE";
+//                var html = "";
+//                for (var persona in data) {
+//                    persona = data[persona];
+//                    if (persona.cargo.toLowerCase() === varCargoCliente.toLowerCase()) {
+//                        varClientes += "<option value='" + persona.id + "'>" + persona.nombre + "</option>";
+//                    } else {
+//                        varEmpleados += "<option value='" + persona.id + "'>" + persona.nombre + "</option>";
+//                    }
+//                }
+//                if (varClientes !== "<optgroup label='Cliente(s)'>") {
+//                    varClientes += "</optgroup>";
+//                } else {
+//                    varClientes = "";
+//                }
+//
+//                if (varEmpleados !== "<optgroup label='Empleado(s)'>") {
+//                    varEmpleados += "</optgroup>";
+//                } else {
+//                    varEmpleados = "";
+//                }
+//                html = varEmpleados + varClientes;
+//                $("#persona").html(html);
+//                $("#personaActividad").html("");
+//            }
+//        },
+//        error: function (err) {
+//            alert(err);
+//        }
+//    });
+//}

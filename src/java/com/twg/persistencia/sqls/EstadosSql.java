@@ -19,7 +19,7 @@ public class EstadosSql {
     }
     
     public String consultarEstadosPS(Integer id) {
-        return "SELECT * FROM estados WHERE estadoPrev = " + id + " OR estadoSig = " + id;
+        return "SELECT * FROM estados WHERE estado_prev = " + id + " OR estado_sig = " + id;
     }
 
     public String consultarEstados(Integer id, String tipoEstado, String nombre, Integer estadoPrev, 
@@ -35,24 +35,24 @@ public class EstadosSql {
             sql += " AND nombre LIKE '%" + nombre + "%'";
         }
         if (estadoPrev != null && estadoPrev != 0) {
-            sql += " AND estadoPrev = " + estadoPrev;
+            sql += " AND estado_prev = " + estadoPrev;
         }
         if (estadoSig != null && estadoSig != 0) {
-            sql += " AND estadoSig = " + estadoSig;
+            sql += " AND estado_sig = " + estadoSig;
         }
         if (eFinal != null && !eFinal.isEmpty() && !eFinal.equals("0")) {
-            sql += " AND eFinal = '" + eFinal + "'";
+            sql += " AND e_final = '" + eFinal + "'";
         }
         sql += " ORDER BY nombre";
         return sql;
     }
 
     public String insertarEstado() {
-        return "INSERT INTO estados (tipo_estado, nombre, estadoPrev, estadoSig, eFinal) VALUES (?, ?, ?, ?, ?)";
+        return "INSERT INTO estados (tipo_estado, nombre, estado_prev, estado_sig, e_final) VALUES (?, ?, ?, ?, ?)";
     }
 
     public String actualizarEstado() {
-        return "UPDATE estados SET tipo_estado=?, nombre = ?, estadoPrev = ?, estadoSig = ?, eFinal = ? WHERE id = ?";
+        return "UPDATE estados SET tipo_estado=?, nombre = ?, estado_prev = ?, estado_sig = ?, e_final = ? WHERE id = ?";
     }
 
     public String eliminarEstado() {
