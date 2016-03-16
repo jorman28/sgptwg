@@ -52,6 +52,7 @@
                                                         <option value="${tipo.id}" <c:if test="${proyecto == tipo.id}">selected</c:if> >${tipo.nombre}</option>
                                                     </c:forEach>
                                                 </select>
+                                                <input type="hidden" id="proyecto" name="proyecto" value="${proyecto}"/>
                                             </c:otherwise>
                                         </c:choose>                                      
                                     </div>
@@ -74,6 +75,7 @@
                                                         <option value="${ver.id}" <c:if test="${ver.id == version}">selected</c:if>>${ver.nombre}</option>
                                                     </c:forEach>
                                                 </select>
+                                                <input type="hidden" id="version" name="version" value="${version}"/>
                                             </c:otherwise>
                                         </c:choose>                                      
                                     </div>

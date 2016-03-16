@@ -38,7 +38,7 @@ public class ActividadesEsfuerzosSql {
     }
 
     public String actualizarActividad_Esfuerzo() {
-        return "UPDATE actividades_esfuerzos SET actividad = ?, empleado = ?, fecha = ?, tiempo = ?, descripcion = ? WHERE id = ?";
+        return "UPDATE actividades_esfuerzos SET fecha = ?, tiempo = ?, descripcion = ? WHERE actividad = ? AND empleado = ?";
     }
 
     public String eliminarActividad_Esfuerzo() {
@@ -57,5 +57,9 @@ public class ActividadesEsfuerzosSql {
             sql += "AND empleado = " + idEmpleado + " ";
         }
         return sql;
+    }
+    
+    public String eliminarActividades_Esfuerzos() {
+        return "DELETE FROM actividades_esfuerzos WHERE 1 = 1 AND actividad = ? AND empleado NOT IN (?)";
     }
 }

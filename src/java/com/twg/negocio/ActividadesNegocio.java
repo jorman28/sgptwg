@@ -75,22 +75,20 @@ public class ActividadesNegocio {
                 if (id != null && !id.isEmpty()) { //Condición para modificar
                     actividad.setId(Integer.valueOf(id));
                     guardado = actividadesDao.actualizarActividad(actividad);
+                    //En caso de eliminar un participante existente
+                    actividades_empleadosDao.eliminarActividadesEmpleados(Integer.valueOf(id), participantes);
+                    actividades_esfuerzosDao.eliminarActividadesEsfuerzos(Integer.valueOf(id), participantes);
                     
                     for (String item : participantes) { //Aplica para tablas actividades_empleados y actividades_esfuerzos
-                        
-                        //Condición si se añade un nuevo participante
-                        
-                        //Condición si se elimina un participante existente
+                        ActividadesEmpleadosBean actividadEmpleadoBeanAux = actividades_empleadosDao.consultarActividadEmpleado(Integer.valueOf(id), Integer.valueOf(item));
+                        ActividadesEsfuerzosBean actividadEsfuerzoBeanAux = actividades_esfuerzosDao.consultarActividadEsfuerzo(null, Integer.valueOf(id), Integer.valueOf(item), null, null, null);
 
-                        //Condición si se modifica información del participante
-                        
-                        
-                        //las siguientes líneas es para insertar los datos en la tabla actividades_empleados
+                        //las siguientes líneas es para manejar los datos en la tabla actividades_empleados
                         ActividadesEmpleadosBean actividadEmpleadoBean = new ActividadesEmpleadosBean();
                         actividadEmpleadoBean.setEmpleado(Integer.valueOf(item));
                         actividadEmpleadoBean.setActividad(actividad.getId());
 
-                        //las siguientes líneas es para insertar los datos en la tabla actividades_esfuerzos
+                        //las siguientes líneas es para manejar los datos en la tabla actividades_esfuerzos
                         ActividadesEsfuerzosBean actividadEsfuerzoBean = new ActividadesEsfuerzosBean();
                         actividadEsfuerzoBean.setActividad(actividad.getId());
                         actividadEsfuerzoBean.setEmpleado(Integer.valueOf(item));
@@ -98,13 +96,20 @@ public class ActividadesNegocio {
                             actividadEsfuerzoBean.setFecha(sdf.parse(fecha_estimada_terminacion));
                         } catch (ParseException ex) {
                             Logger.getLogger(ActividadesNegocio.class.getName()).log(Level.SEVERE, null, ex);
-                        }                        
+                        }
                         actividadEsfuerzoBean.setTiempo(Double.valueOf(tiempo_estimado));
                         actividadEsfuerzoBean.setDescripcion(descripcion);
-                        
-                        actividades_esfuerzosDao.crearActividadEsfuerzo(actividadEsfuerzoBean);
-                        actividades_empleadosDao.insertarActividadEmpleado(actividadEmpleadoBean);
-                        guardadoAct_Emp += 1;
+
+                        //Condición si se añade información del participante
+                        if (actividadEmpleadoBeanAux.getActividad() != null && actividadEmpleadoBeanAux.getEmpleado() != null && actividadEsfuerzoBeanAux.getId() != null) {
+                            actividades_esfuerzosDao.actualizarActividadEsfuerzo(actividadEsfuerzoBean);
+                            guardadoAct_Emp += 1;
+                        } else {
+                            //Condición si se añade un nuevo participante
+                            actividades_esfuerzosDao.crearActividadEsfuerzo(actividadEsfuerzoBean);
+                            actividades_empleadosDao.insertarActividadEmpleado(actividadEmpleadoBean);
+                            guardadoAct_Emp += 1;
+                        }
                     }
 
                 } else { //Sino es una inserción
@@ -267,7 +272,7 @@ public class ActividadesNegocio {
     public List<ActividadesEmpleadosBean> consultarActividadesEmpleados(Integer idActividad, Integer idEmpleado) {
         List<ActividadesEmpleadosBean> listaActividadesEmpleados = new ArrayList<>();
         try {
-            listaActividadesEmpleados = actividades_empleadosDao.consultarActividadEmpleado(idActividad, idEmpleado);
+            listaActividadesEmpleados = actividades_empleadosDao.consultarActividadesEmpleados(idActividad, idEmpleado);
         } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
             Logger.getLogger(ActividadesNegocio.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -362,7 +367,7 @@ public class ActividadesNegocio {
     public String eliminarActividad(Integer idActividad) {
         String error = "";
         try {
-            int eliminacionAct_Esf = actividades_empleadosDao.eliminarActividadEmpleado(idActividad);
+            int eliminacionAct_Esf = actividades_empleadosDao.eliminarActividadEmpleado(idActividad, null);
             int eliminacionAct_Empl = actividades_esfuerzosDao.eliminarActividadEsfuerzo(idActividad);
             int eliminacion = actividadesDao.eliminarActividad(idActividad);
             if (eliminacion == 0 && eliminacionAct_Esf == 0 && eliminacionAct_Empl == 0) {
