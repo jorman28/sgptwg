@@ -117,7 +117,7 @@ public class ActividadesController extends HttpServlet {
         }
 
         List<String> permisosPagina = PerfilesNegocio.permisosPorPagina(request, Paginas.ACTIVIDADES);
-        
+
         switch (accion) {
             case "consultar":
                 if (fechaStr != null && !fechaStr.isEmpty()) {
@@ -130,15 +130,22 @@ public class ActividadesController extends HttpServlet {
                 }
                 cargarTabla(response, id, proyectoStr, versionStr, descripcion, estadoStr, fechaStr, responsableStr);
                 break;
-            case "gestionarActividad":
-            case "limpiarGestion":
+            case "crearActividad":
+            case "limpiarCreacion":
                 request.setAttribute("estados", estadosNegocio.consultarEstados(null, "ACTIVIDADES", null, null, null, null));
                 request.setAttribute("proyectos", proyectosNegocio.consultarProyectos(null, null, false));
                 request.setAttribute("clientesActividad", null);
                 request.setAttribute("empleadosActividad", null);
+                request.getRequestDispatcher(INSERTAR_O_EDITAR).forward(request, response);
+                break;
+            case "gestionarActividad":
+            case "limpiarGestion":
                 if (idStr != null && !idStr.isEmpty()) {
                     ActividadesBean actividad = actividadesNegocio.consultarActividadI(id);
-                    //ActividadesEmpleadosBean actividad_empleado = actividadesNegocio.consultarActividad_Empleado(actividad.getId(), responsable);
+                    request.setAttribute("estados", estadosNegocio.consultarEstados(null, "ACTIVIDADES", null, null, null, null));
+                    request.setAttribute("proyectos", proyectosNegocio.consultarProyectos(null, null, false));
+                    request.setAttribute("clientesActividad", null);
+                    request.setAttribute("empleadosActividad", null);
                     proyecto = proyectosNegocio.consultarProyectoPorVersion(actividad.getVersion()).getId();
                     List<PersonasBean> personas = personasNegocio.consultarPersonasActividad(idStr);
                     List<PersonasBean> empleados = new ArrayList<>();
@@ -243,7 +250,7 @@ public class ActividadesController extends HttpServlet {
         request.setAttribute("proyectos", proyectosNegocio.consultarProyectos(null, null, false));
         request.setAttribute("versiones", versionesNegocio.consultarVersiones(null, null, null, false));
         request.setAttribute("estados", estadosNegocio.consultarEstados(null, "ACTIVIDADES", null, null, null, null));
-        if (!accion.equals("consultar") && !accion.equals("editar") && !accion.equals("consultarVersiones") && !accion.equals("gestionarActividad") && !accion.equals("limpiarGestion") && !accion.equals("consultarPersonasProyecto")) {
+        if (!accion.equals("consultar") && !accion.equals("editar") && !accion.equals("consultarVersiones") && !accion.equals("crearActividad") && !accion.equals("limpiarCreacion") && !accion.equals("gestionarActividad") && !accion.equals("limpiarGestion") && !accion.equals("consultarPersonasProyecto")) {
             request.getRequestDispatcher(LISTAR_ACTIVIDADES).forward(request, response);
         }
     }

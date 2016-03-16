@@ -207,7 +207,14 @@
                         </div>
                         <div class="row">
                             <button class="btn btn-default" type="submit" name="accion" id="guardar" value="guardar">Guardar</button>
-                            <button class="btn btn-default" type="submit" name="accion" id="limpiarGestion" value="limpiarGestion">Limpiar</button>
+                            <c:choose>
+                                <c:when test="${id == null || id == ''}">
+                                    <button class="btn btn-default" type="submit" name="accion" id="limpiarCreacion" value="limpiarCreacion">Limpiar</button>
+                                </c:when>
+                                <c:otherwise>
+                                    <button class="btn btn-default" type="submit" name="accion" id="limpiarGestion" value="limpiarGestion">Limpiar</button>
+                                </c:otherwise>
+                            </c:choose>
                             <button class="btn btn-default" type="submit" name="accion" id="limpiar" value="limpiar">Volver a Actividades</button>
                         </div>
                         <br />
