@@ -80,10 +80,18 @@ jQuery(function () {
     $('#proyecto').change(function () {
         var dato = $('#proyecto').val();
         if (dato !== undefined && dato !== "" && dato !== "0") {
+            $("#participante").val("");
             $("#participante").prop("disabled", false);
         } else {
+            $("#participante").val("");
             $("#participante").prop("disabled", true);
         }
+        
+        $("#clientesActividad").html('No se han agregado clientes al proyecto');
+        clientesSeleccionados = 0;
+
+        $("#empleadosActividad").html('No se han agregado empleados al proyecto');
+        empleadosSeleccionados = 0;
     });
 
 });

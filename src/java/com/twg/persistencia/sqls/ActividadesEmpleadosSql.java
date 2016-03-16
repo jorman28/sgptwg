@@ -15,17 +15,13 @@ public class ActividadesEmpleadosSql {
     
     public ActividadesEmpleadosSql(){
     }
-    
-    public String consultarEmpleadosxAtividad(Integer empleado) {
-        return "SELECT actividad, empleado FROM actividades_empleados WHERE 1 = 1 AND empleado = "+empleado;
-    }
-    
-    public String consultarEmpleadosxAtividad(Integer idActividad, Integer idEmpleado) {
-        String sql = "SELECT * FROM actividades_empleados WHERE 1 = 1";
-        if (idActividad != null) {
-            sql += " AND actividad = " + idActividad + " ";
+       
+    public String consultarEmpleadosxActividad(Integer idActividad, Integer idEmpleado) {
+        String sql = "SELECT * FROM actividades_empleados WHERE 1 = 1 ";
+        if (idActividad != null && !idActividad.toString().isEmpty()) {
+            sql += "AND actividad = " + idActividad + " ";
         }
-        if (idEmpleado != null) {
+        if (idEmpleado != null && !idEmpleado.toString().isEmpty()) {
             sql += "AND empleado = '" + idEmpleado + "'";
         }
         return sql;
@@ -35,7 +31,18 @@ public class ActividadesEmpleadosSql {
         return "INSERT INTO actividades_empleados (actividad, empleado) VALUES (? , ?)";
     }
     
-    public String eliminarActividad_Empleado() {
-        return "UPDATE actividades_empleados SET fecha_eliminacion = now() WHERE actividad = ?";
+    public String eliminarActividad_Empleado(Integer idActividad, Integer idEmpleado) {
+        String sql = "UPDATE actividades_empleados SET fecha_eliminacion = now() WHERE 1 = 1 ";
+        if (idActividad != null && !idActividad.toString().isEmpty()) {
+            sql += "AND actividad = " + idActividad + " ";
+        }
+        if (idEmpleado != null && !idEmpleado.toString().isEmpty()) {
+            sql += "AND empleado = '" + idEmpleado + "'";
+        }
+        return sql;
+    }
+    
+    public String eliminarActividades_Empleados() {
+        return "DELETE FROM actividades_empleados WHERE 1 = 1 AND actividad = ? AND empleado NOT IN (?)";
     }
 }
