@@ -150,13 +150,13 @@ public class ActividadesController extends HttpServlet {
                     List<PersonasBean> personas = personasNegocio.consultarPersonasActividad(idStr);
                     List<PersonasBean> empleados = new ArrayList<>();
                     List<PersonasBean> clientes = new ArrayList<>();
-                    personas.stream().forEach((persona) -> {
+                    for (PersonasBean persona : personas) {
                         if (persona.getNombreCargo().toLowerCase().equalsIgnoreCase("cliente")) {
                             clientes.add(persona);
                         } else {
                             empleados.add(persona);
                         }
-                    });
+                    }
                     request.setAttribute("clientesActividad", clientes);
                     request.setAttribute("empleadosActividad", empleados);
                     request.setAttribute("id", actividad.getId().toString());
@@ -190,14 +190,14 @@ public class ActividadesController extends HttpServlet {
                         }
                         List<PersonasBean> empleados = new ArrayList<>();
                         List<PersonasBean> clientes = new ArrayList<>();
-                        personas.stream().forEach((persona) -> {
+
+                        for (PersonasBean persona : personas) {
                             if (persona.getNombreCargo().toLowerCase().equalsIgnoreCase("cliente")) {
                                 clientes.add(persona);
                             } else {
                                 empleados.add(persona);
                             }
-                        });
-
+                        }
                         request.setAttribute("clientesActividad", clientes);
                         request.setAttribute("empleadosActividad", empleados);
                     } else {
@@ -224,14 +224,12 @@ public class ActividadesController extends HttpServlet {
                 JSONArray array = new JSONArray();
                 List<VersionesBean> listaVersiones = versionesNegocio.consultarVersiones(null, proyecto, null, false);
                 if (listaVersiones != null && !listaVersiones.isEmpty()) {
-                    listaVersiones.stream().map((versionBean) -> {
+                    for (VersionesBean versionBean : listaVersiones) {
                         JSONObject object = new JSONObject();
                         object.put("id", versionBean.getId());
                         object.put("nombre", versionBean.getNombre());
-                        return object;
-                    }).forEach((object) -> {
                         array.add(object);
-                    });
+                    }
                 }
                 response.getWriter().write(array.toString());
                 break;

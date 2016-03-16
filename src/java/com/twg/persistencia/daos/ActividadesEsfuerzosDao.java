@@ -135,9 +135,18 @@ public class ActividadesEsfuerzosDao {
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;
+
+        StringBuilder strEmpleados = new StringBuilder("");
+        for (int i = 0; i < empleados.length; i++) {
+            strEmpleados.append(empleados[i]);
+            if (i < empleados.length - 1) {
+                strEmpleados.append(',');
+            }
+        }
+
         ps = con.prepareStatement(sql.eliminarActividades_Esfuerzos());
         ps.setInt(1, actividad);
-        ps.setString(2, String.join(",", empleados));
+        ps.setString(2, strEmpleados.toString());
         int eliminacion = ps.executeUpdate();
         ps.close();
         con.close();
