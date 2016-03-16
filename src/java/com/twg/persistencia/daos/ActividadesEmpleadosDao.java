@@ -99,17 +99,24 @@ public class ActividadesEmpleadosDao {
         int eliminacion = 0;
 
         if (empleados != null && empleados.length > 0) {
+            StringBuilder strEmpleados = new StringBuilder("");
+            for (int i = 0; i < empleados.length; i++) {
+                strEmpleados.append(empleados[i]);
+                if (i < empleados.length - 1) {
+                    strEmpleados.append(',');
+                }
+            }
+
             PreparedStatement ps;
             ps = con.prepareStatement(sql.eliminarActividades_Empleados());
             ps.setInt(1, Actividad);
-            ps.setString(2, String.join(",", empleados));
+            ps.setString(2, strEmpleados.toString());
             eliminacion = ps.executeUpdate();
             ps.close();
 
         } else {
             PreparedStatement ps;
             ps = con.prepareStatement(sql.eliminarActividad_Empleado(Actividad, null));
-            //ps.setInt(1, Actividad);
             eliminacion = ps.executeUpdate();
             ps.close();
         }
