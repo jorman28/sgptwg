@@ -45,9 +45,6 @@ public class ActividadesNegocio {
                 int ultActividad;
 
                 ActividadesBean actividad = new ActividadesBean();
-                ActividadesEmpleadosBean actividadEmpleadoBean = new ActividadesEmpleadosBean();
-
-                actividadEmpleadoBean.setEmpleado(Integer.valueOf(idResponsable));
 
                 actividad.setVersion(Integer.valueOf(version));
                 actividad.setDescripcion(descripcion);
