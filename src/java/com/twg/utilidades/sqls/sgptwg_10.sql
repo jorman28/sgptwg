@@ -1,0 +1,1 @@
+ALTER TABLE versiones ADD COLUMN costo DOUBLE NULL AFTER estado;

@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.sf.dynamicreports.report.datasource.DRDataSource;
+import net.sf.jasperreports.engine.JRDataSource;
 import org.json.simple.JSONObject;
 
 /**
@@ -378,5 +380,26 @@ public class ActividadesNegocio {
             error = "Ocurrió un error eliminando la actividad";
         }
         return error;
+    }
+
+    public JRDataSource actividadesPorEstado() {
+        DRDataSource datos = new DRDataSource("estado", "actividades", "porcentaje");
+        try {
+            Map<String, Integer> actividadesPorEstado = actividadesDao.actividadesPorEstado();
+            double totalActividades = 0;
+            for (Map.Entry<String, Integer> entry : actividadesPorEstado.entrySet()) {
+                try {
+                    totalActividades += entry.getValue();
+                } catch (Exception e) {
+                }
+            }
+            for (Map.Entry<String, Integer> entry : actividadesPorEstado.entrySet()) {
+                double actividades = entry.getValue();
+                datos.add(entry.getKey(), entry.getValue(), actividades / totalActividades);
+            }
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | SQLException ex) {
+            Logger.getLogger(ActividadesNegocio.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return datos;
     }
 }

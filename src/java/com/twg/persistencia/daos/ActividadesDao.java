@@ -14,7 +14,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import net.sf.dynamicreports.report.datasource.DRDataSource;
 
 /**
  *
@@ -51,7 +54,7 @@ public class ActividadesDao {
         con.close();
         return listaActividades;
     }
-    
+
     public int consultarUtimaActividad() throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         int ultimaActividad = 0;
         Connection con;
@@ -68,9 +71,8 @@ public class ActividadesDao {
         con.close();
         return ultimaActividad;
     }
-    
-    
-    public List<ActividadesBean> consultarActiv2(String id, Integer version, String descripcion, String fecha, 
+
+    public List<ActividadesBean> consultarActiv2(String id, Integer version, String descripcion, String fecha,
             Integer estado, String responsable) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         List<ActividadesBean> listaActividades = new ArrayList();
         Connection con;
@@ -111,16 +113,16 @@ public class ActividadesDao {
         ps.setDate(3, new Date(actividad.getFecha_estimada_terminacion().getTime()));
         if (actividad.getFecha_real_inicio() != null) {
             ps.setDate(4, new Date(actividad.getFecha_real_inicio().getTime()));
-        }else{
+        } else {
             ps.setDate(4, null);
         }
-        
+
         if (actividad.getFecha_real_terminacion() != null) {
             ps.setDate(5, new Date(actividad.getFecha_real_terminacion().getTime()));
-        }else{
+        } else {
             ps.setDate(5, null);
         }
-        
+
         ps.setDouble(6, actividad.getTiempo_estimado());
         ps.setDouble(7, actividad.getTiempo_invertido());
         ps.setInt(8, actividad.getVersion());
@@ -140,19 +142,19 @@ public class ActividadesDao {
         ps.setString(1, actividad.getDescripcion());
         ps.setDate(2, new Date(actividad.getFecha_estimada_inicio().getTime()));
         ps.setDate(3, new Date(actividad.getFecha_estimada_terminacion().getTime()));
-        
+
         if (actividad.getFecha_real_inicio() != null) {
             ps.setDate(4, new Date(actividad.getFecha_real_inicio().getTime()));
-        }else{
+        } else {
             ps.setDate(4, null);
         }
-        
+
         if (actividad.getFecha_real_terminacion() != null) {
             ps.setDate(5, new Date(actividad.getFecha_real_terminacion().getTime()));
-        }else{
+        } else {
             ps.setDate(5, null);
         }
-        
+
         ps.setDouble(6, actividad.getTiempo_estimado());
         ps.setDouble(7, actividad.getTiempo_invertido());
         ps.setInt(8, actividad.getVersion());
@@ -173,5 +175,19 @@ public class ActividadesDao {
         ps.close();
         con.close();
         return eliminacion;
+    }
+
+    public Map<String, Integer> actividadesPorEstado() throws ClassNotFoundException, InstantiationException, IllegalAccessException, SQLException {
+        Map<String, Integer> actividadesPorEstado = new HashMap<>();
+        Connection con;
+        con = new ConexionBaseDatos().obtenerConexion();
+        PreparedStatement ps;
+        ps = con.prepareStatement(sql.estadosPorActividades());
+        ResultSet rs;
+        rs = ps.executeQuery();
+        while (rs.next()) {
+            actividadesPorEstado.put(rs.getString("estado"), ((Long) rs.getObject("actividades")).intValue());
+        }
+        return actividadesPorEstado;
     }
 }

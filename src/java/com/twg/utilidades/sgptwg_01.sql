@@ -1,2 +1,0 @@
-ALTER TABLE usuarios ADD activo VARCHAR(1) NOT NULL;
-ALTER TABLE tipos_documentos MODIFY nombre VARCHAR(50) NOT NULL;
