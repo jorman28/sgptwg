@@ -38,9 +38,9 @@ public class EstadosDao {
             estado.setId(rs.getInt("id"));
             estado.setTipo_estado(rs.getString("tipo_estado"));            
             estado.setNombre(rs.getString("nombre"));
-            estado.setEstadoPrev(rs.getInt("estadoPrev"));
-            estado.setEstadoSig(rs.getInt("estadoSig"));
-            estado.seteFinal(rs.getString("eFinal"));
+            estado.setEstadoPrev(rs.getInt("estado_prev"));
+            estado.setEstadoSig(rs.getInt("estado_sig"));
+            estado.seteFinal(rs.getString("e_final"));
             listaEstados.add(estado);
         }
         rs.close();
@@ -62,9 +62,9 @@ public class EstadosDao {
             estado.setId(rs.getInt("id"));
             estado.setTipo_estado(rs.getString("tipo_estado"));            
             estado.setNombre(rs.getString("nombre"));
-            estado.setEstadoPrev(rs.getInt("estadoPrev"));
-            estado.setEstadoSig(rs.getInt("estadoSig"));
-            estado.seteFinal(rs.getString("eFinal"));
+            estado.setEstadoPrev(rs.getInt("estado_prev"));
+            estado.setEstadoSig(rs.getInt("estado_sig"));
+            estado.seteFinal(rs.getString("e_final"));
             listaEstados.add(estado);
         }
         rs.close();
