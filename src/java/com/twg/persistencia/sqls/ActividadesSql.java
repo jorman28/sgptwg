@@ -103,7 +103,7 @@ public class ActividadesSql {
                 + "        INNER JOIN\n"
                 + "    estados est ON act.estado = est.id\n"
                 + "WHERE\n"
-                + "    est.eFinal != 'T'\n"
+                + "    est.e_final != 'T'\n"
                 + "GROUP BY act.estado";
         return sql;
     }
@@ -116,7 +116,7 @@ public class ActividadesSql {
                 + "        LEFT JOIN\n"
                 + "    actividades act ON act.estado = est.id\n"
                 + "WHERE\n"
-                + "    est.eFinal != 'T'\n"
+                + "    est.e_final != 'T'\n"
                 + "        AND est.tipo_estado = 'ACTIVIDADES'\n"
                 + "GROUP BY act.estado;";
         return sql;
