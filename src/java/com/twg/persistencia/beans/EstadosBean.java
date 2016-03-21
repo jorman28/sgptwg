@@ -14,29 +14,29 @@ public class EstadosBean {
     
     private Integer id;
     private String nombre;    
-    private String fecha_eliminacion;
-    private String tipo_estado;
-    private Integer estado_prev;
-    private Integer estado_sig;
-    private String e_final;
+    private String fechaEliminacion;
+    private String tipoEstado;
+    private Integer estadoPrevio;
+    private Integer estadoSiguiente;
+    private String estadoFinal;
 
     public EstadosBean(){
     }
 
-    public String getFecha_eliminacion() {
-        return fecha_eliminacion;
+    public String getFechaEliminacion() {
+        return fechaEliminacion;
     }
 
-    public void setFecha_eliminacion(String fecha_eliminacion) {
-        this.fecha_eliminacion = fecha_eliminacion;
+    public void setFechaEliminacion(String fechaEliminacion) {
+        this.fechaEliminacion = fechaEliminacion;
     }
 
-    public String getTipo_estado() {
-        return tipo_estado;
+    public String getTipoEstado() {
+        return tipoEstado;
     }
 
-    public void setTipo_estado(String tipo_estado) {
-        this.tipo_estado = tipo_estado;
+    public void setTipoEstado(String tipoEstado) {
+        this.tipoEstado = tipoEstado;
     }
 
     public Integer getId() {
@@ -55,27 +55,27 @@ public class EstadosBean {
         this.nombre = nombre;
     }
     
-    public Integer getEstadoPrev() {
-        return estado_prev;
+    public Integer getEstadoPrevio() {
+        return estadoPrevio;
     }
 
-    public void setEstadoPrev(Integer estado_prev) {
-        this.estado_prev = estado_prev;
+    public void setEstadoPrevio(Integer estadoPrevio) {
+        this.estadoPrevio = estadoPrevio;
     }
 
-    public Integer getEstadoSig() {
-        return estado_sig;
+    public Integer getEstadoSiguiente() {
+        return estadoSiguiente;
     }
 
-    public void setEstadoSig(Integer estado_sig) {
-        this.estado_sig = estado_sig;
+    public void setEstadoSiguiente(Integer estadoSiguiente) {
+        this.estadoSiguiente = estadoSiguiente;
     }
 
-    public String geteFinal() {
-        return e_final;
+    public String getEstadoFinal() {
+        return estadoFinal;
     }
 
-    public void seteFinal(String e_final) {
-        this.e_final = e_final;
+    public void setEstadoFinal(String estadoFinal) {
+        this.estadoFinal = estadoFinal;
     }
 }

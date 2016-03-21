@@ -36,11 +36,11 @@ public class EstadosDao {
         while(rs.next()){
             EstadosBean estado = new EstadosBean();
             estado.setId(rs.getInt("id"));
-            estado.setTipo_estado(rs.getString("tipo_estado"));            
+            estado.setTipoEstado(rs.getString("tipo_estado"));            
             estado.setNombre(rs.getString("nombre"));
-            estado.setEstadoPrev(rs.getInt("estado_prev"));
-            estado.setEstadoSig(rs.getInt("estado_sig"));
-            estado.seteFinal(rs.getString("e_final"));
+            estado.setEstadoPrevio(rs.getInt("estado_previo"));
+            estado.setEstadoSiguiente(rs.getInt("estado_siguiente"));
+            estado.setEstadoFinal(rs.getString("estado_final"));
             listaEstados.add(estado);
         }
         rs.close();
@@ -60,11 +60,11 @@ public class EstadosDao {
         while(rs.next()){
             EstadosBean estado = new EstadosBean();
             estado.setId(rs.getInt("id"));
-            estado.setTipo_estado(rs.getString("tipo_estado"));            
+            estado.setTipoEstado(rs.getString("tipo_estado"));            
             estado.setNombre(rs.getString("nombre"));
-            estado.setEstadoPrev(rs.getInt("estado_prev"));
-            estado.setEstadoSig(rs.getInt("estado_sig"));
-            estado.seteFinal(rs.getString("e_final"));
+            estado.setEstadoPrevio(rs.getInt("estado_previo"));
+            estado.setEstadoSiguiente(rs.getInt("estado_siguiente"));
+            estado.setEstadoFinal(rs.getString("estado_final"));
             listaEstados.add(estado);
         }
         rs.close();
@@ -96,11 +96,11 @@ public class EstadosDao {
         PreparedStatement ps;
         ps = con.prepareStatement(sql.insertarEstado());
         //ps.setInt(1, estado.getId());
-        ps.setString(1, estado.getTipo_estado());        
+        ps.setString(1, estado.getTipoEstado());        
         ps.setString(2, estado.getNombre());
-        ps.setInt(3, estado.getEstadoPrev());
-        ps.setInt(4, estado.getEstadoSig());
-        ps.setString(5, estado.geteFinal());
+        ps.setInt(3, estado.getEstadoPrevio());
+        ps.setInt(4, estado.getEstadoSiguiente());
+        ps.setString(5, estado.getEstadoFinal());
         int insercion = ps.executeUpdate();
         ps.close();
         con.close();
@@ -113,11 +113,11 @@ public class EstadosDao {
         PreparedStatement ps;
         ps = con.prepareStatement(sql.actualizarEstado());
         ps.setInt(6, estado.getId());
-        ps.setString(1, estado.getTipo_estado());        
+        ps.setString(1, estado.getTipoEstado());        
         ps.setString(2, estado.getNombre());
-        ps.setInt(3, estado.getEstadoPrev());
-        ps.setInt(4, estado.getEstadoSig());
-        ps.setString(5, estado.geteFinal());
+        ps.setInt(3, estado.getEstadoPrevio());
+        ps.setInt(4, estado.getEstadoSiguiente());
+        ps.setString(5, estado.getEstadoFinal());
         int actualizacion = ps.executeUpdate();
         ps.close();
         con.close();

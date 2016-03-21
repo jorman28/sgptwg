@@ -26,11 +26,11 @@ public class EstadosNegocio {
                 if (listaEstados != null && !listaEstados.isEmpty()) {
                     EstadosBean estado = listaEstados.get(0);
                     jsonEstado.put("id", estado.getId());
-                    jsonEstado.put("tipoEstado", estado.getTipo_estado());
+                    jsonEstado.put("tipoEstado", estado.getTipoEstado());
                     jsonEstado.put("nombre", estado.getNombre());
-                    jsonEstado.put("estadoPrev", estado.getEstadoPrev());
-                    jsonEstado.put("estadoSig", estado.getEstadoSig());
-                    jsonEstado.put("eFinal", estado.geteFinal() );
+                    jsonEstado.put("estadoPrev", estado.getEstadoPrevio());
+                    jsonEstado.put("estadoSig", estado.getEstadoSiguiente());
+                    jsonEstado.put("eFinal", estado.getEstadoFinal() );
                 }
             } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
                 Logger.getLogger(EstadosNegocio.class.getName()).log(Level.SEVERE, null, ex);
@@ -53,12 +53,12 @@ public class EstadosNegocio {
     public Map<String, Object> crearEstado(Integer id, String tipoEstado, String nombre, Integer estadoPrev, 
             Integer estadoSig, String eFinal) {
         EstadosBean estadoBean = new EstadosBean();
-        estadoBean.setTipo_estado(tipoEstado);        
+        estadoBean.setTipoEstado(tipoEstado);        
         estadoBean.setNombre(nombre);
         estadoBean.setId(id);
-        estadoBean.setEstadoPrev(estadoPrev);
-        estadoBean.setEstadoSig(estadoSig);
-        estadoBean.seteFinal(eFinal);
+        estadoBean.setEstadoPrevio(estadoPrev);
+        estadoBean.setEstadoSiguiente(estadoSig);
+        estadoBean.setEstadoFinal(eFinal);
 
         String mensajeExito = "";
         String mensajeError = validarDatos(estadoBean);
@@ -148,15 +148,15 @@ public class EstadosNegocio {
 
     private String validarDatos(EstadosBean estado) {
         String error = "";
-        if (estado.getTipo_estado() == null || estado.getTipo_estado().equals("0") || estado.getTipo_estado().isEmpty()) {
+        if (estado.getTipoEstado() == null || estado.getTipoEstado().equals("0") || estado.getTipoEstado().isEmpty()) {
             error += "El campo 'Tipo de Estado' es obligatorio <br/>";
         }
         if (estado.getNombre() == null || estado.getNombre().isEmpty()) {
             error += "El campo 'Nombre' es obligatorio <br/>";
         }
-        if (estado.getEstadoPrev() != null && estado.getEstadoPrev().intValue() != 0 && estado.getEstadoSig() != null && 
-                estado.getEstadoSig().intValue() != 0){
-            if( estado.getEstadoPrev().intValue() == estado.getEstadoSig().intValue()){
+        if (estado.getEstadoPrevio() != null && estado.getEstadoPrevio().intValue() != 0 && estado.getEstadoSiguiente() != null && 
+                estado.getEstadoSiguiente().intValue() != 0){
+            if( estado.getEstadoPrevio().intValue() == estado.getEstadoSiguiente().intValue()){
                 error += "El estado previo y siguiente no pueden ser iguales <br/>";
             }
         }
