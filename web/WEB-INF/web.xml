@@ -48,6 +48,10 @@
         <servlet-name>CerrarSesionController</servlet-name>
         <servlet-class>com.twg.controladores.CerrarSesionController</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>ActividadesPorEstadoController</servlet-name>
+        <servlet-class>com.twg.controladores.ActividadesPorEstadoController</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>UsuariosController</servlet-name>
         <url-pattern>/UsuariosController</url-pattern>
@@ -87,6 +91,10 @@
     <servlet-mapping>
         <servlet-name>CerrarSesionController</servlet-name>
         <url-pattern>/CerrarSesionController</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ActividadesPorEstadoController</servlet-name>
+        <url-pattern>/ActividadesPorEstadoController</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
