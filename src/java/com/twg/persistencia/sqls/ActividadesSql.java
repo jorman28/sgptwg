@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.twg.persistencia.sqls;
 
 import java.util.Date;
@@ -10,6 +5,7 @@ import java.util.Date;
 /**
  *
  * @author Jorman Rincón
+ * @author Andrés Giraldo
  */
 public class ActividadesSql {
 
@@ -95,30 +91,40 @@ public class ActividadesSql {
         return "UPDATE actividades SET fecha_eliminacion = now() WHERE id = ?";
     }
 
-    public String actividadesPorEstados() {
+    public String actividadesPorEstados(Integer proyecto, Integer version, Integer persona) {
         String sql = "SELECT \n"
-                + "    est.nombre AS estado, COUNT(act.id) AS actividades\n"
+                + "    est.nombre AS estado,\n"
+                + "    (SELECT \n"
+                + "            COUNT(DISTINCT act.id)\n"
+                + "        FROM\n"
+                + "            actividades act\n"
+                + "                LEFT JOIN\n"
+                + "            versiones ver ON ver.id = act.version\n"
+                + "                LEFT JOIN\n"
+                + "            proyectos pro ON pro.id = ver.proyecto\n"
+                + "                LEFT JOIN\n"
+                + "            actividades_empleados actEmp ON actEmp.actividad = act.id\n"
+                + "        WHERE\n"
+                + "            act.estado = est.id ";
+        if (proyecto != null && proyecto.intValue() != 0) {
+            sql += "                AND pro.id = ''\n";
+        }
+        if (version != null && version.intValue() != 0) {
+            sql += "                AND ver.id = ''\n";
+        }
+        if (persona != null && persona.intValue() != 0) {
+            sql += "                AND actEmp.empleado = '' ";
+        }
+        sql += "     ) AS actividades\n"
                 + "FROM\n"
-                + "    actividades act\n"
-                + "        INNER JOIN\n"
-                + "    estados est ON act.estado = est.id\n"
+                + "    estados est\n"
                 + "WHERE\n"
                 + "    est.estado_final != 'T'\n"
-                + "GROUP BY act.estado";
+                + "        AND est.tipo_estado = 'ACTIVIDADES';";
         return sql;
     }
 
-    public String estadosPorActividades() {
-        String sql = "SELECT \n"
-                + "    est.nombre AS estado, COUNT(DISTINCT act.id) AS actividades\n"
-                + "FROM\n"
-                + "    estados est\n"
-                + "        LEFT JOIN\n"
-                + "    actividades act ON act.estado = est.id\n"
-                + "WHERE\n"
-                + "    est.estado_final != 'T'\n"
-                + "        AND est.tipo_estado = 'ACTIVIDADES'\n"
-                + "GROUP BY act.estado;";
-        return sql;
+    public static void main(String[] args) {
+        System.out.println(new ActividadesSql().actividadesPorEstados(null, null, null));
     }
 }

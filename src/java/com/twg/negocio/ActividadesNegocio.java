@@ -80,7 +80,7 @@ public class ActividadesNegocio {
                     //En caso de eliminar un participante existente
                     actividades_empleadosDao.eliminarActividadesEmpleados(Integer.valueOf(id), participantes);
                     actividades_esfuerzosDao.eliminarActividadesEsfuerzos(Integer.valueOf(id), participantes);
-                    
+
                     for (String item : participantes) { //Aplica para tablas actividades_empleados y actividades_esfuerzos
                         ActividadesEmpleadosBean actividadEmpleadoBeanAux = actividades_empleadosDao.consultarActividadEmpleado(Integer.valueOf(id), Integer.valueOf(item));
                         ActividadesEsfuerzosBean actividadEsfuerzoBeanAux = actividades_esfuerzosDao.consultarActividadEsfuerzo(null, Integer.valueOf(id), Integer.valueOf(item), null, null, null);
@@ -382,10 +382,10 @@ public class ActividadesNegocio {
         return error;
     }
 
-    public JRDataSource actividadesPorEstado() {
+    public JRDataSource actividadesPorEstado(Integer proyecto, Integer version, Integer persona) {
         DRDataSource datos = new DRDataSource("estado", "actividades", "porcentaje");
         try {
-            Map<String, Integer> actividadesPorEstado = actividadesDao.actividadesPorEstado();
+            Map<String, Integer> actividadesPorEstado = actividadesDao.actividadesPorEstado(proyecto, version, persona);
             double totalActividades = 0;
             for (Map.Entry<String, Integer> entry : actividadesPorEstado.entrySet()) {
                 try {
@@ -395,11 +395,44 @@ public class ActividadesNegocio {
             }
             for (Map.Entry<String, Integer> entry : actividadesPorEstado.entrySet()) {
                 double actividades = entry.getValue();
-                datos.add(entry.getKey(), entry.getValue(), actividades / totalActividades);
+                if (totalActividades > 0) {
+                    datos.add(entry.getKey(), entry.getValue(), actividades / totalActividades);
+                } else {
+                    datos.add(entry.getKey(), entry.getValue(), 0);
+                }
             }
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | SQLException ex) {
             Logger.getLogger(ActividadesNegocio.class.getName()).log(Level.SEVERE, null, ex);
         }
         return datos;
+    }
+
+    public List<Map<String, Object>> listarActividadesPorEstado(Integer proyecto, Integer version, Integer persona) {
+        List<Map<String, Object>> actividadesPorEstado = new ArrayList<>();
+        try {
+            Map<String, Integer> estados = actividadesDao.actividadesPorEstado(proyecto, version, persona);
+            double totalActividades = 0;
+            for (Map.Entry<String, Integer> entry : estados.entrySet()) {
+                try {
+                    totalActividades += entry.getValue();
+                } catch (Exception e) {
+                }
+            }
+            for (Map.Entry<String, Integer> entry : estados.entrySet()) {
+                Map<String, Object> mapaActividades = new HashMap<>();
+                mapaActividades.put("estado", entry.getKey());
+                mapaActividades.put("actividades", entry.getValue());
+                double actividades = entry.getValue();
+                if (totalActividades > 0) {
+                    mapaActividades.put("porcentaje", (Math.round(actividades / totalActividades * 100d) / 100d) + "%");
+                } else {
+                    mapaActividades.put("porcentaje", 0+"%");
+                }
+                actividadesPorEstado.add(mapaActividades);
+            }
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | SQLException ex) {
+            Logger.getLogger(ActividadesNegocio.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return actividadesPorEstado;
     }
 }
