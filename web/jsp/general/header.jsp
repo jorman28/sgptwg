@@ -5,6 +5,7 @@
 <script type="text/javascript" src="js/general/bootstrap.min.js"></script>
 <script type="text/javascript" src="js/general/bootstrap-datetimepicker.min.js"></script>
 <script type="text/javascript" src="js/general/bootstrap-typeahead.min.js"></script>
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 <link rel="stylesheet" type="text/css" href="css/bootstrap-theme.min.css">
 <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
 <link rel="stylesheet" type="text/css" href="css/bootstrap-datetimepicker.css">
