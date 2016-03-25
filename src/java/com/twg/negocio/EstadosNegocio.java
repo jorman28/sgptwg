@@ -163,14 +163,22 @@ public class EstadosNegocio {
         if(estado.getEstadoFinal()!= null && estado.getEstadoFinal().equals("T")){
             List<EstadosBean> ef = new ArrayList<>();
             try {
-                if(estado.getTipoEstado()!= null && estado.getTipoEstado().equals("ACTIVIDADES")){
-                    ef = estadosDao.consultarEstados(null, "ACTIVIDADES", null, null, null, "T");
-                }else{
-                    ef = estadosDao.consultarEstados(null, "VERSIONES", null, null, null, "T");
-                }
-                
-                if(ef != null && ef.size() > 0){
-                    error += "Sólo puede existir un estado 'Final' en cada tipo <br/>";
+                //Se consulta el estado anterior en caso de que estén haceindo un update para calidar si cambió el campo Estado Final.
+                ef = estadosDao.consultarEstados(estado.getId(), null, null, null, null, null);
+                /*
+                Si el estado final es el mismo, no hay que hacer la validación para que no exista más de un estado marcado como final.
+                Per si es diferente, sí hay que validar
+                */
+                if(ef != null && ef.size() > 0 && !ef.get(0).getEstadoFinal().equals(estado.getEstadoFinal())){
+                    if(estado.getTipoEstado()!= null && estado.getTipoEstado().equals("ACTIVIDADES")){
+                        ef = estadosDao.consultarEstados(null, "ACTIVIDADES", null, null, null, "T");
+                    }else{
+                        ef = estadosDao.consultarEstados(null, "VERSIONES", null, null, null, "T");
+                    }
+
+                    if(ef != null && ef.size() > 0){
+                        error += "Sólo puede existir un estado 'Final' en cada tipo <br/>";
+                    }
                 }
             } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
                 Logger.getLogger(EstadosNegocio.class.getName()).log(Level.SEVERE, null, ex);

@@ -29,9 +29,9 @@ public class VersionesNegocio {
         version.setAlcance(alcance);
         version.setProyecto(Integer.valueOf(proyecto));
         version.setEstado(Integer.valueOf(estado));
-        if (costo != null) {
+        try {
             version.setCosto(Double.valueOf(costo));
-        }else{
+        } catch (Exception e) {
             version.setCosto(0.0);
         }
         try {
@@ -65,10 +65,15 @@ public class VersionesNegocio {
         if (nombre == null || nombre.isEmpty()) {
             validacion += "El campo 'Nombre' no debe estar vacío \n";
         } else {
-            List<VersionesBean> listaVersiones = consultarVersiones(null, null, nombre, true);
+            int proyectoInt = 0;
+            try {
+                proyectoInt = Integer.valueOf(proyecto);
+            } catch (Exception e) {
+            }
+            List<VersionesBean> listaVersiones = consultarVersiones(null, proyectoInt, nombre, true);
             if (listaVersiones != null && !listaVersiones.isEmpty()) {
                 if (idVersion == null || idVersion.intValue() != listaVersiones.get(0).getId()) {
-                    validacion += "El valor ingresado en el campo 'Nombre' ya existe en el sistema \n";
+                    validacion += "El valor ingresado en el campo 'Nombre' ya existe dentro del proyecto \n";
                 }
             }
         }
@@ -112,11 +117,16 @@ public class VersionesNegocio {
             EstadosDao eDao = new EstadosDao();
             try {
                 if(idVersion!=null){//Versión existente: se valida contra estados prev y sig
-
-//                    TODO: Validar estado previo y siguiente.   
-//                    Validar que al dar clic en MAS, se borre el ID.
-                    
-                    
+                    List<VersionesBean> versionAntigua = consultarVersiones(idVersion, null, null, false);
+                    if(versionAntigua != null && !versionAntigua.isEmpty()){
+                        if(versionAntigua.get(0).getEstado() != est){
+                            List<EstadosBean> listaEstados = eDao.consultarEstados(versionAntigua.get(0).getEstado(), null, null, null, null, null);
+                            if(listaEstados != null && !listaEstados.isEmpty() && listaEstados.get(0).getEstadoPrevio() != est
+                                    && listaEstados.get(0).getEstadoSiguiente() != est){
+                                validacion += "El estado seleccionado no es válido. \n";
+                            }
+                        }
+                    }
                 }else{//Versión nueva: se valida contra estado final unicamente
                     List<EstadosBean> eBean = eDao.consultarEstados(null, "VERSIONES", null, null, null, "T");
                     if(eBean!=null && !eBean.isEmpty()){

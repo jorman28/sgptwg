@@ -13,6 +13,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 public class EstadosController extends HttpServlet {
@@ -72,8 +73,8 @@ public class EstadosController extends HttpServlet {
                 cargarTabla(response, permisosPagina, id, tipoEstado, nombre, estadoPrev, estadoSig, eFinal);
                 break;
             case "editar":
-                JSONObject object = estadosNegocio.consultarEstado(id);
-                response.getWriter().write(object.toString());
+                JSONObject obj = estadosNegocio.consultarEstado(id);
+                response.getWriter().write(obj.toString());
                 
                 break;
             case "guardar":
@@ -97,6 +98,19 @@ public class EstadosController extends HttpServlet {
                     mensajeExito = (String) result.get("mensajeExito");
                     enviarDatos(request, null, null, null, null, null, null);
                 }
+                break;
+            case "ConsultarEstados":
+                JSONArray array = new JSONArray();
+                List<EstadosBean> listaEstados = estadosNegocio.consultarEstados(null, tipoEstado, null, null, null, null);
+                if (listaEstados != null && !listaEstados.isEmpty()) {
+                    for (EstadosBean estadoBean : listaEstados) {
+                        JSONObject object = new JSONObject();
+                        object.put("id", estadoBean.getId());
+                        object.put("nombre", estadoBean.getNombre());
+                        array.add(object);
+                    }
+                }
+                response.getWriter().write(array.toString());
                 break;
             default:
                 enviarDatos(request, null, null, null, null, null, null);
