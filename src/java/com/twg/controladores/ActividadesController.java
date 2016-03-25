@@ -13,6 +13,7 @@ import com.twg.negocio.ProyectosNegocio;
 import com.twg.negocio.VersionesNegocio;
 import com.twg.persistencia.beans.ActividadesBean;
 import com.twg.persistencia.beans.Paginas;
+import com.twg.persistencia.beans.Permisos;
 import com.twg.persistencia.beans.PersonasBean;
 import com.twg.persistencia.beans.VersionesBean;
 import java.io.IOException;
@@ -128,7 +129,7 @@ public class ActividadesController extends HttpServlet {
                         Logger.getLogger(ActividadesController.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
-                cargarTabla(response, id, proyectoStr, versionStr, descripcion, estadoStr, fechaStr, responsableStr);
+                cargarTabla(response, permisosPagina, id, proyectoStr, versionStr, descripcion, estadoStr, fechaStr, responsableStr);
                 break;
             case "crearActividad":
             case "limpiarCreacion":
@@ -249,6 +250,14 @@ public class ActividadesController extends HttpServlet {
         request.setAttribute("versiones", versionesNegocio.consultarVersiones(null, null, null, false));
         request.setAttribute("estados", estadosNegocio.consultarEstados(null, "ACTIVIDADES", null, null, null, null));
         if (!accion.equals("consultar") && !accion.equals("editar") && !accion.equals("consultarVersiones") && !accion.equals("crearActividad") && !accion.equals("limpiarCreacion") && !accion.equals("gestionarActividad") && !accion.equals("limpiarGestion") && !accion.equals("consultarPersonasProyecto")) {
+            if (permisosPagina != null && !permisosPagina.isEmpty()) {
+                if (permisosPagina.contains(Permisos.CONSULTAR.getNombre())) {
+                    request.setAttribute("opcionConsultar", "T");
+                }
+                if (permisosPagina.contains(Permisos.GUARDAR.getNombre())) {
+                    request.setAttribute("opcionGuardar", "T");
+                }
+            }
             request.getRequestDispatcher(LISTAR_ACTIVIDADES).forward(request, response);
         }
     }
@@ -267,7 +276,7 @@ public class ActividadesController extends HttpServlet {
         request.setAttribute("estado", estado);
     }
 
-    private void cargarTabla(HttpServletResponse response, Integer id, String proyecto, String version, String descripcion,
+    private void cargarTabla(HttpServletResponse response, List<String> permisos, Integer id, String proyecto, String version, String descripcion,
             String estado, String fecha, String responsable) throws ServletException, IOException {
         response.setContentType("text/html; charset=iso-8859-1");
 
@@ -298,8 +307,12 @@ public class ActividadesController extends HttpServlet {
                 out.println("<td>" + actividad.getTiempo_estimado() + "</td>");
                 out.println("<td>" + actividad.getNombreE() + "</td>");
                 out.println("<td>");
-                out.println("<button class=\"btn btn-default\" type=\"submit\" name=\"accion\" id=\"gestionarActividad\" value='gestionarActividad_" + actividad.getId() + "'> Gestionar</button>");
-                out.println("<button class=\"btn btn-default\" type=\"button\" data-toggle=\"modal\" data-target=\"#confirmationMessage\" onclick=\"jQuery('#id').val('" + actividad.getId() + "');\">Eliminar</button>");
+                if (permisos != null && !permisos.isEmpty() && permisos.contains(Permisos.GUARDAR.getNombre())) {
+                    out.println("<button class=\"btn btn-default\" type=\"submit\" name=\"accion\" id=\"gestionarActividad\" value='gestionarActividad_" + actividad.getId() + "'> Gestionar</button>");
+                }
+                if (permisos != null && !permisos.isEmpty() && permisos.contains(Permisos.ELIMINAR.getNombre())) {
+                    out.println("<button class=\"btn btn-default\" type=\"button\" data-toggle=\"modal\" data-target=\"#confirmationMessage\" onclick=\"jQuery('#id').val('" + actividad.getId() + "');\">Eliminar</button>");
+                }
                 out.println("</td>");
                 out.println("</tr>");
             }
