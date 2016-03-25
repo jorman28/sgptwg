@@ -86,7 +86,7 @@ public class ProyectosController extends HttpServlet {
         String busquedaProyecto = request.getParameter("busquedaProyecto");
 
         List<String> permisosPagina = PerfilesNegocio.permisosPorPagina(request, Paginas.VERSIONES);
-
+        
         switch (accion) {
             case "editarProyecto":
                 JSONObject proyecto = proyectosNegocio.consultarProyecto(idProyecto);
@@ -139,8 +139,7 @@ public class ProyectosController extends HttpServlet {
                         if (mensajeError.isEmpty()) {
                             mensajeExito = "La versión ha sido eliminada con éxito";
                         }
-                    }
-                    if (tipoEliminacion.equals("COMENTARIO")) {
+                    }else if (tipoEliminacion.equals("COMENTARIO")) {
                         Integer idComentario = Integer.valueOf(request.getParameter("idComentario"));
                         mensajeError = comentariosNegocio.eliminarComentario(idComentario);
                         if (mensajeError.isEmpty()) {

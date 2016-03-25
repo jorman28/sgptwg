@@ -74,6 +74,7 @@ function nuevoProyecto() {
 
 function nuevaVersion(idProyecto, fechaInicio) {
     $("#idProyectoVersion").val(idProyecto);
+    $("#idVersion").val('');
     $("#nombreVersion").val('');
     $("#estado").val("0");
     $("#fechaInicioVersion").val('');
