@@ -30,7 +30,7 @@ public class GeneradorReportes {
 
     private final ActividadesNegocio actividadesNegocio = new ActividadesNegocio();
     private final SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyy_hhmmss");
-    private final String rutaReportes = "D://POLITECNICO JIC/PPI SGPTWG/reportes/";
+    public final String rutaReportes = "D://POLITECNICO JIC/PPI SGPTWG/reportes/";
 
     /**
      * Método encargado de listar los distintos estados de actividades y contar
@@ -44,9 +44,9 @@ public class GeneradorReportes {
      * que se desean consultar.
      * @param persona Identificador de la persona que tiene asociada las
      * actividades que se desean consultar
-     * @param tipoReporte Indica el formato en el que se generará el reporte
+     * @return El nombre del archivo generado
      */
-    public void actividadesPorEstado(Integer proyecto, Integer version, Integer persona, String tipoReporte) {
+    public String actividadesPorEstado(Integer proyecto, Integer version, Integer persona) {
         FontBuilder boldFont = stl.fontArialBold().setFontSize(12);
         TextColumnBuilder<String> estado = Columns.column("Estado", "estado", DataTypes.stringType());
         TextColumnBuilder<Integer> cantidad = Columns.column("Actividades", "actividades", DataTypes.integerType());
@@ -63,7 +63,7 @@ public class GeneradorReportes {
                 .add(cmp.verticalGap(20))
                 .add(cht.pie3DChart().setTitleFont(boldFont).setKey(estado).series(cht.serie(cantidad))));
         reporte.setTemplate(Templates.reportTemplate);
-        guardarReporte(reporte, tipoReporte, "Actividades_por_estado");
+        return guardarReporte(reporte, "Actividades_por_estado");
     }
 
     /**
@@ -73,41 +73,24 @@ public class GeneradorReportes {
      *
      * @param reporte Corresponde al reporte generado mediante la librería
      * DynamicReports
-     * @param tipoReporte Si es pdf, xlsx o csv.
      * @param nombreReporte Nombre que tendrá el reporte al ser almacenado.
+     * @return El nombre del archivo generado
      */
-    public void guardarReporte(JasperReportBuilder reporte, String tipoReporte, String nombreReporte) {
-        if (tipoReporte == null
-                || (!tipoReporte.equalsIgnoreCase("pdf") && !tipoReporte.equalsIgnoreCase("xlsx") && !tipoReporte.equalsIgnoreCase("csv"))) {
-            tipoReporte = "pdf";
-        }
+    public String guardarReporte(JasperReportBuilder reporte, String nombreReporte) {
         if (nombreReporte == null) {
             nombreReporte = "";
         }
         try {
             nombreReporte += sdf.format(new Date());
             OutputStream out;
-            out = new FileOutputStream(new File(rutaReportes + nombreReporte + "." + tipoReporte));
-            switch (tipoReporte.toLowerCase()) {
-                case "xslx":
-                    reporte.toXlsx(out);
-                    break;
-                case "csv":
-                    reporte.toCsv(out);
-                    break;
-                default:
-                    reporte.toPdf(out);
-                    break;
-            }
+            out = new FileOutputStream(new File(rutaReportes + nombreReporte + ".pdf"));
+            reporte.toPdf(out);
             out.flush();
             out.close();
-        } catch (IOException | DRException  e) {
+        } catch (IOException | DRException e) {
             Logger.getLogger(ActividadesNegocio.class.getName()).log(Level.SEVERE, "Error guardando reporte generado", e);
+            return "";
         }
+        return nombreReporte + ".pdf";
     }
-
-    public static void main(String[] args) {
-        new GeneradorReportes().actividadesPorEstado(null, null, null, null);
-    }
-
 }

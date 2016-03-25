@@ -1,5 +1,5 @@
 $(document).ready(function() {
-//    llenarTabla();
+    llenarTabla();
     $("#responsable").typeahead({
         onSelect: function(item) {
             $("#idPersona").val(item.value);
@@ -21,17 +21,21 @@ $(document).ready(function() {
         }
     });
     google.charts.load('current', {'packages': ['corechart']});
-    google.charts.setOnLoadCallback(llenarTabla);
+    google.charts.setOnLoadCallback(pintarGrafica);
 });
 
-function drawChart(datos) {
-    var data = google.visualization.arrayToDataTable(datos);
-    var options = {
-        'legend': 'left',
-        'is3D': true
+var datos = [];
+
+function pintarGrafica() {
+    if (google.visualization !== undefined) {
+        var data = google.visualization.arrayToDataTable(datos);
+        var options = {
+            'is3D': true,
+            'chartArea': {top: 0, width: '100%', height: '100%'}
+        };
+        var chart = new google.visualization.PieChart(document.getElementById('graficaActividadesPorEstado'));
+        chart.draw(data, options);
     }
-    var chart = new google.visualization.PieChart(document.getElementById('graficaActividadesPorEstado'));
-    chart.draw(data, options);
 }
 
 function llenarTabla() {
@@ -44,20 +48,18 @@ function llenarTabla() {
     $.ajax({
         type: "POST",
         url: "ActividadesPorEstadoController",
-        dataType: "html",
+        dataType: "json",
         data: {accion: "consultar", proyecto: proyecto, version: version, persona: persona},
         success: function(data) {
             if (data !== undefined) {
-                $('#tablaActividadesPorEstado').html(data);
+                if (data.html !== undefined) {
+                    $('#tablaActividadesPorEstado').html(data.html);
+                }
+                if (data.estados !== undefined) {
+                    datos = data.estados;
+                    pintarGrafica();
+                }
             }
-            drawChart([
-                ['Task', 'Hours per Day'],
-                ['Work', 11],
-                ['Eat', 2],
-                ['Commute', 2],
-                ['Watch TV', 2],
-                ['Sleep', 7]
-            ]);
         },
         error: function() {
             console.log('Error al cargar la tabla');
@@ -78,10 +80,18 @@ function generarReporte() {
         dataType: "json",
         data: {accion: "generarReporte", proyecto: proyecto, version: version, persona: persona},
         success: function(data) {
-            console.log(data);
+            if (data !== undefined && data.archivo !== undefined) {
+                console.log('El reporte ha sido generado con éxito');
+                var link = document.createElement('a');
+                link.href = 'ActividadesPorEstadoController?accion=obtenerArchivo&archivo=' + data.archivo;
+                link.target = '_blank';
+                link.click();
+            } else {
+                alert('Error al generar el reporte');
+            }
         },
         error: function() {
-            console.log('Error al cargar la tabla');
+            alert('Error al generar el reporte');
         }
     });
 }

@@ -51,23 +51,23 @@
                                         <input type="hidden" id="idPersona" name="idPersona"/>
                                     </div>
                                 </div>
-                                <br>
                                 <div class="row" align="center">
                                     <button class="btn btn-default" type="button" name="accion" id="consultar" value="consultar" onclick="llenarTabla()">Consultar</button>
                                 </div>
                             </div>                            
                         </div>
+                        <br>
                         <div class="row" align="center">
                             <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
-                                <div id="graficaActividadesPorEstado" style="width:100%; height:200px;"></div>
+                                <div id="tablaActividadesPorEstado"></div>
                             </div>
                             <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
-                                <div id="tablaActividadesPorEstado"></div>
+                                <div id="graficaActividadesPorEstado" style="width:100%; height:120px;"></div>
                             </div>
                         </div>
                         <br>
                         <div class="row" align="center">
-                            <button class="btn btn-default" type="button" name="accion" id="reporte" value="reporte" onclick="generarReporte()">Generar reporte</button>
+                            <button class="btn btn-default" type="button" name="accion" id="reportePdf" value="pdf" onclick="generarReporte()">Generar reporte</button>
                         </div>
                     </form>
                 </div>
