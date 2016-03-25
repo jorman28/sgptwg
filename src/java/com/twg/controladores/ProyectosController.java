@@ -86,7 +86,7 @@ public class ProyectosController extends HttpServlet {
         String busquedaProyecto = request.getParameter("busquedaProyecto");
 
         List<String> permisosPagina = PerfilesNegocio.permisosPorPagina(request, Paginas.VERSIONES);
-
+        
         switch (accion) {
             case "editarProyecto":
                 JSONObject proyecto = proyectosNegocio.consultarProyecto(idProyecto);

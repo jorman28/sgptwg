@@ -1,6 +1,8 @@
 package com.twg.negocio;
 
+import com.twg.persistencia.beans.EstadosBean;
 import com.twg.persistencia.beans.VersionesBean;
+import com.twg.persistencia.daos.EstadosDao;
 import com.twg.persistencia.daos.VersionesDao;
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -100,12 +102,34 @@ public class VersionesNegocio {
         if (estado == null || estado.equals("0")) {
             validacion += "El campo 'Estado' no debe estar vacío \n";
         } else {
+            int est;
             try {
-                Integer.valueOf(estado);
+                est= Integer.valueOf(estado);
             } catch (NumberFormatException e) {
                 validacion += "El valor ingresado en el campo 'Estado' no corresponde al id de un estado \n";
+                est = -1;
+            }
+            EstadosDao eDao = new EstadosDao();
+            try {
+                if(idVersion!=null){//Versión existente: se valida contra estados prev y sig
+
+//                    TODO: Validar estado previo y siguiente.
+//                    Validar que al dar clic en MAS, se borre el ID.
+                    
+                    
+                }else{//Versión nueva: se valida contra estado final unicamente
+                    List<EstadosBean> eBean = eDao.consultarEstados(null, "VERSIONES", null, null, null, "T");
+                    if(eBean!=null && !eBean.isEmpty()){
+                        if(eBean.get(0).getId() == est){
+                            validacion += "El estado seleccionado no es válido para una nueva versión \n";
+                        }
+                    }
+                }
+                
+            } catch (Exception e) {
             }
         }
+        
         if (alcance == null || alcance.isEmpty()) {
             validacion += "El campo 'Alcance' no debe estar vacío \n";
         }
