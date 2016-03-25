@@ -152,21 +152,21 @@ public class EstadosController extends HttpServlet {
             for (EstadosBean estado : listaEstados) {
                 out.println("<tr>");
 //                out.println(    "<td>"+estado.getId()+"</td>");                
-                out.println("<td>" + estado.getTipo_estado() + "</td>");
+                out.println("<td>" + estado.getTipoEstado() + "</td>");
                 out.println("<td>" + estado.getNombre() + "</td>");
-                List<EstadosBean> estadoP = estadosNegocio.consultarEstados(estado.getEstadoPrev(), null, null, null, null, null);
+                List<EstadosBean> estadoP = estadosNegocio.consultarEstados(estado.getEstadoPrevio(), null, null, null, null, null);
                 if(estadoP!=null&&estadoP.size()>0){
                     out.println("<td>" + estadoP.get(0).getNombre() + "</td>");
                 }else{
                     out.println("<td>" + "" + "</td>");
                 }
-                List<EstadosBean> estadoS = estadosNegocio.consultarEstados(estado.getEstadoSig(), null, null, null, null, null);
+                List<EstadosBean> estadoS = estadosNegocio.consultarEstados(estado.getEstadoSiguiente(), null, null, null, null, null);
                 if(estadoS!=null&&estadoS.size()>0){
                     out.println("<td>" + estadoS.get(0).getNombre() + "</td>");
                 }else{
                     out.println("<td>" + "" + "</td>");
                 }
-                if(estado.geteFinal()!=null && !estado.geteFinal().isEmpty() && estado.geteFinal().equals("T")){
+                if(estado.getEstadoFinal()!=null && !estado.getEstadoFinal().isEmpty() && estado.getEstadoFinal().equals("T")){
                     out.println("<td>Sí</td>");
                 }else{
                     out.println("<td>No</td>");

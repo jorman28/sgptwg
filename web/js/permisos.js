@@ -92,6 +92,7 @@ function obtenerPermisos(idPerfil) {
                 $("#permiso_16_6").prop("checked", data.permiso_37 !== undefined ? data.permiso_37 : false);
                 $("#permiso_16_7").prop("checked", data.permiso_38 !== undefined ? data.permiso_38 : false);
                 $("#permiso_16_8").prop("checked", data.permiso_39 !== undefined ? data.permiso_39 : false);
+                $("#permiso_45").prop("checked", data.permiso_45 !== undefined ? data.permiso_45 : false);
 
                 $("#perfilPermiso").val(idPerfil);
                 $("#modalPermisos").modal('show');

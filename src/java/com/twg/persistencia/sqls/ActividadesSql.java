@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.twg.persistencia.sqls;
 
 import java.util.Date;
@@ -10,6 +5,7 @@ import java.util.Date;
 /**
  *
  * @author Jorman Rincón
+ * @author Andrés Giraldo
  */
 public class ActividadesSql {
 
@@ -54,7 +50,7 @@ public class ActividadesSql {
         }
         return sql;
     }
-    
+
     public String consultarActividades(String id, Integer version, String descripcion, String fecha, Integer estado) {
         String sql = "SELECT a.id, a.version, a.descripcion, a.fecha_estimada_inicio, a.fecha_estimada_terminacion, "
                 + "a.fecha_real_inicio, a.fecha_real_terminacion, a.tiempo_estimado, a.tiempo_invertido, a.estado, e.nombre as nombree, v.nombre as nombrev "
@@ -70,8 +66,8 @@ public class ActividadesSql {
             sql += "AND a.descripcion LIKE '%" + descripcion + "%' ";
         }
         if (fecha != null && !fecha.isEmpty()) {
-            sql += "AND (a.fecha_estimada_inicio = '" + fecha + "' OR a.fecha_estimada_terminacion = '" + 
-                fecha + "' OR a.fecha_real_inicio = '" + fecha + "' OR a.fecha_real_terminacion = '" + fecha + "')";
+            sql += "AND (a.fecha_estimada_inicio = '" + fecha + "' OR a.fecha_estimada_terminacion = '"
+                    + fecha + "' OR a.fecha_real_inicio = '" + fecha + "' OR a.fecha_real_terminacion = '" + fecha + "')";
         }
         if (estado != null && !estado.toString().isEmpty()) {
             sql += "AND a.estado = '" + estado + "' ";
@@ -82,11 +78,11 @@ public class ActividadesSql {
     public String consultarUtimaActividad() {
         return "SELECT MAX(id) AS id FROM actividades";
     }
-    
+
     public String insertarActividad() {
         return "INSERT INTO actividades (descripcion, fecha_estimada_inicio, fecha_estimada_terminacion, fecha_real_inicio, fecha_real_terminacion, tiempo_estimado, tiempo_invertido, version, estado) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
     }
-    
+
     public String actualizarActividad() {
         return "UPDATE actividades SET  descripcion = ?, fecha_estimada_inicio=?, fecha_estimada_terminacion=?, fecha_real_inicio=?, fecha_real_terminacion=?, tiempo_estimado=?, tiempo_invertido=?, version=?, estado=?  WHERE id = ?";
     }
@@ -95,4 +91,36 @@ public class ActividadesSql {
         return "UPDATE actividades SET fecha_eliminacion = now() WHERE id = ?";
     }
 
+    public String actividadesPorEstados(Integer proyecto, Integer version, Integer persona) {
+        String sql = "SELECT \n"
+                + "    est.nombre AS estado,\n"
+                + "    (SELECT \n"
+                + "            COUNT(DISTINCT act.id)\n"
+                + "        FROM\n"
+                + "            actividades act\n"
+                + "                LEFT JOIN\n"
+                + "            versiones ver ON ver.id = act.version\n"
+                + "                LEFT JOIN\n"
+                + "            proyectos pro ON pro.id = ver.proyecto\n"
+                + "                LEFT JOIN\n"
+                + "            actividades_empleados actEmp ON actEmp.actividad = act.id\n"
+                + "        WHERE\n"
+                + "            act.estado = est.id ";
+        if (proyecto != null && proyecto.intValue() != 0) {
+            sql += "                AND pro.id = '" + proyecto + "'\n";
+        }
+        if (version != null && version.intValue() != 0) {
+            sql += "                AND ver.id = '" + version + "'\n";
+        }
+        if (persona != null && persona.intValue() != 0) {
+            sql += "                AND actEmp.empleado = '" + persona + "' ";
+        }
+        sql += "     ) AS actividades\n"
+                + "FROM\n"
+                + "    estados est\n"
+                + "WHERE\n"
+                + "    est.estado_final != 'T'\n"
+                + "        AND est.tipo_estado = 'ACTIVIDADES';";
+        return sql;
+    }
 }
