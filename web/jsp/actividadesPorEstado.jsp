@@ -62,7 +62,7 @@
                                 <div id="tablaActividadesPorEstado"></div>
                             </div>
                             <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
-                                <div id="graficaActividadesPorEstado" style="width:100%; height:120px;"></div>
+                                <div id="graficaActividadesPorEstado" style="width:100%; height:140px;"></div>
                             </div>
                         </div>
                         <br>
