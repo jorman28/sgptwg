@@ -160,10 +160,10 @@ public class EstadosNegocio {
                 error += "El estado previo y siguiente no pueden ser iguales <br/>";
             }
         }
-        if(estado.getEstadoFinal() != null && estado.getEstadoFinal().equals("T")){
+        if(estado.getEstadoFinal()!= null && estado.getEstadoFinal().equals("T")){
             List<EstadosBean> ef = new ArrayList<>();
             try {
-                if(estado.getTipoEstado() != null && estado.getTipoEstado().equals("ACTIVIDADES")){
+                if(estado.getTipoEstado()!= null && estado.getTipoEstado().equals("ACTIVIDADES")){
                     ef = estadosDao.consultarEstados(null, "ACTIVIDADES", null, null, null, "T");
                 }else{
                     ef = estadosDao.consultarEstados(null, "VERSIONES", null, null, null, "T");
