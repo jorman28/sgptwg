@@ -113,7 +113,7 @@ public class VersionesNegocio {
             try {
                 if(idVersion!=null){//Versión existente: se valida contra estados prev y sig
 
-//                    TODO: Validar estado previo y siguiente.
+//                    TODO: Validar estado previo y siguiente.   
 //                    Validar que al dar clic en MAS, se borre el ID.
                     
                     
