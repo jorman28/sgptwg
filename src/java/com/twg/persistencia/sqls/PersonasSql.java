@@ -135,6 +135,35 @@ public class PersonasSql {
         return sql;
     }
 
+    public String consultarPersonasAsignadasActividad() {
+        String sql = "";
+        sql += "SELECT DISTINCT p.id,\n"
+                + "        p.documento,\n"
+                + "        p.tipo_documento,\n"
+                + "        d.nombre AS nombre_tipo_documento,\n"
+                + "        p.nombres,\n"
+                + "        p.apellidos, \n"
+                + "        p.telefono, \n"
+                + "        p.celular, \n"
+                + "        p.correo, \n"
+                + "        p.direccion, \n"
+                + "        p.cargo, \n"
+                + "        car.nombre nombre_cargo, \n"
+                + "        u.usuario, \n"
+                + "        u.perfil AS id_perfil, \n"
+                + "        pf.nombre AS nombre_perfil \n"
+                + "FROM    personas p \n"
+                + "		INNER JOIN actividades_empleados ae ON ae.empleado = p.id \n"
+                + "		INNER JOIN actividades act ON act.id = ae.actividad\n"
+                + "		INNER JOIN tipos_documentos d ON d.tipo = p.tipo_documento \n"
+                + "        INNER JOIN cargos car ON car.id = p.cargo \n"
+                + "        LEFT JOIN usuarios u ON p.id = u.id_persona AND u.fecha_eliminacion IS NULL \n"
+                + "        LEFT JOIN perfiles pf ON pf.id = u.perfil AND pf.fecha_eliminacion IS NULL \n"
+                + "WHERE   1 = 1 AND p.fecha_eliminacion IS NULL AND act.fecha_estimada_inicio >= ? AND act.fecha_estimada_terminacion <= ? AND ae.empleado IN (?)";
+
+        return sql;
+    }
+
     public String insertarPersona() {
         return "INSERT INTO personas (documento, tipo_documento, nombres, apellidos, direccion, telefono, celular, correo, cargo) "
                 + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";

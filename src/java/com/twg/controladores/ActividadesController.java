@@ -59,139 +59,99 @@ public class ActividadesController extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.setCharacterEncoding("UTF-8");
-        response.setCharacterEncoding("UTF-8");
-        String mensajeAlerta = "";
-        String mensajeExito = "";
-        String mensajeError = "";
-
-        String accion = request.getParameter("accion");
-        String idStr = request.getParameter("id"); //consulta y creacion Er
-        if (accion == null) {
-            accion = "";
-        } else if (accion.contains("_")) { //esto se hace por tema de modificación, para poder extraer el id del registro
-            String[] arrayGetId = accion.split("_");
-            if (arrayGetId[1] != null) {
-                idStr = arrayGetId[1];
-                accion = arrayGetId[0];
-            }
-        }
-
-        String[] idPersonasActividad = request.getParameterValues("idPersonas");// Personas que estan en la lista 2 Participantes en la actividad
-        String proyectoStr = request.getParameter("proyecto"); //consulta y creacion Er
-        String versionStr = request.getParameter("version"); //consulta y creacion Er
-        String descripcion = request.getParameter("descripcion"); //consulta y creacion Er
-        String estadoStr = request.getParameter("estado"); //consulta y creacion Er
-        String fechaStr = request.getParameter("fecha"); //consulta Er
-        String responsableStr = request.getParameter("responsable"); //consulta y creacion Er en creación se recibe el objeto hidden
-        String participanteStr = request.getParameter("participante"); //consulta y creacion Er en creación se recibe el valor que hay en el campo participante
-
-        String fecha_estimada_inicioStr = request.getParameter("fecha_estimada_inicio");//creacion
-        String fecha_estimada_terminacionStr = request.getParameter("fecha_estimada_terminacion");//creacion
-        String fecha_real_inicioStr = request.getParameter("fecha_real_inicio");//creacion
-        String fecha_real_terminacionStr = request.getParameter("fecha_real_terminacion");//creacion
-        String tiempo_estimadoStr = request.getParameter("tiempo_estimado");//creacion
-        String tiempo_invertidoStr = request.getParameter("tiempo_invertido");//creacion
-
-        Integer id = null;
         try {
-            id = Integer.valueOf(idStr);
-        } catch (NumberFormatException e) {
-        }
-
-        Integer proyecto = null;
-        try {
-            proyecto = Integer.valueOf(proyectoStr);
-        } catch (NumberFormatException e) {
-        }
-
-        Integer version = null;
-        try {
-            version = Integer.valueOf(versionStr);
-        } catch (NumberFormatException e) {
-        }
-
-        Integer responsable = null;
-        try {
-            responsable = Integer.valueOf(responsableStr);
-        } catch (NumberFormatException e) {
-        }
-
-        List<String> permisosPagina = PerfilesNegocio.permisosPorPagina(request, Paginas.ACTIVIDADES);
-
-        switch (accion) {
-            case "consultar":
-                if (fechaStr != null && !fechaStr.isEmpty()) {
-                    try {
-                        SimpleDateFormat filtroFecha = new SimpleDateFormat("yyyy-MM-dd");
-                        fechaStr = filtroFecha.format(sdf.parse(fechaStr));
-                    } catch (ParseException ex) {
-                        Logger.getLogger(ActividadesController.class.getName()).log(Level.SEVERE, null, ex);
-                    }
+            request.setCharacterEncoding("UTF-8");
+            response.setCharacterEncoding("UTF-8");
+            String mensajeAlerta = "";
+            String mensajeExito = "";
+            String mensajeError = "";
+            
+            String accion = request.getParameter("accion");
+            String idStr = request.getParameter("id"); //consulta y creacion Er
+            if (accion == null) {
+                accion = "";
+            } else if (accion.contains("_")) { //esto se hace por tema de modificación, para poder extraer el id del registro
+                String[] arrayGetId = accion.split("_");
+                if (arrayGetId[1] != null) {
+                    idStr = arrayGetId[1];
+                    accion = arrayGetId[0];
                 }
-                cargarTabla(response, permisosPagina, id, proyectoStr, versionStr, descripcion, estadoStr, fechaStr, responsableStr);
-                break;
-            case "crearActividad":
-            case "limpiarCreacion":
-                request.setAttribute("estados", estadosNegocio.consultarEstados(null, "ACTIVIDADES", null, null, null, null));
-                request.setAttribute("proyectos", proyectosNegocio.consultarProyectos(null, null, false));
-                request.setAttribute("clientesActividad", null);
-                request.setAttribute("empleadosActividad", null);
-                request.getRequestDispatcher(INSERTAR_O_EDITAR).forward(request, response);
-                break;
-            case "gestionarActividad":
-            case "limpiarGestion":
-                if (idStr != null && !idStr.isEmpty()) {
-                    ActividadesBean actividad = actividadesNegocio.consultarActividadI(id);
+            }
+            
+            String[] idPersonasActividad = request.getParameterValues("idPersonas");// Personas que estan en la lista 2 Participantes en la actividad
+            String proyectoStr = request.getParameter("proyecto"); //consulta y creacion Er
+            String versionStr = request.getParameter("version"); //consulta y creacion Er
+            String descripcion = request.getParameter("descripcion"); //consulta y creacion Er
+            String estadoStr = request.getParameter("estado"); //consulta y creacion Er
+            String fechaStr = request.getParameter("fecha"); //consulta Er
+            String responsableStr = request.getParameter("responsable"); //consulta y creacion Er en creación se recibe el objeto hidden
+            String participanteStr = request.getParameter("participante"); //consulta y creacion Er en creación se recibe el valor que hay en el campo participante
+            
+            String fecha_estimada_inicioStr = request.getParameter("fecha_estimada_inicio");//creacion
+            String fecha_estimada_terminacionStr = request.getParameter("fecha_estimada_terminacion");//creacion
+            String fecha_real_inicioStr = request.getParameter("fecha_real_inicio");//creacion
+            String fecha_real_terminacionStr = request.getParameter("fecha_real_terminacion");//creacion
+            String tiempo_estimadoStr = request.getParameter("tiempo_estimado");//creacion
+            String tiempo_invertidoStr = request.getParameter("tiempo_invertido");//creacion
+            
+            Integer id = null;
+            try {
+                id = Integer.valueOf(idStr);
+            } catch (NumberFormatException e) {
+            }
+            
+            Integer proyecto = null;
+            try {
+                proyecto = Integer.valueOf(proyectoStr);
+            } catch (NumberFormatException e) {
+            }
+            
+            Integer version = null;
+            try {
+                version = Integer.valueOf(versionStr);
+            } catch (NumberFormatException e) {
+            }
+            
+            Integer responsable = null;
+            try {
+                responsable = Integer.valueOf(responsableStr);
+            } catch (NumberFormatException e) {
+            }
+            
+            List<String> permisosPagina = PerfilesNegocio.permisosPorPagina(request, Paginas.ACTIVIDADES);
+            
+            switch (accion) {
+                case "consultar":
+                    if (fechaStr != null && !fechaStr.isEmpty()) {
+                        try {
+                            SimpleDateFormat filtroFecha = new SimpleDateFormat("yyyy-MM-dd");
+                            fechaStr = filtroFecha.format(sdf.parse(fechaStr));
+                        } catch (ParseException ex) {
+                            Logger.getLogger(ActividadesController.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+                    cargarTabla(response, permisosPagina, id, proyectoStr, versionStr, descripcion, estadoStr, fechaStr, responsableStr);
+                    break;
+                case "crearActividad":
+                case "limpiarCreacion":
                     request.setAttribute("estados", estadosNegocio.consultarEstados(null, "ACTIVIDADES", null, null, null, null));
                     request.setAttribute("proyectos", proyectosNegocio.consultarProyectos(null, null, false));
                     request.setAttribute("clientesActividad", null);
                     request.setAttribute("empleadosActividad", null);
-                    proyecto = proyectosNegocio.consultarProyectoPorVersion(actividad.getVersion()).getId();
-                    List<PersonasBean> personas = personasNegocio.consultarPersonasActividad(idStr);
-                    List<PersonasBean> empleados = new ArrayList<>();
-                    List<PersonasBean> clientes = new ArrayList<>();
-                    for (PersonasBean persona : personas) {
-                        if (persona.getNombreCargo().toLowerCase().equalsIgnoreCase("cliente")) {
-                            clientes.add(persona);
-                        } else {
-                            empleados.add(persona);
-                        }
-                    }
-                    request.setAttribute("clientesActividad", clientes);
-                    request.setAttribute("empleadosActividad", empleados);
-                    request.setAttribute("id", actividad.getId().toString());
-                    request.setAttribute("proyecto", proyecto.toString());
-                    request.setAttribute("versiones", versionesNegocio.consultarVersiones(null, proyecto, null, false));
-                    request.setAttribute("version", actividad.getVersion().toString());
-                    request.setAttribute("descripcion", actividad.getDescripcion());
-                    request.setAttribute("fecha_estimada_inicio", actividad.getFecha_estimada_inicio() != null ? sdf.format(actividad.getFecha_estimada_inicio()) : "");
-                    request.setAttribute("fecha_estimada_terminacion", actividad.getFecha_estimada_terminacion() != null ? sdf.format(actividad.getFecha_estimada_terminacion()) : "");
-                    request.setAttribute("fecha_real_inicio", actividad.getFecha_real_inicio() != null ? sdf.format(actividad.getFecha_real_inicio()) : "");
-                    request.setAttribute("fecha_real_terminacion", actividad.getFecha_real_terminacion() != null ? sdf.format(actividad.getFecha_real_terminacion()) : "");
-                    request.setAttribute("tiempo_estimado", actividad.getTiempo_estimado());
-                    request.setAttribute("tiempo_invertido", actividad.getTiempo_invertido());
-                    request.setAttribute("estado", actividad.getEstado());
-                }
-                request.getRequestDispatcher(INSERTAR_O_EDITAR).forward(request, response);
-                break;
-
-            case "guardar":
-                Map<String, Object> result = actividadesNegocio.guardarActividad(idStr, proyectoStr, versionStr, idPersonasActividad, descripcion, fecha_estimada_inicioStr, fecha_estimada_terminacionStr, fecha_real_inicioStr, fecha_real_terminacionStr, tiempo_estimadoStr, tiempo_invertidoStr, estadoStr);
-                if (result.get("mensajeError") != null) {
-                    mensajeError = (String) result.get("mensajeError");
-                    request.setAttribute("mensajeError", mensajeError);
-                    request.setAttribute("estados", estadosNegocio.consultarEstados(null, "ACTIVIDADES", null, null, null, null));
-                    request.setAttribute("proyectos", proyectosNegocio.consultarProyectos(null, null, false));
-                    request.setAttribute("versiones", versionesNegocio.consultarVersiones(null, Integer.parseInt(proyectoStr), null, false));
-                    if (idPersonasActividad != null) {
-                        List<PersonasBean> personas = new ArrayList<>();
-                        for (String idPersona : idPersonasActividad) {
-                            personas.add(personasNegocio.consultarPersona(idPersona, null, null));
-                        }
+                    request.getRequestDispatcher(INSERTAR_O_EDITAR).forward(request, response);
+                    break;
+                case "gestionarActividad":
+                case "limpiarGestion":
+                    if (idStr != null && !idStr.isEmpty()) {
+                        ActividadesBean actividad = actividadesNegocio.consultarActividadI(id);
+                        request.setAttribute("estados", estadosNegocio.consultarEstados(null, "ACTIVIDADES", null, null, null, null));
+                        request.setAttribute("proyectos", proyectosNegocio.consultarProyectos(null, null, false));
+                        request.setAttribute("clientesActividad", null);
+                        request.setAttribute("empleadosActividad", null);
+                        proyecto = proyectosNegocio.consultarProyectoPorVersion(actividad.getVersion()).getId();
+                        List<PersonasBean> personas = personasNegocio.consultarPersonasActividad(idStr);
                         List<PersonasBean> empleados = new ArrayList<>();
                         List<PersonasBean> clientes = new ArrayList<>();
-
                         for (PersonasBean persona : personas) {
                             if (persona.getNombreCargo().toLowerCase().equalsIgnoreCase("cliente")) {
                                 clientes.add(persona);
@@ -201,64 +161,119 @@ public class ActividadesController extends HttpServlet {
                         }
                         request.setAttribute("clientesActividad", clientes);
                         request.setAttribute("empleadosActividad", empleados);
-                    } else {
-                        request.setAttribute("clientesActividad", null);
-                        request.setAttribute("empleadosActividad", null);
+                        request.setAttribute("id", actividad.getId().toString());
+                        request.setAttribute("proyecto", proyecto.toString());
+                        request.setAttribute("versiones", versionesNegocio.consultarVersiones(null, proyecto, null, false));
+                        request.setAttribute("version", actividad.getVersion().toString());
+                        request.setAttribute("descripcion", actividad.getDescripcion());
+                        request.setAttribute("fecha_estimada_inicio", actividad.getFecha_estimada_inicio() != null ? sdf.format(actividad.getFecha_estimada_inicio()) : "");
+                        request.setAttribute("fecha_estimada_terminacion", actividad.getFecha_estimada_terminacion() != null ? sdf.format(actividad.getFecha_estimada_terminacion()) : "");
+                        request.setAttribute("fecha_real_inicio", actividad.getFecha_real_inicio() != null ? sdf.format(actividad.getFecha_real_inicio()) : "");
+                        request.setAttribute("fecha_real_terminacion", actividad.getFecha_real_terminacion() != null ? sdf.format(actividad.getFecha_real_terminacion()) : "");
+                        request.setAttribute("tiempo_estimado", actividad.getTiempo_estimado());
+                        request.setAttribute("tiempo_invertido", actividad.getTiempo_invertido());
+                        request.setAttribute("estado", actividad.getEstado());
                     }
-                    enviarDatosCreacionEdicion(request, idStr, proyectoStr, versionStr, descripcion, fecha_estimada_inicioStr, fecha_estimada_terminacionStr, fecha_real_inicioStr, fecha_real_terminacionStr, tiempo_estimadoStr, tiempo_invertidoStr, estadoStr);
-                    accion = "gestionarActividad";
                     request.getRequestDispatcher(INSERTAR_O_EDITAR).forward(request, response);
                     break;
-                }
-                if (result.get("mensajeExito") != null) {
-                    mensajeExito = (String) result.get("mensajeExito");
-                    enviarDatosCreacionEdicion(request, null, null, null, null, null, null, null, null, null, null, null);
-                }
-                break;
-            case "eliminar":
-                mensajeError = actividadesNegocio.eliminarActividad(id);
-                if (mensajeError.isEmpty()) {
-                    mensajeExito = "La actividad ha sido eliminada con éxito";
-                }
-                break;
-            case "consultarVersiones":
-                JSONArray array = new JSONArray();
-                List<VersionesBean> listaVersiones = versionesNegocio.consultarVersiones(null, proyecto, null, false);
-                if (listaVersiones != null && !listaVersiones.isEmpty()) {
-                    for (VersionesBean versionBean : listaVersiones) {
-                        JSONObject object = new JSONObject();
-                        object.put("id", versionBean.getId());
-                        object.put("nombre", versionBean.getNombre());
-                        array.add(object);
+                    
+                case "guardar":
+                    Map<String, Object> result = actividadesNegocio.guardarActividad(idStr, proyectoStr, versionStr, idPersonasActividad, descripcion, fecha_estimada_inicioStr, fecha_estimada_terminacionStr, fecha_real_inicioStr, fecha_real_terminacionStr, tiempo_estimadoStr, tiempo_invertidoStr, estadoStr);
+                    if (result.get("mensajeError") != null) {
+                        mensajeError = (String) result.get("mensajeError");
+                        request.setAttribute("mensajeError", mensajeError);
+                        request.setAttribute("estados", estadosNegocio.consultarEstados(null, "ACTIVIDADES", null, null, null, null));
+                        request.setAttribute("proyectos", proyectosNegocio.consultarProyectos(null, null, false));
+                        request.setAttribute("versiones", versionesNegocio.consultarVersiones(null, Integer.parseInt(proyectoStr), null, false));
+                        if (idPersonasActividad != null) {
+                            List<PersonasBean> personas = new ArrayList<>();
+                            for (String idPersona : idPersonasActividad) {
+                                personas.add(personasNegocio.consultarPersona(idPersona, null, null));
+                            }
+                            List<PersonasBean> empleados = new ArrayList<>();
+                            List<PersonasBean> clientes = new ArrayList<>();
+                            
+                            for (PersonasBean persona : personas) {
+                                if (persona.getNombreCargo().toLowerCase().equalsIgnoreCase("cliente")) {
+                                    clientes.add(persona);
+                                } else {
+                                    empleados.add(persona);
+                                }
+                            }
+                            request.setAttribute("clientesActividad", clientes);
+                            request.setAttribute("empleadosActividad", empleados);
+                        } else {
+                            request.setAttribute("clientesActividad", null);
+                            request.setAttribute("empleadosActividad", null);
+                        }
+                        enviarDatosCreacionEdicion(request, idStr, proyectoStr, versionStr, descripcion, fecha_estimada_inicioStr, fecha_estimada_terminacionStr, fecha_real_inicioStr, fecha_real_terminacionStr, tiempo_estimadoStr, tiempo_invertidoStr, estadoStr);
+                        accion = "gestionarActividad";
+                        request.getRequestDispatcher(INSERTAR_O_EDITAR).forward(request, response);
+                        break;
+                    }
+                    if (result.get("mensajeExito") != null) {
+                        mensajeExito = (String) result.get("mensajeExito");
+                        enviarDatosCreacionEdicion(request, null, null, null, null, null, null, null, null, null, null, null);
+                    }
+                    break;
+                case "eliminar":
+                    mensajeError = actividadesNegocio.eliminarActividad(id);
+                    if (mensajeError.isEmpty()) {
+                        mensajeExito = "La actividad ha sido eliminada con éxito";
+                    }
+                    break;
+                case "consultarVersiones":
+                    JSONArray array = new JSONArray();
+                    List<VersionesBean> listaVersiones = versionesNegocio.consultarVersiones(null, proyecto, null, false);
+                    if (listaVersiones != null && !listaVersiones.isEmpty()) {
+                        for (VersionesBean versionBean : listaVersiones) {
+                            JSONObject object = new JSONObject();
+                            object.put("id", versionBean.getId());
+                            object.put("nombre", versionBean.getNombre());
+                            array.add(object);
+                        }
+                    }
+                    response.getWriter().write(array.toString());
+                    break;
+                case "consultarPersonasProyecto":
+                    String strParticipante = request.getParameter("search");
+                    String strProyecto = request.getParameter("search1");
+                    JSONArray arrayPersonas = personasNegocio.consultarPersonasProyecto(strProyecto, strParticipante);
+                    response.getWriter().write(arrayPersonas.toString());
+                    break;
+                    
+                case "consultarFechasActividades":
+                    String strParticipantes = request.getParameter("idPersonasSeleccionadas");
+                    String strFechaEstimadaInicial = request.getParameter("strFechaEstimadaInicial");
+                    String strFechaEstimadaFin = request.getParameter("strFechaEstimadaFin");
+                    java.util.Date dateFechaEstimadaInicial = sdf.parse(strFechaEstimadaInicial);
+                    java.util.Date dateFechaEstimadaFin = sdf.parse(strFechaEstimadaFin);
+                    //String[] arrParticipantes = request.getParameterValues("idPersonasSeleccionadas");
+                    JSONArray arrayPersonasAsignadasActividad = personasNegocio.consultarPersonasAsignadasActividad(strParticipantes, dateFechaEstimadaInicial, dateFechaEstimadaFin);
+                    response.getWriter().write(arrayPersonasAsignadasActividad.toString());
+                    break;
+                default:
+                    break;
+            }
+            request.setAttribute("mensajeAlerta", mensajeAlerta);
+            request.setAttribute("mensajeExito", mensajeExito);
+            request.setAttribute("mensajeError", mensajeError);
+            request.setAttribute("proyectos", proyectosNegocio.consultarProyectos(null, null, false));
+            request.setAttribute("versiones", versionesNegocio.consultarVersiones(null, null, null, false));
+            request.setAttribute("estados", estadosNegocio.consultarEstados(null, "ACTIVIDADES", null, null, null, null));
+            if (!accion.equals("consultar") && !accion.equals("editar") && !accion.equals("consultarVersiones") && !accion.equals("crearActividad") && !accion.equals("limpiarCreacion") && !accion.equals("gestionarActividad") && !accion.equals("limpiarGestion") && !accion.equals("consultarPersonasProyecto")) {
+                if (permisosPagina != null && !permisosPagina.isEmpty()) {
+                    if (permisosPagina.contains(Permisos.CONSULTAR.getNombre())) {
+                        request.setAttribute("opcionConsultar", "T");
+                    }
+                    if (permisosPagina.contains(Permisos.GUARDAR.getNombre())) {
+                        request.setAttribute("opcionGuardar", "T");
                     }
                 }
-                response.getWriter().write(array.toString());
-                break;
-            case "consultarPersonasProyecto":
-                String strParticipante = request.getParameter("search");
-                String strProyecto = request.getParameter("search1");
-                JSONArray arrayPersonas = personasNegocio.consultarPersonasProyecto(strProyecto, strParticipante);
-                response.getWriter().write(arrayPersonas.toString());
-                break;
-            default:
-                break;
-        }
-        request.setAttribute("mensajeAlerta", mensajeAlerta);
-        request.setAttribute("mensajeExito", mensajeExito);
-        request.setAttribute("mensajeError", mensajeError);
-        request.setAttribute("proyectos", proyectosNegocio.consultarProyectos(null, null, false));
-        request.setAttribute("versiones", versionesNegocio.consultarVersiones(null, null, null, false));
-        request.setAttribute("estados", estadosNegocio.consultarEstados(null, "ACTIVIDADES", null, null, null, null));
-        if (!accion.equals("consultar") && !accion.equals("editar") && !accion.equals("consultarVersiones") && !accion.equals("crearActividad") && !accion.equals("limpiarCreacion") && !accion.equals("gestionarActividad") && !accion.equals("limpiarGestion") && !accion.equals("consultarPersonasProyecto")) {
-            if (permisosPagina != null && !permisosPagina.isEmpty()) {
-                if (permisosPagina.contains(Permisos.CONSULTAR.getNombre())) {
-                    request.setAttribute("opcionConsultar", "T");
-                }
-                if (permisosPagina.contains(Permisos.GUARDAR.getNombre())) {
-                    request.setAttribute("opcionGuardar", "T");
-                }
+                request.getRequestDispatcher(LISTAR_ACTIVIDADES).forward(request, response);
             }
-            request.getRequestDispatcher(LISTAR_ACTIVIDADES).forward(request, response);
+        } catch (ParseException ex) {
+            Logger.getLogger(ActividadesController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

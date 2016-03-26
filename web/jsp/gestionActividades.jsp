@@ -42,6 +42,24 @@
                             Los campos marcados con (*) son obligatorios
                         </center>
                         <input type="hidden" id="id" name="id" value="${id}" />
+                        <div id="modalWarning" class="modal fade">
+                            <div class="modal-dialog modal-sm">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        WARNING!
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="form-group">
+                                            <div id="contenidoWarning"></div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button class="btn btn-default" type="submit" name="accion" id="guardar" value="guardar">Continuar</button>
+                                        <button type="button" class="btn btn-primary" data-dismiss="modal">Cancelar</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <div class="panel panel-info">
                             <div class="panel-heading">INFORMACIÓN DE LA ACTIVIDAD</div>
                             <div class="panel-body">
@@ -187,7 +205,7 @@
                                                                 <input type="hidden" id="idPersona${item.id}" name="idPersonas" value="${item.id}" />
                                                                 <div class="col-xs-10 col-sm-11 col-md-11 col-lg-11"> ${item.nombre}</div>
                                                                 <div class="col-xs-2 col-sm-1 col-md-1 col-lg-1">
-                                                                    <span class="glyphicon glyphicon-remove" onclick="eliminarPersona(${item.id}, '${item.nombreCargo}');"></span>
+                                                                    <span class="glyphicon glyphicon-remove" style="cursor:pointer;" onclick="eliminarPersona(${item.id}, '${item.nombreCargo}');"></span>
                                                                 </div>
                                                             </div>
                                                         </li>
@@ -215,7 +233,7 @@
                                                                 <input type="hidden" id="idPersona${item.id}" name="idPersonas" value="${item.id}" />
                                                                 <div class="col-xs-10 col-sm-11 col-md-11 col-lg-11"> ${item.nombre}</div>
                                                                 <div class="col-xs-2 col-sm-1 col-md-1 col-lg-1">
-                                                                    <span class="glyphicon glyphicon-remove" onclick="eliminarPersona(${item.id}, '${item.nombreCargo}');"></span>
+                                                                    <span class="glyphicon glyphicon-remove" style="cursor:pointer;" onclick="eliminarPersona(${item.id}, '${item.nombreCargo}');"></span>
                                                                 </div>
                                                             </div>
                                                         </li>
@@ -231,7 +249,7 @@
                             </div>                          
                         </div>
                         <div class="row">
-                            <button class="btn btn-default" type="submit" name="accion" id="guardar" value="guardar">Guardar</button>
+                            <button class="btn btn-default" type="submit" name="accion" id="guardar" value="guardar" onclick="return Validar()">Guardar</button>
                             <c:choose>
                                 <c:when test="${id == null || id == ''}">
                                     <button class="btn btn-default" type="submit" name="accion" id="limpiarCreacion" value="limpiarCreacion">Limpiar</button>
