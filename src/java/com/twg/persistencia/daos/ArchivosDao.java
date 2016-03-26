@@ -25,18 +25,25 @@ public class ArchivosDao {
      * Método encargado de consultar los archivos que existen en la tabla de
      * archivos en la base de datos de acuerdo a los filtros enviados
      *
+     * @param idArchivo
+     * @param contine
+     * @param fecha
+     * @param idPersona
      * @return La lista de los archivos existentes en base de datos
      * @throws ClassNotFoundException
      * @throws InstantiationException
      * @throws SQLException
      * @throws IllegalAccessException
      */
-    public List<ArchivosBean> consultarArchivos() throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
+    public List<ArchivosBean> consultarArchivos(Integer idArchivo, String contine, Date fecha, Integer idPersona) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         List<ArchivosBean> listaArchivos = new ArrayList<>();
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;
-        ps = con.prepareStatement(sql.consultarArchivos());
+        ps = con.prepareStatement(sql.consultarArchivos(idArchivo, contine, fecha, idPersona));
+        if (fecha != null) {
+            ps.setObject(1, fecha);
+        }
         ResultSet rs;
         rs = ps.executeQuery();
         while (rs.next()) {
@@ -47,6 +54,7 @@ public class ArchivosDao {
             archivo.setFechaCreacion((Date) rs.getObject("fecha_creacion"));
             archivo.setRuta(rs.getString("ruta"));
             archivo.setIdPersona((Integer) rs.getObject("id_persona"));
+            archivo.setNombrePersona(rs.getString("nombre_persona"));
             archivo.setTipo(rs.getString("tipo"));
             listaArchivos.add(archivo);
         }
@@ -102,11 +110,7 @@ public class ArchivosDao {
         ps = con.prepareStatement(sql.actualizarArchivo());
         ps.setString(1, archivo.getNombre());
         ps.setString(2, archivo.getDescripcion());
-        ps.setObject(3, archivo.getFechaCreacion());
-        ps.setString(4, archivo.getRuta());
-        ps.setObject(5, archivo.getIdPersona());
-        ps.setString(6, archivo.getTipo());
-        ps.setInt(7, archivo.getId());
+        ps.setInt(3, archivo.getId());
         int actualizacion = ps.executeUpdate();
         ps.close();
         con.close();

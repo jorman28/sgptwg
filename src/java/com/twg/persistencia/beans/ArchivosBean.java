@@ -15,6 +15,7 @@ public class ArchivosBean {
     private Date fechaCreacion;
     private String ruta;
     private Integer idPersona;
+    private String nombrePersona;
     private String tipo;
 
     public Integer getId() {
@@ -63,6 +64,14 @@ public class ArchivosBean {
 
     public void setIdPersona(Integer idPersona) {
         this.idPersona = idPersona;
+    }
+
+    public String getNombrePersona() {
+        return nombrePersona;
+    }
+
+    public void setNombrePersona(String nombrePersona) {
+        this.nombrePersona = nombrePersona;
     }
 
     public String getTipo() {
