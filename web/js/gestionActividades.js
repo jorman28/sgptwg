@@ -7,6 +7,7 @@
 var personasActividades = {};
 var clientesSeleccionados = 0;
 var empleadosSeleccionados = 0;
+var horasTrabajadasDia = 9;
 
 jQuery(function () {
     $('#fecha_estimada_inicio')
@@ -14,11 +15,11 @@ jQuery(function () {
             .on('changeDate', function () {
                 $('#fecha_estimada_terminacion').datetimepicker('setStartDate', $('#fecha_estimada_inicio').val());
             });
-    $('#fecha_estimada_terminacion')
-            .datetimepicker({format: 'dd/mm/yyyy', language: 'es', weekStart: true, todayBtn: true, autoclose: true, todayHighlight: true, startView: 2, minView: 2})
-            .on('changeDate', function () {
-                $('#fecha_estimada_inicio').datetimepicker('setEndDate', $('#fecha_estimada_terminacion').val());
-            });
+//    $('#fecha_estimada_terminacion')
+//            .datetimepicker({format: 'dd/mm/yyyy', language: 'es', weekStart: true, todayBtn: true, autoclose: true, todayHighlight: true, startView: 2, minView: 2})
+//            .on('changeDate', function () {
+//                $('#fecha_estimada_inicio').datetimepicker('setEndDate', $('#fecha_estimada_terminacion').val());
+//            });
 
 
     $('#fecha_real_inicio')
@@ -86,12 +87,27 @@ jQuery(function () {
             $("#participante").val("");
             $("#participante").prop("disabled", true);
         }
-        
+
         $("#clientesActividad").html('No se han agregado clientes al proyecto');
         clientesSeleccionados = 0;
 
         $("#empleadosActividad").html('No se han agregado empleados al proyecto');
         empleadosSeleccionados = 0;
+    });
+
+    $('#fecha_estimada_inicio').change(function () {
+        var dato = $('#fecha_estimada_inicio').val();
+        if (dato !== undefined && dato !== "") {
+            $("#tiempo_estimado").val("0");
+            $("#tiempo_estimado").prop("disabled", false);
+        } else {
+            $("#tiempo_estimado").val("0");
+            $("#tiempo_estimado").prop("disabled", true);
+        }
+    });
+
+    $("#limpiarParticipante").click(function () {
+        $("#participante").val('');
     });
 
 });
@@ -157,45 +173,30 @@ function eliminarPersona(idPersona, cargo) {
     }
 }
 
-//Cuando se utilizaron las listas
-//function consultarPersonasProyecto(idProyecto) {
-//    $.ajax({
-//        type: "POST",
-//        url: "ActividadesController",
-//        dataType: "json",
-//        data: {proyecto: idProyecto, accion: "consultarPersonasProyecto"},
-//        success: function (data) {
-//            if (data !== undefined) {
-//                var varEmpleados = "<optgroup label='Empleado(s)'>";
-//                var varClientes = "<optgroup label='Cliente(s)'>";
-//                var varCargoCliente = "CLIENTE";
-//                var html = "";
-//                for (var persona in data) {
-//                    persona = data[persona];
-//                    if (persona.cargo.toLowerCase() === varCargoCliente.toLowerCase()) {
-//                        varClientes += "<option value='" + persona.id + "'>" + persona.nombre + "</option>";
-//                    } else {
-//                        varEmpleados += "<option value='" + persona.id + "'>" + persona.nombre + "</option>";
-//                    }
-//                }
-//                if (varClientes !== "<optgroup label='Cliente(s)'>") {
-//                    varClientes += "</optgroup>";
-//                } else {
-//                    varClientes = "";
-//                }
-//
-//                if (varEmpleados !== "<optgroup label='Empleado(s)'>") {
-//                    varEmpleados += "</optgroup>";
-//                } else {
-//                    varEmpleados = "";
-//                }
-//                html = varEmpleados + varClientes;
-//                $("#persona").html(html);
-//                $("#personaActividad").html("");
-//            }
-//        },
-//        error: function (err) {
-//            alert(err);
-//        }
-//    });
-//}
+function calcularFechaFin(horas) {
+
+    var diasEstimados = 0;
+    var varFechaInicial = $("#fecha_estimada_inicio").val();
+
+    var arrFecha = varFechaInicial.split('/');
+    var dia = arrFecha[0];
+    var mes = arrFecha[1];
+    var anno = arrFecha[2];
+    var fechaInicial = anno + "-" + mes + "-" + dia;
+
+    $("#tiempo_estimado").data("old", $("#tiempo_estimado").data("new") || "");
+    $("#tiempo_estimado").data("new", $("#tiempo_estimado").val());
+
+    var totalDias = (parseInt(horas) + 1) / parseInt(horasTrabajadasDia);
+    diasEstimados = Math.ceil(totalDias);
+
+    var date = new Date(fechaInicial);
+    var d = date.getDate();
+    var m = date.getMonth();
+    var y = date.getFullYear();
+    var edate = new Date(y, m, d + diasEstimados);
+    var ndate = ("0" + edate.getDate()).slice(-2) + '/' + ("0" + (edate.getMonth() + 1)).slice(-2) + "/" + edate.getFullYear();
+    //alert(edate.toLocaleDateString());
+    $("#fecha_estimada_terminacionn").val(ndate);
+    $("#fecha_estimada_terminacion").val(ndate);
+}
