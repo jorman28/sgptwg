@@ -424,7 +424,7 @@ public class ActividadesNegocio {
                 mapaActividades.put("actividades", entry.getValue());
                 double actividades = entry.getValue();
                 if (totalActividades > 0) {
-                    mapaActividades.put("porcentaje", (Math.round(actividades / totalActividades * 100d) / 100d) + "%");
+                    mapaActividades.put("porcentaje", (Math.round(actividades / totalActividades * 1000d) / 10d) + "%");
                 } else {
                     mapaActividades.put("porcentaje", 0+"%");
                 }

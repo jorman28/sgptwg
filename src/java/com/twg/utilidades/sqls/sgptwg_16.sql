@@ -1,0 +1,4 @@
+SET FOREIGN_KEY_CHECKS=0;
+ALTER TABLE versiones DROP INDEX versiones_uk;
+ALTER TABLE proyectos DROP INDEX proyectos_uk;
+SET FOREIGN_KEY_CHECKS=1;

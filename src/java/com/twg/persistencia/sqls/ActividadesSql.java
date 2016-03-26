@@ -107,13 +107,13 @@ public class ActividadesSql {
                 + "        WHERE\n"
                 + "            act.estado = est.id ";
         if (proyecto != null && proyecto.intValue() != 0) {
-            sql += "                AND pro.id = ''\n";
+            sql += "                AND pro.id = '" + proyecto + "'\n";
         }
         if (version != null && version.intValue() != 0) {
-            sql += "                AND ver.id = ''\n";
+            sql += "                AND ver.id = '" + version + "'\n";
         }
         if (persona != null && persona.intValue() != 0) {
-            sql += "                AND actEmp.empleado = '' ";
+            sql += "                AND actEmp.empleado = '" + persona + "' ";
         }
         sql += "     ) AS actividades\n"
                 + "FROM\n"
@@ -122,9 +122,5 @@ public class ActividadesSql {
                 + "    est.estado_final != 'T'\n"
                 + "        AND est.tipo_estado = 'ACTIVIDADES';";
         return sql;
-    }
-
-    public static void main(String[] args) {
-        System.out.println(new ActividadesSql().actividadesPorEstados(null, null, null));
     }
 }
