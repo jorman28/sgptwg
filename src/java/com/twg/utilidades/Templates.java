@@ -1,4 +1,4 @@
-package com.twg.reportes;
+package com.twg.utilidades;
 
 import static net.sf.dynamicreports.report.builder.DynamicReports.*;
 
