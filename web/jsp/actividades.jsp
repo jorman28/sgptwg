@@ -76,8 +76,12 @@
                             </div>                            
                         </div>
                         <div class="row" align="center">
-                            <button class="btn btn-default" type="button" name="accion" id="consultar" value="consultar" onclick="llenarTablaActividades()">Consultar</button>
-                            <button class="btn btn-default" type="submit" name="accion" id="crearActividad" value="crearActividad">Crear</button>
+                            <c:if test="${opcionConsultar == 'T'}">
+                                <button class="btn btn-default" type="button" name="accion" id="consultar" value="consultar" onclick="llenarTablaActividades()">Consultar</button>
+                            </c:if>
+                                <c:if test="${opcionGuardar == 'T'}">
+                                <button class="btn btn-default" type="submit" name="accion" id="crearActividad" value="crearActividad">Crear</button>
+                            </c:if>
                             <button class="btn btn-default" type="submit" name="accion" id="limpiar" value="limpiar">Limpiar</button>
                         </div>
                         <br>

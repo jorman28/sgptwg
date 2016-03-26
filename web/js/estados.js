@@ -53,3 +53,26 @@ function llenarTablaEstados(){
         }
     });
 }
+
+function ConsultarEstados(tipoEstado){
+    $.ajax({
+        type    :"POST",
+        url     :"EstadosController",
+        dataType:"json",
+        data    :{tipoEstado: tipoEstado, accion: "ConsultarEstados"},
+        success: function(data) {
+            if(data !== undefined){
+                var html = "<option value='0'>SELECCIONE</option>";
+                for(var estado in data){
+                    estado = data[estado];
+                    html += "<option value='"+estado.id+"'>"+estado.nombre+"</option>";
+                }
+                $("#estadoPrev").html(html);
+                $("#estadoSig").html(html);
+            }
+        },
+        error: function(err){
+            alert(err);
+        }
+    });   
+}

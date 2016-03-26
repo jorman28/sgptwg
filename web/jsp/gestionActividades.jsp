@@ -14,6 +14,18 @@
     <head>
         <c:import url="/jsp/general/header.jsp"/>
         <script type="text/javascript" src="js/gestionActividades.js"></script>
+        <style>
+            #limpiarParticipante {
+                position: absolute;
+                right: 20px;
+                bottom: 0;
+                height: 6px;
+                margin: auto;
+                font-size: 18px;
+                cursor: pointer;
+                color: #ccc;
+            }
+        </style>
         <title>Gestionar Actividades</title>
     </head>
     <body>
@@ -93,7 +105,8 @@
 
                                     <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
                                         <label for="fecha_estimada_terminacion">*Fecha estimada fin:</label>
-                                        <input class="form-control" type="text" id="fecha_estimada_terminacion" name="fecha_estimada_terminacion" value="${fecha_estimada_terminacion}" readonly="true"/>
+                                        <input class="form-control" type="text" id="fecha_estimada_terminacionn" name="fecha_estimada_terminacionn" value="${fecha_estimada_terminacion}" disabled = "disabled"/>
+                                        <input type="hidden" id="fecha_estimada_terminacion" name="fecha_estimada_terminacion" value="${fecha_estimada_terminacion}"/>
                                     </div> 
 
                                     <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
@@ -106,16 +119,26 @@
                                         <label for="fecha_real_terminacion">Fecha real de terminacion:</label>
                                         <input class="form-control" type="text" id="fecha_real_terminacion" name="fecha_real_terminacion" value="${fecha_real_terminacion}" readonly="true"/>
                                     </div>
-
-                                    <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
-                                        <label for="tiempo_estimado">*Tiempo estimado (horas):</label>
-                                        <input class="form-control" type="number" min="0" step="0.1" pattern="[0-9]+([,\.][0-9]+)?" id="tiempo_estimado" name="tiempo_estimado" value="${tiempo_estimado}"/>
-                                    </div>
+                                    <c:choose>
+                                        <c:when test="${fecha_estimada_terminacion == null || fecha_estimada_terminacion == ''}">
+                                            <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
+                                                <label for="tiempo_estimado">*Tiempo estimado (horas):</label>
+                                                <input class="form-control" type="number" min="0" step="0.1" pattern="[0-9]+([,\.][0-9]+)?" id="tiempo_estimado" name="tiempo_estimado" value="${tiempo_estimado}" onchange="calcularFechaFin(this.value);" disabled = "disabled"/>
+                                                <input type="hidden" id="tiempo_estimado" name="tiempo_estimado" value="${tiempo_estimado}"/>
+                                            </div>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
+                                                <label for="tiempo_estimado">*Tiempo estimado (horas):</label>
+                                                <input class="form-control" type="number" min="0" step="0.1" pattern="[0-9]+([,\.][0-9]+)?" id="tiempo_estimado" name="tiempo_estimado" value="${tiempo_estimado}" onchange="calcularFechaFin(this.value);"/>
+                                            </div>
+                                        </c:otherwise>
+                                    </c:choose>
 
                                     <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
                                         <label for="tiempo_invertido">Tiempo invertido (horas):</label>
                                         <input class="form-control" type="number" min="0" step="any" id="tiempo_invertido" name="tiempo_invertido" value="${tiempo_invertido}"/>
-                                    </div> 
+                                    </div>
                                 </div> 
                                 <div class="row">
                                     <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
@@ -131,10 +154,12 @@
                                         <label for="participante">Añadir Participante:</label>
                                         <c:choose>
                                             <c:when test="${proyecto == null || proyecto == 0}">
-                                                <input class="form-control" type="text" id="participante" name="participante" value="${participante}" disabled="disabled"/>
+                                                <input class="form-control" type="search" id="participante" name="participante" value="${participante}" disabled="disabled"/>
+                                                <span id="limpiarParticipante" class="glyphicon glyphicon-remove-circle"></span>
                                             </c:when>
                                             <c:otherwise>
-                                                <input class="form-control" type="text" id="participante" name="participante" value="${participante}"/>
+                                                <input class="form-control" type="search" id="participante" name="participante" value="${participante}"/>
+                                                <span id="limpiarParticipante" class="glyphicon glyphicon-remove-circle"></span>
                                             </c:otherwise>
                                         </c:choose>
                                     </div>
