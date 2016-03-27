@@ -5,7 +5,7 @@ import com.twg.negocio.PersonasNegocio;
 import com.twg.negocio.ProyectosNegocio;
 import com.twg.negocio.VersionesNegocio;
 import com.twg.persistencia.beans.VersionesBean;
-import com.twg.reportes.GeneradorReportes;
+import com.twg.utilidades.GeneradorReportes;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;

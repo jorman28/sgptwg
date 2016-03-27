@@ -163,7 +163,7 @@ public class ProyectosController extends HttpServlet {
                 String comentario = request.getParameter("comentario");
                 Integer persona;
                 try {
-                    persona = (Integer) request.getSession().getAttribute("personaSesion");
+                    persona = (Integer) request.getSession(false).getAttribute("personaSesion");
                 } catch (Exception e) {
                     persona = null;
                 }

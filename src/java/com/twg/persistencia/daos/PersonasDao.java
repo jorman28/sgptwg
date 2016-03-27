@@ -4,6 +4,7 @@ import com.twg.persistencia.beans.PersonasBean;
 import com.twg.persistencia.sqls.PersonasSql;
 import com.twg.utilidades.ConexionBaseDatos;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -88,7 +89,7 @@ public class PersonasDao {
         return listaPersonas;
     }
     
-    
+    //Consultar las personas que estan en una actividad especifica
     public List<PersonasBean> consultarPersonasActividad(String idActividad) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         List<PersonasBean> listaPersonas = new ArrayList<>();
         PreparedStatement ps;
@@ -115,6 +116,43 @@ public class PersonasDao {
             persona.setCargo(rs.getInt("cargo"));
             persona.setNombreCargo(rs.getString("nombre_cargo"));
             persona.setNombre(persona.getTipoDocumento() + persona.getDocumento() + " " + persona.getNombres() + " " + persona.getApellidos());
+            listaPersonas.add(persona);
+        }
+        rs.close();
+        ps.close();
+        con.close();
+        return listaPersonas;
+    }
+    
+    //Personas que ya estan asignadas en una actividad para mostrar warning
+    public List<PersonasBean> consultarPersonasAsignadasActividad(String idPersonas, java.util.Date fechaEstimadaInicio, java.util.Date fechaEstimadaFin) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
+        List<PersonasBean> listaPersonas = new ArrayList<>();
+        PreparedStatement ps;
+        Connection con;
+        con = new ConexionBaseDatos().obtenerConexion();
+        ps = con.prepareStatement(sql.consultarPersonasAsignadasActividad(idPersonas));
+        ps.setDate(1, new Date(fechaEstimadaInicio.getTime()));
+        ps.setDate(2, new Date(fechaEstimadaFin.getTime()));
+        ResultSet rs;
+        rs = ps.executeQuery();
+        System.out.println(ps);
+        while (rs.next()) {
+            PersonasBean persona = new PersonasBean();
+            persona.setId(rs.getInt("id"));
+            persona.setDocumento(rs.getString("documento"));
+            persona.setTipoDocumento(rs.getString("tipo_documento"));
+            persona.setNombreTipoDocumento(rs.getString("nombre_tipo_documento"));
+            persona.setNombres(rs.getString("nombres"));
+            persona.setApellidos(rs.getString("apellidos"));
+            persona.setDireccion(rs.getString("direccion"));
+            persona.setTelefono(rs.getString("telefono"));
+            persona.setCelular(rs.getString("celular"));
+            persona.setCorreo(rs.getString("correo"));
+            persona.setUsuario(rs.getString("usuario"));
+            persona.setPerfil(rs.getInt("id_perfil"));
+            persona.setNombrePerfil(rs.getString("nombre_perfil"));
+            persona.setCargo(rs.getInt("cargo"));
+            persona.setNombreCargo(rs.getString("nombre_cargo"));
             listaPersonas.add(persona);
         }
         rs.close();

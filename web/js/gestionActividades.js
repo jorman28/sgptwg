@@ -7,6 +7,7 @@
 var personasActividades = {};
 var clientesSeleccionados = 0;
 var empleadosSeleccionados = 0;
+var horasTrabajadasDia = 9;
 
 jQuery(function () {
     $('#fecha_estimada_inicio')
@@ -86,12 +87,27 @@ jQuery(function () {
             $("#participante").val("");
             $("#participante").prop("disabled", true);
         }
-        
+
         $("#clientesActividad").html('No se han agregado clientes al proyecto');
         clientesSeleccionados = 0;
 
         $("#empleadosActividad").html('No se han agregado empleados al proyecto');
         empleadosSeleccionados = 0;
+    });
+
+    $('#fecha_estimada_inicio').change(function () {
+        var dato = $('#fecha_estimada_inicio').val();
+        if (dato !== undefined && dato !== "") {
+            $("#tiempo_estimado").val("0");
+            $("#tiempo_estimado").prop("disabled", false);
+        } else {
+            $("#tiempo_estimado").val("0");
+            $("#tiempo_estimado").prop("disabled", true);
+        }
+    });
+
+    $("#limpiarParticipante").click(function () {
+        $("#participante").val('');
     });
 
 });
@@ -135,7 +151,7 @@ function pintarPersonas(persona) {
             + '                 ' + persona.nombre
             + '             </div>'
             + '             <div class="col-xs-2 col-sm-1 col-md-1 col-lg-1">'
-            + '                 <span class="glyphicon glyphicon-remove" onclick="eliminarPersona(' + persona.id + ' , \'' + persona.cargo + '\');"></span>'
+            + '                 <span class="glyphicon glyphicon-remove" style="cursor:pointer;" onclick="eliminarPersona(' + persona.id + ' , \'' + persona.cargo + '\');"></span>'
             + '             </div>'
             + '         </div>'
             + '     </li>';
@@ -157,45 +173,86 @@ function eliminarPersona(idPersona, cargo) {
     }
 }
 
-//Cuando se utilizaron las listas
-//function consultarPersonasProyecto(idProyecto) {
-//    $.ajax({
-//        type: "POST",
-//        url: "ActividadesController",
-//        dataType: "json",
-//        data: {proyecto: idProyecto, accion: "consultarPersonasProyecto"},
-//        success: function (data) {
-//            if (data !== undefined) {
-//                var varEmpleados = "<optgroup label='Empleado(s)'>";
-//                var varClientes = "<optgroup label='Cliente(s)'>";
-//                var varCargoCliente = "CLIENTE";
-//                var html = "";
-//                for (var persona in data) {
-//                    persona = data[persona];
-//                    if (persona.cargo.toLowerCase() === varCargoCliente.toLowerCase()) {
-//                        varClientes += "<option value='" + persona.id + "'>" + persona.nombre + "</option>";
-//                    } else {
-//                        varEmpleados += "<option value='" + persona.id + "'>" + persona.nombre + "</option>";
-//                    }
-//                }
-//                if (varClientes !== "<optgroup label='Cliente(s)'>") {
-//                    varClientes += "</optgroup>";
-//                } else {
-//                    varClientes = "";
-//                }
-//
-//                if (varEmpleados !== "<optgroup label='Empleado(s)'>") {
-//                    varEmpleados += "</optgroup>";
-//                } else {
-//                    varEmpleados = "";
-//                }
-//                html = varEmpleados + varClientes;
-//                $("#persona").html(html);
-//                $("#personaActividad").html("");
-//            }
-//        },
-//        error: function (err) {
-//            alert(err);
-//        }
-//    });
-//}
+function calcularFechaFin(horas) {
+
+    var diasEstimados = 0;
+    var varFechaInicial = $("#fecha_estimada_inicio").val();
+
+    var arrFecha = varFechaInicial.split('/');
+    var dia = arrFecha[0];
+    var mes = arrFecha[1];
+    var anno = arrFecha[2];
+    var fechaInicial = anno + "-" + mes + "-" + dia;
+
+    $("#tiempo_estimado").data("old", $("#tiempo_estimado").data("new") || "");
+    $("#tiempo_estimado").data("new", $("#tiempo_estimado").val());
+
+    var totalDias = (parseInt(horas) + 1) / parseInt(horasTrabajadasDia);
+    diasEstimados = Math.ceil(totalDias);
+
+    var date = new Date(fechaInicial);
+    var d = date.getDate();
+    var m = date.getMonth();
+    var y = date.getFullYear();
+    var edate = new Date(y, m, d + diasEstimados);
+    var ndate = ("0" + edate.getDate()).slice(-2) + '/' + ("0" + (edate.getMonth() + 1)).slice(-2) + "/" + edate.getFullYear();
+    $("#fecha_estimada_terminacionn").val(ndate);
+    $("#fecha_estimada_terminacion").val(ndate);
+}
+
+function Validar() {
+    var empleados = $("input[name='idPersonas']").map(function () {
+        return $(this).val();
+    }).get();
+
+    var varFechaInicial = $("#fecha_estimada_inicio").val();
+    var varFechaFin = $("#fecha_estimada_terminacion").val();
+
+    if (empleados.toString() !== "" && varFechaInicial !== "" && varFechaFin !== "") {
+        $.ajax({
+            type: "POST",
+            url: "ActividadesController",
+            dataType: "json",
+            data: {empleadosSeleccionados: empleados.toString(), strFechaEstimadaInicial: varFechaInicial, strFechaEstimadaFin: varFechaFin, accion: "consultarFechasActividades"},
+            success: function (data) {
+                var arrayLength = data.length;
+                if (data !== undefined || arrayLength !== 0) {
+                    var html = "Las siguientes personas tienen otras actividades asignadas entre las fechas " + varFechaInicial + " y " + varFechaFin + "<br /><br />";
+                    var clientes = "<b>Clientes:</b><ul>";
+                    var empleados = "<b>Empleados:</b><ul>";
+                    for (var persona in data) {
+                        persona = data[persona];
+                        if (persona.cargo.toLowerCase() === "cliente") {
+                            clientes += '<li>' + persona.nombre + '</li>';
+                        } else {
+                            empleados += '<li>' + persona.nombre + '</li>';
+                        }
+                    }
+                    if (clientes === "<b>Clientes:</b><ul>") {
+                        clientes = "";
+                    } else {
+                        clientes += "</ul>";
+                    }
+
+                    if (empleados === "<b>Empleados:</b><ul>") {
+                        empleados = "";
+                    } else {
+                        empleados += "</ul>";
+                    }
+
+                    html += clientes + empleados + '<b>¿Desea Continuar Con El Registro?</b>';
+                    $("#contenidoWarning").html(html);
+                    $("#modalWarning").modal("show");
+                }else {
+                    $('#guardar').click();
+                }
+
+            },
+            error: function (err) {
+                alert(err);
+            }
+        });
+    } else {
+        $('#guardar').click();
+    }
+}
