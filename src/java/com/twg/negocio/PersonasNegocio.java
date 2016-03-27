@@ -238,8 +238,7 @@ public class PersonasNegocio {
         }
         return listaPersonas;
     }
-    
-    
+
     public List<PersonasBean> consultarPersonasActividad(String idActividad) {
         List<PersonasBean> listaPersonas = new ArrayList<>();
         try {
@@ -248,5 +247,25 @@ public class PersonasNegocio {
             Logger.getLogger(PersonasNegocio.class.getName()).log(Level.SEVERE, null, ex);
         }
         return listaPersonas;
+    }
+
+    //Jara 25/03/2016 - Método para consultar el grupo de personas ocupadas en en las fechas seleccionadas
+    public JSONArray consultarPersonasAsignadasActividad(String idPersonas, java.util.Date fechaEstimadaInicio, java.util.Date fechaEstimadaFin) {
+        JSONArray array = new JSONArray();
+        try {
+            List<PersonasBean> listaPersonas = personasDao.consultarPersonasAsignadasActividad(idPersonas, fechaEstimadaInicio, fechaEstimadaFin);
+            if (listaPersonas != null && !listaPersonas.isEmpty()) {
+                for (PersonasBean persona : listaPersonas) {
+                    JSONObject object = new JSONObject();
+                    object.put("id", persona.getId());
+                    object.put("nombre", persona.getTipoDocumento() + persona.getDocumento() + " " + persona.getNombres() + " " + persona.getApellidos());
+                    object.put("cargo", persona.getNombreCargo().equalsIgnoreCase("Cliente") ? "Cliente" : persona.getNombreCargo());
+                    array.add(object);
+                }
+            }
+        } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
+            Logger.getLogger(PersonasNegocio.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return array;
     }
 }

@@ -15,11 +15,11 @@ jQuery(function () {
             .on('changeDate', function () {
                 $('#fecha_estimada_terminacion').datetimepicker('setStartDate', $('#fecha_estimada_inicio').val());
             });
-//    $('#fecha_estimada_terminacion')
-//            .datetimepicker({format: 'dd/mm/yyyy', language: 'es', weekStart: true, todayBtn: true, autoclose: true, todayHighlight: true, startView: 2, minView: 2})
-//            .on('changeDate', function () {
-//                $('#fecha_estimada_inicio').datetimepicker('setEndDate', $('#fecha_estimada_terminacion').val());
-//            });
+    $('#fecha_estimada_terminacion')
+            .datetimepicker({format: 'dd/mm/yyyy', language: 'es', weekStart: true, todayBtn: true, autoclose: true, todayHighlight: true, startView: 2, minView: 2})
+            .on('changeDate', function () {
+                $('#fecha_estimada_inicio').datetimepicker('setEndDate', $('#fecha_estimada_terminacion').val());
+            });
 
 
     $('#fecha_real_inicio')
@@ -151,7 +151,7 @@ function pintarPersonas(persona) {
             + '                 ' + persona.nombre
             + '             </div>'
             + '             <div class="col-xs-2 col-sm-1 col-md-1 col-lg-1">'
-            + '                 <span class="glyphicon glyphicon-remove" onclick="eliminarPersona(' + persona.id + ' , \'' + persona.cargo + '\');"></span>'
+            + '                 <span class="glyphicon glyphicon-remove" style="cursor:pointer;" onclick="eliminarPersona(' + persona.id + ' , \'' + persona.cargo + '\');"></span>'
             + '             </div>'
             + '         </div>'
             + '     </li>';
@@ -196,7 +196,63 @@ function calcularFechaFin(horas) {
     var y = date.getFullYear();
     var edate = new Date(y, m, d + diasEstimados);
     var ndate = ("0" + edate.getDate()).slice(-2) + '/' + ("0" + (edate.getMonth() + 1)).slice(-2) + "/" + edate.getFullYear();
-    //alert(edate.toLocaleDateString());
     $("#fecha_estimada_terminacionn").val(ndate);
     $("#fecha_estimada_terminacion").val(ndate);
+}
+
+function Validar() {
+    var empleados = $("input[name='idPersonas']").map(function () {
+        return $(this).val();
+    }).get();
+
+    var varFechaInicial = $("#fecha_estimada_inicio").val();
+    var varFechaFin = $("#fecha_estimada_terminacion").val();
+
+    if (empleados.toString() !== "" && varFechaInicial !== "" && varFechaFin !== "") {
+        $.ajax({
+            type: "POST",
+            url: "ActividadesController",
+            dataType: "json",
+            data: {empleadosSeleccionados: empleados.toString(), strFechaEstimadaInicial: varFechaInicial, strFechaEstimadaFin: varFechaFin, accion: "consultarFechasActividades"},
+            success: function (data) {
+                var arrayLength = data.length;
+                if (data !== undefined || arrayLength !== 0) {
+                    var html = "Las siguientes personas tienen otras actividades asignadas entre las fechas " + varFechaInicial + " y " + varFechaFin + "<br /><br />";
+                    var clientes = "<b>Clientes:</b><ul>";
+                    var empleados = "<b>Empleados:</b><ul>";
+                    for (var persona in data) {
+                        persona = data[persona];
+                        if (persona.cargo.toLowerCase() === "cliente") {
+                            clientes += '<li>' + persona.nombre + '</li>';
+                        } else {
+                            empleados += '<li>' + persona.nombre + '</li>';
+                        }
+                    }
+                    if (clientes === "<b>Clientes:</b><ul>") {
+                        clientes = "";
+                    } else {
+                        clientes += "</ul>";
+                    }
+
+                    if (empleados === "<b>Empleados:</b><ul>") {
+                        empleados = "";
+                    } else {
+                        empleados += "</ul>";
+                    }
+
+                    html += clientes + empleados + '<b>¿Desea Continuar Con El Registro?</b>';
+                    $("#contenidoWarning").html(html);
+                    $("#modalWarning").modal("show");
+                }else {
+                    $('#guardar').click();
+                }
+
+            },
+            error: function (err) {
+                alert(err);
+            }
+        });
+    } else {
+        $('#guardar').click();
+    }
 }
