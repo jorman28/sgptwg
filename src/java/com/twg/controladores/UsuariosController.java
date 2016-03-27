@@ -16,6 +16,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.json.simple.JSONObject;
 
+/**
+ * Esta clase define métodos para controlar las peticiones y respuestas 
+ * que se hacen sobre el módulo principal de Usuarios, así como guardar, 
+ * consultar, modificar o eliminar la información.
+ * 
+ * @author Andrés Felipe Giraldo, Jorman Rincón, Erika Jhoana Castaneda
+ */
 public class UsuariosController extends HttpServlet {
 
     private final PerfilesNegocio perfilesNegocio = new PerfilesNegocio();
@@ -23,13 +30,13 @@ public class UsuariosController extends HttpServlet {
     private final UsuariosNegocio usuariosNegocio = new UsuariosNegocio();
 
     /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
+     * Método encargado de procesar las peticiones que ingresan por métodos get
+     * y post al controlador de Usuarios
      *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
@@ -120,6 +127,18 @@ public class UsuariosController extends HttpServlet {
         }
     }
 
+    /**
+     * Este método se encarga de enviar los atributos del Usuario, al cliente 
+     * que realiza la petición.
+     * 
+     * @param request
+     * @param idPersona
+     * @param nombreUsuario
+     * @param perfil
+     * @param activo
+     * @param documento
+     * @param tipoDocumento 
+     */
     private void enviarDatos(HttpServletRequest request, Integer idPersona, String nombreUsuario, Integer perfil, String activo, String documento, String tipoDocumento) {
         request.setAttribute("idPersona", idPersona);
         request.setAttribute("tipoDocumento", tipoDocumento);
@@ -130,6 +149,21 @@ public class UsuariosController extends HttpServlet {
         request.setAttribute("activo", activo);
     }
 
+    /**
+     * Método encargado de pintar la tabla con el listado de registros 
+     * que hay sobre los Usuarios.
+     * 
+     * @param response
+     * @param permisos
+     * @param idPersona
+     * @param nombreUsuario
+     * @param perfil
+     * @param activo
+     * @param documento
+     * @param tipoDocumento
+     * @throws ServletException
+     * @throws IOException 
+     */
     private void cargarTabla(HttpServletResponse response, List<String> permisos, Integer idPersona, String nombreUsuario, Integer perfil, String activo, String documento, String tipoDocumento) throws ServletException, IOException {
         response.setContentType("text/html; charset=iso-8859-1");
 
@@ -176,16 +210,34 @@ public class UsuariosController extends HttpServlet {
         out.println("</table>");
     }
 
+    /**
+     * @param reqeust
+     * @param response
+     * @throws ServletException
+     * @throws IOException 
+     */
     @Override
     protected void doGet(HttpServletRequest reqeust, HttpServletResponse response) throws ServletException, IOException {
         processRequest(reqeust, response);
     }
 
+    /**
+     * @param reqeust
+     * @param response
+     * @throws ServletException
+     * @throws IOException 
+     */
     @Override
     protected void doPost(HttpServletRequest reqeust, HttpServletResponse response) throws ServletException, IOException {
         processRequest(reqeust, response);
     }
 
+    /**
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException 
+     */
     protected void init(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         processRequest(request, response);
     }

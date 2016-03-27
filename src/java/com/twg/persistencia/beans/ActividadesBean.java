@@ -1,18 +1,16 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.twg.persistencia.beans;
 
 import java.util.Date;
 
 /**
- *
- * @author Jorman Rincón
+ * Esta clase define los atributos del objeto Actividades, 
+ * junto con los métodos get y set.
+ * 
+ * @author Andrés Felipe Giraldo, Jorman Rincón, Erika Jhoana Castaneda
  */
 public class ActividadesBean {
 
+    //Definición de atributos.
     private Integer id;
     private Integer version;
     private String nombreV;
@@ -27,6 +25,10 @@ public class ActividadesBean {
     private String nombreE;
     private Date fecha_eliminacion;
 
+    /*
+     * Declaración de métodos Get y Set para cada atributo de la clase.
+     */
+    
     public Integer getId() {
         return id;
     }

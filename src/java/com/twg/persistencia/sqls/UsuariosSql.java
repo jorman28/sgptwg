@@ -1,14 +1,30 @@
 package com.twg.persistencia.sqls;
 
 /**
- *
- * @author Pipe
+ * Esta clase define métodos para contruír los SQLs utilizados en el DAO.
+ * 
+ * @author Andrés Felipe Giraldo, Jorman Rincón, Erika Jhoana Castaneda
  */
 public class UsuariosSql {
 
+    /**
+     * Constructor de la clase.
+     */
     public UsuariosSql() {
     }
 
+    /**
+     * Método encargado de consultar los usuarios, aplicando diferentes filtros
+     * según los parámetros que reciba distintos de nulos.
+     * 
+     * @param idPersona
+     * @param usuario
+     * @param perfil
+     * @param activo
+     * @param documento
+     * @param tipoDocumento
+     * @return 
+     */
     public String consultarUsuarios(Integer idPersona, String usuario, Integer perfil, String activo, String documento, String tipoDocumento) {
         String sql = "SELECT " +
                     "   per.id AS id_persona, " +
@@ -51,14 +67,27 @@ public class UsuariosSql {
         return sql;
     }
 
+    /**
+     * Método encargado de retornar el SQL para insertar uno nuevo usuario.
+     * @return 
+     */
     public String insertarUsuario() {
         return "INSERT INTO usuarios (id_persona, usuario, clave, perfil, activo) VALUES (?, ?, ?, ?, ?)";
     }
 
+    /**
+     * Método encargado de retornar el SQL para actualizar un usuario existente.
+     * @return 
+     */
     public String actualizarUsuario() {
         return "UPDATE usuarios SET usuario = ?, clave = ?, perfil = ?, activo = ? WHERE id_persona = ?";
     }
 
+    /**
+     * Método encargado de eliminar lógicamente un usuario, actualizando 
+     * la fecha de eliminación con la fecha actual.
+     * @return 
+     */
     public String eliminarUsuario() {
         return "UPDATE usuarios SET fecha_eliminacion = now(), activo = 'F' WHERE id_persona = ?";
     }

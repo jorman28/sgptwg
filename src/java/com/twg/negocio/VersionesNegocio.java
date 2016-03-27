@@ -107,12 +107,11 @@ public class VersionesNegocio {
         if (estado == null || estado.equals("0")) {
             validacion += "El campo 'Estado' no debe estar vacío \n";
         } else {
-            int est;
+            int est=0;
             try {
                 est= Integer.valueOf(estado);
             } catch (NumberFormatException e) {
                 validacion += "El valor ingresado en el campo 'Estado' no corresponde al id de un estado \n";
-                est = -1;
             }
             EstadosDao eDao = new EstadosDao();
             try {
@@ -121,9 +120,13 @@ public class VersionesNegocio {
                     if(versionAntigua != null && !versionAntigua.isEmpty()){
                         if(versionAntigua.get(0).getEstado() != est){
                             List<EstadosBean> listaEstados = eDao.consultarEstados(versionAntigua.get(0).getEstado(), null, null, null, null, null);
-                            if(listaEstados != null && !listaEstados.isEmpty() && listaEstados.get(0).getEstadoPrevio() != est
-                                    && listaEstados.get(0).getEstadoSiguiente() != est){
-                                validacion += "El estado seleccionado no es válido. \n";
+                            if(listaEstados != null && !listaEstados.isEmpty()){
+                                if(listaEstados.get(0).getEstadoPrevio() != null && listaEstados.get(0).getEstadoPrevio() > 0 ||
+                                        listaEstados.get(0).getEstadoSiguiente() != null && listaEstados.get(0).getEstadoSiguiente() > 0){
+                                    if(listaEstados.get(0).getEstadoPrevio() != est && listaEstados.get(0).getEstadoSiguiente() != est){
+                                        validacion += "El estado seleccionado no es válido. \n";
+                                    }
+                                }
                             }
                         }
                     }

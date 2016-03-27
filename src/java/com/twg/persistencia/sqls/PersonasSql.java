@@ -1,14 +1,34 @@
 package com.twg.persistencia.sqls;
 
 /**
- *
- * @author Erika Jhoana
+ * Esta clase define métodos para contruír los SQLs utilizados en el DAO.
+ * 
+ * @author Andrés Felipe Giraldo, Jorman Rincón, Erika Jhoana Castaneda
  */
 public class PersonasSql {
 
+    /**
+     * Constructor de la clase
+     */
     public PersonasSql() {
     }
 
+    /**
+     * Método encargado de consultar las personas, aplicando diferentes filtros
+     * según los parámetros que lleguen distintos de nulos.
+     * 
+     * @param idPersona
+     * @param documento
+     * @param tipoDocumento
+     * @param nombres
+     * @param apellidos
+     * @param correo
+     * @param usuario
+     * @param perfil
+     * @param cargo
+     * @param nombreCompleto
+     * @return 
+     */
     public String consultarPersonas(String idPersona, String documento, String tipoDocumento, String nombres, String apellidos, String correo, String usuario, String perfil, String cargo, String nombreCompleto) {
         String sql = "";
         sql += "SELECT  "
@@ -72,6 +92,13 @@ public class PersonasSql {
         return sql;
     }
 
+    /**
+     * Método encargado de retornar el SQL para consultar las personas 
+     * pertenecientes a un proyecto, por nombres, apellidos o documento.
+     * @param idProyecto
+     * @param Busqueda
+     * @return 
+     */
     public String consultarPersonasProyecto(String idProyecto, String Busqueda) {
         String sql = "";
         sql += "SELECT p.id,\n"
@@ -108,6 +135,12 @@ public class PersonasSql {
         return sql;
     }
 
+    /**
+     * Método encargado de retornar el SQL para consultar las personas que
+     * pertenezcan a una actividad en específico.
+     * @param idActividad
+     * @return 
+     */
     public String consultarPersonasActividad(String idActividad) {
         String sql = "";
         sql += "SELECT  p.id,\n"
@@ -135,21 +168,41 @@ public class PersonasSql {
         return sql;
     }
 
+    /**
+     * Método encargado de retornar el SQL para insertar una nueva persona.
+     * @return 
+     */
     public String insertarPersona() {
         return "INSERT INTO personas (documento, tipo_documento, nombres, apellidos, direccion, telefono, celular, correo, cargo) "
                 + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
     }
 
+    /**
+     * Método encargado de retornar el SQL para actualizar una persona existente.
+     * @return 
+     */
     public String actualizarPersona() {
         return "UPDATE personas "
                 + "SET documento = ?, tipo_documento = ?, nombres = ?, apellidos = ?, direccion = ?, telefono = ?, celular = ?, correo = ?, cargo = ? "
                 + "WHERE id = ?";
     }
 
+    /**
+     * Método encargado de eliminar lógicamente una persona, actualizando 
+     * la fecha de eliminación con la fecha actual.
+     * @return 
+     */
     public String eliminarPersona() {
         return "UPDATE personas SET fecha_eliminacion = now() WHERE id = ?";
     }
 
+    /**
+     * Mètodo encargado de retornar el SQL para consultar a una persona por el 
+     * número y tipo de documento.
+     * @param documento
+     * @param tipoDocumento
+     * @return 
+     */
     public String consultarIdPersona(String documento, String tipoDocumento) {
         String sql = "";
         sql += "SELECT id FROM personas WHERE documento = '" + documento + "'";

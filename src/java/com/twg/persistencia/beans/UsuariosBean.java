@@ -1,11 +1,14 @@
 package com.twg.persistencia.beans;
 
 /**
- *
- * @author Pipe
+ * Esta clase define los atributos del objeto Usuarios, 
+ * junto con los métodos get y set.
+ * 
+ * @author Andrés Felipe Giraldo, Jorman Rincón, Erika Jhoana Castaneda
  */
 public class UsuariosBean {
     
+    //Definición de atributos.
     private Integer idPersona;
     private String usuario;
     private String clave;
@@ -16,9 +19,16 @@ public class UsuariosBean {
     private String descripcionTipoDocumento;
     private String activo;
     
+    /**
+     * Constructor de la clase
+     */
     public UsuariosBean(){
     }
 
+    /*
+     * Declaración de métodos Get y Set para cada atributo de la clase.
+     */
+    
     public Integer getIdPersona() {
         return idPersona;
     }

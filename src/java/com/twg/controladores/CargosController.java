@@ -15,21 +15,24 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.simple.JSONObject;
 
 /**
- *
- * @author erikasta07
+ * Esta clase es la encargada de controlar las peticiones que se hacen sobre el 
+ * administrador de cargos, como crear, consultar, modificar, eliminar y listar
+ * la información.
+ * 
+ * @author Andrés Felipe Giraldo, Jorman Rincón, Erika Jhoana Castaneda
  */
 public class CargosController extends HttpServlet {
 
     private final CargosNegocio cargosNegocio = new CargosNegocio();
 
     /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
+     * Método encargado de procesar las peticiones que ingresan por métodos get
+     * y post al controlador de cargos
      *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
@@ -99,6 +102,18 @@ public class CargosController extends HttpServlet {
         }
     }
 
+    /**
+     * Método encargado de pintar la tabla con el listado de registros 
+     * que hay sobre los cargos
+     * 
+     * @param response
+     * @param permisos
+     * @param nombre Este parámetro se utiliza para filtrar la información de la
+     * tabla por nombre.
+     * 
+     * @throws ServletException
+     * @throws IOException 
+     */
     private void cargarTabla(HttpServletResponse response, List<String> permisos, String nombre) throws ServletException, IOException {
         response.setContentType("text/html; charset=iso-8859-1");
         List<CargosBean> listaCargos = cargosNegocio.consultarCargos(nombre, false);

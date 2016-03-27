@@ -32,8 +32,11 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 /**
- *
- * @author Jorman Rincón
+ * Esta clase define métodos para controlar las peticiones y respuestas 
+ * que se hacen sobre el módulo principal de Actividades como listar información,
+ * filtrar o gestionar.
+ * 
+ * @author Andrés Felipe Giraldo, Jorman Rincón, Erika Jhoana Castaneda
  */
 public class ActividadesController extends HttpServlet {
 
@@ -49,13 +52,13 @@ public class ActividadesController extends HttpServlet {
     private static final String LISTAR_ACTIVIDADES = "./jsp/actividades.jsp";
 
     /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
+     * Método encargado de procesar las peticiones que ingresan por métodos get
+     * y post al controlador de Actividades
      *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
@@ -160,6 +163,7 @@ public class ActividadesController extends HttpServlet {
                     request.setAttribute("clientesActividad", clientes);
                     request.setAttribute("empleadosActividad", empleados);
                     request.setAttribute("id", actividad.getId().toString());
+                    request.setAttribute("duplicar", false);
                     request.setAttribute("proyecto", proyecto.toString());
                     request.setAttribute("versiones", versionesNegocio.consultarVersiones(null, proyecto, null, false));
                     request.setAttribute("version", actividad.getVersion().toString());
@@ -174,7 +178,6 @@ public class ActividadesController extends HttpServlet {
                 }
                 request.getRequestDispatcher(INSERTAR_O_EDITAR).forward(request, response);
                 break;
-
             case "guardar":
                 Map<String, Object> result = actividadesNegocio.guardarActividad(idStr, proyectoStr, versionStr, idPersonasActividad, descripcion, fecha_estimada_inicioStr, fecha_estimada_terminacionStr, fecha_real_inicioStr, fecha_real_terminacionStr, tiempo_estimadoStr, tiempo_invertidoStr, estadoStr);
                 if (result.get("mensajeError") != null) {
@@ -213,6 +216,41 @@ public class ActividadesController extends HttpServlet {
                     mensajeExito = (String) result.get("mensajeExito");
                     enviarDatosCreacionEdicion(request, null, null, null, null, null, null, null, null, null, null, null);
                 }
+                break;
+            case "duplicarActividad":
+                if (idStr != null && !idStr.isEmpty()) {
+                    ActividadesBean actividad = actividadesNegocio.consultarActividadI(id);
+                    request.setAttribute("estados", estadosNegocio.consultarEstados(null, "ACTIVIDADES", null, null, null, null));
+                    request.setAttribute("proyectos", proyectosNegocio.consultarProyectos(null, null, false));
+                    request.setAttribute("clientesActividad", null);
+                    request.setAttribute("empleadosActividad", null);
+                    proyecto = proyectosNegocio.consultarProyectoPorVersion(actividad.getVersion()).getId();
+                    List<PersonasBean> personas = personasNegocio.consultarPersonasActividad(idStr);
+                    List<PersonasBean> empleados = new ArrayList<>();
+                    List<PersonasBean> clientes = new ArrayList<>();
+                    for (PersonasBean persona : personas) {
+                        if (persona.getNombreCargo().toLowerCase().equalsIgnoreCase("cliente")) {
+                            clientes.add(persona);
+                        } else {
+                            empleados.add(persona);
+                        }
+                    }
+                    request.setAttribute("clientesActividad", clientes);
+                    request.setAttribute("empleadosActividad", empleados);
+                    request.setAttribute("duplicar", true);
+                    request.setAttribute("proyecto", proyecto.toString());
+                    request.setAttribute("versiones", versionesNegocio.consultarVersiones(null, proyecto, null, false));
+                    request.setAttribute("version", actividad.getVersion().toString());
+                    request.setAttribute("descripcion", actividad.getDescripcion());
+                    request.setAttribute("fecha_estimada_inicio", actividad.getFecha_estimada_inicio() != null ? sdf.format(actividad.getFecha_estimada_inicio()) : "");
+                    request.setAttribute("fecha_estimada_terminacion", actividad.getFecha_estimada_terminacion() != null ? sdf.format(actividad.getFecha_estimada_terminacion()) : "");
+                    request.setAttribute("fecha_real_inicio", actividad.getFecha_real_inicio() != null ? sdf.format(actividad.getFecha_real_inicio()) : "");
+                    request.setAttribute("fecha_real_terminacion", actividad.getFecha_real_terminacion() != null ? sdf.format(actividad.getFecha_real_terminacion()) : "");
+                    request.setAttribute("tiempo_estimado", actividad.getTiempo_estimado());
+                    request.setAttribute("tiempo_invertido", actividad.getTiempo_invertido());
+                    request.setAttribute("estado", actividad.getEstado());
+                }
+                request.getRequestDispatcher(INSERTAR_O_EDITAR).forward(request, response);
                 break;
             case "eliminar":
                 mensajeError = actividadesNegocio.eliminarActividad(id);
@@ -253,6 +291,23 @@ public class ActividadesController extends HttpServlet {
         }
     }
 
+    /**
+     * Este método se encarga de enviar los atributos de las Actividades, 
+     * al cliente que realiza la petición.
+     * 
+     * @param request
+     * @param id
+     * @param proyecto
+     * @param version
+     * @param descripcion
+     * @param fecha_estimada_inicio
+     * @param fecha_estimada_terminacion
+     * @param fecha_real_inicio
+     * @param fecha_real_terminacion
+     * @param tiempo_estimado
+     * @param tiempo_invertido
+     * @param estado 
+     */
     private void enviarDatosCreacionEdicion(HttpServletRequest request, String id, String proyecto, String version, String descripcion, String fecha_estimada_inicio, String fecha_estimada_terminacion, String fecha_real_inicio, String fecha_real_terminacion, String tiempo_estimado, String tiempo_invertido, String estado) {
         request.setAttribute("id", id);
         request.setAttribute("proyecto", proyecto);
@@ -267,6 +322,21 @@ public class ActividadesController extends HttpServlet {
         request.setAttribute("estado", estado);
     }
 
+    /**
+     * Método encargado de pintar la tabla con el listado de registros 
+     * que hay sobre las Actividades
+     * 
+     * @param response
+     * @param id
+     * @param proyecto
+     * @param version
+     * @param descripcion
+     * @param estado
+     * @param fecha
+     * @param responsable
+     * @throws ServletException
+     * @throws IOException 
+     */
     private void cargarTabla(HttpServletResponse response, Integer id, String proyecto, String version, String descripcion,
             String estado, String fecha, String responsable) throws ServletException, IOException {
         response.setContentType("text/html; charset=iso-8859-1");
@@ -299,6 +369,7 @@ public class ActividadesController extends HttpServlet {
                 out.println("<td>" + actividad.getNombreE() + "</td>");
                 out.println("<td>");
                 out.println("<button class=\"btn btn-default\" type=\"submit\" name=\"accion\" id=\"gestionarActividad\" value='gestionarActividad_" + actividad.getId() + "'> Gestionar</button>");
+                out.println("<button class=\"btn btn-default\" type=\"submit\" name=\"accion\" id=\"duplicarActividad\" value='duplicarActividad_" + actividad.getId() + "'> Duplicar</button>");
                 out.println("<button class=\"btn btn-default\" type=\"button\" data-toggle=\"modal\" data-target=\"#confirmationMessage\" onclick=\"jQuery('#id').val('" + actividad.getId() + "');\">Eliminar</button>");
                 out.println("</td>");
                 out.println("</tr>");
