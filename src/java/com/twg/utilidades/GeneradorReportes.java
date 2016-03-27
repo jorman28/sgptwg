@@ -1,4 +1,4 @@
-package com.twg.reportes;
+package com.twg.utilidades;
 
 import com.twg.negocio.ActividadesNegocio;
 import java.io.File;
