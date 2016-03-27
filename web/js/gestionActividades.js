@@ -222,7 +222,6 @@ function Validar() {
                     var empleados = "<b>Empleados:</b><ul>";
                     for (var persona in data) {
                         persona = data[persona];
-                        console.log(persona);
                         if (persona.cargo.toLowerCase() === "cliente") {
                             clientes += '<li>' + persona.nombre + '</li>';
                         } else {
