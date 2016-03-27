@@ -1,18 +1,20 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.twg.persistencia.beans;
 
 /**
- *
- * @author erikasta07
+ * Esta clase define los atributos del objeto ActividadesEmpleados, 
+ * junto con los métodos get y set.
+ * 
+ * @author Andrés Felipe Giraldo, Jorman Rincón, Erika Jhoana Castaneda
  */
 public class ActividadesEmpleadosBean {
     
+    //Definición de atributos.
     private Integer actividad;
     private Integer empleado;
+    
+    /*
+     * Declaración de métodos Get y Set para cada atributo de la clase.
+     */
     
     public Integer getActividad() {
         return actividad;

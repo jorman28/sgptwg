@@ -12,11 +12,25 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 /**
- *
- * @author Pipe
+ * Esta clase define métodos para controlar la navegación dentro del sistema
+ * y filtrar todas las URLs a las que se intenta ingresar.
+ * 
+ * @author Andrés Felipe Giraldo, Jorman Rincón, Erika Jhoana Castaneda
+ * @see Filter
  */
 public class FiltroSesion implements Filter {
 
+    /**
+     * Método encargado de filtrar las URLs a las que se acceden en el sistema,
+     * controlando la existencia de unos permisos y una sesión activa para 
+     * continuar con la navegación.
+     * 
+     * @param request
+     * @param response
+     * @param chain
+     * @throws IOException
+     * @throws ServletException 
+     */
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest req = (HttpServletRequest) request;
@@ -63,11 +77,19 @@ public class FiltroSesion implements Filter {
         chain.doFilter(request, response);
     }
 
+    /**
+     * Método encargado de destruír el filtro de sesión.
+     */
     @Override
     public void destroy() {
         System.out.println("Se destruye el filtro de sesión");
     }
 
+    /**
+     * Método encargado de inicializar el filtro de sesión.
+     * 
+     * @param filterConfig 
+     */
     @Override
     public void init(FilterConfig filterConfig) {
         System.out.println("Se inicia el filtro");

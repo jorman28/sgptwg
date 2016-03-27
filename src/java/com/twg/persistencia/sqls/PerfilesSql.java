@@ -3,14 +3,27 @@ package com.twg.persistencia.sqls;
 import java.util.List;
 
 /**
- *
- * @author Pipe
+ * Esta clase define métodos para contruír los SQLs utilizados en el DAO.
+ * 
+ * @author Andrés Felipe Giraldo, Jorman Rincón, Erika Jhoana Castaneda
  */
 public class PerfilesSql {
     
+    /**
+     * Constructor de la clase.
+    */
     public PerfilesSql(){
     }
     
+    /**
+     * Método encargado de consultar los perfiles, aplicando diferentes filtros
+     * según los parámetros que lleguen distintos de nulos.
+     * 
+     * @param idPerfil
+     * @param nombrePerfil
+     * @param nombreExacto
+     * @return 
+     */
     public String consultarPerfiles(Integer idPerfil, String nombrePerfil, boolean nombreExacto){
         StringBuilder sql = new StringBuilder();
         sql.append("SELECT * FROM perfiles WHERE 1 = 1 ");
@@ -27,35 +40,71 @@ public class PerfilesSql {
         return sql.toString();
     }
     
+    /**
+     * Método encargado de consultar un perfil específico según el parámetro
+     * que envíen.
+     * @param id
+     * @return 
+     */
     public String consultarPerfil(int id){
         return "SELECT id, nombre FROM perfiles WHERE id = "+id;
     }
 
+    /**
+     * Método encargado de retornar el SQL para insertar un nuevo perfil.
+     * @return 
+     */
     public String insertarPerfil(){
         return "INSERT INTO perfiles (nombre) VALUES (?)";
     }
     
+    /**
+     * Método encargado de retornar el SQL para actualizar un perfil existente.
+     * @return 
+     */
     public String actualizarPerfil(){
         return "UPDATE perfiles SET nombre = ? WHERE id = ?";
     }
     
+    /**
+     * Método encargado de retornar el SQL para eliminar todos los permisos 
+     * asociados a un perfil específico.
+     * @return 
+     */
     public String eliminarPermisosPorPerfil(){
         return "DELETE FROM permisos_perfiles WHERE perfil = ?";
     }
     
+    /**
+     * Método encargado de retornar el SQL para eliminar físicamente un perfil
+     * de la base de datos.
+     * @return 
+     */
     public String eliminarPerfil(){
         return "DELETE FROM perfiles WHERE id = ?";
     }
     
+    /**
+     * Método encargado de insertar todos los permisos de un perfil.
+     * @param idPerfil
+     * @param permisos
+     * @return 
+     */
     public String insertarPermisos(Integer idPerfil, List<Integer> permisos){
         StringBuilder sql = new StringBuilder();
         sql.append("INSERT INTO permisos_perfiles (permiso, perfil) VALUES ");
+        //Se recorre la lista de permisos para armar el SQL, asociando uno por uno al perfil.
         for (Integer permiso : permisos) {
             sql.append("(").append(permiso).append(", ").append(idPerfil).append("),");
         }
         return sql.toString().substring(0, sql.toString().length()-1);
     }
     
+    /**
+     * Método encargado de consultar los permisos para un perfil específico.
+     * @param idPerfil
+     * @return 
+     */
     public String consultarPermisos(Integer idPerfil){
         String sql = "SELECT DISTINCT\n" +
                 "    pag.id idPagina,\n" +
@@ -78,6 +127,10 @@ public class PerfilesSql {
         return sql;
     }
     
+    /**
+     * Método encargado de consultar los permisos de un perfil específico.
+     * @return 
+     */
     public String obtenerPermisosPerfil(){
         return "SELECT DISTINCT permiso FROM permisos_perfiles WHERE perfil = ?";
     }

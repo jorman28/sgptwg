@@ -1,11 +1,14 @@
 package com.twg.persistencia.beans;
 
 /**
- *
- * @author Erika Jhoana
+ * Esta clase define los atributos del objeto Personas, 
+ * junto con los métodos get y set.
+ * 
+ * @author Andrés Felipe Giraldo, Jorman Rincón, Erika Jhoana Castaneda
  */
 public class PersonasBean {
 
+    //Definición de atributos.
     private Integer id;
     private String documento;
     private String tipoDocumento;
@@ -25,8 +28,15 @@ public class PersonasBean {
     
     private String nombre; //utilizada para cargar las listas en actividades
 
+    /**
+     * Constructor de la clase
+     */
     public PersonasBean() {
     }
+    
+    /*
+     * Declaración de métodos Get y Set para cada atributo de la clase.
+     */
 
     public Integer getId() {
         return id;
@@ -163,6 +173,5 @@ public class PersonasBean {
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }
-    
     
 }

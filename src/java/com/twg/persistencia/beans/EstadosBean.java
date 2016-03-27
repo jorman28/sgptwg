@@ -1,17 +1,14 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package com.twg.persistencia.beans;
 
 /**
- *
- * @author Jorman
+ * Esta clase define los atributos del objeto Estados, 
+ * junto con los métodos get y set.
+ * 
+ * @author Andrés Felipe Giraldo, Jorman Rincón, Erika Jhoana Castaneda
  */
 public class EstadosBean {
     
+    //Definición de atributos.
     private Integer id;
     private String nombre;    
     private String fechaEliminacion;
@@ -20,8 +17,15 @@ public class EstadosBean {
     private Integer estadoSiguiente;
     private String estadoFinal;
 
+    /**
+     * Constructor de la clase
+     */
     public EstadosBean(){
     }
+    
+    /*
+     * Declaración de métodos Get y Set para cada atributo de la clase.
+     */
 
     public String getFechaEliminacion() {
         return fechaEliminacion;
