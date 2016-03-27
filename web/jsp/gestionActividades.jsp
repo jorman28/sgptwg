@@ -43,10 +43,19 @@
                         </center>
                         <input type="hidden" id="id" name="id" value="${id}" />
                         <div id="modalWarning" class="modal fade">
-                            <div class="modal-dialog modal-sm">
+                            <div class="modal-dialog" role="document">
                                 <div class="modal-content">
-                                    <div class="modal-header">
-                                        WARNING!
+                                    <div class="modal-header" style="color:#fff;
+                                         padding:9px 15px;
+                                         border-bottom:1px solid #eee;
+                                         background-color: #FFCC00;
+                                         -webkit-border-top-left-radius: 5px;
+                                         -webkit-border-top-right-radius: 5px;
+                                         -moz-border-radius-topleft: 5px;
+                                         -moz-border-radius-topright: 5px;
+                                         border-top-left-radius: 5px;
+                                         border-top-right-radius: 5px;">
+                                        <span class="glyphicon glyphicon-warning-sign"></span> <b>WARNING!</b>
                                     </div>
                                     <div class="modal-body">
                                         <div class="form-group">
@@ -54,7 +63,7 @@
                                         </div>
                                     </div>
                                     <div class="modal-footer">
-                                        <button class="btn btn-default" type="submit" name="accion" id="guardar" value="guardar">Continuar</button>
+                                        <button class="btn btn-primary" type="submit" name="accion" id="guardar" value="guardar">Continuar</button>
                                         <button type="button" class="btn btn-primary" data-dismiss="modal">Cancelar</button>
                                     </div>
                                 </div>
@@ -249,7 +258,7 @@
                             </div>                          
                         </div>
                         <div class="row">
-                            <button class="btn btn-default" type="submit" name="accion" id="guardar" value="guardar" onclick="return Validar()">Guardar</button>
+                            <button class="btn btn-default" type="button" name="accion" id="crear" value="Guardar" onclick="Validar()">Guardar</button>
                             <c:choose>
                                 <c:when test="${id == null || id == ''}">
                                     <button class="btn btn-default" type="submit" name="accion" id="limpiarCreacion" value="limpiarCreacion">Limpiar</button>

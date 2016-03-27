@@ -130,12 +130,12 @@ public class PersonasDao {
         PreparedStatement ps;
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
-        ps = con.prepareStatement(sql.consultarPersonasAsignadasActividad());
+        ps = con.prepareStatement(sql.consultarPersonasAsignadasActividad(idPersonas));
         ps.setDate(1, new Date(fechaEstimadaInicio.getTime()));
         ps.setDate(2, new Date(fechaEstimadaFin.getTime()));
-        ps.setString(3, idPersonas);
         ResultSet rs;
         rs = ps.executeQuery();
+        System.out.println(ps);
         while (rs.next()) {
             PersonasBean persona = new PersonasBean();
             persona.setId(rs.getInt("id"));

@@ -243,7 +243,7 @@ public class ActividadesController extends HttpServlet {
                     break;
                     
                 case "consultarFechasActividades":
-                    String strParticipantes = request.getParameter("idPersonasSeleccionadas");
+                    String strParticipantes = request.getParameter("empleadosSeleccionados");
                     String strFechaEstimadaInicial = request.getParameter("strFechaEstimadaInicial");
                     String strFechaEstimadaFin = request.getParameter("strFechaEstimadaFin");
                     java.util.Date dateFechaEstimadaInicial = sdf.parse(strFechaEstimadaInicial);
@@ -261,7 +261,7 @@ public class ActividadesController extends HttpServlet {
             request.setAttribute("proyectos", proyectosNegocio.consultarProyectos(null, null, false));
             request.setAttribute("versiones", versionesNegocio.consultarVersiones(null, null, null, false));
             request.setAttribute("estados", estadosNegocio.consultarEstados(null, "ACTIVIDADES", null, null, null, null));
-            if (!accion.equals("consultar") && !accion.equals("editar") && !accion.equals("consultarVersiones") && !accion.equals("crearActividad") && !accion.equals("limpiarCreacion") && !accion.equals("gestionarActividad") && !accion.equals("limpiarGestion") && !accion.equals("consultarPersonasProyecto")) {
+            if (!accion.equals("consultar") && !accion.equals("editar") && !accion.equals("consultarVersiones") && !accion.equals("crearActividad") && !accion.equals("limpiarCreacion") && !accion.equals("gestionarActividad") && !accion.equals("limpiarGestion") && !accion.equals("consultarPersonasProyecto") && !accion.equals("consultarFechasActividades")) {
                 if (permisosPagina != null && !permisosPagina.isEmpty()) {
                     if (permisosPagina.contains(Permisos.CONSULTAR.getNombre())) {
                         request.setAttribute("opcionConsultar", "T");

@@ -135,7 +135,7 @@ public class PersonasSql {
         return sql;
     }
 
-    public String consultarPersonasAsignadasActividad() {
+    public String consultarPersonasAsignadasActividad(String personas) {
         String sql = "";
         sql += "SELECT DISTINCT p.id,\n"
                 + "        p.documento,\n"
@@ -159,7 +159,7 @@ public class PersonasSql {
                 + "        INNER JOIN cargos car ON car.id = p.cargo \n"
                 + "        LEFT JOIN usuarios u ON p.id = u.id_persona AND u.fecha_eliminacion IS NULL \n"
                 + "        LEFT JOIN perfiles pf ON pf.id = u.perfil AND pf.fecha_eliminacion IS NULL \n"
-                + "WHERE   1 = 1 AND p.fecha_eliminacion IS NULL AND act.fecha_estimada_inicio >= ? AND act.fecha_estimada_terminacion <= ? AND ae.empleado IN (?)";
+                + "WHERE   1 = 1 AND p.fecha_eliminacion IS NULL AND act.fecha_estimada_inicio >= ? AND act.fecha_estimada_terminacion <= ? AND ae.empleado IN (" + personas + ")";
 
         return sql;
     }

@@ -213,40 +213,47 @@ function Validar() {
             type: "POST",
             url: "ActividadesController",
             dataType: "json",
-            data: {idPersonasSeleccionadas: empleados, strFechaEstimadaInicial: varFechaInicial, strFechaEstimadaFin:varFechaFin ,accion: "consultarFechasActividades"},
+            data: {empleadosSeleccionados: empleados.toString(), strFechaEstimadaInicial: varFechaInicial, strFechaEstimadaFin: varFechaFin, accion: "consultarFechasActividades"},
             success: function (data) {
-                if (data !== undefined) {
-                    var html = "Las siguientes personas tienen actividades asignadas para las fechas señaladas <br /><br />";
-                    var clientes = "<b>Clientes</b><br /><br />";
-                    var empleados = "<b>Empleados</b><br /><br />";
+                var arrayLength = data.length;
+                if (data !== undefined || arrayLength !== 0) {
+                    var html = "Las siguientes personas tienen otras actividades asignadas entre las fechas " + varFechaInicial + " y " + varFechaFin + "<br /><br />";
+                    var clientes = "<b>Clientes:</b><ul>";
+                    var empleados = "<b>Empleados:</b><ul>";
                     for (var persona in data) {
                         persona = data[persona];
+                        console.log(persona);
                         if (persona.cargo.toLowerCase() === "cliente") {
-                            clientes += persona.nombre;
+                            clientes += '<li>' + persona.nombre + '</li>';
                         } else {
-                            empleados += persona.nombre;
+                            empleados += '<li>' + persona.nombre + '</li>';
                         }
                     }
-                    if (clientes === "<b>Clientes</b><br /><br />") {
+                    if (clientes === "<b>Clientes:</b><ul>") {
                         clientes = "";
-                    }
-                    if (empleados === "<b>Empleados</b><br /><br />") {
-                        empleados = "";
+                    } else {
+                        clientes += "</ul>";
                     }
 
-                    html += clientes + empleados + '<br /><br /> ¿Desea Continuar?';
+                    if (empleados === "<b>Empleados:</b><ul>") {
+                        empleados = "";
+                    } else {
+                        empleados += "</ul>";
+                    }
+
+                    html += clientes + empleados + '<b>¿Desea Continuar Con El Registro?</b>';
                     $("#contenidoWarning").html(html);
                     $("#modalWarning").modal("show");
+                }else {
+                    $('#guardar').click();
                 }
+
             },
             error: function (err) {
                 alert(err);
             }
         });
-        alert('return true');
-        return true;
     } else {
-        alert('no se ha seleccionado personas');
-        return false;
+        $('#guardar').click();
     }
 }
