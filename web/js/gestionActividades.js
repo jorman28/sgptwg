@@ -216,7 +216,7 @@ function Validar() {
             data: {empleadosSeleccionados: empleados.toString(), strFechaEstimadaInicial: varFechaInicial, strFechaEstimadaFin: varFechaFin, accion: "consultarFechasActividades"},
             success: function (data) {
                 var arrayLength = data.length;
-                if (data !== undefined || arrayLength !== 0) {
+                if (data !== undefined && arrayLength !== 0) {
                     var html = "Las siguientes personas tienen otras actividades asignadas entre las fechas " + varFechaInicial + " y " + varFechaFin + "<br /><br />";
                     var clientes = "<b>Clientes:</b><ul>";
                     var empleados = "<b>Empleados:</b><ul>";
