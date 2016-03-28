@@ -125,12 +125,12 @@ public class PersonasDao {
     }
     
     //Personas que ya estan asignadas en una actividad para mostrar warning
-    public List<PersonasBean> consultarPersonasAsignadasActividad(String idPersonas, java.util.Date fechaEstimadaInicio, java.util.Date fechaEstimadaFin) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
+    public List<PersonasBean> consultarPersonasAsignadasActividad(String idPersonas, java.util.Date fechaEstimadaInicio, java.util.Date fechaEstimadaFin, String idActividad) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         List<PersonasBean> listaPersonas = new ArrayList<>();
         PreparedStatement ps;
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
-        ps = con.prepareStatement(sql.consultarPersonasAsignadasActividad(idPersonas));
+        ps = con.prepareStatement(sql.consultarPersonasAsignadasActividad(idPersonas, idActividad));
         ps.setDate(1, new Date(fechaEstimadaInicio.getTime()));
         ps.setDate(2, new Date(fechaEstimadaFin.getTime()));
         ResultSet rs;

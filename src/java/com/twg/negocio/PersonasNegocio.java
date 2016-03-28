@@ -121,38 +121,81 @@ public class PersonasNegocio {
         return matcher.matches();
     }
 
-    public String validarDatos(String documento, String tipoDocumento, String nombres, String apellidos,
+    public String validarDatos(String documento, String tipoDocumento, String nombres, String apellidos, String telefono, String celular,
             String correo, String direccion, String cargo, String usuario, String perfil, String clave, String clave2) {
         String error = "";
+
+        //Obligatorios
         if (tipoDocumento == null || tipoDocumento.trim().isEmpty() || tipoDocumento.trim().equals("0")) {
-            error += "El campo 'Tipo de documento' es obligatorio \n";
+            error += "El campo 'Tipo de documento' es obligatorio <br />";
         }
         if (documento == null || documento.trim().isEmpty()) {
-            error += "El campo 'Documento' es obligatorio \n";
+            error += "El campo 'Documento' es obligatorio <br />";
+        } else {
+            if (documento.length() > 15) {
+                error += "El campo 'Documento' no debe contener más de 15 caracteres, has dígitado " + documento.length() + " caracteres <br />";
+            }
         }
         if (nombres == null || nombres.trim().isEmpty()) {
-            error += "El campo 'Nombres' es obligatorio \n";
+            error += "El campo 'Nombres' es obligatorio <br />";
+        } else {
+            if (nombres.length() > 50) {
+                error += "El campo 'Nombres' no debe contener más de 50 caracteres, has dígitado " + nombres.length() + " caracteres <br />";
+            }
         }
         if (apellidos == null || apellidos.trim().isEmpty()) {
-            error += "El campo 'Apellidos' es obligatorio \n";
+            error += "El campo 'Apellidos' es obligatorio <br />";
+        } else {
+            if (apellidos.length() > 50) {
+                error += "El campo 'Apellidos' no debe contener más de 50 caracteres, has dígitado " + apellidos.length() + " caracteres <br />";
+            }
         }
-        if (correo == null || correo.trim().isEmpty()) {
-            error += "El campo 'Correo' es obligatorio \n";
-        } else if (!validarEmail(correo)) {
-            error += "El campo 'Correo' no cuenta con el formato válido correo@dominio \n";
+        if (telefono == null || telefono.trim().isEmpty()) {
+            error += "El campo 'Teléfono' es obligatorio <br />";
+        } else {
+            if (telefono.length() > 15) {
+                error += "El campo 'Teléfono' no debe contener más de 15 caracteres, has dígitado " + telefono.length() + " caracteres <br />";
+            }
         }
         if (direccion == null || direccion.trim().isEmpty()) {
-            error += "El campo 'Dirección' es obligatorio \n";
+            error += "El campo 'Dirección' es obligatorio <br />";
+        } else {
+            if (direccion.length() > 50) {
+                error += "El campo 'Dirección' no debe contener más de 50 caracteres, has dígitado " + direccion.length() + " caracteres <br />";
+            }
         }
         if (cargo == null || cargo.equals("0")) {
-            error += "El campo 'Cargo' es obligatorio \n";
+            error += "El campo 'Cargo' es obligatorio <br />";
         }
+
+        //NO Obligatorios, pero se valida su longitud, caso celular y correo
+        if (celular != null && !celular.trim().isEmpty()) {
+            if (celular.length() > 15) {
+                error += "El campo 'Celular' no debe contener más de 15 caracteres, has dígitado " + celular.length() + " caracteres <br />";
+            }
+        }
+
+        if (correo != null && !correo.trim().isEmpty()) {
+            if (correo.length() > 50) {
+                error += "El campo 'Correo' no debe contener más de 50 caracteres, has dígitado " + correo.length() + " caracteres <br />";
+            } else {
+                if (!validarEmail(correo)) {
+                    error += "El campo 'Correo' no cuenta con el formato válido correo@dominio <br />";
+                }
+            }
+        }
+
+        //Validar Campos de registro de Usuario en caso de que sean diligenciados
         if ((usuario != null && !usuario.isEmpty()) || (perfil != null && !perfil.equals("0")) || (clave != null && !clave.isEmpty()) || (clave2 != null && !clave2.isEmpty())) {
             if (usuario == null || usuario.isEmpty()) {
-                error += "El campo 'Usuario' es obligatorio \n";
+                error += "El campo 'Usuario' es obligatorio <br />";
+            } else {
+                if (usuario.length() > 15) {
+                    error += "El campo 'Usuario' no debe contener más de 15 caracteres, has dígitado " + usuario.length() + " caracteres <br />";
+                }
             }
             if (perfil == null) {
-                error += "El campo 'Perfil' es obligatorio \n";
+                error += "El campo 'Perfil' es obligatorio <br />";
             }
             UsuariosBean objetoUsuario = null;
             if (documento != null && !documento.isEmpty() && tipoDocumento != null && !tipoDocumento.equals("0")) {
@@ -168,15 +211,19 @@ public class PersonasNegocio {
 
             if (clave == null || clave.isEmpty()) {
                 if (objetoUsuario == null) {
-                    error += "El campo 'Clave' es obligatorio \n";
+                    error += "El campo 'Clave' es obligatorio <br />";
                 } else if (clave2 != null && !clave2.isEmpty()) {
-                    error += "El campo 'Clave' es obligatorio \n";
+                    error += "El campo 'Clave' es obligatorio <br />";
                 }
             } else {
-                if (clave2 == null || clave2.isEmpty()) {
-                    error += "El campo 'Confirmar clave' es obligatorio \n";
-                } else if (!clave.equals(clave2)) {
-                    error += "El valor en el campo 'Clave' y 'Confirmar clave' deben ser iguales \n";
+                if (clave.length() > 15) {
+                    error += "El campo 'Clave' no debe contener más de 15 caracteres <br />";
+                } else {
+                    if (clave2 == null || clave2.isEmpty()) {
+                        error += "El campo 'Confirmar clave' es obligatorio <br />";
+                    } else if (!clave.equals(clave2)) {
+                        error += "El valor en el campo 'Clave' y 'Confirmar clave' deben ser iguales <br />";
+                    }
                 }
             }
         }
@@ -250,10 +297,10 @@ public class PersonasNegocio {
     }
 
     //Jara 25/03/2016 - Método para consultar el grupo de personas ocupadas en en las fechas seleccionadas
-    public JSONArray consultarPersonasAsignadasActividad(String idPersonas, java.util.Date fechaEstimadaInicio, java.util.Date fechaEstimadaFin) {
+    public JSONArray consultarPersonasAsignadasActividad(String idPersonas, java.util.Date fechaEstimadaInicio, java.util.Date fechaEstimadaFin, String idActividad) {
         JSONArray array = new JSONArray();
         try {
-            List<PersonasBean> listaPersonas = personasDao.consultarPersonasAsignadasActividad(idPersonas, fechaEstimadaInicio, fechaEstimadaFin);
+            List<PersonasBean> listaPersonas = personasDao.consultarPersonasAsignadasActividad(idPersonas, fechaEstimadaInicio, fechaEstimadaFin, idActividad);
             if (listaPersonas != null && !listaPersonas.isEmpty()) {
                 for (PersonasBean persona : listaPersonas) {
                     JSONObject object = new JSONObject();

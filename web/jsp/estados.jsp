@@ -42,7 +42,7 @@
 
                                     <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                         <label for="nombre">*Nombre:</label>
-                                        <input class="form-control" type="text" id="nombre" name="nombre" value="${nombre}"/>
+                                        <input class="form-control" type="text" id="nombre" name="nombre" value="${nombre}" maxlength="30"/>
                                     </div>
                                 </div>
                                 <div class="row">

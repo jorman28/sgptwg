@@ -46,7 +46,7 @@
                                     </div>
                                     <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                         <label for="documento">*Documento:</label> 
-                                        <input class="form-control" type="text" id="documento" name="documento" value="${documento}"/>
+                                        <input class="form-control" type="text" id="documento" name="documento" value="${documento}" maxlength="15"/>
                                     </div>
                                     <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                         <label for="nombres">*Nombres</label>
@@ -54,10 +54,10 @@
                                     </div>
                                     <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                         <label for="apellidos">*Apellidos</label>
-                                        <input class="form-control" type="text" id="apellidos" name="apellidos" value="${apellidos}"/>
+                                        <input class="form-control" type="text" id="apellidos" name="apellidos" value="${apellidos}" maxlength="50"/>
                                     </div>
                                     <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                                        <label for="telefono">Teléfono</label>
+                                        <label for="telefono">*Teléfono</label>
                                         <input class="form-control" type="text" id="telefono" name="telefono" value="${telefono}" maxlength="15" />
                                     </div>
                                     <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
@@ -65,7 +65,7 @@
                                         <input class="form-control" type="text" id="celular" name="celular" value="${celular}" maxlength="15"/>
                                     </div>
                                     <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                                        <label for="correo">*Correo</label>
+                                        <label for="correo">Correo</label>
                                         <input class="form-control" type="text" id="correo" name="correo" value="${correo}" maxlength="50"/>
                                     </div>
                                     <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
@@ -91,7 +91,7 @@
                                 <div class="row">
                                     <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                         <label for="usuario">*Usuario:</label> 
-                                        <input class="form-control" type="text" id="usuario" name="usuario" value="${usuario}" />
+                                        <input class="form-control" type="text" id="usuario" name="usuario" value="${usuario}" maxlength="15" />
                                     </div>
                                     <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                         <label for="perfil">*Perfil:</label> 
@@ -104,11 +104,11 @@
                                     </div>
                                     <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                         <label for="clave">*Clave:</label> 
-                                        <input class="form-control" type="password" id="clave" name="clave" value="${clave}" />
+                                        <input class="form-control" type="password" id="clave" name="clave" value="${clave}" maxlength="15"/>
                                     </div>
                                     <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                         <label for="clave">*Confirmar clave:</label> 
-                                        <input class="form-control" type="password" id="clave2" name="clave2" value="${clave}" />
+                                        <input class="form-control" type="password" id="clave2" name="clave2" value="${clave}" maxlength="15"/>
                                     </div>
                                 </div>
                             </div>
@@ -121,6 +121,7 @@
                                 <button class="btn btn-default" type="submit" name="accion" id="cancelar" value="cancelar">Atrás</button>
                             </div>
                         </div>
+                        <br />
                     </form>
                 </div>
             </div>

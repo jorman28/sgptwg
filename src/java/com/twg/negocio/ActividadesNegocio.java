@@ -175,6 +175,10 @@ public class ActividadesNegocio {
 
         if (descripcion == null || descripcion.isEmpty()) {
             validacion += "El campo 'Descripción' no debe estar vacío <br />";
+        } else {
+            if (descripcion.length() > 1000) {
+                validacion += "El campo 'Descripción' no debe contener más de 1000 caracteres, has dígitado " + descripcion.length() + " caracteres <br />";
+            }
         }
 
         if (fecha_estimada_inicio == null || fecha_estimada_inicio.isEmpty()) {
@@ -205,45 +209,45 @@ public class ActividadesNegocio {
 
         if (estado == null || estado.equals("0")) {
             validacion += "El campo 'Estado' no debe estar vacío <br />";
-        }else {
-            int est=0;
+        } else {
+            int est = 0;
             try {
-                est= Integer.valueOf(estado);
+                est = Integer.valueOf(estado);
             } catch (NumberFormatException e) {
-                validacion += "El valor ingresado en el campo 'Estado' no corresponde al id de un estado \n";
+                validacion += "El valor ingresado en el campo 'Estado' no corresponde al id de un estado <br />";
             }
             EstadosDao eDao = new EstadosDao();
             try {
-                if(idAct!=null && !idAct.equals("")){//Actividad existente: se valida contra estados prev y sig
-                    int act=0;
+                if (idAct != null && !idAct.equals("")) {//Actividad existente: se valida contra estados prev y sig
+                    int act = 0;
                     try {
-                        act= Integer.valueOf(idAct);
+                        act = Integer.valueOf(idAct);
                     } catch (NumberFormatException e) {
                     }
                     ActividadesBean actividadAntigua = consultarActividadI(act);
-                    if(actividadAntigua != null){
+                    if (actividadAntigua != null) {
                         //Si el estado seleccionado es distinto al que ya tenía, se valida que sea el previo o el siguiente
-                        if(actividadAntigua.getEstado() != est){
+                        if (actividadAntigua.getEstado() != est) {
                             List<EstadosBean> listaEstados = eDao.consultarEstados(actividadAntigua.getEstado(), null, null, null, null, null);
-                            if(listaEstados != null && !listaEstados.isEmpty()){
-                                if(listaEstados.get(0).getEstadoPrevio() != null && listaEstados.get(0).getEstadoPrevio() > 0 ||
-                                        listaEstados.get(0).getEstadoSiguiente() != null && listaEstados.get(0).getEstadoSiguiente() > 0){
-                                    if(listaEstados.get(0).getEstadoPrevio() != est && listaEstados.get(0).getEstadoSiguiente() != est){
-                                        validacion += "El estado seleccionado no es válido. \n";
+                            if (listaEstados != null && !listaEstados.isEmpty()) {
+                                if (listaEstados.get(0).getEstadoPrevio() != null && listaEstados.get(0).getEstadoPrevio() > 0
+                                        || listaEstados.get(0).getEstadoSiguiente() != null && listaEstados.get(0).getEstadoSiguiente() > 0) {
+                                    if (listaEstados.get(0).getEstadoPrevio() != est && listaEstados.get(0).getEstadoSiguiente() != est) {
+                                        validacion += "El estado seleccionado no es válido. <br />";
                                     }
                                 }
                             }
                         }
                     }
-                }else{//Actividad nueva: se valida contra estado final unicamente
+                } else {//Actividad nueva: se valida contra estado final unicamente
                     List<EstadosBean> eBean = eDao.consultarEstados(null, "ACTIVIDADES", null, null, null, "T");
-                    if(eBean!=null && !eBean.isEmpty()){
-                        if(eBean.get(0).getId() == est){
-                            validacion += "El estado seleccionado no es válido para una nueva actividad \n";
+                    if (eBean != null && !eBean.isEmpty()) {
+                        if (eBean.get(0).getId() == est) {
+                            validacion += "El estado seleccionado no es válido para una nueva actividad <br />";
                         }
                     }
                 }
-                
+
             } catch (Exception e) {
             }
         }
@@ -278,8 +282,7 @@ public class ActividadesNegocio {
             validacion += "Se debe añadir al menos 1 participante en la actividad. <br />";
         }
 
-        if (fecha_real_inicio == null || fecha_real_inicio.isEmpty()) {
-        } else {
+        if (fecha_real_inicio != null && !fecha_real_inicio.isEmpty()) {
             try {
                 sdf.parse(fecha_real_inicio);
             } catch (ParseException e) {
@@ -287,8 +290,7 @@ public class ActividadesNegocio {
             }
         }
 
-        if (fecha_real_terminacion == null || fecha_real_terminacion.isEmpty()) {
-        } else {
+        if (fecha_real_terminacion != null && !fecha_real_terminacion.isEmpty()) {
             try {
                 sdf.parse(fecha_real_terminacion);
             } catch (ParseException e) {
@@ -296,9 +298,10 @@ public class ActividadesNegocio {
             }
         }
 
-        if (tiempo_invertido == null || tiempo_invertido.equals("")) {
-        } else if (!tiempo_invertido.matches("[0-9]+(\\.[0-9][0-9]?)?")) {
-            validacion += "El valor ingresado en el campo 'Tiempo invertido' solo debe contener números' <br />";
+        if (tiempo_invertido != null && !tiempo_invertido.isEmpty()) {
+            if (!tiempo_invertido.matches("[0-9]+(\\.[0-9][0-9]?)?")) {
+                validacion += "El valor ingresado en el campo 'Tiempo invertido' solo debe contener números' <br />";
+            }
         }
 
         return validacion;
@@ -469,7 +472,7 @@ public class ActividadesNegocio {
                 if (totalActividades > 0) {
                     mapaActividades.put("porcentaje", (Math.round(actividades / totalActividades * 1000d) / 10d) + "%");
                 } else {
-                    mapaActividades.put("porcentaje", 0+"%");
+                    mapaActividades.put("porcentaje", 0 + "%");
                 }
                 actividadesPorEstado.add(mapaActividades);
             }

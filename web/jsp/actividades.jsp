@@ -48,7 +48,7 @@
                                     
                                     <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
                                         <label for="descripcion">Descripción</label>
-                                        <input class="form-control" type="text" id="descripcion" name="descripcion" value="${descripcion}"/>
+                                        <input class="form-control" type="text" id="descripcion" name="descripcion" value="${descripcion}" maxlength="1000"/>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -69,7 +69,7 @@
                                         
                                     <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
                                         <label for="responsable">Documento persona</label>
-                                        <input class="form-control" type="text" id="responsable" name="responsable" value="${responsable}"/>
+                                        <input class="form-control" type="text" id="responsable" name="responsable" value="${responsable}" maxlength="15"/>
                                     </div>
                                 </div>
                                 <br>

@@ -473,7 +473,7 @@
                         <div class="row">
                             <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                 <label for="nombrePerfil">Perfil:</label> 
-                                <input class="form-control" type="text" id="nombrePerfil" name="nombrePerfil" value="${nombrePerfil}"/>
+                                <input class="form-control" type="text" id="nombrePerfil" name="nombrePerfil" value="${nombrePerfil}" maxlength="50"/>
                             </div>
                         </div>
                         <br>

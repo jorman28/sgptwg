@@ -2,21 +2,21 @@ var personasProyecto = {};
 var clientesSeleccionados = 0;
 var empleadosSeleccionados = false;
 
-$(function() {
+$(function () {
     $('#fechaInicioProyecto').datetimepicker({format: 'dd/mm/yyyy', language: 'es', weekStart: true, todayBtn: true, autoclose: true, todayHighlight: true, startView: 2, minView: 2});
     $('#fechaInicioVersion')
             .datetimepicker({format: 'dd/mm/yyyy', language: 'es', weekStart: true, todayBtn: true, autoclose: true, todayHighlight: true, startView: 2, minView: 2})
-            .on('changeDate', function() {
+            .on('changeDate', function () {
                 $('#fechaFinVersion').datetimepicker('setStartDate', $('#fechaInicioVersion').val());
             });
     $('#fechaFinVersion')
             .datetimepicker({format: 'dd/mm/yyyy', language: 'es', weekStart: true, todayBtn: true, autoclose: true, todayHighlight: true, startView: 2, minView: 2})
-            .on('changeDate', function() {
+            .on('changeDate', function () {
                 $('#fechaInicioVersion').datetimepicker('setEndDate', $('#fechaFinVersion').val());
             });
     $("#participante")
             .typeahead({
-                onSelect: function(item) {
+                onSelect: function (item) {
                     if ($("#persona" + item.value)[0] === undefined) {
                         var persona = personasProyecto[item.value];
                         var html = pintarPersona(persona);
@@ -45,10 +45,10 @@ $(function() {
                     triggerLength: 1,
                     items: 10,
                     method: "POST",
-                    preDispatch: function(query) {
+                    preDispatch: function (query) {
                         return {search: query, accion: "completarPersonas"};
                     },
-                    preProcess: function(data) {
+                    preProcess: function (data) {
                         for (var i = 0; i < data.length; i++) {
                             var persona = data[i];
                             personasProyecto[persona.id] = persona;
@@ -57,6 +57,12 @@ $(function() {
                     }
                 }
             });
+});
+
+jQuery(function () {
+    $("#limpiarParticipante").click(function () {
+        $("#participante").val('');
+    });
 });
 
 function nuevoProyecto() {
@@ -93,7 +99,7 @@ function editarProyecto(idProyecto) {
         url: "ProyectosController",
         dataType: "json",
         data: {idProyecto: idProyecto, accion: "editarProyecto"},
-        success: function(data) {
+        success: function (data) {
             personasProyecto = {};
             clientesSeleccionados = 0;
             empleadosSeleccionados = 0;
@@ -113,7 +119,7 @@ function editarProyecto(idProyecto) {
                 $("#modalProyectos").modal("show");
             }
         },
-        error: function() {
+        error: function () {
         }
     });
 }
@@ -124,7 +130,7 @@ function editarVersion(idVersion) {
         url: "ProyectosController",
         dataType: "json",
         data: {idVersion: idVersion, accion: "editarVersion"},
-        success: function(data) {
+        success: function (data) {
             if (data !== undefined) {
                 $("#idProyectoVersion").val(data.idProyecto !== undefined ? data.idProyecto : "");
                 $("#idVersion").val(data.idVersion !== undefined ? data.idVersion : "");
@@ -144,7 +150,7 @@ function editarVersion(idVersion) {
                 $("#modalVersiones").modal("show");
             }
         },
-        error: function() {
+        error: function () {
         }
     });
 }

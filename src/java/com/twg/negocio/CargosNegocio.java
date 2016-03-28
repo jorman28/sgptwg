@@ -66,17 +66,21 @@ public class CargosNegocio {
     public String validarCargo(String id, String nombre) {
         String error = "";
         if (nombre == null || nombre.isEmpty()) {
-            error += "El campo 'Nombre' es obligatorio \n";
+            error += "El campo 'Nombre del cargo' es obligatorio <br />";
         } else {
-            try {
-                List<CargosBean> listaCargos = cargosDao.consultarCargos(nombre, true);
-                if (listaCargos != null && !listaCargos.isEmpty()) {
-                    if (id == null || id.isEmpty() || !id.equals(listaCargos.get(0).getId().toString())) {
-                        error += "El nombre del cargo ingresado ya existe en el sistema \n";
+            if (nombre.length() > 50) {
+                error += "El campo 'Nombre del cargo' no debe contener más de 50 caracteres, has dígitado " + nombre.length() + " caracteres <br />";
+            } else {
+                try {
+                    List<CargosBean> listaCargos = cargosDao.consultarCargos(nombre, true);
+                    if (listaCargos != null && !listaCargos.isEmpty()) {
+                        if (id == null || id.isEmpty() || !id.equals(listaCargos.get(0).getId().toString())) {
+                            error += "El nombre del cargo ingresado ya existe en el sistema \n";
+                        }
                     }
+                } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
+                    Logger.getLogger(CargosNegocio.class.getName()).log(Level.SEVERE, null, ex);
                 }
-            } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
-                Logger.getLogger(CargosNegocio.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         return error;
