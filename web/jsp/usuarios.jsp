@@ -39,11 +39,11 @@
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                 <label for="documento">*Documento:</label> 
-                                <input class="form-control" type="text" id="documento" name="documento" value="${documento}" <c:if test="${not empty idPersona}">disabled</c:if>/>
+                                <input class="form-control" type="text" id="documento" name="documento" value="${documento}" maxlength="15" <c:if test="${not empty idPersona}">disabled</c:if>/>
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                 <label for="usuario">*Usuario:</label> 
-                                <input class="form-control" type="text" id="usuario" name="usuario" value="${usuario}" />
+                                <input class="form-control" type="text" id="usuario" name="usuario" value="${usuario}" maxlength="15"/>
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                 <label for="perfil">*Perfil:</label> 
@@ -56,11 +56,11 @@
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                 <label for="clave">*Clave:</label> 
-                                <input class="form-control" type="password" id="clave" name="clave" value="${clave}" />
+                                <input class="form-control" type="password" id="clave" name="clave" value="${clave}" maxlength="15"/>
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                 <label for="clave">*Confirmar clave:</label> 
-                                <input class="form-control" type="password" id="clave2" name="clave2" value="${clave}" />
+                                <input class="form-control" type="password" id="clave2" name="clave2" value="${clave}" maxlength="15"/>
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                 <label for="activo">*Estado:</label> 

@@ -282,10 +282,10 @@ public class ActividadesController extends HttpServlet {
                     String strParticipantes = request.getParameter("empleadosSeleccionados");
                     String strFechaEstimadaInicial = request.getParameter("strFechaEstimadaInicial");
                     String strFechaEstimadaFin = request.getParameter("strFechaEstimadaFin");
+                    String strIdActividad = request.getParameter("strIdActividad");
                     java.util.Date dateFechaEstimadaInicial = sdf.parse(strFechaEstimadaInicial);
                     java.util.Date dateFechaEstimadaFin = sdf.parse(strFechaEstimadaFin);
-                    //String[] arrParticipantes = request.getParameterValues("idPersonasSeleccionadas");
-                    JSONArray arrayPersonasAsignadasActividad = personasNegocio.consultarPersonasAsignadasActividad(strParticipantes, dateFechaEstimadaInicial, dateFechaEstimadaFin);
+                    JSONArray arrayPersonasAsignadasActividad = personasNegocio.consultarPersonasAsignadasActividad(strParticipantes, dateFechaEstimadaInicial, dateFechaEstimadaFin, strIdActividad);
                     response.getWriter().write(arrayPersonasAsignadasActividad.toString());
                     break;
                 default:

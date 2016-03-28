@@ -115,7 +115,7 @@ public class ProyectosController extends HttpServlet {
                 request.setAttribute("idPersona", idPersona);
                 break;
             case "guardarVersion":
-                mensajeAlerta = versionesNegocio.validarDatos(idVersion, nombreVersion, fechaInicioVersion, fechaFinVersion, alcance, idProyectoVersion, estado);
+                mensajeAlerta = versionesNegocio.validarDatos(idVersion, nombreVersion, fechaInicioVersion, fechaFinVersion, alcance, idProyectoVersion, estado, costo);
                 if (mensajeAlerta.isEmpty()) {
                     mensajeError = versionesNegocio.guardarVersion(idVersionStr, nombreVersion, fechaInicioVersion, fechaFinVersion, alcance, idProyectoVersion, estado, costo);
                     if (mensajeError.isEmpty()) {

@@ -39,19 +39,19 @@
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                 <label for="documento">Documento:</label> 
-                                <input class="form-control" type="text" id="documento" name="documento"/>
+                                <input class="form-control" type="text" id="documento" name="documento" maxlength="15"/>
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                 <label for="nombres">Nombres:</label>
-                                <input class="form-control" type="text" id="nombres" name="nombres"/>
+                                <input class="form-control" type="text" id="nombres" name="nombres" maxlength="50"/>
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                 <label for="apellidos">Apellidos:</label>
-                                <input class="form-control" type="text" id="apellidos" name="apellidos"/>
+                                <input class="form-control" type="text" id="apellidos" name="apellidos" maxlength="50"/>
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                 <label for="correo">Correo:</label>
-                                <input class="form-control" type="text" id="correo" name="correo"/>
+                                <input class="form-control" type="text" id="correo" name="correo" maxlength="50"/>
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                 <label for="cargo">Cargo:</label>
@@ -64,7 +64,7 @@
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                 <label for="usuario">Usuario:</label> 
-                                <input class="form-control" type="text" id="usuario" name="usuario" />
+                                <input class="form-control" type="text" id="usuario" name="usuario" maxlength="15"/>
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                 <label for="perfil">Perfil:</label> 

@@ -205,6 +205,7 @@ function Validar() {
         return $(this).val();
     }).get();
 
+    var idActividad = $("#id").val();
     var varFechaInicial = $("#fecha_estimada_inicio").val();
     var varFechaFin = $("#fecha_estimada_terminacion").val();
 
@@ -213,7 +214,7 @@ function Validar() {
             type: "POST",
             url: "ActividadesController",
             dataType: "json",
-            data: {empleadosSeleccionados: empleados.toString(), strFechaEstimadaInicial: varFechaInicial, strFechaEstimadaFin: varFechaFin, accion: "consultarFechasActividades"},
+            data: {empleadosSeleccionados: empleados.toString(), strFechaEstimadaInicial: varFechaInicial, strFechaEstimadaFin: varFechaFin, strIdActividad: idActividad, accion: "consultarFechasActividades"},
             success: function (data) {
                 var arrayLength = data.length;
                 if (data !== undefined && arrayLength !== 0) {

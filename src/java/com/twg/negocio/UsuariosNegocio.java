@@ -144,31 +144,44 @@ public class UsuariosNegocio {
 
     private String validarDatos(UsuariosBean usuario, String clave2) {
         String error = "";
-        if (usuario.getIdPersona() == null && (usuario.getDocumento() == null || usuario.getDocumento().isEmpty())) {
-            error += "El campo 'Documento' es obligatorio \n";
-        }
 
         if (usuario.getIdPersona() == null && (usuario.getTipoDocumento() == null || usuario.getTipoDocumento().isEmpty() || usuario.getTipoDocumento().equals("0"))) {
-            error += "El campo 'Tipo de documento' es obligatorio \n";
+            error += "El campo 'Tipo de documento' es obligatorio <br />";
+        }
+
+        if (usuario.getIdPersona() == null && (usuario.getDocumento() == null || usuario.getDocumento().isEmpty())) {
+            error += "El campo 'Documento' es obligatorio <br />";
+        } else {
+            if (usuario.getDocumento().length() > 15) {
+                error += "El campo 'Documento' no debe contener más de 15 caracteres, has dígitado " + usuario.getDocumento().length() + " caracteres <br />";
+            }
         }
 
         if (usuario.getUsuario() == null || usuario.getUsuario().isEmpty()) {
-            error += "El campo 'Usuario' es obligatorio \n";
+            error += "El campo 'Usuario' es obligatorio <br />";
         } else {
-            try {
-                List<UsuariosBean> usuarios = usuariosDao.consultarUsuarios(usuario.getUsuario());
-                if (usuarios != null && !usuarios.isEmpty()) {
-                    if (usuario.getIdPersona() != null) {
-                        if (usuario.getIdPersona().intValue() != usuarios.get(0).getIdPersona().intValue()) {
-                            error += "El usuario a ingresar no está disponible \n";
+            if (usuario.getUsuario().length() > 15) {
+                error += "El campo 'Usuario' no debe contener más de 15 caracteres, has dígitado " + usuario.getUsuario().length() + " caracteres <br />";
+            } else {
+                try {
+                    List<UsuariosBean> usuarios = usuariosDao.consultarUsuarios(usuario.getUsuario());
+                    if (usuarios != null && !usuarios.isEmpty()) {
+                        if (usuario.getIdPersona() != null) {
+                            if (usuario.getIdPersona().intValue() != usuarios.get(0).getIdPersona().intValue()) {
+                                error += "El usuario a ingresar no está disponible <br />";
+                            }
+                        } else {
+                            error += "El usuario a ingresar no está disponible <br />";
                         }
-                    } else {
-                        error += "El usuario a ingresar no está disponible \n";
                     }
+                } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
+                    Logger.getLogger(UsuariosController.class.getName()).log(Level.SEVERE, null, ex);
                 }
-            } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
-                Logger.getLogger(UsuariosController.class.getName()).log(Level.SEVERE, null, ex);
             }
+        }
+
+        if (usuario.getPerfil() == null) {
+            error += "El campo 'Perfil' es obligatorio <br />";
         }
 
         UsuariosBean objetoUsuario = null;
@@ -197,24 +210,26 @@ public class UsuariosNegocio {
 
         if (usuario.getClave() == null || usuario.getClave().isEmpty()) {
             if (objetoUsuario == null) {
-                error += "El campo 'Clave' es obligatorio \n";
+                error += "El campo 'Clave' es obligatorio <br />";
             } else if (clave2 != null && !clave2.isEmpty()) {
-                error += "El campo 'Clave' es obligatorio \n";
+                error += "El campo 'Clave' es obligatorio <br />";
             }
         } else {
-            if (clave2 == null || clave2.isEmpty()) {
-                error += "El campo 'Confirmar clave' es obligatorio \n";
-            } else if (!usuario.getClave().equals(clave2)) {
-                error += "El valor en el campo 'Clave' y 'Confirmar clave' deben ser iguales \n";
+            if (usuario.getClave().length() > 15) {
+                error += "El campo 'Clave' no debe contener más de 15 caracteres <br />";
+            } else {
+                if (clave2 == null || clave2.isEmpty()) {
+                    error += "El campo 'Confirmar clave' es obligatorio <br />";
+                } else {
+                    if (!usuario.getClave().equals(clave2)) {
+                        error += "El valor en el campo 'Clave' y 'Confirmar clave' deben ser iguales <br />";
+                    }
+                }
             }
-        }
-
-        if (usuario.getPerfil() == null) {
-            error += "El campo 'Perfil' es obligatorio \n";
         }
 
         if (usuario.getActivo() == null || usuario.getActivo().isEmpty()) {
-            error += "El campo 'Estado' es obligatorio \n";
+            error += "El campo 'Estado' es obligatorio <br />";
         }
         return error;
     }

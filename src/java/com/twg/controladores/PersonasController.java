@@ -100,10 +100,10 @@ public class PersonasController extends HttpServlet {
                 }
                 break;
             case "guardar":
-                mensajeAlerta = personasNegocio.validarDatos(documento, tipoDocumento, nombres, apellidos, correo, direccion, cargo, usuario, perfil, clave, clave2);
-                if (mensajeAlerta.isEmpty()) {
-                    mensajeError = personasNegocio.guardarPersona(idPersona, documento, tipoDocumento, nombres, apellidos, telefono, celular, correo, direccion, cargo, usuario, perfil, clave, clave2);
-                    if (mensajeError.isEmpty()) {
+                mensajeError = personasNegocio.validarDatos(documento, tipoDocumento, nombres, apellidos, telefono, celular, correo, direccion, cargo, usuario, perfil, clave, clave2);
+                if (mensajeError.isEmpty()) {
+                    mensajeAlerta = personasNegocio.guardarPersona(idPersona, documento, tipoDocumento, nombres, apellidos, telefono, celular, correo, direccion, cargo, usuario, perfil, clave, clave2);
+                    if (mensajeAlerta.isEmpty()) {
                         mensajeExito = "La persona ha sido guardada con éxito";
                         break;
                     }

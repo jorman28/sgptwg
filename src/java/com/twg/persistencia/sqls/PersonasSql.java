@@ -2,7 +2,7 @@ package com.twg.persistencia.sqls;
 
 /**
  * Esta clase define métodos para contruír los SQLs utilizados en el DAO.
- * 
+ *
  * @author Andrés Felipe Giraldo, Jorman Rincón, Erika Jhoana Castaneda
  */
 public class PersonasSql {
@@ -16,7 +16,7 @@ public class PersonasSql {
     /**
      * Método encargado de consultar las personas, aplicando diferentes filtros
      * según los parámetros que lleguen distintos de nulos.
-     * 
+     *
      * @param idPersona
      * @param documento
      * @param tipoDocumento
@@ -27,7 +27,7 @@ public class PersonasSql {
      * @param perfil
      * @param cargo
      * @param nombreCompleto
-     * @return 
+     * @return
      */
     public String consultarPersonas(String idPersona, String documento, String tipoDocumento, String nombres, String apellidos, String correo, String usuario, String perfil, String cargo, String nombreCompleto) {
         String sql = "";
@@ -93,11 +93,12 @@ public class PersonasSql {
     }
 
     /**
-     * Método encargado de retornar el SQL para consultar las personas 
+     * Método encargado de retornar el SQL para consultar las personas
      * pertenecientes a un proyecto, por nombres, apellidos o documento.
+     *
      * @param idProyecto
      * @param Busqueda
-     * @return 
+     * @return
      */
     public String consultarPersonasProyecto(String idProyecto, String Busqueda) {
         String sql = "";
@@ -138,8 +139,9 @@ public class PersonasSql {
     /**
      * Método encargado de retornar el SQL para consultar las personas que
      * pertenezcan a una actividad en específico.
+     *
      * @param idActividad
-     * @return 
+     * @return
      */
     public String consultarPersonasActividad(String idActividad) {
         String sql = "";
@@ -168,7 +170,7 @@ public class PersonasSql {
         return sql;
     }
 
-    public String consultarPersonasAsignadasActividad(String personas) {
+    public String consultarPersonasAsignadasActividad(String personas, String idActividad) {
         String sql = "";
         sql += "SELECT DISTINCT p.id,\n"
                 + "        p.documento,\n"
@@ -186,20 +188,25 @@ public class PersonasSql {
                 + "        u.perfil AS id_perfil, \n"
                 + "        pf.nombre AS nombre_perfil \n"
                 + "FROM    personas p \n"
-                + "		INNER JOIN actividades_empleados ae ON ae.empleado = p.id \n"
-                + "		INNER JOIN actividades act ON act.id = ae.actividad\n"
-                + "		INNER JOIN tipos_documentos d ON d.tipo = p.tipo_documento \n"
+                + "	   INNER JOIN actividades_empleados ae ON ae.empleado = p.id \n"
+                + "	   INNER JOIN actividades act ON act.id = ae.actividad\n"
+                + "	   INNER JOIN tipos_documentos d ON d.tipo = p.tipo_documento \n"
                 + "        INNER JOIN cargos car ON car.id = p.cargo \n"
                 + "        LEFT JOIN usuarios u ON p.id = u.id_persona AND u.fecha_eliminacion IS NULL \n"
                 + "        LEFT JOIN perfiles pf ON pf.id = u.perfil AND pf.fecha_eliminacion IS NULL \n"
-                + "WHERE   1 = 1 AND p.fecha_eliminacion IS NULL AND act.fecha_estimada_inicio >= ? AND act.fecha_estimada_terminacion <= ? AND ae.empleado IN (" + personas + ")";
+                + "WHERE   1 = 1 AND p.fecha_eliminacion IS NULL AND act.fecha_estimada_inicio >= ? AND act.fecha_estimada_terminacion <= ? AND ae.empleado IN (" + personas + ") ";
+
+        if (idActividad != null && !idActividad.isEmpty()) {
+            sql += "AND act.id <> " + idActividad + "";
+        }
 
         return sql;
     }
 
     /**
      * Método encargado de retornar el SQL para insertar una nueva persona.
-     * @return 
+     *
+     * @return
      */
     public String insertarPersona() {
         return "INSERT INTO personas (documento, tipo_documento, nombres, apellidos, direccion, telefono, celular, correo, cargo) "
@@ -207,8 +214,10 @@ public class PersonasSql {
     }
 
     /**
-     * Método encargado de retornar el SQL para actualizar una persona existente.
-     * @return 
+     * Método encargado de retornar el SQL para actualizar una persona
+     * existente.
+     *
+     * @return
      */
     public String actualizarPersona() {
         return "UPDATE personas "
@@ -217,20 +226,22 @@ public class PersonasSql {
     }
 
     /**
-     * Método encargado de eliminar lógicamente una persona, actualizando 
-     * la fecha de eliminación con la fecha actual.
-     * @return 
+     * Método encargado de eliminar lógicamente una persona, actualizando la
+     * fecha de eliminación con la fecha actual.
+     *
+     * @return
      */
     public String eliminarPersona() {
         return "UPDATE personas SET fecha_eliminacion = now() WHERE id = ?";
     }
 
     /**
-     * Mètodo encargado de retornar el SQL para consultar a una persona por el 
+     * Mètodo encargado de retornar el SQL para consultar a una persona por el
      * número y tipo de documento.
+     *
      * @param documento
      * @param tipoDocumento
-     * @return 
+     * @return
      */
     public String consultarIdPersona(String documento, String tipoDocumento) {
         String sql = "";
