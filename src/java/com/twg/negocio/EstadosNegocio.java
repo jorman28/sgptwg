@@ -1,4 +1,5 @@
 package com.twg.negocio;
+
 import com.twg.controladores.EstadosController;
 import com.twg.persistencia.beans.ActividadesBean;
 import com.twg.persistencia.beans.EstadosBean;
@@ -30,7 +31,7 @@ public class EstadosNegocio {
                     jsonEstado.put("nombre", estado.getNombre());
                     jsonEstado.put("estadoPrev", estado.getEstadoPrevio());
                     jsonEstado.put("estadoSig", estado.getEstadoSiguiente());
-                    jsonEstado.put("eFinal", estado.getEstadoFinal() );
+                    jsonEstado.put("eFinal", estado.getEstadoFinal());
                 }
             } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
                 Logger.getLogger(EstadosNegocio.class.getName()).log(Level.SEVERE, null, ex);
@@ -39,7 +40,7 @@ public class EstadosNegocio {
         return jsonEstado;
     }
 
-    public List<EstadosBean> consultarEstados(Integer id, String tipoEstado,String nombre, Integer estadoPrev, 
+    public List<EstadosBean> consultarEstados(Integer id, String tipoEstado, String nombre, Integer estadoPrev,
             Integer estadoSig, String eFinal) {
         List<EstadosBean> listaEstados = new ArrayList<>();
         try {
@@ -50,10 +51,10 @@ public class EstadosNegocio {
         return listaEstados;
     }
 
-    public Map<String, Object> crearEstado(Integer id, String tipoEstado, String nombre, Integer estadoPrev, 
+    public Map<String, Object> crearEstado(Integer id, String tipoEstado, String nombre, Integer estadoPrev,
             Integer estadoSig, String eFinal) {
         EstadosBean estadoBean = new EstadosBean();
-        estadoBean.setTipoEstado(tipoEstado);        
+        estadoBean.setTipoEstado(tipoEstado);
         estadoBean.setNombre(nombre);
         estadoBean.setId(id);
         estadoBean.setEstadoPrevio(estadoPrev);
@@ -118,10 +119,10 @@ public class EstadosNegocio {
                 ActividadesDao act = new ActividadesDao();
                 List<ActividadesBean> actList = act.consultarActiv2(null, null, null, null, id, null);
                 List<EstadosBean> estList = estadosDao.consultarEstadosPS(id);
-                if((actList!=null && actList.size()>0) || (estList!=null && estList.size()>0)){
+                if ((actList != null && actList.size() > 0) || (estList != null && estList.size() > 0)) {
                     mensajeError = "El estado no puede ser eliminado porque ya tiene actividades asociadas o está ligado a "
                             + "otro estado.";
-                }else{
+                } else {
                     int eliminacion = estadosDao.eliminarEstado(id);
                     if (eliminacion > 0) {
                         mensajeExito = "El estado fue eliminado con éxito";
@@ -153,30 +154,34 @@ public class EstadosNegocio {
         }
         if (estado.getNombre() == null || estado.getNombre().isEmpty()) {
             error += "El campo 'Nombre' es obligatorio <br/>";
+        } else {
+            if (estado.getNombre().length() > 30) {
+                error += "El campo 'Nombre' no debe contener más de 15 caracteres, has dígitado " + estado.getNombre().length() + " caracteres <br />";
+            }
         }
-        if (estado.getEstadoPrevio() != null && estado.getEstadoPrevio().intValue() != 0 && estado.getEstadoSiguiente() != null && 
-                estado.getEstadoSiguiente().intValue() != 0){
-            if( estado.getEstadoPrevio().intValue() == estado.getEstadoSiguiente().intValue()){
+        if (estado.getEstadoPrevio() != null && estado.getEstadoPrevio().intValue() != 0 && estado.getEstadoSiguiente() != null
+                && estado.getEstadoSiguiente().intValue() != 0) {
+            if (estado.getEstadoPrevio().intValue() == estado.getEstadoSiguiente().intValue()) {
                 error += "El estado previo y siguiente no pueden ser iguales <br/>";
             }
         }
-        if(estado.getEstadoFinal()!= null && estado.getEstadoFinal().equals("T")){
+        if (estado.getEstadoFinal() != null && estado.getEstadoFinal().equals("T")) {
             List<EstadosBean> ef = new ArrayList<>();
             try {
                 //Se consulta el estado anterior en caso de que estén haceindo un update para calidar si cambió el campo Estado Final.
                 ef = estadosDao.consultarEstados(estado.getId(), null, null, null, null, null);
                 /*
-                Si el estado final es el mismo, no hay que hacer la validación para que no exista más de un estado marcado como final.
-                Per si es diferente, sí hay que validar
-                */
-                if(ef != null && ef.size() > 0 && !ef.get(0).getEstadoFinal().equals(estado.getEstadoFinal())){
-                    if(estado.getTipoEstado()!= null && estado.getTipoEstado().equals("ACTIVIDADES")){
+                 Si el estado final es el mismo, no hay que hacer la validación para que no exista más de un estado marcado como final.
+                 Per si es diferente, sí hay que validar
+                 */
+                if (ef != null && ef.size() > 0 && !ef.get(0).getEstadoFinal().equals(estado.getEstadoFinal())) {
+                    if (estado.getTipoEstado() != null && estado.getTipoEstado().equals("ACTIVIDADES")) {
                         ef = estadosDao.consultarEstados(null, "ACTIVIDADES", null, null, null, "T");
-                    }else{
+                    } else {
                         ef = estadosDao.consultarEstados(null, "VERSIONES", null, null, null, "T");
                     }
 
-                    if(ef != null && ef.size() > 0){
+                    if (ef != null && ef.size() > 0) {
                         error += "Sólo puede existir un estado 'Final' en cada tipo <br/>";
                     }
                 }

@@ -16,8 +16,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- *
- * @author Erika Jhoana
+ * Esta clase define métodos para controlar las peticiones y respuestas 
+ * que se hacen sobre el módulo principal de Personas, así como guardar, 
+ * consultar, modificar o eliminar la información.
+ * 
+ * @author Andrés Felipe Giraldo, Jorman Rincón, Erika Jhoana Castaneda
  */
 public class PersonasController extends HttpServlet {
 
@@ -27,13 +30,13 @@ public class PersonasController extends HttpServlet {
     private final PerfilesNegocio perfilesNegocio = new PerfilesNegocio();
 
     /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
+     * Método encargado de procesar las peticiones que ingresan por métodos get
+     * y post al controlador de Personas.
      *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
@@ -97,10 +100,10 @@ public class PersonasController extends HttpServlet {
                 }
                 break;
             case "guardar":
-                mensajeAlerta = personasNegocio.validarDatos(documento, tipoDocumento, nombres, apellidos, correo, direccion, cargo, usuario, perfil, clave, clave2);
-                if (mensajeAlerta.isEmpty()) {
-                    mensajeError = personasNegocio.guardarPersona(idPersona, documento, tipoDocumento, nombres, apellidos, telefono, celular, correo, direccion, cargo, usuario, perfil, clave, clave2);
-                    if (mensajeError.isEmpty()) {
+                mensajeError = personasNegocio.validarDatos(documento, tipoDocumento, nombres, apellidos, telefono, celular, correo, direccion, cargo, usuario, perfil, clave, clave2);
+                if (mensajeError.isEmpty()) {
+                    mensajeAlerta = personasNegocio.guardarPersona(idPersona, documento, tipoDocumento, nombres, apellidos, telefono, celular, correo, direccion, cargo, usuario, perfil, clave, clave2);
+                    if (mensajeAlerta.isEmpty()) {
                         mensajeExito = "La persona ha sido guardada con éxito";
                         break;
                     }
@@ -155,6 +158,23 @@ public class PersonasController extends HttpServlet {
         }
     }
 
+    /**
+     * Método encargado de pintar la tabla con el listado de registros 
+     * que hay sobre las personas.
+     * 
+     * @param response
+     * @param permisos
+     * @param documento
+     * @param tipoDocumento
+     * @param nombres
+     * @param apellidos
+     * @param correo
+     * @param usuario
+     * @param perfil
+     * @param cargo
+     * @throws ServletException
+     * @throws IOException 
+     */
     private void cargarTabla(HttpServletResponse response, List<String> permisos, String documento, String tipoDocumento, String nombres, String apellidos, String correo, String usuario, String perfil, String cargo) throws ServletException, IOException {
         response.setContentType("text/html; charset=iso-8859-1");
         List<PersonasBean> listaPersonas = personasNegocio.consultarPersonas(documento, tipoDocumento, nombres, apellidos, correo, usuario, perfil, cargo, null);
@@ -198,11 +218,23 @@ public class PersonasController extends HttpServlet {
         out.println("</table>");
     }
 
+    /**
+     * @param reqeust
+     * @param response
+     * @throws ServletException
+     * @throws IOException 
+     */
     @Override
     protected void doGet(HttpServletRequest reqeust, HttpServletResponse response) throws ServletException, IOException {
         processRequest(reqeust, response);
     }
 
+    /**
+     * @param reqeust
+     * @param response
+     * @throws ServletException
+     * @throws IOException 
+     */
     @Override
     protected void doPost(HttpServletRequest reqeust, HttpServletResponse response) throws ServletException, IOException {
         processRequest(reqeust, response);

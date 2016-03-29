@@ -1,5 +1,10 @@
 package com.twg.persistencia.beans;
 
+/**
+ * Esta clase se encarga de enumerar las páginas que existen en el sistema.
+ * 
+ * @author Andrés Felipe Giraldo, Jorman Rincón, Erika Jhoana Castaneda
+ */
 public enum Paginas {
 
     INICIO("Inicio", 1),
@@ -16,8 +21,13 @@ public enum Paginas {
     DOCUMENTACION("Documentacion", 12),
     REPORTES("Reportes", 13);
 
+    //Declaración de los atributos de una página.
     private final String nombrePagina;
     private final Integer idPagina;
+
+    /*
+    * Declaración de los métodos Get y Set de los atributos de la clase.
+    */
 
     private Paginas(String nombrePagina, Integer idPagina) {
         this.nombrePagina = nombrePagina;

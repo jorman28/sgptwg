@@ -64,6 +64,10 @@ public class PerfilesNegocio {
         String mensajeError = "";
         if (nombrePerfil == null || nombrePerfil.isEmpty()) {
             mensajeError = "El campo 'Perfil' es obligatorio";
+        } else {
+            if (nombrePerfil.length() > 50) {
+                mensajeError += "El campo 'Perfil' no debe contener más de 50 caracteres, has dígitado " + nombrePerfil.length() + " caracteres <br />";
+            }
         }
 
         if (mensajeError.isEmpty()) {

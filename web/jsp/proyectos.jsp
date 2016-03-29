@@ -11,6 +11,18 @@
     <head>
         <c:import url="/jsp/general/header.jsp"/>
         <script type="text/javascript" src="js/proyectos.js"></script>
+        <style>
+            #limpiarParticipante {
+                position: absolute;
+                right: 20px;
+                bottom: 0;
+                height: 6px;
+                margin: auto;
+                font-size: 18px;
+                cursor: pointer;
+                color: #ccc;
+            }
+        </style>
         <title>Proyectos</title>
     </head>
     <body>
@@ -53,7 +65,7 @@
                                         <div class="row form-group">
                                             <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                                 <label for="nombreProyecto">*Nombre:</label> 
-                                                <input class="form-control" type="text" id="nombreProyecto" name="nombreProyecto" value="${nombreProyecto}"/>
+                                                <input class="form-control" type="text" id="nombreProyecto" name="nombreProyecto" value="${nombreProyecto}" maxlength="30"/>
                                             </div>
                                             <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                                 <label for="fechaInicioProyecto">*Fecha de inicio:</label> 
@@ -62,6 +74,7 @@
                                             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                                 <label for="participante">*Participante:</label> 
                                                 <input class="form-control" type="text" id="participante" name="participante" />
+                                                <span id="limpiarParticipante" class="glyphicon glyphicon-remove-circle"></span>
                                             </div>
                                         </div>
                                         <div align="center" class="row form-group">
@@ -104,7 +117,7 @@
                                         <div class="row form-group">
                                             <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                                 <label for="nombreVersion">*Nombre:</label> 
-                                                <input class="form-control" type="text" id="nombreVersion" name="nombreVersion" value="${nombreVersion}"/>
+                                                <input class="form-control" type="text" id="nombreVersion" name="nombreVersion" value="${nombreVersion}" maxlength="30"/>
                                             </div>
                                             <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                                 <label for="estado">*Estado:</label> 
@@ -129,7 +142,7 @@
                                             </div> 
                                             <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                                 <label for="alcance">*Alcance:</label> 
-                                                <textarea class="form-control" type="text" id="alcance" name="alcance" >${alcance}</textarea>
+                                                <textarea class="form-control" type="text" id="alcance" name="alcance" maxlength="1000">${alcance}</textarea>
                                             </div>
                                         </div>
                                     </div>
@@ -157,6 +170,8 @@
                         <input type="hidden" id="idComentario" name="idComentario"/>
                         <div id="listaComentarios">${listaComentarios}</div>
                         <button class="btn btn-default" type="button" data-toggle="modal" data-target="#modalComentarios">Comentar</button>
+                        <br />
+                        <br />
                     </form>
                 </div>
             </div>

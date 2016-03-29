@@ -60,89 +60,107 @@ public class VersionesNegocio {
         return error;
     }
 
-    public String validarDatos(Integer idVersion, String nombre, String fechaInicio, String fechaTerminacion, String alcance, String proyecto, String estado) {
+    public String validarDatos(Integer idVersion, String nombre, String fechaInicio, String fechaTerminacion, String alcance, String proyecto, String estado, String costo) {
         String validacion = "";
         if (nombre == null || nombre.isEmpty()) {
-            validacion += "El campo 'Nombre' no debe estar vacío \n";
+            validacion += "El campo 'Nombre' no debe estar vacío <br />";
         } else {
-            int proyectoInt = 0;
-            try {
-                proyectoInt = Integer.valueOf(proyecto);
-            } catch (Exception e) {
-            }
-            List<VersionesBean> listaVersiones = consultarVersiones(null, proyectoInt, nombre, true);
-            if (listaVersiones != null && !listaVersiones.isEmpty()) {
-                if (idVersion == null || idVersion.intValue() != listaVersiones.get(0).getId()) {
-                    validacion += "El valor ingresado en el campo 'Nombre' ya existe dentro del proyecto \n";
+            if (nombre.length() > 30) {
+                validacion += "El campo 'Nombre' no debe contener más de 30 caracteres, has dígitado " + nombre.length() + " caracteres <br />";
+            } else {
+                int proyectoInt = 0;
+                try {
+                    proyectoInt = Integer.valueOf(proyecto);
+                } catch (Exception e) {
+                }
+                List<VersionesBean> listaVersiones = consultarVersiones(null, proyectoInt, nombre, true);
+                if (listaVersiones != null && !listaVersiones.isEmpty()) {
+                    if (idVersion == null || idVersion.intValue() != listaVersiones.get(0).getId()) {
+                        validacion += "El valor ingresado en el campo 'Nombre' ya existe dentro del proyecto <br />";
+                    }
                 }
             }
         }
         if (fechaInicio == null || fechaInicio.isEmpty()) {
-            validacion += "El campo 'Fecha de inicio' no debe estar vacío \n";
+            validacion += "El campo 'Fecha de inicio' no debe estar vacío <br />";
         } else {
             try {
                 sdf.parse(fechaInicio);
             } catch (ParseException e) {
-                validacion += "El valor ingresado en el campo 'Fecha de inicio' no se encuentra en el formato 'día/mes/año' \n";
+                validacion += "El valor ingresado en el campo 'Fecha de inicio' no se encuentra en el formato 'día/mes/año' <br />";
             }
         }
         if (fechaTerminacion == null || fechaTerminacion.isEmpty()) {
-            validacion += "El campo 'Fecha de fin' no debe estar vacío \n";
+            validacion += "El campo 'Fecha de fin' no debe estar vacío <br />";
         } else {
             try {
                 sdf.parse(fechaTerminacion);
             } catch (ParseException e) {
-                validacion += "El valor ingresado en el campo 'Fecha de fin' no se encuentra en el formato 'día/mes/año' \n";
+                validacion += "El valor ingresado en el campo 'Fecha de fin' no se encuentra en el formato 'día/mes/año' <br />";
             }
         }
         if (proyecto == null || proyecto.isEmpty()) {
-            validacion += "El campo 'Proyecto' no debe estar vacío \n";
+            validacion += "El campo 'Proyecto' no debe estar vacío <br />";
         } else {
             try {
                 Integer.valueOf(proyecto);
             } catch (NumberFormatException e) {
-                validacion += "El valor ingresado en el campo 'Proyecto' no corresponde al id de un proyecto \n";
+                validacion += "El valor ingresado en el campo 'Proyecto' no corresponde al id de un proyecto <br />";
             }
         }
         if (estado == null || estado.equals("0")) {
-            validacion += "El campo 'Estado' no debe estar vacío \n";
+            validacion += "El campo 'Estado' no debe estar vacío <br />";
         } else {
-            int est;
+            int est = 0;
             try {
-                est= Integer.valueOf(estado);
+                est = Integer.valueOf(estado);
             } catch (NumberFormatException e) {
-                validacion += "El valor ingresado en el campo 'Estado' no corresponde al id de un estado \n";
-                est = -1;
+                validacion += "El valor ingresado en el campo 'Estado' no corresponde al id de un estado <br />";
             }
             EstadosDao eDao = new EstadosDao();
             try {
-                if(idVersion!=null){//Versión existente: se valida contra estados prev y sig
+                if (idVersion != null) {//Versión existente: se valida contra estados prev y sig
                     List<VersionesBean> versionAntigua = consultarVersiones(idVersion, null, null, false);
-                    if(versionAntigua != null && !versionAntigua.isEmpty()){
-                        if(versionAntigua.get(0).getEstado() != est){
+                    if (versionAntigua != null && !versionAntigua.isEmpty()) {
+                        if (versionAntigua.get(0).getEstado() != est) {
                             List<EstadosBean> listaEstados = eDao.consultarEstados(versionAntigua.get(0).getEstado(), null, null, null, null, null);
-                            if(listaEstados != null && !listaEstados.isEmpty() && listaEstados.get(0).getEstadoPrevio() != est
-                                    && listaEstados.get(0).getEstadoSiguiente() != est){
-                                validacion += "El estado seleccionado no es válido. \n";
+                            if (listaEstados != null && !listaEstados.isEmpty()) {
+                                if (listaEstados.get(0).getEstadoPrevio() != null && listaEstados.get(0).getEstadoPrevio() > 0
+                                        || listaEstados.get(0).getEstadoSiguiente() != null && listaEstados.get(0).getEstadoSiguiente() > 0) {
+                                    if (listaEstados.get(0).getEstadoPrevio() != est && listaEstados.get(0).getEstadoSiguiente() != est) {
+                                        validacion += "El estado seleccionado no es válido. <br />";
+                                    }
+                                }
                             }
                         }
                     }
-                }else{//Versión nueva: se valida contra estado final unicamente
+                } else {//Versión nueva: se valida contra estado final unicamente
                     List<EstadosBean> eBean = eDao.consultarEstados(null, "VERSIONES", null, null, null, "T");
-                    if(eBean!=null && !eBean.isEmpty()){
-                        if(eBean.get(0).getId() == est){
-                            validacion += "El estado seleccionado no es válido para una nueva versión \n";
+                    if (eBean != null && !eBean.isEmpty()) {
+                        if (eBean.get(0).getId() == est) {
+                            validacion += "El estado seleccionado no es válido para una nueva versión <br />";
                         }
                     }
                 }
-                
+
             } catch (Exception e) {
             }
         }
-        
+
         if (alcance == null || alcance.isEmpty()) {
-            validacion += "El campo 'Alcance' no debe estar vacío \n";
+            validacion += "El campo 'Alcance' no debe estar vacío <br />";
+        } else {
+            if (alcance.length() > 1000) {
+                validacion += "El campo 'Alcance' no debe contener más de 1000 caracteres, has dígitado " + alcance.length() + " caracteres <br />";
+            }
         }
+
+        if (costo != null && !costo.isEmpty()) {
+            if (!costo.matches("[0-9]+(\\.[0-9][0-9]?)?")) {
+                validacion += "El valor ingresado en el campo 'Tiempo invertido' solo debe contener números' <br />";
+            }
+        }
+
         return validacion;
     }
 
@@ -158,7 +176,7 @@ public class VersionesNegocio {
 
     public JSONObject consultarVersion(Integer idVersion) {
         JSONObject object = new JSONObject();
-        List<VersionesBean> listaVersiones = consultarVersiones(idVersion, null, null,false);
+        List<VersionesBean> listaVersiones = consultarVersiones(idVersion, null, null, false);
         if (listaVersiones != null && !listaVersiones.isEmpty()) {
             object.put("idVersion", listaVersiones.get(0).getId());
             object.put("idProyecto", listaVersiones.get(0).getProyecto());
@@ -167,7 +185,7 @@ public class VersionesNegocio {
             object.put("costo", listaVersiones.get(0).getCosto());
             object.put("fechaInicio", listaVersiones.get(0).getFechaInicio() != null ? sdf.format(listaVersiones.get(0).getFechaInicio()) : "");
             object.put("fechaFin", listaVersiones.get(0).getFechaTerminacion() != null ? sdf.format(listaVersiones.get(0).getFechaTerminacion()) : "");
-            object.put("fechaProyecto", listaVersiones.get(0).getFechaInicioProyecto()!= null ? sdf.format(listaVersiones.get(0).getFechaInicioProyecto()) : "");
+            object.put("fechaProyecto", listaVersiones.get(0).getFechaInicioProyecto() != null ? sdf.format(listaVersiones.get(0).getFechaInicioProyecto()) : "");
             object.put("alcance", listaVersiones.get(0).getAlcance());
         }
         return object;

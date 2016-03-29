@@ -21,8 +21,12 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 /**
- *
- * @author Pipe
+ * Esta clase define métodos para controlar las peticiones y respuestas 
+ * que se hacen sobre el módulo principal de proyectos, donde también se incluye
+ * el manejo de versiones. Las peticiones pueden ser para guardar, consultar,
+ * modificar o eliminar la información.
+ * 
+ * @author Andrés Felipe Giraldo, Jorman Rincón, Erika Jhoana Castaneda
  */
 public class ProyectosController extends HttpServlet {
 
@@ -34,13 +38,13 @@ public class ProyectosController extends HttpServlet {
     private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
     /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
+     * Método encargado de procesar las peticiones que ingresan por métodos get
+     * y post al controlador de Proyectos y versiones.
      *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
@@ -111,7 +115,7 @@ public class ProyectosController extends HttpServlet {
                 request.setAttribute("idPersona", idPersona);
                 break;
             case "guardarVersion":
-                mensajeAlerta = versionesNegocio.validarDatos(idVersion, nombreVersion, fechaInicioVersion, fechaFinVersion, alcance, idProyectoVersion, estado);
+                mensajeAlerta = versionesNegocio.validarDatos(idVersion, nombreVersion, fechaInicioVersion, fechaFinVersion, alcance, idProyectoVersion, estado, costo);
                 if (mensajeAlerta.isEmpty()) {
                     mensajeError = versionesNegocio.guardarVersion(idVersionStr, nombreVersion, fechaInicioVersion, fechaFinVersion, alcance, idProyectoVersion, estado, costo);
                     if (mensajeError.isEmpty()) {
@@ -200,6 +204,15 @@ public class ProyectosController extends HttpServlet {
         }
     }
 
+    /**
+     * Método encargado de pintar el listado de registros que hay sobre los
+     * proyectos. Al desplegar cada uno de ellos, se consultan sus versiones y 
+     * se listan en su interior.
+     * 
+     * @param nombre Parámetro utilizado para filtrar por un proyecto específico.
+     * @param permisos
+     * @return 
+     */
     private String listarProyectos(String nombre, List<String> permisos) {
         String lista = "";
         List<ProyectosBean> listaProyectos = proyectosNegocio.consultarProyectos(null, nombre, false);

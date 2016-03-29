@@ -3,19 +3,43 @@ package com.twg.persistencia.sqls;
 import java.util.Date;
 
 /**
- *
- * @author Jorman Rincón
- * @author Andrés Giraldo
+ * Esta clase define métodos para contruír los SQLs utilizados en el DAO.
+ * 
+ * @author Andrés Felipe Giraldo, Jorman Rincón, Erika Jhoana Castaneda
  */
 public class ActividadesSql {
 
+    /**
+     * Constructor de la clase.
+     */
     public ActividadesSql() {
     }
 
+    /**
+     * Método encargado de retornar el SQL para consultar todas las atividades.
+     * @return 
+     */
     public String consultarActividades() {
         return "SELECT * FROM actividades WHERE fecha_eliminacion IS NULL ";
     }
 
+    /**
+     * Método encargado de retornar el SQL para consultar las actividades, 
+     * aplicando diferentes filtros según los parámetros que lleguen 
+     * distintos de nulos.
+     * 
+     * @param id
+     * @param version
+     * @param descripcion
+     * @param fecha_estimada_inicio
+     * @param fecha_estimada_terminacion
+     * @param fecha_real_inicio
+     * @param fecha_real_terminacion
+     * @param tiempo_estimado
+     * @param tiempo_invertido
+     * @param estado
+     * @return 
+     */
     public String consultarActividades(Integer id, Integer version, String descripcion, Date fecha_estimada_inicio, Date fecha_estimada_terminacion, Date fecha_real_inicio, Date fecha_real_terminacion, Integer tiempo_estimado, Integer tiempo_invertido, Integer estado) {
         String sql = "SELECT * FROM actividades WHERE fecha_eliminacion IS NULL ";
         if (id != null) {
@@ -51,6 +75,17 @@ public class ActividadesSql {
         return sql;
     }
 
+    /**
+     * Método encargado de retornar el SQL para consultar las actividades, 
+     * aplicando diferentes filtros según los parámetros que lleguen 
+     * distintos de nulos.
+     * @param id
+     * @param version
+     * @param descripcion
+     * @param fecha
+     * @param estado
+     * @return 
+     */
     public String consultarActividades(String id, Integer version, String descripcion, String fecha, Integer estado) {
         String sql = "SELECT a.id, a.version, a.descripcion, a.fecha_estimada_inicio, a.fecha_estimada_terminacion, "
                 + "a.fecha_real_inicio, a.fecha_real_terminacion, a.tiempo_estimado, a.tiempo_invertido, a.estado, e.nombre as nombree, v.nombre as nombrev "
@@ -75,22 +110,48 @@ public class ActividadesSql {
         return sql;
     }
 
+    /**
+     * Método encargado de retornar el SQL para consultar la última actividad
+     * registrada en el sistema.
+     * @return 
+     */
     public String consultarUtimaActividad() {
         return "SELECT MAX(id) AS id FROM actividades";
     }
 
+    /**
+     * Método encargado de retornar el SQL para insertar una nueva actividad.
+     * @return 
+     */
     public String insertarActividad() {
         return "INSERT INTO actividades (descripcion, fecha_estimada_inicio, fecha_estimada_terminacion, fecha_real_inicio, fecha_real_terminacion, tiempo_estimado, tiempo_invertido, version, estado) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
     }
 
+    /**
+     * Método encargado de retornar el SQL para actualizar una actividad existente.
+     * @return 
+     */
     public String actualizarActividad() {
         return "UPDATE actividades SET  descripcion = ?, fecha_estimada_inicio=?, fecha_estimada_terminacion=?, fecha_real_inicio=?, fecha_real_terminacion=?, tiempo_estimado=?, tiempo_invertido=?, version=?, estado=?  WHERE id = ?";
     }
 
+    /**
+     * Método encargado de retornar el SQL para eliminar lógicamente una
+     * actividad, actualizando la fecha de eliminación con la fecha actual.
+     * @return 
+     */
     public String eliminarActividad() {
         return "UPDATE actividades SET fecha_eliminacion = now() WHERE id = ?";
     }
 
+    /**
+     * Método encargado de retornar el SQL para consultar las actividades que 
+     * se encuentren en un estado diferente a finalizado.
+     * @param proyecto
+     * @param version
+     * @param persona
+     * @return 
+     */
     public String actividadesPorEstados(Integer proyecto, Integer version, Integer persona) {
         String sql = "SELECT \n"
                 + "    est.nombre AS estado,\n"

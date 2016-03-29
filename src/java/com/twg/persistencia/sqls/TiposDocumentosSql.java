@@ -7,25 +7,50 @@
 package com.twg.persistencia.sqls;
 
 /**
- *
- * @author Erika Jhoana
+ * Esta clase define métodos para contruír los SQLs utilizados en el DAO.
+ * 
+ * @author Andrés Felipe Giraldo, Jorman Rincón, Erika Jhoana Castaneda
  */
 public class TiposDocumentosSql {
+    
+    /**
+     * Constructor de la clase.
+     */
     public TiposDocumentosSql(){
     }
     
+    /**
+     * Método encargado de retornar el SQL para consultar todos los tipos
+     * de documentos.
+     * 
+     * @return 
+     */
     public String consultarTiposDocumentos(){
         return "SELECT tipo, nombre FROM tipos_documentos";
     }
     
+    /**
+     * Método encargado de retornar el SQL para insertar un nuevo tipo de 
+     * documento.
+     * @return 
+     */
     public String insertarTipoDocumento(){
         return "INSERT INTO tipos_documentos (tipo, nombre) VALUES (?, ?)";
     }
     
+    /**
+     * Método encargado de retornar el SQL para actualizar un tipo de 
+     * documento existente.
+     * @return 
+     */
     public String actualizarTipoDocumento(){
         return "UPDATE tipos_documentos SET nombre = ? WHERE tipo = ?";
     }
     
+    /**
+     * Método encargado de retornar el SQL para eliminar 
+     * @return 
+     */
     public String eliminarTipoDocumento(){
         return "DELETE FROM tipos_documentos WHERE tipo = ?";
     }

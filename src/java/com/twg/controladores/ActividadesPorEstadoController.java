@@ -23,7 +23,7 @@ import org.json.simple.JSONObject;
  * relacionadas con la consulta, visualización y/o exportación de las
  * actividades que se encuentran en los distintos estados.
  *
- * @author Andres Giraldo
+ * @author Andrés Felipe Giraldo, Jorman Rincón, Erika Jhoana Castaneda
  */
 public class ActividadesPorEstadoController extends HttpServlet {
 

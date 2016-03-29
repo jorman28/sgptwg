@@ -15,21 +15,24 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.simple.JSONObject;
 
 /**
- *
- * @author Pipe
+ * Esta clase define métodos para controlar las peticiones y respuestas 
+ * que se hacen sobre el módulo principal de Permisos, así como guardar, 
+ * consultar, modificar o eliminar la información.
+ * 
+ * @author Andrés Felipe Giraldo, Jorman Rincón, Erika Jhoana Castaneda
  */
 public class PermisosController extends HttpServlet {
 
     private final PerfilesNegocio perfilesNegocio = new PerfilesNegocio();
 
     /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
+     * Método encargado de procesar las peticiones que ingresan por métodos get
+     * y post al controlador de permisos
      *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
@@ -117,6 +120,16 @@ public class PermisosController extends HttpServlet {
         }
     }
 
+    /**
+     * Método encargado de pintar la tabla con el listado de registros 
+     * que hay sobre los Permisos.
+     * 
+     * @param response
+     * @param permisos
+     * @param nombrePerfil
+     * @throws ServletException
+     * @throws IOException 
+     */
     private void cargarTabla(HttpServletResponse response, List<String> permisos, String nombrePerfil) throws ServletException, IOException {
         response.setContentType("text/html; charset=iso-8859-1");
 

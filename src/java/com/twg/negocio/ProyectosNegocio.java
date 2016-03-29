@@ -76,31 +76,35 @@ public class ProyectosNegocio {
     public String validarDatos(Integer idProyecto, String nombre, String fechaInicio) {
         String validacion = "";
         if (nombre == null || nombre.isEmpty()) {
-            validacion += "El campo 'Nombre' no debe estar vacío \n";
+            validacion += "El campo 'Nombre' no debe estar vacío <br />";
         } else {
-            List<ProyectosBean> listaProyectos = consultarProyectos(null, nombre, true);
-            if (listaProyectos != null && !listaProyectos.isEmpty()) {
-                if (idProyecto == null || idProyecto.intValue() != listaProyectos.get(0).getId().intValue()) {
-                    validacion += "El valor ingresado en el campo 'Nombre' ya existe en el sistema \n";
+            if (nombre.length() > 30) {
+                validacion += "El campo 'Nombre' no debe contener más de 30 caracteres, has dígitado " + nombre.length() + " caracteres <br />";
+            } else {
+                List<ProyectosBean> listaProyectos = consultarProyectos(null, nombre, true);
+                if (listaProyectos != null && !listaProyectos.isEmpty()) {
+                    if (idProyecto == null || idProyecto.intValue() != listaProyectos.get(0).getId().intValue()) {
+                        validacion += "El valor ingresado en el campo 'Nombre' ya existe en el sistema \n";
+                    }
                 }
             }
         }
         if (fechaInicio == null || fechaInicio.isEmpty()) {
-            validacion += "El campo 'Fecha de inicio' no debe estar vacío \n";
+            validacion += "El campo 'Fecha de inicio' no debe estar vacío <br />";
         } else {
             try {
                 Date fechaInicioProyecto = sdf.parse(fechaInicio);
                 if (idProyecto != null) {
                     try {
                         if (versionesDao.versionesPorFecha(idProyecto, fechaInicioProyecto)) {
-                            validacion += "La fecha de inicio del proyecto es mayor que alguna de sus versiones \n";
+                            validacion += "La fecha de inicio del proyecto es mayor que alguna de sus versiones <br />";
                         }
                     } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
                         Logger.getLogger(ProyectosNegocio.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
             } catch (ParseException e) {
-                validacion += "El valor ingresado en el campo 'Fecha de inicio' no se encuentra en el formato 'día/mes/año' \n";
+                validacion += "El valor ingresado en el campo 'Fecha de inicio' no se encuentra en el formato 'día/mes/año' <br />";
             }
         }
         return validacion;
@@ -153,7 +157,7 @@ public class ProyectosNegocio {
         }
         return object;
     }
-    
+
     //JARA 17/02/2016 Método para encontrar los proyectos de una versión determinada
     public ProyectosBean consultarProyectoPorVersion(Integer idVersion) {
         ProyectosBean proyBean = new ProyectosBean();

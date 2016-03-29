@@ -16,18 +16,25 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+/**
+ * Esta clase define métodos para controlar las peticiones y respuestas 
+ * que se hacen sobre el módulo principal de Estados, así como guardar, consultar,
+ * modificar o eliminar la información.
+ * 
+ * @author Andrés Felipe Giraldo, Jorman Rincón, Erika Jhoana Castaneda
+ */
 public class EstadosController extends HttpServlet {
 
     private final EstadosNegocio estadosNegocio = new EstadosNegocio();
 
     /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
+     * Método encargado de procesar las peticiones que ingresan por métodos get
+     * y post al controlador de Estados
      *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
@@ -134,6 +141,18 @@ public class EstadosController extends HttpServlet {
         }
     }
 
+    /**
+     * Este método se encarga de enviar los atributos del Estado, al cliente que
+     * realiza la petición.
+     * 
+     * @param request
+     * @param id
+     * @param tipoEstado
+     * @param nombre
+     * @param estadoPrev
+     * @param estadoSig
+     * @param eFinal 
+     */
     private void enviarDatos(HttpServletRequest request, Integer id, String tipoEstado, String nombre, Integer estadoPrev,
             Integer estadoSig, String eFinal) {
         request.setAttribute("id", id);
@@ -144,6 +163,21 @@ public class EstadosController extends HttpServlet {
         request.setAttribute("eFinal", eFinal);
     }
 
+    /**
+     * Método encargado de pintar la tabla con el listado de registros 
+     * que hay sobre los Estados
+     * 
+     * @param response
+     * @param permisos
+     * @param id
+     * @param tipoEstado
+     * @param nombre
+     * @param estadoPrev
+     * @param estadoSig
+     * @param eFinal
+     * @throws ServletException
+     * @throws IOException 
+     */
     private void cargarTabla(HttpServletResponse response, List<String> permisos, Integer id, String tipoEstado, String nombre, 
             Integer estadoPrev, Integer estadoSig, String eFinal) throws ServletException, IOException {
         response.setContentType("text/html; charset=iso-8859-1");
@@ -202,11 +236,25 @@ public class EstadosController extends HttpServlet {
         out.println("</table>");
     }
 
+    /**
+     * 
+     * @param reqeust
+     * @param response
+     * @throws ServletException
+     * @throws IOException 
+     */
     @Override
     protected void doGet(HttpServletRequest reqeust, HttpServletResponse response) throws ServletException, IOException {
         processRequest(reqeust, response);
     }
 
+    /**
+     * 
+     * @param reqeust
+     * @param response
+     * @throws ServletException
+     * @throws IOException 
+     */
     @Override
     protected void doPost(HttpServletRequest reqeust, HttpServletResponse response) throws ServletException, IOException {
         processRequest(reqeust, response);
