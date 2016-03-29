@@ -20,7 +20,7 @@
             <div class="row">
                 <c:import url="/jsp/general/about.jsp"/>
                 <div class="col-xs-12 col-sm-9 col-md-10 col-lg-10" id="contenido">
-                    <form autocomplete="off" action="./ArchivosController" method="POST" id="formularioArchivos">
+                    <form autocomplete="off" action="./ArchivosController" method="POST" id="formularioArchivos" enctype="multipart/form-data">
                         <c:import url="/jsp/general/eliminacion.jsp"/>
                         <center>
                             <h2>ARCHIVOS</h2>
@@ -56,7 +56,8 @@
                                                 </textarea>
                                             </div>
                                             <div id="divArchivo" class="col-xs-12 col-sm-12 col-md-12 col-lg-12" align="center">
-                                                <input type="file" id="archivo" name="archivo"/>
+                                                <input type="file" id="archivo" name="archivo" onchange="cargarArchivo(this);"/>
+                                                <input type="hidden" id="nombreArchivo" name="nombreArchivo"/>
                                             </div>
                                         </div>
                                     </div>

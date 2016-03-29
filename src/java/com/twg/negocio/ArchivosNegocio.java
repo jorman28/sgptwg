@@ -2,6 +2,7 @@ package com.twg.negocio;
 
 import com.twg.persistencia.beans.ArchivosBean;
 import com.twg.persistencia.daos.ArchivosDao;
+import com.twg.utilidades.AlmacenamientoArchivos;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -119,6 +120,17 @@ public class ArchivosNegocio {
         return error.toString();
     }
 
+    /**
+     * Método encargado de almacenar o editar el registro de archivo en base de
+     * datos y almacenar el archivo cargado en el servidor
+     *
+     * @param idArchivo
+     * @param nombre
+     * @param descripcion
+     * @param idPersona
+     * @param nombreArchivo
+     * @return
+     */
     public String guardarArchivo(Integer idArchivo, String nombre, String descripcion, Integer idPersona, String nombreArchivo) {
         String error = "";
         ArchivosBean archivo = new ArchivosBean();
@@ -139,6 +151,7 @@ public class ArchivosNegocio {
                     error = "El archivo no pudo ser guardado";
                 }
             }
+
         } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
             Logger.getLogger(ArchivosNegocio.class.getName()).log(Level.SEVERE, null, ex);
             error = "Ocurrió un error guardando el archivo";
