@@ -4,15 +4,18 @@ import com.twg.negocio.ArchivosNegocio;
 import com.twg.negocio.PersonasNegocio;
 import com.twg.persistencia.beans.ArchivosBean;
 import com.twg.persistencia.beans.PersonasBean;
+import com.twg.utilidades.AlmacenamientoArchivos;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.Part;
 import org.json.simple.JSONArray;
 
 /**
@@ -21,10 +24,12 @@ import org.json.simple.JSONArray;
  *
  * @author Andrés Giraldo
  */
+@MultipartConfig
 public class ArchivosController extends HttpServlet {
 
     private final ArchivosNegocio archivosNegocio = new ArchivosNegocio();
     private final PersonasNegocio personasNegocio = new PersonasNegocio();
+    public final AlmacenamientoArchivos almacenamientoArchivos = new AlmacenamientoArchivos();
 
     /**
      * Método encargado de procesar las peticiones que ingresan tanto por método
@@ -59,7 +64,7 @@ public class ArchivosController extends HttpServlet {
         }
         String nombre = request.getParameter("nombre");
         String descripcion = request.getParameter("descripcion");
-        String nombreArchivo = request.getParameter("archivo");
+        String nombreArchivo = request.getParameter("nombreArchivo");
         String mensajeAlerta = "";
         String mensajeError = "";
         String mensajeExito = "";
@@ -87,6 +92,8 @@ public class ArchivosController extends HttpServlet {
                     Integer persona = (Integer) request.getSession(false).getAttribute("personaSesion");
                     mensajeError = archivosNegocio.guardarArchivo(idArchivo, nombre, descripcion, persona, nombreArchivo);
                     if (mensajeError.isEmpty()) {
+                        Part archivoPart = request.getPart("archivo");
+                        almacenamientoArchivos.cargarArchivo(archivoPart, nombreArchivo);
                         mensajeExito = "El archivo ha sido guardado con éxito";
                     }
                 }

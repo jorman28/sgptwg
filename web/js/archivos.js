@@ -76,3 +76,8 @@ function consultarArchivo(idArchivo) {
         }
     });
 }
+
+function cargarArchivo(objetoArchivo) {
+    var archivo = objetoArchivo.files[0];
+    $("#nombreArchivo").val(archivo.name);
+}
