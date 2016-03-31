@@ -43,6 +43,7 @@ public class ArchivosNegocio {
                 archivoObject.put("nombre", archivo.getNombre());
                 archivoObject.put("descripcion", archivo.getDescripcion());
                 archivoObject.put("persona", archivo.getNombrePersona());
+                archivoObject.put("archivo", "<a onclick=\"descargarArchivo('" + archivo.getRuta() + "');\">" + archivo.getRuta() + "</a>");
                 archivoObject.put("fecha", sdf.format(archivo.getFechaCreacion()));
             }
         }

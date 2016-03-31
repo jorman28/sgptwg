@@ -30,6 +30,7 @@ function nuevoArchivo() {
     $("#fechaCreacion").val($("#hiddenFecha").val());
     $("#creador").val($("#hiddenCreador").val());
     $("#divArchivo").show();
+    $("#divDescarga").hide();
     $("#modalArchivos").modal("show");
 }
 
@@ -69,6 +70,8 @@ function consultarArchivo(idArchivo) {
                 $("#creador").val(data.persona !== undefined ? data.persona : "");
                 $("#fechaCreacion").val(data.fecha !== undefined ? data.fecha : "");
                 $("#divArchivo").hide();
+                $("#divDescarga").html(data.archivo);
+                $("#divDescarga").show();
                 $("#modalArchivos").modal("show");
             }
         },
@@ -80,4 +83,11 @@ function consultarArchivo(idArchivo) {
 function cargarArchivo(objetoArchivo) {
     var archivo = objetoArchivo.files[0];
     $("#nombreArchivo").val(archivo.name);
+}
+
+function descargarArchivo(archivo) {
+    var link = document.createElement('a');
+    link.href = 'ArchivosController?accion=obtenerArchivo&nombreArchivo=' + archivo;
+    link.target = '_blank';
+    link.click();
 }

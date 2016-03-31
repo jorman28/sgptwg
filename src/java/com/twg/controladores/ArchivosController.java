@@ -5,12 +5,14 @@ import com.twg.negocio.PersonasNegocio;
 import com.twg.persistencia.beans.ArchivosBean;
 import com.twg.persistencia.beans.PersonasBean;
 import com.twg.utilidades.AlmacenamientoArchivos;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -102,6 +104,9 @@ public class ArchivosController extends HttpServlet {
                 JSONArray arrayPersonas = personasNegocio.completarPersonas(busqueda);
                 response.getWriter().write(arrayPersonas.toJSONString());
                 break;
+            case "obtenerArchivo":
+                obtenerArchivo(response, nombreArchivo);
+                break;
             default:
                 break;
         }
@@ -168,6 +173,31 @@ public class ArchivosController extends HttpServlet {
         }
         out.println("</tbody>");
         out.println("</table>");
+    }
+
+    /**
+     * Método encargado de descargar los archivos que han sido cargados al
+     * sistema por la funcionalidad de archivos o asociados a un comentario
+     *
+     * @param response
+     * @param nombreArchivo
+     * @throws IOException
+     */
+    private void obtenerArchivo(HttpServletResponse response, String nombreArchivo) throws IOException {
+        ServletOutputStream respuesta = response.getOutputStream();
+        String mimetype = "application/x-download";
+        FileInputStream archivo;
+        archivo = new FileInputStream(almacenamientoArchivos.rutaCargas + nombreArchivo);
+        byte[] buffer = new byte[4096];
+        int length;
+        while ((length = archivo.read(buffer)) > 0) {
+            respuesta.write(buffer, 0, length);
+        }
+        response.addHeader("Content-Disposition", "attachment; filename=" + nombreArchivo);
+        response.setHeader("Content-Length", Integer.toString(length));
+        response.setContentType(mimetype);
+        archivo.close();
+        respuesta.flush();
     }
 
     @Override
