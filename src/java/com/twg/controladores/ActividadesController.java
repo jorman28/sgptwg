@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties. 
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.twg.controladores;
 
 import com.twg.negocio.ActividadesNegocio;
@@ -88,7 +83,6 @@ public class ActividadesController extends HttpServlet {
             String estadoStr = request.getParameter("estado"); //consulta y creacion Er
             String fechaStr = request.getParameter("fecha"); //consulta Er
             String responsableStr = request.getParameter("responsable"); //consulta y creacion Er en creación se recibe el objeto hidden
-            String participanteStr = request.getParameter("participante"); //consulta y creacion Er en creación se recibe el valor que hay en el campo participante
             
             String fecha_estimada_inicioStr = request.getParameter("fecha_estimada_inicio");//creacion
             String fecha_estimada_terminacionStr = request.getParameter("fecha_estimada_terminacion");//creacion
@@ -106,18 +100,6 @@ public class ActividadesController extends HttpServlet {
             Integer proyecto = null;
             try {
                 proyecto = Integer.valueOf(proyectoStr);
-            } catch (NumberFormatException e) {
-            }
-            
-            Integer version = null;
-            try {
-                version = Integer.valueOf(versionStr);
-            } catch (NumberFormatException e) {
-            }
-            
-            Integer responsable = null;
-            try {
-                responsable = Integer.valueOf(responsableStr);
             } catch (NumberFormatException e) {
             }
             
