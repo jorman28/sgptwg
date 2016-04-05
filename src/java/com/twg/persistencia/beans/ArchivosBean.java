@@ -6,9 +6,10 @@ import java.util.Date;
  * Clase con los atributos de la tabla archivos con sus respectivos métodos
  * accesores
  *
- * @author Andrés Giraldo
+ * @author Andrés Felipe Giraldo, Jorman Rincón, Erika Jhoana Castaneda
  */
 public class ArchivosBean {
+
     private Integer id;
     private String nombre;
     private String descripcion;

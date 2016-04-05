@@ -6,7 +6,7 @@ import java.util.Date;
  * Clase que contiene las sentencias SQL para la interacción con la base de
  * datos
  *
- * @author Andrés Giraldo
+ * @author Andrés Felipe Giraldo, Jorman Rincón, Erika Jhoana Castaneda
  */
 public class ArchivosSql {
 

@@ -2,7 +2,6 @@ package com.twg.negocio;
 
 import com.twg.persistencia.beans.ArchivosBean;
 import com.twg.persistencia.daos.ArchivosDao;
-import com.twg.utilidades.AlmacenamientoArchivos;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -16,7 +15,7 @@ import org.json.simple.JSONObject;
  * Clase encargada de realizar la conexión entre la vista y las operaciones en
  * base de datos.
  *
- * @author Andrés Giraldo
+ * @author Andrés Felipe Giraldo, Jorman Rincón, Erika Jhoana Castaneda
  */
 public class ArchivosNegocio {
 

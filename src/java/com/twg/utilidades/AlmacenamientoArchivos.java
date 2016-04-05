@@ -12,7 +12,7 @@ import javax.servlet.http.Part;
  * Clase encargada de almacenar archivos en el servidor por medio de una
  * interfaz gráfica
  *
- * @author Andres Giraldo
+ * @author Andrés Felipe Giraldo, Jorman Rincón, Erika Jhoana Castaneda
  */
 public class AlmacenamientoArchivos {
 

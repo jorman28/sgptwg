@@ -15,7 +15,7 @@ import java.util.List;
  * Clase encargada de obtener la conexión con la base de datos y ejecutar las
  * sentencias con base en los datos enviados desde el negocio
  *
- * @author Andrés Giraldo
+ * @author Andrés Felipe Giraldo, Jorman Rincón, Erika Jhoana Castaneda
  */
 public class ArchivosDao {
 

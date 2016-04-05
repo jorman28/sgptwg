@@ -24,7 +24,7 @@ import org.json.simple.JSONArray;
  * Clase encargada de gestionar las peticiones en torno al almacenamiento de
  * archivos en el servidor por medio de interfaz gráfica
  *
- * @author Andrés Giraldo
+ * @author Andrés Felipe Giraldo, Jorman Rincón, Erika Jhoana Castaneda
  */
 @MultipartConfig
 public class ArchivosController extends HttpServlet {
