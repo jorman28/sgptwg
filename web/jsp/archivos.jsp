@@ -61,6 +61,9 @@
                                             </div>
                                             <div id="divDescarga" class="col-xs-12 col-sm-12 col-md-12 col-lg-12" align="center">
                                             </div>
+                                            <div id="divComentarios" class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                                <c:import url="/jsp/general/comentarios.jsp"/>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="modal-footer">
