@@ -107,6 +107,11 @@ public class ArchivosController extends HttpServlet {
             case "obtenerArchivo":
                 obtenerArchivo(response, nombreArchivo);
                 break;
+            case "guardarComentario":
+                
+                break;
+            case "obtenerComentarios":
+                break;
             default:
                 break;
         }

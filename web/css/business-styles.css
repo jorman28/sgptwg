@@ -1,5 +1,5 @@
 label {
-  color: #269abc;
+    color: #269abc;
 }
 
 .form-control {
@@ -41,5 +41,16 @@ h2, .h2 {
 }
 
 .ui-state-hover, .ui-widget-content .ui-state-hover, .ui-widget-header .ui-state-hover, .ui-state-focus, .ui-widget-content .ui-state-focus, .ui-widget-header .ui-state-focus{
-        border: 1px solid #46b8da;
+    border: 1px solid #46b8da;
+}
+
+#limpiarParticipante {
+    position: absolute;
+    right: 20px;
+    bottom: 0;
+    height: 6px;
+    margin: auto;
+    font-size: 18px;
+    cursor: pointer;
+    color: #ccc;
 }

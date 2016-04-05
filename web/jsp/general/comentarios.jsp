@@ -8,7 +8,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-default" type="submit" name="accion" id="guardarComentario" value="guardarComentario">Comentar</button>
+                <button class="btn btn-default" type="button" name="accion" id="comentar" onclick="guardarComentario();">Comentar</button>
                 <button type="button" class="btn btn-primary" data-dismiss="modal">Cancelar</button>
             </div>
         </div>

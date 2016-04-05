@@ -11,18 +11,6 @@
     <head>
         <c:import url="/jsp/general/header.jsp"/>
         <script type="text/javascript" src="js/proyectos.js"></script>
-        <style>
-            #limpiarParticipante {
-                position: absolute;
-                right: 20px;
-                bottom: 0;
-                height: 6px;
-                margin: auto;
-                font-size: 18px;
-                cursor: pointer;
-                color: #ccc;
-            }
-        </style>
         <title>Proyectos</title>
     </head>
     <body>
