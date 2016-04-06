@@ -21,11 +21,11 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 /**
- * Esta clase define métodos para controlar las peticiones y respuestas 
- * que se hacen sobre el módulo principal de proyectos, donde también se incluye
- * el manejo de versiones. Las peticiones pueden ser para guardar, consultar,
+ * Esta clase define métodos para controlar las peticiones y respuestas que se
+ * hacen sobre el módulo principal de proyectos, donde también se incluye el
+ * manejo de versiones. Las peticiones pueden ser para guardar, consultar,
  * modificar o eliminar la información.
- * 
+ *
  * @author Andrés Felipe Giraldo, Jorman Rincón, Erika Jhoana Castaneda
  */
 public class ProyectosController extends HttpServlet {
@@ -90,7 +90,7 @@ public class ProyectosController extends HttpServlet {
         String busquedaProyecto = request.getParameter("busquedaProyecto");
 
         List<String> permisosPagina = PerfilesNegocio.permisosPorPagina(request, Paginas.VERSIONES);
-        
+
         switch (accion) {
             case "editarProyecto":
                 JSONObject proyecto = proyectosNegocio.consultarProyecto(idProyecto);
@@ -98,6 +98,7 @@ public class ProyectosController extends HttpServlet {
                 break;
             case "editarVersion":
                 JSONObject version = versionesNegocio.consultarVersion(idVersion);
+                version.put("comentarios", comentariosNegocio.listaComentarios(comentariosNegocio.TIPO_VERSION, idVersion));
                 response.getWriter().write(version.toJSONString());
                 break;
             case "guardarProyecto":
@@ -138,22 +139,19 @@ public class ProyectosController extends HttpServlet {
                 break;
             case "eliminar":
                 if (tipoEliminacion != null && !tipoEliminacion.isEmpty()) {
-                    if (tipoEliminacion.equals("VERSION")) {
-                        mensajeError = versionesNegocio.eliminarVersion(idVersion, null);
-                        if (mensajeError.isEmpty()) {
-                            mensajeExito = "La versión ha sido eliminada con éxito";
-                        }
-                    }else if (tipoEliminacion.equals("COMENTARIO")) {
-                        Integer idComentario = Integer.valueOf(request.getParameter("idComentario"));
-                        mensajeError = comentariosNegocio.eliminarComentario(idComentario);
-                        if (mensajeError.isEmpty()) {
-                            mensajeExito = "Comentario eliminado con éxito";
-                        }
-                    } else {
-                        mensajeError = proyectosNegocio.eliminarProyecto(idProyecto);
-                        if (mensajeError.isEmpty()) {
-                            mensajeExito = "El proyecto ha sido eliminado con éxito";
-                        }
+                    switch (tipoEliminacion) {
+                        case "VERSION":
+                            mensajeError = versionesNegocio.eliminarVersion(idVersion, null);
+                            if (mensajeError.isEmpty()) {
+                                mensajeExito = "La versión ha sido eliminada con éxito";
+                            }
+                            break;
+                        default:
+                            mensajeError = proyectosNegocio.eliminarProyecto(idProyecto);
+                            if (mensajeError.isEmpty()) {
+                                mensajeExito = "El proyecto ha sido eliminado con éxito";
+                            }
+                            break;
                     }
                 } else {
                     mensajeError = "No se especificó tipo de eliminación";
@@ -167,25 +165,42 @@ public class ProyectosController extends HttpServlet {
                 } catch (Exception e) {
                     persona = null;
                 }
+                JSONObject comentarioGuardado = new JSONObject();
                 mensajeAlerta = comentariosNegocio.validarDatos(comentario);
                 if (mensajeAlerta.isEmpty()) {
-                    mensajeError = comentariosNegocio.guardarComentario(null, persona, comentario, "PROYECTOS", 1);
+                    mensajeError = comentariosNegocio.guardarComentario(null, persona, comentario, comentariosNegocio.TIPO_VERSION, idVersion);
                     if (mensajeError.isEmpty()) {
-                        mensajeExito = "Comentario guardado con éxito";
+                        comentarioGuardado.put("comentarios", comentariosNegocio.listaComentarios(comentariosNegocio.TIPO_VERSION, idVersion));
+                    } else {
+                        comentarioGuardado.put("mensajeError", mensajeError);
                     }
+                } else {
+                    comentarioGuardado.put("mensajeAlerta", mensajeAlerta);
                 }
+                response.getWriter().write(comentarioGuardado.toJSONString());
+                break;
+            case "eliminarComentario":
+                Integer idComentario = Integer.valueOf(request.getParameter("idComentario"));
+                JSONObject comentarioEliminado = new JSONObject();
+                mensajeError = comentariosNegocio.eliminarComentario(idComentario);
+                if (mensajeError.isEmpty()) {
+                    comentarioEliminado.put("comentarios", comentariosNegocio.listaComentarios(comentariosNegocio.TIPO_VERSION, idVersion));
+                } else {
+                    comentarioEliminado.put("mensajeError", mensajeError);
+                }
+                response.getWriter().write(comentarioEliminado.toJSONString());
                 break;
             default:
                 break;
         }
 
-        if (!accion.equals("editarProyecto") && !accion.equals("editarVersion") && !accion.equals("completarPersonas")) {
+        if (!accion.equals("editarProyecto") && !accion.equals("editarVersion") && 
+                !accion.equals("completarPersonas") && !accion.equals("guardarComentario") && !accion.equals("eliminarComentario")) {
             request.setAttribute("mensajeError", mensajeError);
             request.setAttribute("mensajeExito", mensajeExito);
             request.setAttribute("mensajeAlerta", mensajeAlerta);
             request.setAttribute("listaProyectos", listarProyectos(busquedaProyecto, permisosPagina));
             request.setAttribute("estados", estadosNegocio.consultarEstados(null, "VERSIONES", null, null, null, null));
-            request.setAttribute("listaComentarios", comentariosNegocio.listaComentarios("PROYECTOS", 1));
             if (permisosPagina != null && !permisosPagina.isEmpty()) {
                 if (permisosPagina.contains(Permisos.CONSULTAR.getNombre())) {
                     request.setAttribute("opcionConsultar", "T");
@@ -206,12 +221,13 @@ public class ProyectosController extends HttpServlet {
 
     /**
      * Método encargado de pintar el listado de registros que hay sobre los
-     * proyectos. Al desplegar cada uno de ellos, se consultan sus versiones y 
+     * proyectos. Al desplegar cada uno de ellos, se consultan sus versiones y
      * se listan en su interior.
-     * 
-     * @param nombre Parámetro utilizado para filtrar por un proyecto específico.
+     *
+     * @param nombre Parámetro utilizado para filtrar por un proyecto
+     * específico.
      * @param permisos
-     * @return 
+     * @return
      */
     private String listarProyectos(String nombre, List<String> permisos) {
         String lista = "";

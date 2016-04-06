@@ -18,6 +18,9 @@ public class ComentariosNegocio {
 
     private final ComentariosDao comentariosDao = new ComentariosDao();
     private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+    public final String TIPO_ARCHIVO = "ARCHIVOS";
+    public final String TIPO_VERSION = "VERSION";
+    public final String TIPO_ACTIVIDAD = "ACTIVIDAD";
 
     public String guardarComentario(String id, Integer idPersona, String comentarioEscrito, String tipoDestino, Integer idDestino) {
         String error = "";
@@ -90,6 +93,8 @@ public class ComentariosNegocio {
                         + "         </div>\n"
                         + "     </div>";
             }
+        } else {
+            resultado += "No hay comentarios disponibles";
         }
         return resultado;
     }

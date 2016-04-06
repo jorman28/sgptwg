@@ -1,6 +1,7 @@
 package com.twg.controladores;
 
 import com.twg.negocio.ArchivosNegocio;
+import com.twg.negocio.ComentariosNegocio;
 import com.twg.negocio.PersonasNegocio;
 import com.twg.persistencia.beans.ArchivosBean;
 import com.twg.persistencia.beans.PersonasBean;
@@ -19,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 /**
  * Clase encargada de gestionar las peticiones en torno al almacenamiento de
@@ -31,7 +33,8 @@ public class ArchivosController extends HttpServlet {
 
     private final ArchivosNegocio archivosNegocio = new ArchivosNegocio();
     private final PersonasNegocio personasNegocio = new PersonasNegocio();
-    public final AlmacenamientoArchivos almacenamientoArchivos = new AlmacenamientoArchivos();
+    private final AlmacenamientoArchivos almacenamientoArchivos = new AlmacenamientoArchivos();
+    private final ComentariosNegocio comentariosNegocio = new ComentariosNegocio();
 
     /**
      * Método encargado de procesar las peticiones que ingresan tanto por método
@@ -77,7 +80,9 @@ public class ArchivosController extends HttpServlet {
         }
         switch (accion) {
             case "editar":
-                response.getWriter().write(archivosNegocio.consultarArchivo(idArchivo).toJSONString());
+                JSONObject archivoConsultado = archivosNegocio.consultarArchivo(idArchivo);
+                archivoConsultado.put("comentarios", comentariosNegocio.listaComentarios(comentariosNegocio.TIPO_ARCHIVO, idArchivo));
+                response.getWriter().write(archivoConsultado.toJSONString());
                 break;
             case "consultar":
                 cargarTabla(response, contiene, filtroFecha, idPersona);
@@ -108,9 +113,37 @@ public class ArchivosController extends HttpServlet {
                 obtenerArchivo(response, nombreArchivo);
                 break;
             case "guardarComentario":
-                
+                String comentario = request.getParameter("comentario");
+                Integer persona;
+                try {
+                    persona = (Integer) request.getSession(false).getAttribute("personaSesion");
+                } catch (Exception e) {
+                    persona = null;
+                }
+                JSONObject comentarioGuardado = new JSONObject();
+                mensajeAlerta = comentariosNegocio.validarDatos(comentario);
+                if (mensajeAlerta.isEmpty()) {
+                    mensajeError = comentariosNegocio.guardarComentario(null, persona, comentario, comentariosNegocio.TIPO_ARCHIVO, idArchivo);
+                    if (mensajeError.isEmpty()) {
+                        comentarioGuardado.put("comentarios", comentariosNegocio.listaComentarios(comentariosNegocio.TIPO_ARCHIVO, idArchivo));
+                    } else {
+                        comentarioGuardado.put("mensajeError", mensajeError);
+                    }
+                } else {
+                    comentarioGuardado.put("mensajeAlerta", mensajeAlerta);
+                }
+                response.getWriter().write(comentarioGuardado.toJSONString());
                 break;
-            case "obtenerComentarios":
+            case "eliminarComentario":
+                Integer idComentario = Integer.valueOf(request.getParameter("idComentario"));
+                JSONObject comentarioEliminado = new JSONObject();
+                mensajeError = comentariosNegocio.eliminarComentario(idComentario);
+                if (mensajeError.isEmpty()) {
+                    comentarioEliminado.put("comentarios", comentariosNegocio.listaComentarios(comentariosNegocio.TIPO_ARCHIVO, idArchivo));
+                } else {
+                    comentarioEliminado.put("mensajeError", mensajeError);
+                }
+                response.getWriter().write(comentarioEliminado.toJSONString());
                 break;
             default:
                 break;

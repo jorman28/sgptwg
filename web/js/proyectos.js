@@ -90,6 +90,7 @@ function nuevaVersion(idProyecto, fechaInicio) {
     $('#fechaFinVersion').datetimepicker('setStartDate', fechaInicio);
     $('#fechaInicioVersion').datetimepicker('setEndDate', null);
     $('#fechaFinVersion').datetimepicker('setEndDate', null);
+    $("#divComentarios").hide();
     $("#modalVersiones").modal("show");
 }
 
@@ -147,6 +148,8 @@ function editarVersion(idVersion) {
                 }
                 $('#fechaInicioVersion').datetimepicker('setStartDate', data.fechaProyecto);
                 $("#alcance").val(data.alcance !== undefined ? data.alcance : "");
+                $("#listaComentarios").html(data.comentarios);
+                $("#divComentarios").show();
                 $("#modalVersiones").modal("show");
             }
         },
@@ -164,12 +167,6 @@ function eliminarProyecto(idProyecto) {
 function eliminarVersion(idVersion) {
     $("#tipoEliminacion").val("VERSION");
     $("#idVersion").val(idVersion);
-    $("#confirmationMessage").modal("show");
-}
-
-function eliminarComentario(idComentario) {
-    $("#tipoEliminacion").val("COMENTARIO");
-    $("#idComentario").val(idComentario);
     $("#confirmationMessage").modal("show");
 }
 
@@ -209,4 +206,42 @@ function eliminarPersona(idPersona, cargo) {
             $("#empleadosProyecto").html('No se han agregado empleados al proyecto');
         }
     }
+}
+
+function guardarComentario() {
+    $.ajax({
+        type: "POST",
+        url: "ProyectosController",
+        dataType: "json",
+        data: {accion: "guardarComentario", comentario: jQuery("#comentario").val(), idVersion: $("#idVersion").val()},
+        success: function(data) {
+            if (data !== undefined) {
+                if (data.comentarios !== undefined && data.comentarios !== '') {
+                    $("#comentario").val('');
+                    $("#listaComentarios").html(data.comentarios);
+                }
+            }
+        },
+        error: function() {
+        }
+    });
+}
+
+function eliminarComentario(idComentario) {
+    $.ajax({
+        type: "POST",
+        url: "ProyectosController",
+        dataType: "json",
+        data: {accion: "eliminarComentario", idComentario: idComentario, idVersion: $("#idVersion").val()},
+        success: function(data) {
+            if (data !== undefined) {
+                if (data.comentarios !== undefined && data.comentarios !== '') {
+                    $("#comentario").val('');
+                    $("#listaComentarios").html(data.comentarios);
+                }
+            }
+        },
+        error: function() {
+        }
+    });
 }

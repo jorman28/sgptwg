@@ -31,6 +31,7 @@ function nuevoArchivo() {
     $("#creador").val($("#hiddenCreador").val());
     $("#divArchivo").show();
     $("#divDescarga").hide();
+    $("#divComentarios").hide();
     $("#modalArchivos").modal("show");
 }
 
@@ -72,6 +73,9 @@ function consultarArchivo(idArchivo) {
                 $("#divArchivo").hide();
                 $("#divDescarga").html(data.archivo);
                 $("#divDescarga").show();
+                $("#comentario").val('');
+                $("#listaComentarios").html(data.comentarios);
+                $("#divComentarios").show();
                 $("#modalArchivos").modal("show");
             }
         },
@@ -90,4 +94,42 @@ function descargarArchivo(archivo) {
     link.href = 'ArchivosController?accion=obtenerArchivo&nombreArchivo=' + archivo;
     link.target = '_blank';
     link.click();
+}
+
+function guardarComentario() {
+    $.ajax({
+        type: "POST",
+        url: "ArchivosController",
+        dataType: "json",
+        data: {accion: "guardarComentario", comentario: jQuery("#comentario").val(), id: $("#id").val()},
+        success: function(data) {
+            if (data !== undefined) {
+                if (data.comentarios !== undefined && data.comentarios !== '') {
+                    $("#comentario").val('');
+                    $("#listaComentarios").html(data.comentarios);
+                }
+            }
+        },
+        error: function() {
+        }
+    });
+}
+
+function eliminarComentario(idComentario) {
+    $.ajax({
+        type: "POST",
+        url: "ArchivosController",
+        dataType: "json",
+        data: {accion: "eliminarComentario", idComentario: idComentario, id: $("#id").val()},
+        success: function(data) {
+            if (data !== undefined) {
+                if (data.comentarios !== undefined && data.comentarios !== '') {
+                    $("#comentario").val('');
+                    $("#listaComentarios").html(data.comentarios);
+                }
+            }
+        },
+        error: function() {
+        }
+    });
 }
