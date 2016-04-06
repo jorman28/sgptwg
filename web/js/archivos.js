@@ -101,7 +101,26 @@ function guardarComentario() {
         type: "POST",
         url: "ArchivosController",
         dataType: "json",
-        data: {accion: "guardarComentario", comentario: jQuery("#comentario").val()},
+        data: {accion: "guardarComentario", comentario: jQuery("#comentario").val(), id: $("#id").val()},
+        success: function(data) {
+            if (data !== undefined) {
+                if (data.comentarios !== undefined && data.comentarios !== '') {
+                    $("#comentario").val('');
+                    $("#listaComentarios").html(data.comentarios);
+                }
+            }
+        },
+        error: function() {
+        }
+    });
+}
+
+function eliminarComentario(idComentario) {
+    $.ajax({
+        type: "POST",
+        url: "ArchivosController",
+        dataType: "json",
+        data: {accion: "eliminarComentario", idComentario: idComentario, id: $("#id").val()},
         success: function(data) {
             if (data !== undefined) {
                 if (data.comentarios !== undefined && data.comentarios !== '') {

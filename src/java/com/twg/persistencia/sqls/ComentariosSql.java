@@ -39,7 +39,7 @@ public class ComentariosSql {
                 + "     WHERE "
                 + "         com.fecha_eliminacion IS NULL "
                 + "         AND com.tipo_destino = ? AND com.id_destino = ? "
-                + "     ORDER BY com.fecha_creacion DESC, com.id DESC";
+                + "     ORDER BY com.fecha_creacion, com.id";
         return sql;
     }
 

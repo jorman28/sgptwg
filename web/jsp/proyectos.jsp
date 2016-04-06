@@ -133,6 +133,11 @@
                                                 <textarea class="form-control" type="text" id="alcance" name="alcance" maxlength="1000">${alcance}</textarea>
                                             </div>
                                         </div>
+                                        <div class="row">
+                                            <div id="divComentarios" class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                                <c:import url="/jsp/general/comentarios.jsp"/>
+                                            </div>
+                                        </div>  
                                     </div>
                                     <div class="modal-footer">
                                         <c:if test="${opcionGuardarVersion == 'T'}">
@@ -154,7 +159,6 @@
                             </c:if>
                             <button class="btn btn-default" type="submit" name="accion" id="limpiarProyecto" value="limpiarProyecto">Limpiar</button>
                         </div>
-                        <c:import url="/jsp/general/comentarios.jsp"/>
                     </form>
                 </div>
             </div>

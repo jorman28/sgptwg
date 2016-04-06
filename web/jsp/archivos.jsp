@@ -59,7 +59,7 @@
                                                 <input type="file" id="archivo" name="archivo" onchange="cargarArchivo(this);"/>
                                                 <input type="hidden" id="nombreArchivo" name="nombreArchivo"/>
                                             </div>
-                                            <div id="divDescarga" class="col-xs-12 col-sm-12 col-md-12 col-lg-12" align="center">
+                                            <div id="divDescarga" class="col-xs-12 col-sm-12 col-md-12 col-lg-12 form-group" align="center">
                                             </div>
                                             <div id="divComentarios" class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                                 <c:import url="/jsp/general/comentarios.jsp"/>

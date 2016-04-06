@@ -98,6 +98,7 @@ public class ProyectosController extends HttpServlet {
                 break;
             case "editarVersion":
                 JSONObject version = versionesNegocio.consultarVersion(idVersion);
+                version.put("comentarios", comentariosNegocio.listaComentarios(comentariosNegocio.TIPO_VERSION, idVersion));
                 response.getWriter().write(version.toJSONString());
                 break;
             case "guardarProyecto":
@@ -145,13 +146,6 @@ public class ProyectosController extends HttpServlet {
                                 mensajeExito = "La versión ha sido eliminada con éxito";
                             }
                             break;
-                        case "COMENTARIO":
-                            Integer idComentario = Integer.valueOf(request.getParameter("idComentario"));
-                            mensajeError = comentariosNegocio.eliminarComentario(idComentario);
-                            if (mensajeError.isEmpty()) {
-                                mensajeExito = "Comentario eliminado con éxito";
-                            }
-                            break;
                         default:
                             mensajeError = proyectosNegocio.eliminarProyecto(idProyecto);
                             if (mensajeError.isEmpty()) {
@@ -174,9 +168,9 @@ public class ProyectosController extends HttpServlet {
                 JSONObject comentarioGuardado = new JSONObject();
                 mensajeAlerta = comentariosNegocio.validarDatos(comentario);
                 if (mensajeAlerta.isEmpty()) {
-                    mensajeError = comentariosNegocio.guardarComentario(null, persona, comentario, "PROYECTOS", 1);
+                    mensajeError = comentariosNegocio.guardarComentario(null, persona, comentario, comentariosNegocio.TIPO_VERSION, idVersion);
                     if (mensajeError.isEmpty()) {
-                        comentarioGuardado.put("mensajeExito", "Comentario guardado con éxito");
+                        comentarioGuardado.put("comentarios", comentariosNegocio.listaComentarios(comentariosNegocio.TIPO_VERSION, idVersion));
                     } else {
                         comentarioGuardado.put("mensajeError", mensajeError);
                     }
@@ -185,17 +179,28 @@ public class ProyectosController extends HttpServlet {
                 }
                 response.getWriter().write(comentarioGuardado.toJSONString());
                 break;
+            case "eliminarComentario":
+                Integer idComentario = Integer.valueOf(request.getParameter("idComentario"));
+                JSONObject comentarioEliminado = new JSONObject();
+                mensajeError = comentariosNegocio.eliminarComentario(idComentario);
+                if (mensajeError.isEmpty()) {
+                    comentarioEliminado.put("comentarios", comentariosNegocio.listaComentarios(comentariosNegocio.TIPO_VERSION, idVersion));
+                } else {
+                    comentarioEliminado.put("mensajeError", mensajeError);
+                }
+                response.getWriter().write(comentarioEliminado.toJSONString());
+                break;
             default:
                 break;
         }
 
-        if (!accion.equals("editarProyecto") && !accion.equals("editarVersion") && !accion.equals("completarPersonas")) {
+        if (!accion.equals("editarProyecto") && !accion.equals("editarVersion") && 
+                !accion.equals("completarPersonas") && !accion.equals("guardarComentario") && !accion.equals("eliminarComentario")) {
             request.setAttribute("mensajeError", mensajeError);
             request.setAttribute("mensajeExito", mensajeExito);
             request.setAttribute("mensajeAlerta", mensajeAlerta);
             request.setAttribute("listaProyectos", listarProyectos(busquedaProyecto, permisosPagina));
             request.setAttribute("estados", estadosNegocio.consultarEstados(null, "VERSIONES", null, null, null, null));
-            request.setAttribute("listaComentarios", comentariosNegocio.listaComentarios("PROYECTOS", 1));
             if (permisosPagina != null && !permisosPagina.isEmpty()) {
                 if (permisosPagina.contains(Permisos.CONSULTAR.getNombre())) {
                     request.setAttribute("opcionConsultar", "T");

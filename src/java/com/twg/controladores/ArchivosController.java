@@ -123,7 +123,7 @@ public class ArchivosController extends HttpServlet {
                 JSONObject comentarioGuardado = new JSONObject();
                 mensajeAlerta = comentariosNegocio.validarDatos(comentario);
                 if (mensajeAlerta.isEmpty()) {
-                    mensajeError = comentariosNegocio.guardarComentario(null, persona, comentario, "PROYECTOS", 1);
+                    mensajeError = comentariosNegocio.guardarComentario(null, persona, comentario, comentariosNegocio.TIPO_ARCHIVO, idArchivo);
                     if (mensajeError.isEmpty()) {
                         comentarioGuardado.put("comentarios", comentariosNegocio.listaComentarios(comentariosNegocio.TIPO_ARCHIVO, idArchivo));
                     } else {
