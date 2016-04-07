@@ -82,7 +82,7 @@ public class ActividadesPorEstadoController extends HttpServlet {
                 obtenerArchivo(response, archivo);
                 break;
             case "consultar":
-                JSONObject estadosObject = actividadesPorEstado(proyecto, version, persona);
+                JSONObject estadosObject = actividadesPorEstado(request.getContextPath(), proyecto, version, persona);
                 response.getWriter().write(estadosObject.toString());
                 break;
             case "consultarVersiones":
@@ -114,14 +114,14 @@ public class ActividadesPorEstadoController extends HttpServlet {
     /**
      * Método encargado de pintar los datos de la tabla en pantalla
      *
-     * @param response
+     * @param contexto
      * @param proyecto
      * @param version
      * @param persona
      * @throws ServletException
      * @throws IOException
      */
-    private JSONObject actividadesPorEstado(Integer proyecto, Integer version, Integer persona) throws ServletException, IOException {
+    private JSONObject actividadesPorEstado(String contexto, Integer proyecto, Integer version, Integer persona) throws ServletException, IOException {
         JSONObject resultado = new JSONObject();
         JSONArray arrayEstados = new JSONArray();
         JSONArray titulos = new JSONArray();
@@ -144,7 +144,17 @@ public class ActividadesPorEstadoController extends HttpServlet {
             for (Map<String, Object> estado : actividadesPorEstado) {
                 html.append("<tr>");
                 html.append("<td>").append(estado.get("estado")).append("</td>");
-                html.append("<td align=\"right\">").append(estado.get("actividades")).append("</td>");
+                html.append("<td align=\"right\">");
+                html.append("<a href=\"")
+                        .append(contexto)
+                        .append("/ActividadesController?proyecto=").append(proyecto != null ? proyecto : "")
+                        .append("&version=").append(version != null ? version : "")
+                        .append("&estado=").append(estado.get("id_estado") != null ? estado.get("id_estado") : "")
+                        .append("&persona=").append(persona != null ? persona : "")
+                        .append("\">");
+                html.append(estado.get("actividades"));
+                html.append("</a>");
+                html.append("</td>");
                 html.append("<td align=\"right\">").append(estado.get("porcentaje")).append("</td>");
                 html.append("</tr>");
                 JSONArray arrayEstado = new JSONArray();

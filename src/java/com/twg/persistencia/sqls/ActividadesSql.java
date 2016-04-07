@@ -154,6 +154,7 @@ public class ActividadesSql {
      */
     public String actividadesPorEstados(Integer proyecto, Integer version, Integer persona) {
         String sql = "SELECT \n"
+                + "    est.id AS id_estado,\n"
                 + "    est.nombre AS estado,\n"
                 + "    (SELECT \n"
                 + "            COUNT(DISTINCT act.id)\n"

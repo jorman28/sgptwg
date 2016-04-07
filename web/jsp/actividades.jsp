@@ -34,18 +34,22 @@
                                         <label for="proyecto">Proyecto</label>
                                         <select class="form-control" id="proyecto" name="proyecto" onchange="consultarVersiones(this.value);">
                                             <option value="0">SELECCIONE</option>
-                                            <c:forEach items="${proyectos}" var="tipo">
-                                                <option value="${tipo.id}" <c:if test="${proyecto == tipo.id}">selected</c:if> >${tipo.nombre}</option>
+                                            <c:forEach items="${proyectos}" var="proy">
+                                                <option value="${proy.id}" <c:if test="${proyecto == proy.id}">selected</c:if> >${proy.nombre}</option>
                                             </c:forEach>
                                         </select>                                         
                                     </div>
-                                    
+
                                     <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
                                         <label for="version">Versión</label>
                                         <select class="form-control" id="version" name="version">
+                                            <option value="0">SELECCIONE</option>
+                                            <c:forEach items="${versiones}" var="vers">
+                                                <option value="${vers.id}" <c:if test="${version == vers.id}">selected</c:if>>${vers.nombre}</option>
+                                            </c:forEach>
                                         </select>                                     
                                     </div>
-                                    
+
                                     <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
                                         <label for="descripcion">Descripción</label>
                                         <input class="form-control" type="text" id="descripcion" name="descripcion" value="${descripcion}" maxlength="1000"/>
@@ -61,12 +65,12 @@
                                             </c:forEach>
                                         </select>                                       
                                     </div>
-                                    
+
                                     <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
                                         <label for="fecha">Fecha</label>
                                         <input type="text" id="fecha" name="fecha" class="form form-control" readonly="true"/>
                                     </div>
-                                        
+
                                     <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
                                         <label for="responsable">Documento persona</label>
                                         <input class="form-control" type="text" id="responsable" name="responsable" value="${responsable}" maxlength="15"/>
@@ -79,7 +83,7 @@
                             <c:if test="${opcionConsultar == 'T'}">
                                 <button class="btn btn-default" type="button" name="accion" id="consultar" value="consultar" onclick="llenarTablaActividades()">Consultar</button>
                             </c:if>
-                                <c:if test="${opcionGuardar == 'T'}">
+                            <c:if test="${opcionGuardar == 'T'}">
                                 <button class="btn btn-default" type="submit" name="accion" id="crearActividad" value="crearActividad">Crear</button>
                             </c:if>
                             <button class="btn btn-default" type="submit" name="accion" id="limpiar" value="limpiar">Limpiar</button>

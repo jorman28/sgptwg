@@ -431,20 +431,20 @@ public class ActividadesNegocio {
     public JRDataSource actividadesPorEstado(Integer proyecto, Integer version, Integer persona) {
         DRDataSource datos = new DRDataSource("estado", "actividades", "porcentaje");
         try {
-            Map<String, Integer> actividadesPorEstado = actividadesDao.actividadesPorEstado(proyecto, version, persona);
+            List<Map<String, Object>> actividadesPorEstado = actividadesDao.actividadesPorEstado(proyecto, version, persona);
             double totalActividades = 0;
-            for (Map.Entry<String, Integer> entry : actividadesPorEstado.entrySet()) {
+            for (Map<String, Object> estado : actividadesPorEstado) {
                 try {
-                    totalActividades += entry.getValue();
+                    totalActividades += (int) estado.get("actividades");
                 } catch (Exception e) {
                 }
             }
-            for (Map.Entry<String, Integer> entry : actividadesPorEstado.entrySet()) {
-                double actividades = entry.getValue();
+            for (Map<String, Object> estado : actividadesPorEstado) {
+                double actividades = (double) estado.get("actividades");
                 if (totalActividades > 0) {
-                    datos.add(entry.getKey(), entry.getValue(), actividades / totalActividades);
+                    datos.add(estado.get("estado"), estado.get("actividades"), actividades / totalActividades);
                 } else {
-                    datos.add(entry.getKey(), entry.getValue(), 0);
+                    datos.add(estado.get("estado"), estado.get("actividades"), 0);
                 }
             }
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | SQLException ex) {
@@ -456,25 +456,22 @@ public class ActividadesNegocio {
     public List<Map<String, Object>> listarActividadesPorEstado(Integer proyecto, Integer version, Integer persona) {
         List<Map<String, Object>> actividadesPorEstado = new ArrayList<>();
         try {
-            Map<String, Integer> estados = actividadesDao.actividadesPorEstado(proyecto, version, persona);
+            List<Map<String, Object>> estados = actividadesDao.actividadesPorEstado(proyecto, version, persona);
             double totalActividades = 0;
-            for (Map.Entry<String, Integer> entry : estados.entrySet()) {
+            for (Map<String, Object> estado : estados) {
                 try {
-                    totalActividades += entry.getValue();
+                    totalActividades += (Integer) estado.get("actividades");
                 } catch (Exception e) {
                 }
             }
-            for (Map.Entry<String, Integer> entry : estados.entrySet()) {
-                Map<String, Object> mapaActividades = new HashMap<>();
-                mapaActividades.put("estado", entry.getKey());
-                mapaActividades.put("actividades", entry.getValue());
-                double actividades = entry.getValue();
+            for (Map<String, Object> estado : estados) {
+                double actividades = ((Integer) estado.get("actividades")).doubleValue();
                 if (totalActividades > 0) {
-                    mapaActividades.put("porcentaje", (Math.round(actividades / totalActividades * 1000d) / 10d) + "%");
+                    estado.put("porcentaje", (Math.round(actividades / totalActividades * 1000d) / 10d) + "%");
                 } else {
-                    mapaActividades.put("porcentaje", 0 + "%");
+                    estado.put("porcentaje", 0 + "%");
                 }
-                actividadesPorEstado.add(mapaActividades);
+                actividadesPorEstado.add(estado);
             }
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | SQLException ex) {
             Logger.getLogger(ActividadesNegocio.class.getName()).log(Level.SEVERE, null, ex);

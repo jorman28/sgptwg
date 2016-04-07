@@ -105,6 +105,12 @@ public class ActividadesController extends HttpServlet {
             } catch (NumberFormatException e) {
             }
 
+            Integer version = null;
+            try {
+                version = Integer.valueOf(versionStr);
+            } catch (NumberFormatException e) {
+            }
+
             List<String> permisosPagina = PerfilesNegocio.permisosPorPagina(request, Paginas.ACTIVIDADES);
 
             switch (accion) {
@@ -312,7 +318,6 @@ public class ActividadesController extends HttpServlet {
             request.setAttribute("mensajeExito", mensajeExito);
             request.setAttribute("mensajeError", mensajeError);
             request.setAttribute("proyectos", proyectosNegocio.consultarProyectos(null, null, false));
-            request.setAttribute("versiones", versionesNegocio.consultarVersiones(null, null, null, false));
             request.setAttribute("estados", estadosNegocio.consultarEstados(null, "ACTIVIDADES", null, null, null, null));
             if (!accion.equals("consultar") && !accion.equals("consultarVersiones") && !accion.equals("crearActividad")
                     && !accion.equals("limpiarCreacion") && !accion.equals("gestionarActividad") && !accion.equals("limpiarGestion")
@@ -326,6 +331,15 @@ public class ActividadesController extends HttpServlet {
                         request.setAttribute("opcionGuardar", "T");
                     }
                 }
+
+                /* Filtros en pantalla de actividades */
+                if (proyecto != null) {
+                    request.setAttribute("versiones", versionesNegocio.consultarVersiones(null, proyecto, null, false));
+                }
+                request.setAttribute("proyecto", proyecto);
+                request.setAttribute("version", version);
+                request.setAttribute("estado", request.getParameter("estado"));
+
                 request.getRequestDispatcher(LISTAR_ACTIVIDADES).forward(request, response);
             }
         } catch (ParseException ex) {
