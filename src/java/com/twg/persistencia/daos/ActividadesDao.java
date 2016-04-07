@@ -176,8 +176,8 @@ public class ActividadesDao {
         return eliminacion;
     }
 
-    public Map<String, Integer> actividadesPorEstado(Integer proyecto, Integer version, Integer persona) throws ClassNotFoundException, InstantiationException, IllegalAccessException, SQLException {
-        Map<String, Integer> actividadesPorEstado = new HashMap<>();
+    public List<Map<String, Object>> actividadesPorEstado(Integer proyecto, Integer version, Integer persona) throws ClassNotFoundException, InstantiationException, IllegalAccessException, SQLException {
+        List<Map<String, Object>> listaActividadesPorEstado = new ArrayList<>();
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;
@@ -185,8 +185,12 @@ public class ActividadesDao {
         ResultSet rs;
         rs = ps.executeQuery();
         while (rs.next()) {
-            actividadesPorEstado.put(rs.getString("estado"), ((Long) rs.getObject("actividades")).intValue());
+            Map<String, Object> actividadesPorEstado = new HashMap<>();
+            actividadesPorEstado.put("id_estado", rs.getObject("id_estado"));
+            actividadesPorEstado.put("estado", rs.getString("estado"));
+            actividadesPorEstado.put("actividades", ((Long) rs.getObject("actividades")).intValue());
+            listaActividadesPorEstado.add(actividadesPorEstado);
         }
-        return actividadesPorEstado;
+        return listaActividadesPorEstado;
     }
 }
