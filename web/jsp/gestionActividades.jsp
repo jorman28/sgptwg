@@ -14,18 +14,6 @@
     <head>
         <c:import url="/jsp/general/header.jsp"/>
         <script type="text/javascript" src="js/gestionActividades.js"></script>
-        <style>
-            #limpiarParticipante {
-                position: absolute;
-                right: 20px;
-                bottom: 0;
-                height: 6px;
-                margin: auto;
-                font-size: 18px;
-                cursor: pointer;
-                color: #ccc;
-            }
-        </style>
         <title>Gestionar Actividades</title>
     </head>
     <body>
@@ -120,9 +108,14 @@
                                     </div>
 
                                     <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
-                                        <label for="descripcion">*Descripción:</label>
-                                        <input class="form-control" type="text" id="descripcion" name="descripcion" value="${descripcion}" maxlength="1000"/>
-                                    </div> 
+                                        <label for="estado">*Estado</label>
+                                        <select id="estado" name="estado" class="form-control">
+                                            <option value="0">SELECCIONE</option>
+                                            <c:forEach items="${estados}" var="esta">
+                                                <option value="${esta.id}" <c:if test="${esta.id == estado}">selected</c:if>>${esta.nombre}</option>
+                                            </c:forEach>
+                                        </select>
+                                    </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
@@ -168,16 +161,13 @@
                                     </div>
                                 </div> 
                                 <div class="row">
-                                    <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
-                                        <label for="estado">*Estado</label>
-                                        <select id="estado" name="estado" class="form-control">
-                                            <option value="0">SELECCIONE</option>
-                                            <c:forEach items="${estados}" var="esta">
-                                                <option value="${esta.id}" <c:if test="${esta.id == estado}">selected</c:if>>${esta.nombre}</option>
-                                            </c:forEach>
-                                        </select>
+                                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                        <label for="descripcion">*Descripción:</label>
+                                        <textarea class="form-control" id="descripcion" name="descripcion" maxlength="1000">${descripcion}</textarea>
                                     </div>
-                                    <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
+                                </div>
+                                <div class="row">
+                                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                         <label for="participante">Añadir Participante:</label>
                                         <c:choose>
                                             <c:when test="${proyecto == null || proyecto == 0}">
@@ -257,7 +247,7 @@
                                 </div>
                             </div>                          
                         </div>
-                        <div class="row form-group">
+                        <div class="row form-group" align="center">
                             <button class="btn btn-default" type="button" name="accion" id="crear" value="Guardar" onclick="Validar()">Guardar</button>
                             <c:choose>
                                 <c:when test="${id == null || id == ''}">
