@@ -1,5 +1,5 @@
 <div class="form-group">
-    <div id="listaComentarios"></div>
+    <div id="listaComentarios">${listaComentarios}</div>
 </div>
 <div class="form-group">
     <textarea class="form-control" id="comentario" name="comentario" placeholder="Ingrese un comentario"></textarea>

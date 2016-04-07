@@ -1,6 +1,7 @@
 package com.twg.controladores;
 
 import com.twg.negocio.ActividadesNegocio;
+import com.twg.negocio.ComentariosNegocio;
 import com.twg.negocio.EstadosNegocio;
 import com.twg.negocio.PerfilesNegocio;
 import com.twg.negocio.PersonasNegocio;
@@ -28,10 +29,10 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 /**
- * Esta clase define métodos para controlar las peticiones y respuestas 
- * que se hacen sobre el módulo principal de Actividades como listar información,
+ * Esta clase define métodos para controlar las peticiones y respuestas que se
+ * hacen sobre el módulo principal de Actividades como listar información,
  * filtrar o gestionar.
- * 
+ *
  * @author Andrés Felipe Giraldo, Jorman Rincón, Erika Jhoana Castaneda
  */
 public class ActividadesController extends HttpServlet {
@@ -41,6 +42,7 @@ public class ActividadesController extends HttpServlet {
     private final VersionesNegocio versionesNegocio = new VersionesNegocio();
     private final EstadosNegocio estadosNegocio = new EstadosNegocio();
     private final PersonasNegocio personasNegocio = new PersonasNegocio();
+    private final ComentariosNegocio comentariosNegocio = new ComentariosNegocio();
 
     SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
@@ -63,7 +65,7 @@ public class ActividadesController extends HttpServlet {
             String mensajeAlerta = "";
             String mensajeExito = "";
             String mensajeError = "";
-            
+
             String accion = request.getParameter("accion");
             String idStr = request.getParameter("id"); //consulta y creacion Er
             if (accion == null) {
@@ -75,7 +77,7 @@ public class ActividadesController extends HttpServlet {
                     accion = arrayGetId[0];
                 }
             }
-            
+
             String[] idPersonasActividad = request.getParameterValues("idPersonas");// Personas que estan en la lista 2 Participantes en la actividad
             String proyectoStr = request.getParameter("proyecto"); //consulta y creacion Er
             String versionStr = request.getParameter("version"); //consulta y creacion Er
@@ -83,28 +85,28 @@ public class ActividadesController extends HttpServlet {
             String estadoStr = request.getParameter("estado"); //consulta y creacion Er
             String fechaStr = request.getParameter("fecha"); //consulta Er
             String responsableStr = request.getParameter("responsable"); //consulta y creacion Er en creación se recibe el objeto hidden
-            
+
             String fecha_estimada_inicioStr = request.getParameter("fecha_estimada_inicio");//creacion
             String fecha_estimada_terminacionStr = request.getParameter("fecha_estimada_terminacion");//creacion
             String fecha_real_inicioStr = request.getParameter("fecha_real_inicio");//creacion
             String fecha_real_terminacionStr = request.getParameter("fecha_real_terminacion");//creacion
             String tiempo_estimadoStr = request.getParameter("tiempo_estimado");//creacion
             String tiempo_invertidoStr = request.getParameter("tiempo_invertido");//creacion
-            
+
             Integer id = null;
             try {
                 id = Integer.valueOf(idStr);
             } catch (NumberFormatException e) {
             }
-            
+
             Integer proyecto = null;
             try {
                 proyecto = Integer.valueOf(proyectoStr);
             } catch (NumberFormatException e) {
             }
-            
+
             List<String> permisosPagina = PerfilesNegocio.permisosPorPagina(request, Paginas.ACTIVIDADES);
-            
+
             switch (accion) {
                 case "consultar":
                     if (fechaStr != null && !fechaStr.isEmpty()) {
@@ -158,6 +160,7 @@ public class ActividadesController extends HttpServlet {
                         request.setAttribute("tiempo_estimado", actividad.getTiempo_estimado());
                         request.setAttribute("tiempo_invertido", actividad.getTiempo_invertido());
                         request.setAttribute("estado", actividad.getEstado());
+                        request.setAttribute("listaComentarios", comentariosNegocio.listaComentarios(comentariosNegocio.TIPO_ACTIVIDAD, actividad.getId()));
                     }
                     request.getRequestDispatcher(INSERTAR_O_EDITAR).forward(request, response);
                     break;
@@ -210,7 +213,7 @@ public class ActividadesController extends HttpServlet {
                             }
                             List<PersonasBean> empleados = new ArrayList<>();
                             List<PersonasBean> clientes = new ArrayList<>();
-                            
+
                             for (PersonasBean persona : personas) {
                                 if (persona.getNombreCargo().toLowerCase().equalsIgnoreCase("cliente")) {
                                     clientes.add(persona);
@@ -259,7 +262,6 @@ public class ActividadesController extends HttpServlet {
                     JSONArray arrayPersonas = personasNegocio.consultarPersonasProyecto(strProyecto, strParticipante);
                     response.getWriter().write(arrayPersonas.toString());
                     break;
-                    
                 case "consultarFechasActividades":
                     String strParticipantes = request.getParameter("empleadosSeleccionados");
                     String strFechaEstimadaInicial = request.getParameter("strFechaEstimadaInicial");
@@ -270,6 +272,39 @@ public class ActividadesController extends HttpServlet {
                     JSONArray arrayPersonasAsignadasActividad = personasNegocio.consultarPersonasAsignadasActividad(strParticipantes, dateFechaEstimadaInicial, dateFechaEstimadaFin, strIdActividad);
                     response.getWriter().write(arrayPersonasAsignadasActividad.toString());
                     break;
+                case "guardarComentario":
+                    String comentario = request.getParameter("comentario");
+                    Integer persona;
+                    try {
+                        persona = (Integer) request.getSession(false).getAttribute("personaSesion");
+                    } catch (Exception e) {
+                        persona = null;
+                    }
+                    JSONObject comentarioGuardado = new JSONObject();
+                    mensajeAlerta = comentariosNegocio.validarDatos(comentario);
+                    if (mensajeAlerta.isEmpty()) {
+                        mensajeError = comentariosNegocio.guardarComentario(null, persona, comentario, comentariosNegocio.TIPO_ACTIVIDAD, id);
+                        if (mensajeError.isEmpty()) {
+                            comentarioGuardado.put("comentarios", comentariosNegocio.listaComentarios(comentariosNegocio.TIPO_ACTIVIDAD, id));
+                        } else {
+                            comentarioGuardado.put("mensajeError", mensajeError);
+                        }
+                    } else {
+                        comentarioGuardado.put("mensajeAlerta", mensajeAlerta);
+                    }
+                    response.getWriter().write(comentarioGuardado.toJSONString());
+                    break;
+                case "eliminarComentario":
+                    Integer idComentario = Integer.valueOf(request.getParameter("idComentario"));
+                    JSONObject comentarioEliminado = new JSONObject();
+                    mensajeError = comentariosNegocio.eliminarComentario(idComentario);
+                    if (mensajeError.isEmpty()) {
+                        comentarioEliminado.put("comentarios", comentariosNegocio.listaComentarios(comentariosNegocio.TIPO_ACTIVIDAD, id));
+                    } else {
+                        comentarioEliminado.put("mensajeError", mensajeError);
+                    }
+                    response.getWriter().write(comentarioEliminado.toJSONString());
+                    break;
                 default:
                     break;
             }
@@ -279,7 +314,10 @@ public class ActividadesController extends HttpServlet {
             request.setAttribute("proyectos", proyectosNegocio.consultarProyectos(null, null, false));
             request.setAttribute("versiones", versionesNegocio.consultarVersiones(null, null, null, false));
             request.setAttribute("estados", estadosNegocio.consultarEstados(null, "ACTIVIDADES", null, null, null, null));
-            if (!accion.equals("consultar") && !accion.equals("editar") && !accion.equals("consultarVersiones") && !accion.equals("crearActividad") && !accion.equals("limpiarCreacion") && !accion.equals("gestionarActividad") && !accion.equals("limpiarGestion") && !accion.equals("consultarPersonasProyecto") && !accion.equals("consultarFechasActividades")) {
+            if (!accion.equals("consultar") && !accion.equals("consultarVersiones") && !accion.equals("crearActividad")
+                    && !accion.equals("limpiarCreacion") && !accion.equals("gestionarActividad") && !accion.equals("limpiarGestion")
+                    && !accion.equals("consultarPersonasProyecto") && !accion.equals("consultarFechasActividades")
+                    && !accion.equals("guardarComentario") && !accion.equals("eliminarComentario")) {
                 if (permisosPagina != null && !permisosPagina.isEmpty()) {
                     if (permisosPagina.contains(Permisos.CONSULTAR.getNombre())) {
                         request.setAttribute("opcionConsultar", "T");
@@ -296,9 +334,9 @@ public class ActividadesController extends HttpServlet {
     }
 
     /**
-     * Este método se encarga de enviar los atributos de las Actividades, 
-     * al cliente que realiza la petición.
-     * 
+     * Este método se encarga de enviar los atributos de las Actividades, al
+     * cliente que realiza la petición.
+     *
      * @param request
      * @param id
      * @param proyecto
@@ -310,7 +348,7 @@ public class ActividadesController extends HttpServlet {
      * @param fecha_real_terminacion
      * @param tiempo_estimado
      * @param tiempo_invertido
-     * @param estado 
+     * @param estado
      */
     private void enviarDatosCreacionEdicion(HttpServletRequest request, String id, String proyecto, String version, String descripcion, String fecha_estimada_inicio, String fecha_estimada_terminacion, String fecha_real_inicio, String fecha_real_terminacion, String tiempo_estimado, String tiempo_invertido, String estado) {
         request.setAttribute("id", id);
@@ -327,8 +365,9 @@ public class ActividadesController extends HttpServlet {
     }
 
     /**
-     * Método encargado de pintar la tabla con el listado de registros 
-     * que hay sobre las Actividades.
+     * Método encargado de pintar la tabla con el listado de registros que hay
+     * sobre las Actividades.
+     *
      * @param response
      * @param permisos
      * @param id
@@ -339,7 +378,7 @@ public class ActividadesController extends HttpServlet {
      * @param fecha
      * @param responsable
      * @throws ServletException
-     * @throws IOException 
+     * @throws IOException
      */
     private void cargarTabla(HttpServletResponse response, List<String> permisos, Integer id, String proyecto, String version, String descripcion,
             String estado, String fecha, String responsable) throws ServletException, IOException {
