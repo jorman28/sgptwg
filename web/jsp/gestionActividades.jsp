@@ -257,7 +257,7 @@
                                 </div>
                             </div>                          
                         </div>
-                        <div class="row">
+                        <div class="row form-group">
                             <button class="btn btn-default" type="button" name="accion" id="crear" value="Guardar" onclick="Validar()">Guardar</button>
                             <c:choose>
                                 <c:when test="${id == null || id == ''}">
@@ -269,8 +269,13 @@
                             </c:choose>
                             <button class="btn btn-default" type="submit" name="accion" id="limpiar" value="limpiar">Volver a Actividades</button>
                         </div>
-                        <br />
-                        <br />
+                        <c:if test="${not empty listaComentarios}">
+                            <div class="row">
+                                <div id="divComentarios" class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                    <c:import url="/jsp/general/comentarios.jsp"/>
+                                </div>
+                            </div>
+                        </c:if>
                     </form>
                 </div>
             </div>
