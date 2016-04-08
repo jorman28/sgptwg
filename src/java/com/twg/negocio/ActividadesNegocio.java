@@ -8,7 +8,6 @@ import com.twg.persistencia.daos.ActividadesDao;
 import com.twg.persistencia.daos.ActividadesEmpleadosDao;
 import com.twg.persistencia.daos.ActividadesEsfuerzosDao;
 import com.twg.persistencia.daos.EstadosDao;
-import com.twg.persistencia.daos.PersonasDao;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -30,8 +29,8 @@ import org.json.simple.JSONObject;
 public class ActividadesNegocio {
 
     private final ActividadesDao actividadesDao = new ActividadesDao();
-    private final ActividadesEmpleadosDao actividades_empleadosDao = new ActividadesEmpleadosDao();
-    private final ActividadesEsfuerzosDao actividades_esfuerzosDao = new ActividadesEsfuerzosDao();
+    private final ActividadesEmpleadosDao actividadesEmpleadosDao = new ActividadesEmpleadosDao();
+    private final ActividadesEsfuerzosDao actividadesEsfuerzosDao = new ActividadesEsfuerzosDao();
 
     private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
@@ -80,12 +79,12 @@ public class ActividadesNegocio {
                     actividad.setId(Integer.valueOf(id));
                     guardado = actividadesDao.actualizarActividad(actividad);
                     //En caso de eliminar un participante existente
-                    actividades_empleadosDao.eliminarActividadesEmpleados(Integer.valueOf(id), participantes);
-                    actividades_esfuerzosDao.eliminarActividadesEsfuerzos(Integer.valueOf(id), participantes);
+                    actividadesEmpleadosDao.eliminarActividadesEmpleados(Integer.valueOf(id), participantes);
+                    actividadesEsfuerzosDao.eliminarActividadesEsfuerzos(Integer.valueOf(id), participantes);
 
                     for (String item : participantes) { //Aplica para tablas actividades_empleados y actividades_esfuerzos
-                        ActividadesEmpleadosBean actividadEmpleadoBeanAux = actividades_empleadosDao.consultarActividadEmpleado(Integer.valueOf(id), Integer.valueOf(item));
-                        ActividadesEsfuerzosBean actividadEsfuerzoBeanAux = actividades_esfuerzosDao.consultarActividadEsfuerzo(null, Integer.valueOf(id), Integer.valueOf(item), null, null, null);
+                        ActividadesEmpleadosBean actividadEmpleadoBeanAux = actividadesEmpleadosDao.consultarActividadEmpleado(Integer.valueOf(id), Integer.valueOf(item));
+                        ActividadesEsfuerzosBean actividadEsfuerzoBeanAux = actividadesEsfuerzosDao.consultarActividadEsfuerzo(null, Integer.valueOf(id), Integer.valueOf(item), null, null, null);
 
                         //las siguientes líneas es para manejar los datos en la tabla actividades_empleados
                         ActividadesEmpleadosBean actividadEmpleadoBean = new ActividadesEmpleadosBean();
@@ -106,12 +105,12 @@ public class ActividadesNegocio {
 
                         //Condición si se añade información del participante
                         if (actividadEmpleadoBeanAux.getActividad() != null && actividadEmpleadoBeanAux.getEmpleado() != null && actividadEsfuerzoBeanAux.getId() != null) {
-                            actividades_esfuerzosDao.actualizarActividadEsfuerzo(actividadEsfuerzoBean);
+                            actividadesEsfuerzosDao.actualizarActividadEsfuerzo(actividadEsfuerzoBean);
                             guardadoAct_Emp += 1;
                         } else {
                             //Condición si se añade un nuevo participante
-                            actividades_esfuerzosDao.crearActividadEsfuerzo(actividadEsfuerzoBean);
-                            actividades_empleadosDao.insertarActividadEmpleado(actividadEmpleadoBean);
+                            actividadesEsfuerzosDao.crearActividadEsfuerzo(actividadEsfuerzoBean);
+                            actividadesEmpleadosDao.insertarActividadEmpleado(actividadEmpleadoBean);
                             guardadoAct_Emp += 1;
                         }
                     }
@@ -137,8 +136,8 @@ public class ActividadesNegocio {
                         actividadEsfuerzoBean.setTiempo(Double.valueOf(tiempo_estimado));
                         actividadEsfuerzoBean.setDescripcion(descripcion);
 
-                        actividades_esfuerzosDao.crearActividadEsfuerzo(actividadEsfuerzoBean);
-                        actividades_empleadosDao.insertarActividadEmpleado(actividadEmpleadoBean);
+                        actividadesEsfuerzosDao.crearActividadEsfuerzo(actividadEsfuerzoBean);
+                        actividadesEmpleadosDao.insertarActividadEmpleado(actividadEmpleadoBean);
                         guardadoAct_Emp += 1;
                     }
                 }
@@ -320,7 +319,7 @@ public class ActividadesNegocio {
     public List<ActividadesEmpleadosBean> consultarActividadesEmpleados(Integer idActividad, Integer idEmpleado) {
         List<ActividadesEmpleadosBean> listaActividadesEmpleados = new ArrayList<>();
         try {
-            listaActividadesEmpleados = actividades_empleadosDao.consultarActividadesEmpleados(idActividad, idEmpleado);
+            listaActividadesEmpleados = actividadesEmpleadosDao.consultarActividadesEmpleados(idActividad, idEmpleado);
         } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
             Logger.getLogger(ActividadesNegocio.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -328,38 +327,24 @@ public class ActividadesNegocio {
     }
 
     //metodo para obtener el listado de actividades que seran cargados en la tabla de consulta
-    public List<ActividadesBean> consultarActividades2(Integer id, String versionStr, String descripcion, String fecha,
-            String estadoStr, String responsable) {
+    public List<ActividadesBean> consultarActividades(Integer proyecto, Integer version, String descripcion, String fecha,
+            String estado, Integer responsable) {
         List<ActividadesBean> listaActividades = new ArrayList<>();
+        Date filtroFecha = null;
+        if (fecha != null && !fecha.isEmpty()) {
+            try {
+                filtroFecha = sdf.parse(fecha);
+            } catch (ParseException e) {
+            }
+        }
+        Integer filtroEstado;
         try {
-            String idsActividades = "";
-            if (responsable != null && !responsable.equals("")) {
-                PersonasDao perDao = new PersonasDao();
-                int persona = perDao.consultarIdPersona(responsable, null);
-                ActividadesEmpleadosDao actiDao = new ActividadesEmpleadosDao();
-                List<ActividadesEmpleadosBean> actiList = actiDao.consultarActividadesEmpleados(null, persona);
-
-                for (ActividadesEmpleadosBean actiList1 : actiList) {
-                    idsActividades += actiList1.getActividad() + ",";
-                }
-                if (!idsActividades.equals("")) {
-                    idsActividades = idsActividades.substring(0, idsActividades.length() - 1);
-                }
-            }
-
-            Integer version = null;
-            try {
-                version = Integer.valueOf(versionStr);
-            } catch (Exception e) {
-            }
-            Integer estado = null;
-            try {
-                estado = Integer.valueOf(estadoStr);
-            } catch (Exception e) {
-            }
-
-            listaActividades = actividadesDao.consultarActiv2(idsActividades, version, descripcion, fecha, estado, responsable);
-
+            filtroEstado = Integer.valueOf(estado);
+        } catch (NumberFormatException e) {
+            filtroEstado = null;
+        }
+        try {
+            listaActividades = actividadesDao.consultarActividades(proyecto, version, descripcion, filtroFecha, filtroEstado, responsable);
         } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
             Logger.getLogger(ActividadesNegocio.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -415,8 +400,8 @@ public class ActividadesNegocio {
     public String eliminarActividad(Integer idActividad) {
         String error = "";
         try {
-            int eliminacionAct_Esf = actividades_empleadosDao.eliminarActividadEmpleado(idActividad, null);
-            int eliminacionAct_Empl = actividades_esfuerzosDao.eliminarActividadEsfuerzo(idActividad);
+            int eliminacionAct_Esf = actividadesEmpleadosDao.eliminarActividadEmpleado(idActividad, null);
+            int eliminacionAct_Empl = actividadesEsfuerzosDao.eliminarActividadEsfuerzo(idActividad);
             int eliminacion = actividadesDao.eliminarActividad(idActividad);
             if (eliminacion == 0 && eliminacionAct_Esf == 0 && eliminacionAct_Empl == 0) {
                 error = "La actividad no pudo ser eliminada";

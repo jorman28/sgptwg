@@ -150,7 +150,7 @@ public class ActividadesPorEstadoController extends HttpServlet {
                         .append("/ActividadesController?proyecto=").append(proyecto != null ? proyecto : "")
                         .append("&version=").append(version != null ? version : "")
                         .append("&estado=").append(estado.get("id_estado") != null ? estado.get("id_estado") : "")
-                        .append("&persona=").append(persona != null ? persona : "")
+                        .append("&responsable=").append(persona != null ? persona : "")
                         .append("\">");
                 html.append(estado.get("actividades"));
                 html.append("</a>");

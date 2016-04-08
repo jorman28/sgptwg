@@ -72,8 +72,9 @@
                                     </div>
 
                                     <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
-                                        <label for="responsable">Documento persona</label>
-                                        <input class="form-control" type="text" id="responsable" name="responsable" value="${responsable}" maxlength="15"/>
+                                        <label for="responsable">Responsable</label>
+                                        <input class="form-control" type="text" id="nombreResponsable" name="nombreResponsable" value="${nombreResponsable}"/>
+                                        <input class="form-control" type="hidden" id="responsable" name="responsable" value="${responsable}"/>
                                     </div>
                                 </div>
                                 <br>

@@ -71,13 +71,19 @@ public class ActividadesDao {
         return ultimaActividad;
     }
 
-    public List<ActividadesBean> consultarActiv2(String id, Integer version, String descripcion, String fecha,
-            Integer estado, String responsable) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
+    public List<ActividadesBean> consultarActividades(Integer proyecto, Integer version, String descripcion, java.util.Date fecha,
+            Integer estado, Integer responsable) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         List<ActividadesBean> listaActividades = new ArrayList();
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;
-        ps = con.prepareStatement(sql.consultarActividades(id, version, descripcion, fecha, estado));
+        ps = con.prepareStatement(sql.consultarActividades(proyecto, version, descripcion, fecha, estado, responsable));
+        if (fecha != null) {
+            ps.setObject(1, fecha);
+            ps.setObject(2, fecha);
+            ps.setObject(3, fecha);
+            ps.setObject(4, fecha);
+        }
         ResultSet rs;
         rs = ps.executeQuery();
         while (rs.next()) {

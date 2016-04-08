@@ -4,7 +4,7 @@ import java.util.Date;
 
 /**
  * Esta clase define métodos para contruír los SQLs utilizados en el DAO.
- * 
+ *
  * @author Andrés Felipe Giraldo, Jorman Rincón, Erika Jhoana Castaneda
  */
 public class ActividadesSql {
@@ -17,17 +17,18 @@ public class ActividadesSql {
 
     /**
      * Método encargado de retornar el SQL para consultar todas las atividades.
-     * @return 
+     *
+     * @return
      */
     public String consultarActividades() {
         return "SELECT * FROM actividades WHERE fecha_eliminacion IS NULL ";
     }
 
     /**
-     * Método encargado de retornar el SQL para consultar las actividades, 
-     * aplicando diferentes filtros según los parámetros que lleguen 
-     * distintos de nulos.
-     * 
+     * Método encargado de retornar el SQL para consultar las actividades,
+     * aplicando diferentes filtros según los parámetros que lleguen distintos
+     * de nulos.
+     *
      * @param id
      * @param version
      * @param descripcion
@@ -38,7 +39,7 @@ public class ActividadesSql {
      * @param tiempo_estimado
      * @param tiempo_invertido
      * @param estado
-     * @return 
+     * @return
      */
     public String consultarActividades(Integer id, Integer version, String descripcion, Date fecha_estimada_inicio, Date fecha_estimada_terminacion, Date fecha_real_inicio, Date fecha_real_terminacion, Integer tiempo_estimado, Integer tiempo_invertido, Integer estado) {
         String sql = "SELECT * FROM actividades WHERE fecha_eliminacion IS NULL ";
@@ -76,36 +77,60 @@ public class ActividadesSql {
     }
 
     /**
-     * Método encargado de retornar el SQL para consultar las actividades, 
-     * aplicando diferentes filtros según los parámetros que lleguen 
-     * distintos de nulos.
+     * Método encargado de retornar el SQL para consultar las actividades,
+     * aplicando diferentes filtros según los parámetros que lleguen distintos
+     * de nulos.
+     *
+     * @param proyecto
      * @param id
      * @param version
      * @param descripcion
      * @param fecha
+     * @param responsable
      * @param estado
-     * @return 
+     * @return
      */
-    public String consultarActividades(String id, Integer version, String descripcion, String fecha, Integer estado) {
-        String sql = "SELECT a.id, a.version, a.descripcion, a.fecha_estimada_inicio, a.fecha_estimada_terminacion, "
-                + "a.fecha_real_inicio, a.fecha_real_terminacion, a.tiempo_estimado, a.tiempo_invertido, a.estado, e.nombre as nombree, v.nombre as nombrev "
-                + "FROM actividades a INNER JOIN versiones v ON v.id=a.version INNER JOIN estados e ON e.id=a.estado"
-                + " WHERE a.fecha_eliminacion IS NULL ";
-        if (id != null && !id.equals("")) {
-            sql += "AND a.id in (" + id + ") ";
+    public String consultarActividades(Integer proyecto, Integer version, String descripcion, Date fecha, Integer estado, Integer responsable) {
+        String sql = "SELECT DISTINCT\n"
+                + "    a.id,\n"
+                + "    a.version,\n"
+                + "    a.descripcion,\n"
+                + "    a.fecha_estimada_inicio,\n"
+                + "    a.fecha_estimada_terminacion,\n"
+                + "    a.fecha_real_inicio,\n"
+                + "    a.fecha_real_terminacion,\n"
+                + "    a.tiempo_estimado,\n"
+                + "    a.tiempo_invertido,\n"
+                + "    a.estado,\n"
+                + "    e.nombre AS nombree,\n"
+                + "    v.nombre AS nombrev\n"
+                + "FROM\n"
+                + "    actividades a\n"
+                + "        INNER JOIN\n"
+                + "    estados e ON e.id = a.estado\n"
+                + "        INNER JOIN\n"
+                + "    versiones v ON v.id = a.version\n"
+                + "        LEFT JOIN\n"
+                + "    actividades_empleados ae ON ae.actividad = a.id\n"
+                + "WHERE\n"
+                + "    a.fecha_eliminacion IS NULL ";
+        if (proyecto != null && proyecto.intValue() != 0) {
+            sql += "AND v.proyecto = '" + proyecto + "' ";
         }
-        if (version != null && !version.toString().isEmpty()) {
+        if (version != null && version.intValue() != 0) {
             sql += "AND a.version = '" + version + "' ";
         }
         if (descripcion != null && !descripcion.isEmpty()) {
             sql += "AND a.descripcion LIKE '%" + descripcion + "%' ";
         }
-        if (fecha != null && !fecha.isEmpty()) {
-            sql += "AND (a.fecha_estimada_inicio = '" + fecha + "' OR a.fecha_estimada_terminacion = '"
-                    + fecha + "' OR a.fecha_real_inicio = '" + fecha + "' OR a.fecha_real_terminacion = '" + fecha + "')";
+        if (fecha != null) {
+            sql += "AND (a.fecha_estimada_inicio = ? OR a.fecha_estimada_terminacion = ? OR a.fecha_real_inicio = ? OR a.fecha_real_terminacion = ?) ";
         }
-        if (estado != null && !estado.toString().isEmpty()) {
+        if (estado != null && estado.intValue() != 0) {
             sql += "AND a.estado = '" + estado + "' ";
+        }
+        if (responsable != null && responsable.intValue() != 0) {
+            sql += "AND ae.empleado = '" + responsable + "' ";
         }
         return sql;
     }
@@ -113,7 +138,8 @@ public class ActividadesSql {
     /**
      * Método encargado de retornar el SQL para consultar la última actividad
      * registrada en el sistema.
-     * @return 
+     *
+     * @return
      */
     public String consultarUtimaActividad() {
         return "SELECT MAX(id) AS id FROM actividades";
@@ -121,15 +147,18 @@ public class ActividadesSql {
 
     /**
      * Método encargado de retornar el SQL para insertar una nueva actividad.
-     * @return 
+     *
+     * @return
      */
     public String insertarActividad() {
         return "INSERT INTO actividades (descripcion, fecha_estimada_inicio, fecha_estimada_terminacion, fecha_real_inicio, fecha_real_terminacion, tiempo_estimado, tiempo_invertido, version, estado) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
     }
 
     /**
-     * Método encargado de retornar el SQL para actualizar una actividad existente.
-     * @return 
+     * Método encargado de retornar el SQL para actualizar una actividad
+     * existente.
+     *
+     * @return
      */
     public String actualizarActividad() {
         return "UPDATE actividades SET  descripcion = ?, fecha_estimada_inicio=?, fecha_estimada_terminacion=?, fecha_real_inicio=?, fecha_real_terminacion=?, tiempo_estimado=?, tiempo_invertido=?, version=?, estado=?  WHERE id = ?";
@@ -138,19 +167,21 @@ public class ActividadesSql {
     /**
      * Método encargado de retornar el SQL para eliminar lógicamente una
      * actividad, actualizando la fecha de eliminación con la fecha actual.
-     * @return 
+     *
+     * @return
      */
     public String eliminarActividad() {
         return "UPDATE actividades SET fecha_eliminacion = now() WHERE id = ?";
     }
 
     /**
-     * Método encargado de retornar el SQL para consultar las actividades que 
-     * se encuentren en un estado diferente a finalizado.
+     * Método encargado de retornar el SQL para consultar las actividades que se
+     * encuentren en un estado diferente a finalizado.
+     *
      * @param proyecto
      * @param version
      * @param persona
-     * @return 
+     * @return
      */
     public String actividadesPorEstados(Integer proyecto, Integer version, Integer persona) {
         String sql = "SELECT \n"
