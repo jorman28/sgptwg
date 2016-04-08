@@ -1,6 +1,5 @@
 package com.twg.negocio;
 
-import com.twg.controladores.EstadosController;
 import com.twg.persistencia.beans.ActividadesBean;
 import com.twg.persistencia.beans.EstadosBean;
 import com.twg.persistencia.daos.ActividadesDao;
@@ -117,7 +116,7 @@ public class EstadosNegocio {
         if (id != null) {
             try {
                 ActividadesDao act = new ActividadesDao();
-                List<ActividadesBean> actList = act.consultarActiv2(null, null, null, null, id, null);
+                List<ActividadesBean> actList = act.consultarActividades(null, null, null, null, id, null);
                 List<EstadosBean> estList = estadosDao.consultarEstadosPS(id);
                 if ((actList != null && actList.size() > 0) || (estList != null && estList.size() > 0)) {
                     mensajeError = "El estado no puede ser eliminado porque ya tiene actividades asociadas o está ligado a "
