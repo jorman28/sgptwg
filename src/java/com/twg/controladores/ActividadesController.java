@@ -324,7 +324,7 @@ public class ActividadesController extends HttpServlet {
             request.setAttribute("mensajeError", mensajeError);
             request.setAttribute("proyectos", proyectosNegocio.consultarProyectos(null, null, false));
             request.setAttribute("estados", estadosNegocio.consultarEstados(null, "ACTIVIDADES", null, null, null, null));
-            if (accion.isEmpty() || accion.equals("crearActividad") || accion.equals("limpiarCreacion") || accion.equals("gestionarActividad")
+            if (accion.isEmpty() || accion.equals("limpiar") || accion.equals("crearActividad") || accion.equals("limpiarCreacion") || accion.equals("gestionarActividad")
                     || accion.equals("limpiarGestion") || accion.equals("duplicarActividad") || accion.equals("guardar") || accion.equals("eliminar")) {
                 if (permisosPagina != null && !permisosPagina.isEmpty()) {
                     if (permisosPagina.contains(Permisos.CONSULTAR.getNombre())) {
