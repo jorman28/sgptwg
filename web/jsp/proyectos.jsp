@@ -128,7 +128,7 @@
                                                 <label for="costo">Costo ($):</label>
                                                 <input class="form-control" type="number" min ="0" id="costo" name="costo" value="${costo}"/>
                                             </div> 
-                                            <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                                 <label for="alcance">*Alcance:</label> 
                                                 <textarea class="form-control" type="text" id="alcance" name="alcance" maxlength="1000">${alcance}</textarea>
                                             </div>
