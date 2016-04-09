@@ -99,9 +99,13 @@ jQuery(function () {
         var dato = $('#fecha_estimada_inicio').val();
         if (dato !== undefined && dato !== "") {
             $("#tiempo_estimado").val("0");
+            $("#fecha_estimada_terminacionn").val("");
+            $("#fecha_estimada_terminacion").val("");
             $("#tiempo_estimado").prop("disabled", false);
         } else {
             $("#tiempo_estimado").val("0");
+            $("#fecha_estimada_terminacionn").val("");
+            $("#fecha_estimada_terminacion").val("");
             $("#tiempo_estimado").prop("disabled", true);
         }
     });
@@ -244,7 +248,7 @@ function Validar() {
                     html += clientes + empleados + '<b>¿Desea Continuar Con El Registro?</b>';
                     $("#contenidoWarning").html(html);
                     $("#modalWarning").modal("show");
-                }else {
+                } else {
                     $('#guardar').click();
                 }
 
@@ -264,7 +268,7 @@ function guardarComentario() {
         url: "ActividadesController",
         dataType: "json",
         data: {accion: "guardarComentario", comentario: jQuery("#comentario").val(), id: $("#id").val()},
-        success: function(data) {
+        success: function (data) {
             if (data !== undefined) {
                 if (data.comentarios !== undefined && data.comentarios !== '') {
                     $("#comentario").val('');
@@ -272,7 +276,7 @@ function guardarComentario() {
                 }
             }
         },
-        error: function() {
+        error: function () {
         }
     });
 }
@@ -283,7 +287,7 @@ function eliminarComentario(idComentario) {
         url: "ActividadesController",
         dataType: "json",
         data: {accion: "eliminarComentario", idComentario: idComentario, id: $("#id").val()},
-        success: function(data) {
+        success: function (data) {
             if (data !== undefined) {
                 if (data.comentarios !== undefined && data.comentarios !== '') {
                     $("#comentario").val('');
@@ -291,7 +295,7 @@ function eliminarComentario(idComentario) {
                 }
             }
         },
-        error: function() {
+        error: function () {
         }
     });
 }

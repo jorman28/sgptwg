@@ -158,7 +158,8 @@ public class ActividadesController extends HttpServlet {
                         request.setAttribute("id", actividad.getId().toString());
                         request.setAttribute("proyecto", proyecto.toString());
                         request.setAttribute("versiones", versionesNegocio.consultarVersiones(null, proyecto, null, false));
-                        request.setAttribute("version", actividad.getVersion().toString());
+                        version = actividad.getVersion();
+                        request.setAttribute("version", version.toString());
                         request.setAttribute("descripcion", actividad.getDescripcion());
                         request.setAttribute("fecha_estimada_inicio", actividad.getFecha_estimada_inicio() != null ? sdf.format(actividad.getFecha_estimada_inicio()) : "");
                         request.setAttribute("fecha_estimada_terminacion", actividad.getFecha_estimada_terminacion() != null ? sdf.format(actividad.getFecha_estimada_terminacion()) : "");
@@ -166,7 +167,8 @@ public class ActividadesController extends HttpServlet {
                         request.setAttribute("fecha_real_terminacion", actividad.getFecha_real_terminacion() != null ? sdf.format(actividad.getFecha_real_terminacion()) : "");
                         request.setAttribute("tiempo_estimado", actividad.getTiempo_estimado());
                         request.setAttribute("tiempo_invertido", actividad.getTiempo_invertido());
-                        request.setAttribute("estado", actividad.getEstado());
+                        estadoStr = actividad.getEstado().toString();
+                        request.setAttribute("estado", Integer.parseInt(estadoStr));
                         request.setAttribute("listaComentarios", comentariosNegocio.listaComentarios(comentariosNegocio.TIPO_ACTIVIDAD, actividad.getId()));
                     }
                     redireccion = INSERTAR_O_EDITAR;
@@ -193,7 +195,8 @@ public class ActividadesController extends HttpServlet {
                         request.setAttribute("empleadosActividad", empleados);
                         request.setAttribute("proyecto", proyecto.toString());
                         request.setAttribute("versiones", versionesNegocio.consultarVersiones(null, proyecto, null, false));
-                        request.setAttribute("version", actividad.getVersion().toString());
+                        version = actividad.getVersion();
+                        request.setAttribute("version", version.toString());
                         request.setAttribute("descripcion", actividad.getDescripcion());
                         request.setAttribute("fecha_estimada_inicio", actividad.getFecha_estimada_inicio() != null ? sdf.format(actividad.getFecha_estimada_inicio()) : "");
                         request.setAttribute("fecha_estimada_terminacion", actividad.getFecha_estimada_terminacion() != null ? sdf.format(actividad.getFecha_estimada_terminacion()) : "");
@@ -201,7 +204,8 @@ public class ActividadesController extends HttpServlet {
                         request.setAttribute("fecha_real_terminacion", actividad.getFecha_real_terminacion() != null ? sdf.format(actividad.getFecha_real_terminacion()) : "");
                         request.setAttribute("tiempo_estimado", actividad.getTiempo_estimado());
                         request.setAttribute("tiempo_invertido", actividad.getTiempo_invertido());
-                        request.setAttribute("estado", actividad.getEstado());
+                        estadoStr = actividad.getEstado().toString();
+                        request.setAttribute("estado", Integer.parseInt(estadoStr));
                     }
                     redireccion = INSERTAR_O_EDITAR;
                     break;
@@ -345,9 +349,15 @@ public class ActividadesController extends HttpServlet {
                         request.setAttribute("nombreResponsable", persona.getTipoDocumento() + persona.getDocumento() + " " + persona.getNombres() + " " + persona.getApellidos());
                     }
                 }
-                request.setAttribute("proyecto", proyecto);
-                request.setAttribute("version", version);
-                request.setAttribute("estado", request.getParameter("estado"));
+                if (!accion.equals("crearActividad") && !accion.equals("limpiarCreacion")) {
+                    request.setAttribute("proyecto", proyecto);
+                    request.setAttribute("version", version);
+                    if (estadoStr != null && !"".equals(estadoStr)) {
+                        request.setAttribute("estado", Integer.parseInt(estadoStr));
+                    } else {
+                        request.setAttribute("estado", request.getParameter("estado"));
+                    }
+                }
                 request.setAttribute("responsable", filtroPersona);
                 request.getRequestDispatcher(redireccion).forward(request, response);
             }
