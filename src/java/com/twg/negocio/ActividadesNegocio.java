@@ -425,7 +425,7 @@ public class ActividadesNegocio {
                 }
             }
             for (Map<String, Object> estado : actividadesPorEstado) {
-                double actividades = (double) estado.get("actividades");
+                double actividades = ((Integer) estado.get("actividades")).doubleValue();
                 if (totalActividades > 0) {
                     datos.add(estado.get("estado"), estado.get("actividades"), actividades / totalActividades);
                 } else {
