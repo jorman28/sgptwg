@@ -1,5 +1,2 @@
-
-ALTER TABLE `estados` 
-CHANGE `estadoPrev` `estado_prev` INT(11) NULL DEFAULT NULL, 
-CHANGE `estadoSig` `estado_sig` INT(11) NULL DEFAULT NULL, 
-CHANGE `eFinal` `e_final` VARCHAR(1) CHARACTER SET latin1 COLLATE latin1_spanish_ci NOT NULL DEFAULT 'F';
+INSERT INTO paginas (id, nombre, url, grupo) VALUES (14, 'Actividades por estado', '/ActividadesPorEstadoController', 13);
+INSERT INTO permisos (id,pagina,permiso) VALUES (45,14,'ACCESO');

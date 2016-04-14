@@ -1,4 +1,4 @@
 ALTER TABLE `estados` 
-ADD `estadoPrev` INT NULL AFTER `tipo_estado`, 
-ADD `estadoSig` INT NULL AFTER `estadoPrev`, 
-ADD `eFinal` VARCHAR(1) NOT NULL DEFAULT 'F' AFTER `estadoSig`;
+ADD `estado_previo` INT NULL AFTER `tipo_estado`, 
+ADD `estado_siguiente` INT NULL AFTER `estado_previo`, 
+ADD `estado_final` VARCHAR(1) NOT NULL DEFAULT 'F' AFTER `estado_siguiente`;

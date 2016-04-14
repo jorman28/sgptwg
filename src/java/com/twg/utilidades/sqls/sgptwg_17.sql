@@ -1,1 +1,0 @@
-UPDATE paginas SET nombre = 'Archivos', url = '/ArchivosController' WHERE id = 12;
