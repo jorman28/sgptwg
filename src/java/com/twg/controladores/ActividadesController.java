@@ -262,6 +262,8 @@ public class ActividadesController extends HttpServlet {
                             JSONObject object = new JSONObject();
                             object.put("id", versionBean.getId());
                             object.put("nombre", versionBean.getNombre());
+                            object.put("fechaInicio", versionBean.getFechaInicio() != null ? sdf.format(versionBean.getFechaInicio()) : "");
+                            object.put("fechaTerminacion", versionBean.getFechaTerminacion() != null ? sdf.format(versionBean.getFechaTerminacion()) : "");
                             array.add(object);
                         }
                     }
@@ -455,7 +457,7 @@ public class ActividadesController extends HttpServlet {
             }
         } else {
             out.println("<tr>");
-            out.println("<td colspan=\"6\">No se encontraron registros</td>");
+            out.println("<td colspan=\"7\">No se encontraron registros</td>");
             out.println("</tr>");
         }
         out.println("</tbody>");

@@ -88,7 +88,7 @@
                                         <label for="version">*Version</label>
                                         <c:choose>
                                             <c:when test="${id == null || id == ''}">
-                                                <select id="version" name="version" class="form-control">
+                                                <select id="version" name="version" class="form-control" onchange="actualizarFechas(this.value);">
                                                     <option value="0">SELECCIONE</option>
                                                     <c:forEach items="${versiones}" var="ver">
                                                         <option value="${ver.id}" <c:if test="${ver.id == version}">selected</c:if>>${ver.nombre}</option>
@@ -96,7 +96,7 @@
                                                 </select>
                                             </c:when>
                                             <c:otherwise>
-                                                <select id="version" name="version" class="form-control" disabled="disabled">
+                                                <select id="version" name="version" class="form-control" disabled="disabled" onchange="actualizarFechas(this.value);">
                                                     <option value="0">SELECCIONE</option>
                                                     <c:forEach items="${versiones}" var="ver">
                                                         <option value="${ver.id}" <c:if test="${ver.id == version}">selected</c:if>>${ver.nombre}</option>

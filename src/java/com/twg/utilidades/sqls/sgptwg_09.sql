@@ -28,3 +28,13 @@ INSERT INTO permisos (id, pagina, permiso) VALUES (41, (SELECT id FROM paginas W
 INSERT INTO permisos (id, pagina, permiso) VALUES (42, (SELECT id FROM paginas WHERE nombre = 'Actividades'), 'ELIMINAR');
 INSERT INTO permisos (id, pagina, permiso) VALUES (43, (SELECT id FROM paginas WHERE nombre = 'Actividades'), 'GUARDAR');
 INSERT INTO permisos (id, pagina, permiso) VALUES (44, (SELECT id FROM paginas WHERE nombre = 'Actividades'), 'COMENTAR');
+
+INSERT INTO permisos_perfiles (permiso, perfil) 
+SELECT 
+    per.id, 1
+FROM
+    permisos per
+        LEFT JOIN
+    permisos_perfiles perper ON per.id = perper.permiso
+WHERE
+    perper.permiso IS NULL

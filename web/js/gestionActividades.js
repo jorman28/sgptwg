@@ -1,41 +1,34 @@
-/* 
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 var personasActividades = {};
+var fechasVersiones = {};
 var clientesSeleccionados = 0;
 var empleadosSeleccionados = 0;
 var horasTrabajadasDia = 9;
 
-jQuery(function () {
+jQuery(function() {
     $('#fecha_estimada_inicio')
             .datetimepicker({format: 'dd/mm/yyyy', language: 'es', weekStart: true, todayBtn: true, autoclose: true, todayHighlight: true, startView: 2, minView: 2})
-            .on('changeDate', function () {
+            .on('changeDate', function() {
                 $('#fecha_estimada_terminacion').datetimepicker('setStartDate', $('#fecha_estimada_inicio').val());
             });
     $('#fecha_estimada_terminacion')
             .datetimepicker({format: 'dd/mm/yyyy', language: 'es', weekStart: true, todayBtn: true, autoclose: true, todayHighlight: true, startView: 2, minView: 2})
-            .on('changeDate', function () {
+            .on('changeDate', function() {
                 $('#fecha_estimada_inicio').datetimepicker('setEndDate', $('#fecha_estimada_terminacion').val());
             });
-
-
     $('#fecha_real_inicio')
             .datetimepicker({format: 'dd/mm/yyyy', language: 'es', weekStart: true, todayBtn: true, autoclose: true, todayHighlight: true, startView: 2, minView: 2})
-            .on('changeDate', function () {
+            .on('changeDate', function() {
                 $('#fecha_real_terminacion').datetimepicker('setStartDate', $('#fecha_real_inicio').val());
             });
     $('#fecha_real_terminacion')
             .datetimepicker({format: 'dd/mm/yyyy', language: 'es', weekStart: true, todayBtn: true, autoclose: true, todayHighlight: true, startView: 2, minView: 2})
-            .on('changeDate', function () {
+            .on('changeDate', function() {
                 $('#fecha_real_inicio').datetimepicker('setEndDate', $('#fecha_real_terminacion').val());
             });
 
     $("#participante")
             .typeahead({
-                onSelect: function (item) {
+                onSelect: function(item) {
                     if ($("#persona" + item.value)[0] === undefined) {
                         var persona = personasActividades[item.value];
                         var html = pintarPersonas(persona);
@@ -64,11 +57,11 @@ jQuery(function () {
                     triggerLength: 1,
                     items: 10,
                     method: "POST",
-                    preDispatch: function (query) {
+                    preDispatch: function(query) {
                         var proyecto = $("#proyecto").val();
                         return {search: query, search1: proyecto, accion: "consultarPersonasProyecto"};
                     },
-                    preProcess: function (data) {
+                    preProcess: function(data) {
                         for (var i = 0; i < data.length; i++) {
                             var persona = data[i];
                             personasActividades[persona.id] = persona;
@@ -78,7 +71,7 @@ jQuery(function () {
                 }
             });
 
-    $('#proyecto').change(function () {
+    $('#proyecto').change(function() {
         var dato = $('#proyecto').val();
         if (dato !== undefined && dato !== "" && dato !== "0") {
             $("#participante").val("");
@@ -95,7 +88,7 @@ jQuery(function () {
         empleadosSeleccionados = 0;
     });
 
-    $('#fecha_estimada_inicio').change(function () {
+    $('#fecha_estimada_inicio').change(function() {
         var dato = $('#fecha_estimada_inicio').val();
         if (dato !== undefined && dato !== "") {
             $("#tiempo_estimado").val("0");
@@ -110,7 +103,7 @@ jQuery(function () {
         }
     });
 
-    $("#limpiarParticipante").click(function () {
+    $("#limpiarParticipante").click(function() {
         $("#participante").val('');
     });
 
@@ -122,17 +115,22 @@ function consultarVersiones(idProyecto) {
         url: "ActividadesController",
         dataType: "json",
         data: {proyecto: idProyecto, accion: "consultarVersiones"},
-        success: function (data) {
+        success: function(data) {
             if (data !== undefined) {
                 var html = "<option value='0'>SELECCIONE</option>";
+                fechasVersiones = {};
                 for (var version in data) {
                     version = data[version];
                     html += "<option value='" + version.id + "'>" + version.nombre + "</option>";
+                    var fechasVersion = {};
+                    fechasVersion['fechaInicio'] = version.fechaInicio;
+                    fechasVersion['fechaTerminacion'] = version.fechaTerminacion;
+                    fechasVersiones[version.id] = fechasVersion;
                 }
                 $("#version").html(html);
             }
         },
-        error: function (err) {
+        error: function(err) {
             alert(err);
         }
     });
@@ -178,7 +176,6 @@ function eliminarPersona(idPersona, cargo) {
 }
 
 function calcularFechaFin(horas) {
-
     var diasEstimados = 0;
     var varFechaInicial = $("#fecha_estimada_inicio").val();
 
@@ -205,7 +202,7 @@ function calcularFechaFin(horas) {
 }
 
 function Validar() {
-    var empleados = $("input[name='idPersonas']").map(function () {
+    var empleados = $("input[name='idPersonas']").map(function() {
         return $(this).val();
     }).get();
 
@@ -219,7 +216,7 @@ function Validar() {
             url: "ActividadesController",
             dataType: "json",
             data: {empleadosSeleccionados: empleados.toString(), strFechaEstimadaInicial: varFechaInicial, strFechaEstimadaFin: varFechaFin, strIdActividad: idActividad, accion: "consultarFechasActividades"},
-            success: function (data) {
+            success: function(data) {
                 var arrayLength = data.length;
                 if (data !== undefined && arrayLength !== 0) {
                     var html = "Las siguientes personas tienen otras actividades asignadas entre las fechas " + varFechaInicial + " y " + varFechaFin + "<br /><br />";
@@ -253,7 +250,7 @@ function Validar() {
                 }
 
             },
-            error: function (err) {
+            error: function(err) {
                 alert(err);
             }
         });
@@ -268,7 +265,7 @@ function guardarComentario() {
         url: "ActividadesController",
         dataType: "json",
         data: {accion: "guardarComentario", comentario: jQuery("#comentario").val(), id: $("#id").val()},
-        success: function (data) {
+        success: function(data) {
             if (data !== undefined) {
                 if (data.comentarios !== undefined && data.comentarios !== '') {
                     $("#comentario").val('');
@@ -276,7 +273,7 @@ function guardarComentario() {
                 }
             }
         },
-        error: function () {
+        error: function() {
         }
     });
 }
@@ -287,7 +284,7 @@ function eliminarComentario(idComentario) {
         url: "ActividadesController",
         dataType: "json",
         data: {accion: "eliminarComentario", idComentario: idComentario, id: $("#id").val()},
-        success: function (data) {
+        success: function(data) {
             if (data !== undefined) {
                 if (data.comentarios !== undefined && data.comentarios !== '') {
                     $("#comentario").val('');
@@ -295,7 +292,24 @@ function eliminarComentario(idComentario) {
                 }
             }
         },
-        error: function () {
+        error: function() {
         }
     });
+}
+
+function actualizarFechas(idVersion) {
+    var fechasVersion = fechasVersiones[idVersion];
+    $('#fecha_estimada_inicio').val('');
+    $('#fecha_estimada_inicio').datetimepicker('setStartDate', fechasVersion.fechaInicio);
+    $('#fecha_estimada_inicio').datetimepicker('setEndDate', fechasVersion.fechaTerminacion);
+    $('#fecha_estimada_terminacion').val('');
+    $('#fecha_estimada_terminacion').datetimepicker('setStartDate', fechasVersion.fechaInicio);
+    $('#fecha_estimada_terminacion').datetimepicker('setEndDate', fechasVersion.fechaTerminacion);
+    $('#fecha_real_inicio').val('');
+    $('#fecha_real_inicio').datetimepicker('setStartDate', fechasVersion.fechaInicio);
+    $('#fecha_real_inicio').datetimepicker('setEndDate', fechasVersion.fechaTerminacion);
+    $('#fecha_real_terminacion').val('');
+    $('#fecha_real_terminacion').datetimepicker('setStartDate', fechasVersion.fechaInicio);
+    $('#fecha_real_terminacion').datetimepicker('setEndDate', fechasVersion.fechaTerminacion);
+    $('#tiempo_estimado').val('0');
 }
