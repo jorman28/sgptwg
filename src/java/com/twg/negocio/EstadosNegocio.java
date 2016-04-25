@@ -9,8 +9,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 public class EstadosNegocio {
@@ -27,9 +29,49 @@ public class EstadosNegocio {
                     EstadosBean estado = listaEstados.get(0);
                     jsonEstado.put("id", estado.getId());
                     jsonEstado.put("tipoEstado", estado.getTipoEstado());
+
+                    JSONArray array = new JSONArray();
+                    JSONArray arrayEstadoPrevio = new JSONArray();
+                    JSONArray arrayEstadoSiguiente = new JSONArray();
+
+                    List<EstadosBean> jsonlistaEstados = consultarEstados(null, estado.getTipoEstado(), null, null, null, null);
+                    if (jsonlistaEstados != null && !jsonlistaEstados.isEmpty()) {
+                        for (EstadosBean estadoBean : jsonlistaEstados) {
+                            JSONObject object = new JSONObject();
+                            object.put("id", estadoBean.getId());
+                            object.put("nombre", estadoBean.getNombre());
+                            
+                            if (Objects.equals(estadoBean.getId(), estado.getEstadoPrevio())) {
+                                JSONObject objectEstadoPrevio = new JSONObject();
+                                objectEstadoPrevio.put("estadoPrevioId", estadoBean.getId());
+                                objectEstadoPrevio.put("estadoPrevioNombre", estadoBean.getNombre());
+                                arrayEstadoPrevio.add(objectEstadoPrevio);
+                            } else {
+                                JSONObject objectEstadoPrevio = new JSONObject();
+                                objectEstadoPrevio.put("estadoPrevioId", 0);
+                                arrayEstadoPrevio.add(objectEstadoPrevio);
+                            }
+                            
+                            if (Objects.equals(estadoBean.getId(), estado.getEstadoSiguiente())) {
+                                JSONObject objectEstadoSiguiente = new JSONObject();
+                                objectEstadoSiguiente.put("estadoSiguienteId", estadoBean.getId());
+                                objectEstadoSiguiente.put("estadoSiguienteNombre", estadoBean.getNombre());
+                                arrayEstadoSiguiente.add(objectEstadoSiguiente);
+                            } else {
+                                JSONObject objectEstadoSiguiente = new JSONObject();
+                                objectEstadoSiguiente.put("estadoSiguienteId", 0);
+                                arrayEstadoSiguiente.add(objectEstadoSiguiente);
+                            }
+                            array.add(object);
+                        }
+                    }
+
                     jsonEstado.put("nombre", estado.getNombre());
-                    jsonEstado.put("estadoPrev", estado.getEstadoPrevio());
-                    jsonEstado.put("estadoSig", estado.getEstadoSiguiente());
+                    jsonEstado.put("estadoPrevio", arrayEstadoPrevio.get(0));
+                    jsonEstado.put("estadoSiguiente", arrayEstadoSiguiente.get(0));
+                    
+                    jsonEstado.put("estadoPrev", array);
+                    jsonEstado.put("estadoSig", array);
                     jsonEstado.put("eFinal", estado.getEstadoFinal());
                 }
             } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
@@ -39,8 +81,7 @@ public class EstadosNegocio {
         return jsonEstado;
     }
 
-    public List<EstadosBean> consultarEstados(Integer id, String tipoEstado, String nombre, Integer estadoPrev,
-            Integer estadoSig, String eFinal) {
+    public List<EstadosBean> consultarEstados(Integer id, String tipoEstado, String nombre, Integer estadoPrev, Integer estadoSig, String eFinal) {
         List<EstadosBean> listaEstados = new ArrayList<>();
         try {
             listaEstados = estadosDao.consultarEstados(id, tipoEstado, nombre, estadoPrev, estadoSig, eFinal);
