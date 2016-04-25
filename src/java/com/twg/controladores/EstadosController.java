@@ -54,6 +54,8 @@ public class EstadosController extends HttpServlet {
         String estadoPrevStr = request.getParameter("estadoPrev");
         String estadoSigStr = request.getParameter("estadoSig");
         String eFinal = request.getParameter("eFinal");
+        
+        String busquedaAsincronica = request.getParameter("busquedaAsincronica");//variable que me permite realizar la busqueda de los estados desde una funcion ajax
 
         Integer id = null;
         try {
@@ -126,9 +128,9 @@ public class EstadosController extends HttpServlet {
         request.setAttribute("mensajeAlerta", mensajeAlerta);
         request.setAttribute("mensajeExito", mensajeExito);
         request.setAttribute("mensajeError", mensajeError);
-        request.setAttribute("estadosPrev", estadosNegocio.consultarEstados(null, null, null, null, null, null));
-        request.setAttribute("estadosSig", estadosNegocio.consultarEstados(null, null, null, null, null, null));
-        if (!accion.equals("consultar") && !accion.equals("editar")) {
+        //request.setAttribute("estadosPrev", estadosNegocio.consultarEstados(null, null, null, null, null, null));
+        //request.setAttribute("estadosSig", estadosNegocio.consultarEstados(null, null, null, null, null, null));
+        if (!accion.equals("consultar") && !accion.equals("editar") && busquedaAsincronica == null){
             if (permisosPagina != null && !permisosPagina.isEmpty()) {
                 if (permisosPagina.contains(Permisos.CONSULTAR.getNombre())) {
                     request.setAttribute("opcionConsultar", "T");

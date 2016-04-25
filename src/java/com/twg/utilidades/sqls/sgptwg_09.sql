@@ -37,4 +37,4 @@ FROM
         LEFT JOIN
     permisos_perfiles perper ON per.id = perper.permiso
 WHERE
-    perper.permiso IS NULL
+    perper.permiso IS NULL;
