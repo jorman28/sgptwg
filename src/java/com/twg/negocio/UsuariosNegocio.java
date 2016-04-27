@@ -13,12 +13,25 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.json.simple.JSONObject;
 
+/**
+ * Esta clase permite la comunicación entre el controlador de usuarios y la base
+ * de datos.
+ *
+ * @author Andrés Felipe Giraldo, Jorman Rincón, Erika Jhoana Castaneda
+ */
 public class UsuariosNegocio {
 
     private final UsuariosDao usuariosDao = new UsuariosDao();
     private final PersonasDao personasDao = new PersonasDao();
     private final PerfilesNegocio perfilesNegocio = new PerfilesNegocio();
 
+    /**
+     * Consulta de los datos relacionados a un usuario por medio del id de la
+     * persona
+     *
+     * @param idPersona
+     * @return
+     */
     public JSONObject consultarUsuario(Integer idPersona) {
         JSONObject jsonUsuario = new JSONObject();
         if (idPersona != null) {
@@ -40,16 +53,64 @@ public class UsuariosNegocio {
         return jsonUsuario;
     }
 
-    public List<UsuariosBean> consultarUsuarios(Integer idPersona, String nombreUsuario, Integer perfil, String activo, String documento, String tipoDocumento) {
+    /**
+     * Método encargado de contar la cantidad total de registros que se
+     * encuentran en base de datos con base en los filtros ingresados
+     *
+     * @param idPersona
+     * @param nombreUsuario
+     * @param perfil
+     * @param activo
+     * @param documento
+     * @param tipoDocumento
+     * @return
+     */
+    public int cantidadUsuarios(Integer idPersona, String nombreUsuario, Integer perfil, String activo, String documento, String tipoDocumento) {
+        int cantidadUsuarios = 0;
+        try {
+            cantidadUsuarios = usuariosDao.cantidadUsuarios(idPersona, nombreUsuario, perfil, activo, documento, tipoDocumento);
+        } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
+            Logger.getLogger(TiposDocumentoNegocio.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return cantidadUsuarios;
+    }
+
+    /**
+     * Método encargado de consultar la lista de usuarios que coinciden con los
+     * filtros ingresados y la página seleccionada
+     *
+     * @param idPersona
+     * @param nombreUsuario
+     * @param perfil
+     * @param activo
+     * @param documento
+     * @param tipoDocumento
+     * @param limite
+     * @return
+     */
+    public List<UsuariosBean> consultarUsuarios(Integer idPersona, String nombreUsuario, Integer perfil, String activo, String documento, String tipoDocumento, String limite) {
         List<UsuariosBean> listaUsuarios = new ArrayList<>();
         try {
-            listaUsuarios = usuariosDao.consultarUsuarios(idPersona, nombreUsuario, perfil, activo, documento, tipoDocumento);
+            listaUsuarios = usuariosDao.consultarUsuarios(idPersona, nombreUsuario, perfil, activo, documento, tipoDocumento, limite);
         } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
             Logger.getLogger(TiposDocumentoNegocio.class.getName()).log(Level.SEVERE, null, ex);
         }
         return listaUsuarios;
     }
 
+    /**
+     * Método encargado de insertar un registro de usuario en la base de datos
+     *
+     * @param idPersona
+     * @param nombreUsuario
+     * @param clave
+     * @param clave2
+     * @param perfil
+     * @param activo
+     * @param documento
+     * @param tipoDocumento
+     * @return
+     */
     public Map<String, Object> crearUsuario(Integer idPersona, String nombreUsuario, String clave, String clave2, Integer perfil, String activo, String documento, String tipoDocumento) {
         UsuariosBean usuario = new UsuariosBean();
         usuario.setUsuario(nombreUsuario);
@@ -114,6 +175,13 @@ public class UsuariosNegocio {
         return result;
     }
 
+    /**
+     * Método encargado de marcar un usuario como eliminado seteando la fecha
+     * actual como fecha de eliminación
+     *
+     * @param idPersona
+     * @return
+     */
     public Map<String, Object> eliminarUsuario(Integer idPersona) {
         String mensajeExito = "";
         String mensajeError = "";
@@ -142,6 +210,14 @@ public class UsuariosNegocio {
         return result;
     }
 
+    /**
+     * Método encargado de validar los datos de usuario que se insertarán en
+     * base de datos antes de realizar la inserción o modificación de registros
+     *
+     * @param usuario
+     * @param clave2
+     * @return
+     */
     private String validarDatos(UsuariosBean usuario, String clave2) {
         String error = "";
 
@@ -188,7 +264,7 @@ public class UsuariosNegocio {
         if (usuario.getIdPersona() == null && usuario.getDocumento() != null && !usuario.getDocumento().isEmpty()
                 && usuario.getTipoDocumento() != null && !usuario.getTipoDocumento().equals("0")) {
             try {
-                List<UsuariosBean> listaUsuarios = usuariosDao.consultarUsuarios(null, null, null, null, usuario.getDocumento(), usuario.getTipoDocumento());
+                List<UsuariosBean> listaUsuarios = usuariosDao.consultarUsuarios(null, null, null, null, usuario.getDocumento(), usuario.getTipoDocumento(), null);
                 if (listaUsuarios != null && !listaUsuarios.isEmpty()) {
                     objetoUsuario = listaUsuarios.get(0);
                 }
@@ -234,6 +310,16 @@ public class UsuariosNegocio {
         return error;
     }
 
+    /**
+     * Método encargado de realizar el inicio de sesión al sistema consultando
+     * las páginas disponibles para determinado rol y la información de la
+     * persona relacionada al usuario ingresado
+     *
+     * @param contexto
+     * @param usuario
+     * @param clave
+     * @return
+     */
     public Map<String, Object> validarInicioSession(String contexto, String usuario, String clave) {
         Map<String, Object> resultado = new HashMap<>();
         String mensajeError = "";

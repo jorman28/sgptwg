@@ -200,7 +200,7 @@ public class PersonasNegocio {
             UsuariosBean objetoUsuario = null;
             if (documento != null && !documento.isEmpty() && tipoDocumento != null && !tipoDocumento.equals("0")) {
                 try {
-                    List<UsuariosBean> listaUsuarios = usuariosDao.consultarUsuarios(null, null, null, null, documento, tipoDocumento);
+                    List<UsuariosBean> listaUsuarios = usuariosDao.consultarUsuarios(null, null, null, null, documento, tipoDocumento, null);
                     if (listaUsuarios != null && !listaUsuarios.isEmpty()) {
                         objetoUsuario = listaUsuarios.get(0);
                     }

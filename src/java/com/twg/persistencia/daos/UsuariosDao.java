@@ -11,36 +11,121 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Clase encargada de realizar la conexión con la base de datos y ejecutar las
+ * sentencias SQL especificadas
  *
  * @author Pipe
  */
 public class UsuariosDao {
+
     private final UsuariosSql sql = new UsuariosSql();
-    
-    public UsuariosDao(){
+
+    public UsuariosDao() {
     }
 
-    public List<UsuariosBean> consultarUsuarios() throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
-        return consultarUsuarios(null, null, null, null, null, null);
+    /**
+     * Método encargado de consultar todos los usuarios existentes en la base de
+     * datos
+     *
+     * @return
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws SQLException
+     * @throws IllegalAccessException
+     */
+    public List<UsuariosBean> consultarUsuarios() throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
+        return consultarUsuarios(null, null, null, null, null, null, null);
     }
-    
-    public List<UsuariosBean> consultarUsuarios(String nombreUsuario) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
-        return consultarUsuarios(null, nombreUsuario, null, null, null, null);
+
+    /**
+     * Método encargado de consultar los usuarios relacionados con un nombre de
+     * usuario
+     *
+     * @param nombreUsuario
+     * @return
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws SQLException
+     * @throws IllegalAccessException
+     */
+    public List<UsuariosBean> consultarUsuarios(String nombreUsuario) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
+        return consultarUsuarios(null, nombreUsuario, null, null, null, null, null);
     }
-    
-    public List<UsuariosBean> consultarUsuarios(Integer idPersona) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
-        return consultarUsuarios(idPersona, null, null, null, null, null);
+
+    /**
+     * Método encargado de consultar el usuario de una persona por medio del id
+     * de dicha persona
+     *
+     * @param idPersona
+     * @return
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws SQLException
+     * @throws IllegalAccessException
+     */
+    public List<UsuariosBean> consultarUsuarios(Integer idPersona) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
+        return consultarUsuarios(idPersona, null, null, null, null, null, null);
     }
-    
-    public List<UsuariosBean> consultarUsuarios(Integer idPersona, String nombreUsuario, Integer perfil, String activo, String documento, String tipoDocumento) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
+
+    /**
+     * Método encargado de consultar la cantidad de usuarios existentes en base
+     * de datos relacionados con los filtros ingresados
+     *
+     * @param idPersona
+     * @param nombreUsuario
+     * @param perfil
+     * @param activo
+     * @param documento
+     * @param tipoDocumento
+     * @return
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws SQLException
+     * @throws IllegalAccessException
+     */
+    public int cantidadUsuarios(Integer idPersona, String nombreUsuario, Integer perfil, String activo, String documento, String tipoDocumento) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
+        int cantidadUsuarios = 0;
+        Connection con;
+        con = new ConexionBaseDatos().obtenerConexion();
+        PreparedStatement ps;
+        ps = con.prepareStatement(sql.cantidadUsuarios(idPersona, nombreUsuario, perfil, activo, documento, tipoDocumento));
+        ResultSet rs;
+        rs = ps.executeQuery();
+        if (rs.next()) {
+            cantidadUsuarios = rs.getInt("cantidadUsuarios");
+        }
+        rs.close();
+        ps.close();
+        con.close();
+        return cantidadUsuarios;
+    }
+
+    /**
+     * Método encargado de consultar la lista de usuarios relacionados con los
+     * filtros ingresados que existen en la base de datos
+     *
+     * @param idPersona
+     * @param nombreUsuario
+     * @param perfil
+     * @param activo
+     * @param documento
+     * @param tipoDocumento
+     * @param limite
+     * @return
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws SQLException
+     * @throws IllegalAccessException
+     */
+    public List<UsuariosBean> consultarUsuarios(Integer idPersona, String nombreUsuario, Integer perfil, String activo, String documento, String tipoDocumento, String limite) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         List<UsuariosBean> listaUsuarios = new ArrayList<>();
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;
-        ps = con.prepareStatement(sql.consultarUsuarios(idPersona, nombreUsuario, perfil, activo, documento, tipoDocumento));
+        ps = con.prepareStatement(sql.consultarUsuarios(idPersona, nombreUsuario, perfil, activo, documento, tipoDocumento, limite));
         ResultSet rs;
         rs = ps.executeQuery();
-        while(rs.next()){
+        while (rs.next()) {
             UsuariosBean usuario = new UsuariosBean();
             usuario.setIdPersona(rs.getInt("id_persona"));
             usuario.setDocumento(rs.getString("documento"));
@@ -51,7 +136,7 @@ public class UsuariosDao {
             usuario.setPerfil(rs.getInt("id_perfil"));
             usuario.setDescripcionPerfil(rs.getString("descripcion_perfil"));
             usuario.setActivo(rs.getString("activo"));
-            
+
             listaUsuarios.add(usuario);
         }
         rs.close();
@@ -59,8 +144,18 @@ public class UsuariosDao {
         con.close();
         return listaUsuarios;
     }
-    
-    public int insertarUsuario(UsuariosBean usuario) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
+
+    /**
+     * Método encargado de insertar un registro de usuario en la base de datos
+     *
+     * @param usuario
+     * @return
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws SQLException
+     * @throws IllegalAccessException
+     */
+    public int insertarUsuario(UsuariosBean usuario) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;
@@ -75,8 +170,19 @@ public class UsuariosDao {
         con.close();
         return insercion;
     }
-    
-    public int actualizarUsuario(UsuariosBean usuario) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
+
+    /**
+     * Método encargado de actualizar la información de un usuario previamente
+     * insertado en la base de datos
+     *
+     * @param usuario
+     * @return
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws SQLException
+     * @throws IllegalAccessException
+     */
+    public int actualizarUsuario(UsuariosBean usuario) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;
@@ -91,8 +197,19 @@ public class UsuariosDao {
         con.close();
         return actualizacion;
     }
-    
-    public int eliminarUsuario(Integer idPersona) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
+
+    /**
+     * Método encargado de eliminar un usuario previamente insertado en base de
+     * datos
+     *
+     * @param idPersona
+     * @return
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws SQLException
+     * @throws IllegalAccessException
+     */
+    public int eliminarUsuario(Integer idPersona) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;
