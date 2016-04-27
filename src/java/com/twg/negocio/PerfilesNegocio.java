@@ -160,7 +160,7 @@ public class PerfilesNegocio {
         String mensajeError = "";
         if (idPerfil != null) {
             try {
-                List<UsuariosBean> listaUsuarios = usuariosDao.consultarUsuarios(null, null, idPerfil, null, null, null);
+                List<UsuariosBean> listaUsuarios = usuariosDao.consultarUsuarios(null, null, idPerfil, null, null, null, null);
                 if (listaUsuarios != null && !listaUsuarios.isEmpty()) {
                     mensajeError = "No se puede eliminar el perfil porque está asociado a usuarios del sistema";
                 } else {

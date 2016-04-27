@@ -2,7 +2,7 @@ $(document).ready(function() {
     llenarTabla();
 });
 
-function nuevoUsuario(){
+function nuevoUsuario() {
     $('#identificacion').val('');
     $('#tipoDocumento').val('00');
     $('#usuario').val('');
@@ -10,14 +10,14 @@ function nuevoUsuario(){
     $('#perfil').val('0');
 }
 
-function consultarUsuario(idPersona){
+function consultarUsuario(idPersona) {
     $.ajax({
-        type    :"POST",
-        url     :"UsuariosController",
-        dataType:"json",
-        data    :{idPersona:idPersona,accion:"editar"},
+        type: "POST",
+        url: "UsuariosController",
+        dataType: "json",
+        data: {idPersona: idPersona, accion: "editar"},
         success: function(data) {
-            if(data !== undefined){
+            if (data !== undefined) {
                 $("#idPersona").val(data.idPersona !== undefined ? data.idPersona : "");
                 $("#documento").val(data.documento !== undefined ? data.documento : "");
                 $("#documento").attr('disabled', true);
@@ -28,28 +28,31 @@ function consultarUsuario(idPersona){
                 $("#activo").val(data.activo !== undefined ? data.activo : "F");
             }
         },
-        error: function(){
+        error: function() {
         }
     });
 }
 
-function llenarTabla(){
+function llenarTabla(pagina) {
+    if (pagina === undefined) {
+        pagina = 1;
+    }
     var documento = $('#documento').val() !== undefined && $('#documento').val() !== "" ? $('#idPersona').val() : null;
     var tipoDocumento = $('#tipoDocumento').val() !== undefined && $('#tipoDocumento').val() !== "0" ? $('#tipoDocumento').val() : null;
     var usuario = $('#usuario').val() !== undefined && $('#usuario').val() !== "" ? $('#usuario').val() : null;
     var perfil = $('#perfil').val() !== undefined && $('#perfil').val() !== "0" ? $('#perfil').val() : null;
     var activo = $('#activo').val() !== undefined && $('#perfil').val() !== "0" ? $('#activo').val() : null;
     $.ajax({
-        type    :"POST",
-        url     :"UsuariosController",
-        dataType:"html",
-        data    :{accion:"consultar",documento:documento,tipoDocumento:tipoDocumento,usuario:usuario,perfil:perfil,activo:activo},
+        type: "POST",
+        url: "UsuariosController",
+        dataType: "html",
+        data: {accion: "consultar", documento: documento, tipoDocumento: tipoDocumento, usuario: usuario, perfil: perfil, activo: activo, pagina: pagina},
         success: function(data) {
-            if(data !== undefined){
+            if (data !== undefined) {
                 $('#tablaUsuarios').html(data);
             }
         },
-        error: function(){
+        error: function() {
         }
     });
 }

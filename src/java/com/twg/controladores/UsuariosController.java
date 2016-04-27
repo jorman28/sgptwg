@@ -17,10 +17,10 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.simple.JSONObject;
 
 /**
- * Esta clase define métodos para controlar las peticiones y respuestas 
- * que se hacen sobre el módulo principal de Usuarios, así como guardar, 
- * consultar, modificar o eliminar la información.
- * 
+ * Esta clase define métodos para controlar las peticiones y respuestas que se
+ * hacen sobre el módulo principal de Usuarios, así como guardar, consultar,
+ * modificar o eliminar la información.
+ *
  * @author Andrés Felipe Giraldo, Jorman Rincón, Erika Jhoana Castaneda
  */
 public class UsuariosController extends HttpServlet {
@@ -59,6 +59,7 @@ public class UsuariosController extends HttpServlet {
         String clave2 = request.getParameter("clave2");
         String perfilStr = request.getParameter("perfil");
         String activo = request.getParameter("activo");
+        String paginaStr = request.getParameter("pagina");
 
         Integer idPersona = null;
         try {
@@ -72,11 +73,18 @@ public class UsuariosController extends HttpServlet {
         } catch (NumberFormatException e) {
         }
 
+        Integer pagina;
+        try {
+            pagina = Integer.valueOf(paginaStr);
+        } catch (NumberFormatException e) {
+            pagina = 1;
+        }
+
         List<String> permisosPagina = PerfilesNegocio.permisosPorPagina(request, Paginas.USUARIOS);
 
         switch (accion) {
             case "consultar":
-                cargarTabla(response, permisosPagina, idPersona, nombreUsuario, perfil, activo, documento, tipoDocumento);
+                cargarTabla(response, permisosPagina, idPersona, nombreUsuario, perfil, activo, documento, tipoDocumento, pagina);
                 break;
             case "editar":
                 JSONObject object = usuariosNegocio.consultarUsuario(idPersona);
@@ -86,7 +94,7 @@ public class UsuariosController extends HttpServlet {
                 Map<String, Object> result = usuariosNegocio.crearUsuario(idPersona, nombreUsuario, clave, clave2, perfil, activo, documento, tipoDocumento);
                 if (result.get("mensajeError") != null) {
                     mensajeError = (String) result.get("mensajeError");
-                    enviarDatos(request, idPersona, nombreUsuario, perfil, activo, (String)result.get("documento"), (String)result.get("tipoDocumento"));
+                    enviarDatos(request, idPersona, nombreUsuario, perfil, activo, (String) result.get("documento"), (String) result.get("tipoDocumento"));
                 }
                 if (result.get("mensajeExito") != null) {
                     mensajeExito = (String) result.get("mensajeExito");
@@ -128,16 +136,16 @@ public class UsuariosController extends HttpServlet {
     }
 
     /**
-     * Este método se encarga de enviar los atributos del Usuario, al cliente 
+     * Este método se encarga de enviar los atributos del Usuario, al cliente
      * que realiza la petición.
-     * 
+     *
      * @param request
      * @param idPersona
      * @param nombreUsuario
      * @param perfil
      * @param activo
      * @param documento
-     * @param tipoDocumento 
+     * @param tipoDocumento
      */
     private void enviarDatos(HttpServletRequest request, Integer idPersona, String nombreUsuario, Integer perfil, String activo, String documento, String tipoDocumento) {
         request.setAttribute("idPersona", idPersona);
@@ -150,9 +158,9 @@ public class UsuariosController extends HttpServlet {
     }
 
     /**
-     * Método encargado de pintar la tabla con el listado de registros 
-     * que hay sobre los Usuarios.
-     * 
+     * Método encargado de pintar la tabla con el listado de registros que hay
+     * sobre los Usuarios.
+     *
      * @param response
      * @param permisos
      * @param idPersona
@@ -162,12 +170,13 @@ public class UsuariosController extends HttpServlet {
      * @param documento
      * @param tipoDocumento
      * @throws ServletException
-     * @throws IOException 
+     * @throws IOException
      */
-    private void cargarTabla(HttpServletResponse response, List<String> permisos, Integer idPersona, String nombreUsuario, Integer perfil, String activo, String documento, String tipoDocumento) throws ServletException, IOException {
+    private void cargarTabla(HttpServletResponse response, List<String> permisos, Integer idPersona, String nombreUsuario, Integer perfil, String activo, String documento, String tipoDocumento, int pagina) throws ServletException, IOException {
         response.setContentType("text/html; charset=iso-8859-1");
-
-        List<UsuariosBean> listaUsuarios = usuariosNegocio.consultarUsuarios(idPersona, nombreUsuario, perfil, activo, documento, tipoDocumento);
+        int cantidadRegistros = 15;
+        String limite = (pagina * cantidadRegistros - cantidadRegistros) + "," + cantidadRegistros;
+        List<UsuariosBean> listaUsuarios = usuariosNegocio.consultarUsuarios(idPersona, nombreUsuario, perfil, activo, documento, tipoDocumento, limite);
         PrintWriter out = response.getWriter();
         out.println("<table class=\"table table-striped table-hover table-condensed bordo-tablas\">");
         out.println("<thead>");
@@ -208,13 +217,41 @@ public class UsuariosController extends HttpServlet {
         }
         out.println("</tbody>");
         out.println("</table>");
+        int cantidadUsuarios = usuariosNegocio.cantidadUsuarios(idPersona, nombreUsuario, perfil, activo, documento, tipoDocumento);
+        int cantidadPaginas = 1;
+        if (cantidadUsuarios > 0) {
+            if (cantidadUsuarios % cantidadRegistros == 0) {
+                cantidadPaginas = cantidadUsuarios / cantidadRegistros;
+            } else {
+                cantidadPaginas = (cantidadUsuarios / cantidadRegistros) + 1;
+            }
+        }
+        out.println("<nav>");
+        out.println("   <ul class=\"pagination\">");
+        if (pagina != 1) {
+            out.println("       <li><a href=\"javascript:void(llenarTabla(1))\"><span>&laquo;</span></a></li>");
+            out.println("       <li><a href=\"javascript:void(llenarTabla(" + (pagina - 1) + "))\"><span>&lsaquo;</span></a></li>");
+        }
+        for (int pag = 1; pag <= cantidadPaginas; pag++) {
+            if (pagina == pag) {
+                out.println("   <li class=\"active\"><a href=\"javascript:void(llenarTabla(" + pag + "))\"><span>" + pag + "</span></a></li>");
+            } else {
+                out.println("   <li><a href=\"javascript:void(llenarTabla(" + pag + "))\"><span>" + pag + "</span></a></li>");
+            }
+        }
+        if (pagina != cantidadPaginas) {
+            out.println("       <li><a href=\"javascript:void(llenarTabla(" + (pagina + 1) + "))\"><span>&rsaquo;</span></a></li>");
+            out.println("       <li><a href=\"javascript:void(llenarTabla(" + cantidadPaginas + "))\"><span>&raquo;</span></a></li>");
+        }
+        out.println("   </ul>");
+        out.println("</nav>");
     }
 
     /**
      * @param reqeust
      * @param response
      * @throws ServletException
-     * @throws IOException 
+     * @throws IOException
      */
     @Override
     protected void doGet(HttpServletRequest reqeust, HttpServletResponse response) throws ServletException, IOException {
@@ -225,7 +262,7 @@ public class UsuariosController extends HttpServlet {
      * @param reqeust
      * @param response
      * @throws ServletException
-     * @throws IOException 
+     * @throws IOException
      */
     @Override
     protected void doPost(HttpServletRequest reqeust, HttpServletResponse response) throws ServletException, IOException {
@@ -236,7 +273,7 @@ public class UsuariosController extends HttpServlet {
      * @param request
      * @param response
      * @throws ServletException
-     * @throws IOException 
+     * @throws IOException
      */
     protected void init(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         processRequest(request, response);
