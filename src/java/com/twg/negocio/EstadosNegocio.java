@@ -40,26 +40,18 @@ public class EstadosNegocio {
                             JSONObject object = new JSONObject();
                             object.put("id", estadoBean.getId());
                             object.put("nombre", estadoBean.getNombre());
-                            
+
                             if (Objects.equals(estadoBean.getId(), estado.getEstadoPrevio())) {
                                 JSONObject objectEstadoPrevio = new JSONObject();
                                 objectEstadoPrevio.put("estadoPrevioId", estadoBean.getId());
                                 objectEstadoPrevio.put("estadoPrevioNombre", estadoBean.getNombre());
                                 arrayEstadoPrevio.add(objectEstadoPrevio);
-                            } else {
-                                JSONObject objectEstadoPrevio = new JSONObject();
-                                objectEstadoPrevio.put("estadoPrevioId", 0);
-                                arrayEstadoPrevio.add(objectEstadoPrevio);
                             }
-                            
+
                             if (Objects.equals(estadoBean.getId(), estado.getEstadoSiguiente())) {
                                 JSONObject objectEstadoSiguiente = new JSONObject();
                                 objectEstadoSiguiente.put("estadoSiguienteId", estadoBean.getId());
                                 objectEstadoSiguiente.put("estadoSiguienteNombre", estadoBean.getNombre());
-                                arrayEstadoSiguiente.add(objectEstadoSiguiente);
-                            } else {
-                                JSONObject objectEstadoSiguiente = new JSONObject();
-                                objectEstadoSiguiente.put("estadoSiguienteId", 0);
                                 arrayEstadoSiguiente.add(objectEstadoSiguiente);
                             }
                             array.add(object);
@@ -67,9 +59,22 @@ public class EstadosNegocio {
                     }
 
                     jsonEstado.put("nombre", estado.getNombre());
-                    jsonEstado.put("estadoPrevio", arrayEstadoPrevio.get(0));
-                    jsonEstado.put("estadoSiguiente", arrayEstadoSiguiente.get(0));
-                    
+                    if (arrayEstadoPrevio.size() > 0) {
+                        jsonEstado.put("estadoPrevio", arrayEstadoPrevio.get(0));
+                    } else {
+                        JSONObject objectEstadoPrevio = new JSONObject();
+                        objectEstadoPrevio.put("estadoPrevioId", 0);
+                        arrayEstadoPrevio.add(objectEstadoPrevio);
+                        jsonEstado.put("estadoPrevio", arrayEstadoPrevio.get(0));
+                    }
+                    if (arrayEstadoSiguiente.size() > 0) {
+                        jsonEstado.put("estadoSiguiente", arrayEstadoSiguiente.get(0));
+                    } else {
+                        JSONObject objectEstadoSiguiente = new JSONObject();
+                        objectEstadoSiguiente.put("estadoSiguienteId", 0);
+                        arrayEstadoSiguiente.add(objectEstadoSiguiente);
+                        jsonEstado.put("estadoSiguiente", arrayEstadoSiguiente.get(0));
+                    }
                     jsonEstado.put("estadoPrev", array);
                     jsonEstado.put("estadoSig", array);
                     jsonEstado.put("eFinal", estado.getEstadoFinal());
