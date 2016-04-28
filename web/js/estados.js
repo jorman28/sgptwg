@@ -24,7 +24,8 @@ function consultarEstado(id) {
                 $("#nombre").val(data.nombre !== undefined ? data.nombre : "");
 
                 //$("#estadoPrev").val(data.estadoPrev !== undefined ? data.estadoPrev : "");
-                var html = "<option value='0'>SELECCIONE</option>";
+                var html = "";
+                html = "<option value='0'>SELECCIONE</option>";
                 for (var estado in data.estadoPrev) {
                     var estadoPrevio = data.estadoPrevio.estadoPrevioId !== undefined ? data.estadoPrevio.estadoPrevioId : "0";
                     estado = data.estadoPrev[estado];
@@ -35,8 +36,8 @@ function consultarEstado(id) {
                     }
                 }
                 $("#estadoPrev").html(html);
-
-                var html = "<option value='0'>SELECCIONE</option>";
+                
+                html = "<option value='0'>SELECCIONE</option>";
                 for (var estado in data.estadoSig) {
                     var estadoSiguiente = data.estadoSiguiente.estadoSiguienteId !== undefined ? data.estadoSiguiente.estadoSiguienteId : "0";
                     estado = data.estadoSig[estado];
