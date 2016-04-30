@@ -10,7 +10,7 @@ import java.util.Date;
  */
 public class ArchivosSql {
 
-    public String consultarArchivos(Integer idArchivo, String contine, Date fecha, Integer idPersona) {
+    public String consultarArchivos(Integer idArchivo, String contiene, Date fecha, Integer idPersona) {
         String sql = "SELECT \n"
                 + "    arc.id,\n"
                 + "    arc.nombre,\n"
@@ -32,9 +32,9 @@ public class ArchivosSql {
         if (fecha != null) {
             sql += "        AND arc.fecha_creacion = ?\n";
         }
-        if (contine != null && !contine.isEmpty()) {
-            sql += "        AND (arc.nombre LIKE '%" + contine + "%'\n"
-                    + "        OR arc.descripcion LIKE '%" + contine + "%')\n";
+        if (contiene != null && !contiene.isEmpty()) {
+            sql += "        AND (arc.nombre LIKE '%" + contiene + "%'\n"
+                    + "        OR arc.descripcion LIKE '%" + contiene + "%')\n";
         }
         if (idPersona != null) {
             sql += "        AND arc.id_persona = '" + idPersona + "';";
