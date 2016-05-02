@@ -57,6 +57,7 @@
                                 </div>
                             </div>
                         </div>
+                        <div id="modalFechas"></div>
                         <div class="panel panel-info">
                             <div class="panel-heading">INFORMACIÓN DE LA ACTIVIDAD</div>
                             <div class="panel-body">
@@ -115,50 +116,6 @@
                                                 <option value="${esta.id}" <c:if test="${esta.id == estado}">selected</c:if>>${esta.nombre}</option>
                                             </c:forEach>
                                         </select>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
-                                        <label for="fecha_estimada_inicio">*Fecha estimada inicio:</label>
-                                        <input class="form-control" type="text" id="fecha_estimada_inicio" name="fecha_estimada_inicio" value="${fecha_estimada_inicio}" readonly="true"/>
-                                    </div>
-
-                                    <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
-                                        <label for="fecha_estimada_terminacion">*Fecha estimada fin:</label>
-                                        <!--se pone el id del type text fecha_estimada_terminacionn porque a pesar de estar disabled al tener el mismo nombre del hidden el dato no llegaba a controlador-->
-                                        <input class="form-control" type="text" id="fecha_estimada_terminacionn" name="fecha_estimada_terminacionn" value="${fecha_estimada_terminacion}" disabled = "disabled"/>
-                                        <input type="hidden" id="fecha_estimada_terminacion" name="fecha_estimada_terminacion" value="${fecha_estimada_terminacion}"/>
-                                    </div> 
-
-                                    <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
-                                        <label for="fecha_real_inicio">Fecha real de inicio:</label>
-                                        <input class="form-control" type="text" id="fecha_real_inicio" name="fecha_real_inicio" value="${fecha_real_inicio}" readonly="true"/>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
-                                        <label for="fecha_real_terminacion">Fecha real de terminacion:</label>
-                                        <input class="form-control" type="text" id="fecha_real_terminacion" name="fecha_real_terminacion" value="${fecha_real_terminacion}" readonly="true"/>
-                                    </div>
-                                    <c:choose>
-                                        <c:when test="${fecha_estimada_terminacion == null || fecha_estimada_terminacion == ''}">
-                                            <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
-                                                <label for="tiempo_estimado">*Tiempo estimado (horas):</label>
-                                                <input class="form-control" type="number" min="0" step="0.1" pattern="[0-9]+([,\.][0-9]+)?" id="tiempo_estimado" name="tiempo_estimado" value="${tiempo_estimado}" onchange="calcularFechaFin(this.value);" disabled = "disabled"/>
-                                                <input type="hidden" id="tiempo_estimado" name="tiempo_estimado" value="${tiempo_estimado}"/>
-                                            </div>
-                                        </c:when>
-                                        <c:otherwise>
-                                            <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
-                                                <label for="tiempo_estimado">*Tiempo estimado (horas):</label>
-                                                <input class="form-control" type="number" min="0" step="0.1" pattern="[0-9]+([,\.][0-9]+)?" id="tiempo_estimado" name="tiempo_estimado" value="${tiempo_estimado}" onchange="calcularFechaFin(this.value);"/>
-                                            </div>
-                                        </c:otherwise>
-                                    </c:choose>
-
-                                    <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
-                                        <label for="tiempo_invertido">Tiempo invertido (horas):</label>
-                                        <input class="form-control" type="number" min="0" step="any" id="tiempo_invertido" name="tiempo_invertido" value="${tiempo_invertido}"/>
                                     </div>
                                 </div> 
                                 <div class="row">
@@ -249,7 +206,8 @@
                             </div>                          
                         </div>
                         <div class="row form-group" align="center">
-                            <button class="btn btn-default" type="button" name="accion" id="crear" value="Guardar" onclick="Validar()">Guardar</button>
+                        <!--<button class="btn btn-default" type="button" name="accion" id="crear" value="Guardar" <%/*onclick="ValidarActividades()"*/%>>Guardar</button>-->
+                            <button class="btn btn-default" type="submit" name="accion" id="crear" value="Guardar" <%/*onclick="ValidarActividades()"*/%>>Guardar</button>
                             <c:choose>
                                 <c:when test="${id == null || id == ''}">
                                     <button class="btn btn-default" type="submit" name="accion" id="limpiarCreacion" value="limpiarCreacion">Limpiar</button>
