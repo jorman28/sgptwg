@@ -22,28 +22,15 @@ public class ActividadesDao {
 
     private final ActividadesSql sql = new ActividadesSql();
 
-    public List<ActividadesBean> consultarActividades(Integer id, Integer version, String descripcion, java.util.Date fecha_estimada_inicio, java.util.Date fecha_estimada_terminacion, java.util.Date fecha_real_inicio, java.util.Date fecha_real_terminacion, Integer tiempo_estimado, Integer tiempo_invertido, Integer estado) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
-        List<ActividadesBean> listaActividades = new ArrayList();
-        Connection con;
-        con = new ConexionBaseDatos().obtenerConexion();
-        PreparedStatement ps;
-        ps = con.prepareStatement(sql.consultarActividades(id, version, descripcion, fecha_estimada_inicio, fecha_estimada_terminacion, fecha_real_inicio, fecha_real_terminacion, tiempo_estimado, tiempo_invertido, estado));
-        ResultSet rs;
-        rs = ps.executeQuery();
-        while (rs.next()) {
-            ActividadesBean actividad = new ActividadesBean();
-            actividad.setId(rs.getInt("id"));
-            actividad.setVersion(rs.getInt("version"));
-            actividad.setDescripcion(rs.getString("descripcion"));
-            actividad.setEstado(rs.getInt("estado"));
-            listaActividades.add(actividad);
-        }
-        rs.close();
-        ps.close();
-        con.close();
-        return listaActividades;
-    }
-
+    /**
+     * Método encargado de consultar el id de la última actividad
+     *
+     * @return
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws SQLException
+     * @throws IllegalAccessException
+     */
     public int consultarUtimaActividad() throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         int ultimaActividad = 0;
         Connection con;
@@ -61,18 +48,31 @@ public class ActividadesDao {
         return ultimaActividad;
     }
 
-    public List<ActividadesBean> consultarActividades(Integer proyecto, Integer version, String descripcion, java.util.Date fecha,
-            Integer estado, Integer responsable) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
+    /**
+     * Método encargado de consultar la lista de actividades relacionada a los
+     * filtros ingresados
+     *
+     * @param idActividad
+     * @param proyecto
+     * @param version
+     * @param contiene
+     * @param fecha
+     * @param estado
+     * @param responsable
+     * @return
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws SQLException
+     * @throws IllegalAccessException
+     */
+    public List<ActividadesBean> consultarActividades(Integer idActividad, Integer proyecto, Integer version, String contiene, java.util.Date fecha, Integer estado, Integer responsable) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         List<ActividadesBean> listaActividades = new ArrayList();
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;
-        ps = con.prepareStatement(sql.consultarActividades(proyecto, version, descripcion, fecha, estado, responsable));
+        ps = con.prepareStatement(sql.consultarActividades(idActividad, proyecto, version, contiene, fecha, estado, responsable));
         if (fecha != null) {
             ps.setObject(1, fecha);
-            ps.setObject(2, fecha);
-            ps.setObject(3, fecha);
-            ps.setObject(4, fecha);
         }
         ResultSet rs;
         rs = ps.executeQuery();
@@ -81,6 +81,7 @@ public class ActividadesDao {
             actividad.setId(rs.getInt("id"));
             actividad.setVersion(rs.getInt("version"));
             actividad.setNombreVersion(rs.getString("nombrev"));
+            actividad.setNombre(rs.getString("nombre"));
             actividad.setDescripcion(rs.getString("descripcion"));
             actividad.setEstado(rs.getInt("estado"));
             actividad.setNombreEstado(rs.getString("nombree"));
@@ -92,6 +93,17 @@ public class ActividadesDao {
         return listaActividades;
     }
 
+    /**
+     * Método encargado de insertar un nuevo registro de actividad en base de
+     * datos
+     *
+     * @param actividad
+     * @return
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws SQLException
+     * @throws IllegalAccessException
+     */
     public int crearActividad(ActividadesBean actividad) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
@@ -107,6 +119,17 @@ public class ActividadesDao {
         return insercion;
     }
 
+    /**
+     * Método encargado de actualizar una registro de actividad previamente
+     * existente en base de datos
+     *
+     * @param actividad
+     * @return
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws SQLException
+     * @throws IllegalAccessException
+     */
     public int actualizarActividad(ActividadesBean actividad) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
@@ -123,6 +146,18 @@ public class ActividadesDao {
         return actualizacion;
     }
 
+    /**
+     * Método encargado de eliminar un registro de actividad existente en base
+     * de datos marcando la fecha de eliminación de dicho registro con la fecha
+     * de la eliminación
+     *
+     * @param idActividad
+     * @return
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws SQLException
+     * @throws IllegalAccessException
+     */
     public int eliminarActividad(Integer idActividad) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
@@ -135,6 +170,19 @@ public class ActividadesDao {
         return eliminacion;
     }
 
+    /**
+     * Método encargado de contar las actividades existes para cada estado
+     * creado
+     *
+     * @param proyecto
+     * @param version
+     * @param persona
+     * @return
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws IllegalAccessException
+     * @throws SQLException
+     */
     public List<Map<String, Object>> actividadesPorEstado(Integer proyecto, Integer version, Integer persona) throws ClassNotFoundException, InstantiationException, IllegalAccessException, SQLException {
         List<Map<String, Object>> listaActividadesPorEstado = new ArrayList<>();
         Connection con;

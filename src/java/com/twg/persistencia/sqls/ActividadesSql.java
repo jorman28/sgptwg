@@ -20,70 +20,20 @@ public class ActividadesSql {
      * aplicando diferentes filtros según los parámetros que lleguen distintos
      * de nulos.
      *
-     * @param id
-     * @param version
-     * @param descripcion
-     * @param fecha_estimada_inicio
-     * @param fecha_estimada_terminacion
-     * @param fecha_real_inicio
-     * @param fecha_real_terminacion
-     * @param tiempo_estimado
-     * @param tiempo_invertido
-     * @param estado
-     * @return
-     */
-    public String consultarActividades(Integer id, Integer version, String descripcion, Date fecha_estimada_inicio, Date fecha_estimada_terminacion, Date fecha_real_inicio, Date fecha_real_terminacion, Integer tiempo_estimado, Integer tiempo_invertido, Integer estado) {
-        String sql = "SELECT * FROM actividades WHERE fecha_eliminacion IS NULL ";
-        if (id != null) {
-            sql += "AND id = " + id + " ";
-        }
-        if (version != null && !version.toString().isEmpty()) {
-            sql += "AND version = '" + version + "' ";
-        }
-        if (descripcion != null && !descripcion.isEmpty()) {
-            sql += "AND descripcion LIKE '%" + descripcion + "%' ";
-        }
-        if (fecha_estimada_inicio != null && !fecha_estimada_inicio.toString().isEmpty()) {
-            sql += "AND fecha_estimada_inicio = '" + fecha_estimada_inicio + "' ";
-        }
-        if (fecha_estimada_terminacion != null && !fecha_estimada_terminacion.toString().isEmpty()) {
-            sql += "AND fecha_estimada_terminacion = '" + fecha_estimada_terminacion + "' ";
-        }
-        if (fecha_real_inicio != null && !fecha_real_inicio.toString().isEmpty()) {
-            sql += "AND fecha_real_inicio = '" + fecha_real_inicio + "' ";
-        }
-        if (fecha_real_terminacion != null && !fecha_real_terminacion.toString().isEmpty()) {
-            sql += "AND fecha_real_terminacion = '" + fecha_real_terminacion + "' ";
-        }
-        if (tiempo_estimado != null && !tiempo_estimado.toString().isEmpty()) {
-            sql += "AND tiempo_estimado = '" + tiempo_estimado + "' ";
-        }
-        if (tiempo_invertido != null && !tiempo_invertido.toString().isEmpty()) {
-            sql += "AND tiempo_invertido = '" + tiempo_invertido + "' ";
-        }
-        if (estado != null && !estado.toString().isEmpty()) {
-            sql += "AND estado = '" + estado + "' ";
-        }
-        return sql;
-    }
-
-    /**
-     * Método encargado de retornar el SQL para consultar las actividades,
-     * aplicando diferentes filtros según los parámetros que lleguen distintos
-     * de nulos.
-     *
+     * @param idActividad
      * @param proyecto
      * @param version
-     * @param descripcion
+     * @param contiene
      * @param fecha
      * @param responsable
      * @param estado
      * @return
      */
-    public String consultarActividades(Integer proyecto, Integer version, String descripcion, Date fecha, Integer estado, Integer responsable) {
+    public String consultarActividades(Integer idActividad, Integer proyecto, Integer version, String contiene, Date fecha, Integer estado, Integer responsable) {
         String sql = "SELECT DISTINCT\n"
                 + "    a.id,\n"
                 + "    a.version,\n"
+                + "    a.nombre,\n"
                 + "    a.descripcion,\n"
                 + "    a.fecha_estimada_inicio,\n"
                 + "    a.fecha_estimada_terminacion,\n"
@@ -104,23 +54,26 @@ public class ActividadesSql {
                 + "    actividades_empleados ae ON ae.actividad = a.id\n"
                 + "WHERE\n"
                 + "    a.fecha_eliminacion IS NULL ";
+        if (idActividad != null && idActividad.intValue() != 0) {
+            sql += "AND a.id = " + idActividad + " ";
+        }
         if (proyecto != null && proyecto.intValue() != 0) {
-            sql += "AND v.proyecto = '" + proyecto + "' ";
+            sql += "AND v.proyecto = " + proyecto + " ";
         }
         if (version != null && version.intValue() != 0) {
-            sql += "AND a.version = '" + version + "' ";
+            sql += "AND a.version = " + version + " ";
         }
-        if (descripcion != null && !descripcion.isEmpty()) {
-            sql += "AND a.descripcion LIKE '%" + descripcion + "%' ";
+        if (contiene != null && !contiene.isEmpty()) {
+            sql += "AND (a.nombre LIKE '%" + contiene + "%' OR a.descripcion LIKE '%" + contiene + "%') ";
         }
         if (fecha != null) {
-            sql += "AND (a.fecha_estimada_inicio = ? OR a.fecha_estimada_terminacion = ? OR a.fecha_real_inicio = ? OR a.fecha_real_terminacion = ?) ";
+            sql += "AND ? BETWEEN ae.fecha_estimada_inicio AND ae.fecha_estimada_terminacion ";
         }
         if (estado != null && estado.intValue() != 0) {
-            sql += "AND a.estado = '" + estado + "' ";
+            sql += "AND a.estado = " + estado + " ";
         }
         if (responsable != null && responsable.intValue() != 0) {
-            sql += "AND ae.empleado = '" + responsable + "' ";
+            sql += "AND ae.empleado = " + responsable + " ";
         }
         return sql;
     }

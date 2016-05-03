@@ -23,8 +23,10 @@ import net.sf.jasperreports.engine.JRDataSource;
 import org.json.simple.JSONObject;
 
 /**
+ * Clase encargada de realizar la conexión entre la vista y las operaciones en
+ * base de datos para la tabla de actividades.
  *
- * @author Jorman Rincón
+ * @author Andrés Felipe Giraldo, Jorman Rincón, Erika Jhoana Castaneda
  */
 public class ActividadesNegocio {
 
@@ -288,16 +290,6 @@ public class ActividadesNegocio {
         return validacion;
     }
 
-    public List<ActividadesBean> consultarActividades(Integer id, Integer version, String descripcion, Date fecha_estimada_inicio, Date fecha_estimada_terminacion, Date fecha_real_inicio, Date fecha_real_terminacion, Integer tiempo_estimado, Integer tiempo_invertido, Integer estado) {
-        List<ActividadesBean> listaActividades = new ArrayList<>();
-        try {
-            listaActividades = actividadesDao.consultarActividades(id, version, descripcion, fecha_estimada_inicio, fecha_estimada_terminacion, fecha_real_inicio, fecha_real_terminacion, tiempo_estimado, tiempo_invertido, estado);
-        } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
-            Logger.getLogger(ActividadesNegocio.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return listaActividades;
-    }
-
     public List<ActividadesEmpleadosBean> consultarActividadesEmpleados(Integer idActividad, Integer idEmpleado) {
         List<ActividadesEmpleadosBean> listaActividadesEmpleados = new ArrayList<>();
         try {
@@ -308,9 +300,20 @@ public class ActividadesNegocio {
         return listaActividadesEmpleados;
     }
 
-    //metodo para obtener el listado de actividades que seran cargados en la tabla de consulta
-    public List<ActividadesBean> consultarActividades(Integer proyecto, Integer version, String descripcion, String fecha,
-            String estado, Integer responsable) {
+    /**
+     * Método encargado de consultar las actividades de acuerdo a los filtros
+     * ingresados en pantalla
+     *
+     * @param idActividad
+     * @param proyecto
+     * @param version
+     * @param contiene
+     * @param fecha
+     * @param estado
+     * @param responsable
+     * @return
+     */
+    public List<ActividadesBean> consultarActividades(Integer idActividad, Integer proyecto, Integer version, String contiene, String fecha, String estado, Integer responsable) {
         List<ActividadesBean> listaActividades = new ArrayList<>();
         Date filtroFecha = null;
         if (fecha != null && !fecha.isEmpty()) {
@@ -326,7 +329,7 @@ public class ActividadesNegocio {
             filtroEstado = null;
         }
         try {
-            listaActividades = actividadesDao.consultarActividades(proyecto, version, descripcion, filtroFecha, filtroEstado, responsable);
+            listaActividades = actividadesDao.consultarActividades(idActividad, proyecto, version, contiene, filtroFecha, filtroEstado, responsable);
         } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
             Logger.getLogger(ActividadesNegocio.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -335,7 +338,7 @@ public class ActividadesNegocio {
 
     public JSONObject consultarActividad(Integer idActividad) {
         JSONObject object = new JSONObject();
-        List<ActividadesBean> listaActividades = consultarActividades(idActividad, null, null, null, null, null, null, null, null, null);
+        List<ActividadesBean> listaActividades = consultarActividades(idActividad, null, null, null, null, null, null);
         if (listaActividades != null && !listaActividades.isEmpty()) {
             object.put("id", listaActividades.get(0).getId());
             object.put("version", listaActividades.get(0).getVersion());
@@ -347,7 +350,7 @@ public class ActividadesNegocio {
 
     public ActividadesBean consultarActividadI(Integer idActividad) {
         ActividadesBean actividad = new ActividadesBean();
-        List<ActividadesBean> listaActividades = consultarActividades(idActividad, null, null, null, null, null, null, null, null, null);
+        List<ActividadesBean> listaActividades = consultarActividades(idActividad, null, null, null, null, null, null);
         if (listaActividades != null && !listaActividades.isEmpty()) {
             actividad.setId(listaActividades.get(0).getId());
             actividad.setVersion(listaActividades.get(0).getVersion());

@@ -51,7 +51,7 @@
                                     </div>
 
                                     <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
-                                        <label for="descripcion">Descripción</label>
+                                        <label for="descripcion">Contiene</label>
                                         <input class="form-control" type="text" id="descripcion" name="descripcion" value="${descripcion}" maxlength="1000"/>
                                     </div>
                                 </div>

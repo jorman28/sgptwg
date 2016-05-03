@@ -396,17 +396,17 @@ public class ActividadesController extends HttpServlet {
      * @param id
      * @param proyecto
      * @param version
-     * @param descripcion
+     * @param contiene
      * @param estado
      * @param fecha
      * @param responsable
      * @throws ServletException
      * @throws IOException
      */
-    private void cargarTabla(HttpServletResponse response, List<String> permisos, Integer proyecto, Integer version, String descripcion, String estado, String fecha, Integer responsable) throws ServletException, IOException {
+    private void cargarTabla(HttpServletResponse response, List<String> permisos, Integer proyecto, Integer version, String contiene, String estado, String fecha, Integer responsable) throws ServletException, IOException {
         response.setContentType("text/html; charset=iso-8859-1");
 
-        List<ActividadesBean> listaActividades = actividadesNegocio.consultarActividades(proyecto, version, descripcion, fecha, estado, responsable);
+        List<ActividadesBean> listaActividades = actividadesNegocio.consultarActividades(null, proyecto, version, contiene, fecha, estado, responsable);
 
         PrintWriter out = response.getWriter();
         out.println("<table class=\"table table-striped table-hover table-condensed bordo-tablas\">");
