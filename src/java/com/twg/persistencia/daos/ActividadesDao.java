@@ -1,15 +1,9 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.twg.persistencia.daos;
 
 import com.twg.persistencia.beans.ActividadesBean;
 import com.twg.persistencia.sqls.ActividadesSql;
 import com.twg.utilidades.ConexionBaseDatos;
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -19,8 +13,10 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * Clase encargada de obtener la conexión con la base de datos y ejecutar las
+ * sentencias con base en los datos enviados desde el negocio
  *
- * @author Jorman Rincón
+ * @author Andrés Felipe Giraldo, Jorman Rincón, Erika Jhoana Castaneda
  */
 public class ActividadesDao {
 
@@ -39,12 +35,6 @@ public class ActividadesDao {
             actividad.setId(rs.getInt("id"));
             actividad.setVersion(rs.getInt("version"));
             actividad.setDescripcion(rs.getString("descripcion"));
-            actividad.setFecha_estimada_inicio(rs.getDate("fecha_estimada_inicio"));
-            actividad.setFecha_estimada_terminacion(rs.getDate("fecha_estimada_terminacion"));
-            actividad.setFecha_real_inicio(rs.getDate("fecha_real_inicio"));
-            actividad.setFecha_real_terminacion(rs.getDate("fecha_real_terminacion"));
-            actividad.setTiempo_estimado(rs.getDouble("tiempo_estimado"));
-            actividad.setTiempo_invertido(rs.getDouble("tiempo_invertido"));
             actividad.setEstado(rs.getInt("estado"));
             listaActividades.add(actividad);
         }
@@ -90,16 +80,10 @@ public class ActividadesDao {
             ActividadesBean actividad = new ActividadesBean();
             actividad.setId(rs.getInt("id"));
             actividad.setVersion(rs.getInt("version"));
-            actividad.setNombreV(rs.getString("nombrev"));
+            actividad.setNombreVersion(rs.getString("nombrev"));
             actividad.setDescripcion(rs.getString("descripcion"));
-            actividad.setFecha_estimada_inicio(rs.getDate("fecha_estimada_inicio"));
-            actividad.setFecha_estimada_terminacion(rs.getDate("fecha_estimada_terminacion"));
-            actividad.setFecha_real_inicio(rs.getDate("fecha_real_inicio"));
-            actividad.setFecha_real_terminacion(rs.getDate("fecha_real_terminacion"));
-            actividad.setTiempo_estimado(rs.getDouble("tiempo_estimado"));
-            actividad.setTiempo_invertido(rs.getDouble("tiempo_invertido"));
             actividad.setEstado(rs.getInt("estado"));
-            actividad.setNombreE(rs.getString("nombree"));
+            actividad.setNombreEstado(rs.getString("nombree"));
             listaActividades.add(actividad);
         }
         rs.close();
@@ -113,25 +97,10 @@ public class ActividadesDao {
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;
         ps = con.prepareStatement(sql.insertarActividad());
-        ps.setString(1, actividad.getDescripcion());
-        ps.setDate(2, new Date(actividad.getFecha_estimada_inicio().getTime()));
-        ps.setDate(3, new Date(actividad.getFecha_estimada_terminacion().getTime()));
-        if (actividad.getFecha_real_inicio() != null) {
-            ps.setDate(4, new Date(actividad.getFecha_real_inicio().getTime()));
-        } else {
-            ps.setDate(4, null);
-        }
-
-        if (actividad.getFecha_real_terminacion() != null) {
-            ps.setDate(5, new Date(actividad.getFecha_real_terminacion().getTime()));
-        } else {
-            ps.setDate(5, null);
-        }
-
-        ps.setDouble(6, actividad.getTiempo_estimado());
-        ps.setDouble(7, actividad.getTiempo_invertido());
-        ps.setInt(8, actividad.getVersion());
-        ps.setInt(9, actividad.getEstado());
+        ps.setObject(1, actividad.getVersion());
+        ps.setString(2, actividad.getNombre());
+        ps.setString(3, actividad.getDescripcion());
+        ps.setObject(4, actividad.getEstado());
         int insercion = ps.executeUpdate();
         ps.close();
         con.close();
@@ -143,27 +112,11 @@ public class ActividadesDao {
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;
         ps = con.prepareStatement(sql.actualizarActividad());
-        ps.setInt(10, actividad.getId());
-        ps.setString(1, actividad.getDescripcion());
-        ps.setDate(2, new Date(actividad.getFecha_estimada_inicio().getTime()));
-        ps.setDate(3, new Date(actividad.getFecha_estimada_terminacion().getTime()));
-
-        if (actividad.getFecha_real_inicio() != null) {
-            ps.setDate(4, new Date(actividad.getFecha_real_inicio().getTime()));
-        } else {
-            ps.setDate(4, null);
-        }
-
-        if (actividad.getFecha_real_terminacion() != null) {
-            ps.setDate(5, new Date(actividad.getFecha_real_terminacion().getTime()));
-        } else {
-            ps.setDate(5, null);
-        }
-
-        ps.setDouble(6, actividad.getTiempo_estimado());
-        ps.setDouble(7, actividad.getTiempo_invertido());
-        ps.setInt(8, actividad.getVersion());
-        ps.setInt(9, actividad.getEstado());
+        ps.setObject(1, actividad.getVersion());
+        ps.setString(2, actividad.getNombre());
+        ps.setString(3, actividad.getDescripcion());
+        ps.setObject(4, actividad.getEstado());
+        ps.setObject(5, actividad.getId());
         int actualizacion = ps.executeUpdate();
         ps.close();
         con.close();

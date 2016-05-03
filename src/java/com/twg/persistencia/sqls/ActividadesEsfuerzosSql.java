@@ -8,15 +8,6 @@ package com.twg.persistencia.sqls;
 public class ActividadesEsfuerzosSql {
 
     /**
-     * Método encargado de retornar el SQL para contar las actividades por
-     * esfuerzos.
-     * @return 
-     */
-    public String contarActividades_Esfuerzos() {
-        return "SELECT COUNT(*) FROM actividades_esfuerzos";
-    }
-
-    /**
      * Método encargado de retornar el SQL para consultar los esfuerzos por
      * actividad, aplicando filtros según los parámetros que lleguen
      * distintos de nulo.
@@ -28,7 +19,7 @@ public class ActividadesEsfuerzosSql {
      * @param descripcion
      * @return 
      */
-    public String consultarActividades_Esfuerzos(Integer id, Integer actividad, Integer empleado, String fecha, Double tiempo, String descripcion) {
+    public String consultarActividadesEsfuerzos(Integer id, Integer actividad, Integer empleado, String fecha, Double tiempo, String descripcion) {
         String sql = "SELECT * FROM actividades_esfuerzos WHERE fecha_eliminacion IS NULL ";
         if (id != null && !id.toString().isEmpty()) {
             sql += "AND id = " + id + " ";
@@ -56,7 +47,7 @@ public class ActividadesEsfuerzosSql {
      * actividad.
      * @return 
      */
-    public String insertarActividad_Esfuerzo() {
+    public String insertarActividadEsfuerzo() {
         return "INSERT INTO actividades_esfuerzos (actividad, empleado, fecha, tiempo, descripcion) VALUES (?, ?, ?, ?, ?)";
     }
 
@@ -65,8 +56,8 @@ public class ActividadesEsfuerzosSql {
      * una actividad.
      * @return 
      */
-    public String actualizarActividad_Esfuerzo() {
-        return "UPDATE actividades_esfuerzos SET fecha = ?, tiempo = ?, descripcion = ? WHERE actividad = ? AND empleado = ?";
+    public String actualizarActividadEsfuerzo() {
+        return "UPDATE actividades_esfuerzos SET fecha = ?, tiempo = ?, descripcion = ? WHERE id = ?";
     }
 
     /**
@@ -75,8 +66,8 @@ public class ActividadesEsfuerzosSql {
      * la fecha actual.
      * @return 
      */
-    public String eliminarActividad_Esfuerzo() {
-        return "UPDATE actividades_esfuerzos SET fecha_eliminacion = now() WHERE actividad = ?";
+    public String eliminarActividadEsfuerzo() {
+        return "UPDATE actividades_esfuerzos SET fecha_eliminacion = now() WHERE id = ?";
     }
     
     /**
@@ -87,7 +78,7 @@ public class ActividadesEsfuerzosSql {
      * @param idEmpleado
      * @return 
      */
-    public String eliminarActividad_Esfuerzo(Integer idActividadEsfuerzo, Integer idActividad, Integer idEmpleado) {
+    public String eliminarActividadEsfuerzo(Integer idActividadEsfuerzo, Integer idActividad, Integer idEmpleado) {
         String sql = "DELETE FROM actividades_esfuerzos WHERE 1 = 1 ";
         if (idActividadEsfuerzo != null && !idActividadEsfuerzo.toString().isEmpty()) {
             sql += "AND id = " + idActividadEsfuerzo + " ";
@@ -106,7 +97,7 @@ public class ActividadesEsfuerzosSql {
      * empleado específico.
      * @return 
      */
-    public String eliminarActividades_Esfuerzos() {
-        return "DELETE FROM actividades_esfuerzos WHERE 1 = 1 AND actividad = ? AND empleado NOT IN (?)";
+    public String eliminarActividadesEsfuerzos() {
+        return "DELETE FROM actividades_esfuerzos WHERE actividad = ? AND empleado NOT IN (?)";
     }
 }

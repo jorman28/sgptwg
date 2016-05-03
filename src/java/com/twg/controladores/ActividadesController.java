@@ -161,12 +161,6 @@ public class ActividadesController extends HttpServlet {
                         version = actividad.getVersion();
                         request.setAttribute("version", version.toString());
                         request.setAttribute("descripcion", actividad.getDescripcion());
-                        request.setAttribute("fecha_estimada_inicio", actividad.getFecha_estimada_inicio() != null ? sdf.format(actividad.getFecha_estimada_inicio()) : "");
-                        request.setAttribute("fecha_estimada_terminacion", actividad.getFecha_estimada_terminacion() != null ? sdf.format(actividad.getFecha_estimada_terminacion()) : "");
-                        request.setAttribute("fecha_real_inicio", actividad.getFecha_real_inicio() != null ? sdf.format(actividad.getFecha_real_inicio()) : "");
-                        request.setAttribute("fecha_real_terminacion", actividad.getFecha_real_terminacion() != null ? sdf.format(actividad.getFecha_real_terminacion()) : "");
-                        request.setAttribute("tiempo_estimado", actividad.getTiempo_estimado());
-                        request.setAttribute("tiempo_invertido", actividad.getTiempo_invertido());
                         estadoStr = actividad.getEstado().toString();
                         request.setAttribute("estado", Integer.parseInt(estadoStr));
                         request.setAttribute("listaComentarios", comentariosNegocio.listaComentarios(comentariosNegocio.TIPO_ACTIVIDAD, actividad.getId()));
@@ -198,12 +192,6 @@ public class ActividadesController extends HttpServlet {
                         version = actividad.getVersion();
                         request.setAttribute("version", version.toString());
                         request.setAttribute("descripcion", actividad.getDescripcion());
-                        request.setAttribute("fecha_estimada_inicio", actividad.getFecha_estimada_inicio() != null ? sdf.format(actividad.getFecha_estimada_inicio()) : "");
-                        request.setAttribute("fecha_estimada_terminacion", actividad.getFecha_estimada_terminacion() != null ? sdf.format(actividad.getFecha_estimada_terminacion()) : "");
-                        request.setAttribute("fecha_real_inicio", actividad.getFecha_real_inicio() != null ? sdf.format(actividad.getFecha_real_inicio()) : "");
-                        request.setAttribute("fecha_real_terminacion", actividad.getFecha_real_terminacion() != null ? sdf.format(actividad.getFecha_real_terminacion()) : "");
-                        request.setAttribute("tiempo_estimado", actividad.getTiempo_estimado());
-                        request.setAttribute("tiempo_invertido", actividad.getTiempo_invertido());
                         estadoStr = actividad.getEstado().toString();
                         request.setAttribute("estado", Integer.parseInt(estadoStr));
                     }
@@ -439,11 +427,8 @@ public class ActividadesController extends HttpServlet {
                 out.println("<input type=\"hidden\" id=\"id\" name=\"id\" value=" + actividad.getId() + " />");
                 out.println("<tr>");
                 out.println("<td>" + actividad.getDescripcion() + "</td>");
-                out.println("<td>" + actividad.getNombreV() + "</td>");
-                out.println("<td>" + actividad.getFecha_estimada_inicio() + "</td>");
-                out.println("<td>" + actividad.getFecha_estimada_terminacion() + "</td>");
-                out.println("<td>" + actividad.getTiempo_estimado() + "</td>");
-                out.println("<td>" + actividad.getNombreE() + "</td>");
+                out.println("<td>" + actividad.getNombreVersion() + "</td>");
+                out.println("<td>" + actividad.getNombreEstado() + "</td>");
                 out.println("<td>");
                 if (permisos != null && !permisos.isEmpty() && permisos.contains(Permisos.GUARDAR.getNombre())) {
                     out.println("<button class=\"btn btn-default\" type=\"submit\" name=\"accion\" id=\"gestionarActividad\" value='gestionarActividad_" + actividad.getId() + "'> Gestionar</button>");

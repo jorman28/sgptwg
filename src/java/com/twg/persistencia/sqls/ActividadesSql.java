@@ -16,15 +16,6 @@ public class ActividadesSql {
     }
 
     /**
-     * Método encargado de retornar el SQL para consultar todas las atividades.
-     *
-     * @return
-     */
-    public String consultarActividades() {
-        return "SELECT * FROM actividades WHERE fecha_eliminacion IS NULL ";
-    }
-
-    /**
      * Método encargado de retornar el SQL para consultar las actividades,
      * aplicando diferentes filtros según los parámetros que lleguen distintos
      * de nulos.
@@ -82,7 +73,6 @@ public class ActividadesSql {
      * de nulos.
      *
      * @param proyecto
-     * @param id
      * @param version
      * @param descripcion
      * @param fecha
@@ -151,7 +141,7 @@ public class ActividadesSql {
      * @return
      */
     public String insertarActividad() {
-        return "INSERT INTO actividades (descripcion, fecha_estimada_inicio, fecha_estimada_terminacion, fecha_real_inicio, fecha_real_terminacion, tiempo_estimado, tiempo_invertido, version, estado) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        return "INSERT INTO actividades (version, nombre, descripcion, estado) VALUES (?, ?, ?, ?)";
     }
 
     /**
@@ -161,7 +151,7 @@ public class ActividadesSql {
      * @return
      */
     public String actualizarActividad() {
-        return "UPDATE actividades SET  descripcion = ?, fecha_estimada_inicio=?, fecha_estimada_terminacion=?, fecha_real_inicio=?, fecha_real_terminacion=?, tiempo_estimado=?, tiempo_invertido=?, version=?, estado=?  WHERE id = ?";
+        return "UPDATE actividades SET version = ?, nombre = ?, descripcion = ?, estado = ?  WHERE id = ?";
     }
 
     /**

@@ -70,7 +70,7 @@ public class ActividadesEmpleadosDao {
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;
-        ps = con.prepareStatement(sql.insertarActividad_Empleado());
+        ps = con.prepareStatement(sql.insertarActividadEmpleado());
         //ps.setInt(1, estado.getId());
         ps.setInt(1, actividad_empleado.getActividad());
         ps.setInt(2, actividad_empleado.getEmpleado());
@@ -84,7 +84,7 @@ public class ActividadesEmpleadosDao {
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;
-        ps = con.prepareStatement(sql.eliminarActividad_Empleado(idActividad, idEmpleado));
+        ps = con.prepareStatement(sql.eliminarActividadEmpleado(idActividad, idEmpleado));
 //        ps.setInt(1, idActividad);
 //        ps.setInt(2, idEmpleado);
         int eliminacion = ps.executeUpdate();
@@ -108,7 +108,7 @@ public class ActividadesEmpleadosDao {
             }
 
             PreparedStatement ps;
-            ps = con.prepareStatement(sql.eliminarActividades_Empleados());
+            ps = con.prepareStatement(sql.eliminarActividadesEmpleados());
             ps.setInt(1, Actividad);
             ps.setString(2, strEmpleados.toString());
             eliminacion = ps.executeUpdate();
@@ -116,7 +116,7 @@ public class ActividadesEmpleadosDao {
 
         } else {
             PreparedStatement ps;
-            ps = con.prepareStatement(sql.eliminarActividad_Empleado(Actividad, null));
+            ps = con.prepareStatement(sql.eliminarActividadEmpleado(Actividad, null));
             eliminacion = ps.executeUpdate();
             ps.close();
         }
