@@ -26,7 +26,7 @@ public class ArchivosDao {
      * archivos en la base de datos de acuerdo a los filtros enviados
      *
      * @param idArchivo
-     * @param contine
+     * @param contiene
      * @param fecha
      * @param idPersona
      * @return La lista de los archivos existentes en base de datos
@@ -35,12 +35,12 @@ public class ArchivosDao {
      * @throws SQLException
      * @throws IllegalAccessException
      */
-    public List<ArchivosBean> consultarArchivos(Integer idArchivo, String contine, Date fecha, Integer idPersona) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
+    public List<ArchivosBean> consultarArchivos(Integer idArchivo, String contiene, Date fecha, Integer idPersona) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         List<ArchivosBean> listaArchivos = new ArrayList<>();
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;
-        ps = con.prepareStatement(sql.consultarArchivos(idArchivo, contine, fecha, idPersona));
+        ps = con.prepareStatement(sql.consultarArchivos(idArchivo, contiene, fecha, idPersona));
         if (fecha != null) {
             ps.setObject(1, fecha);
         }

@@ -174,8 +174,9 @@ public class UsuariosController extends HttpServlet {
      */
     private void cargarTabla(HttpServletResponse response, List<String> permisos, Integer idPersona, String nombreUsuario, Integer perfil, String activo, String documento, String tipoDocumento, int pagina) throws ServletException, IOException {
         response.setContentType("text/html; charset=iso-8859-1");
-        int cantidadRegistros = 15;
-        String limite = (pagina * cantidadRegistros - cantidadRegistros) + "," + cantidadRegistros;
+        int registros = 10;
+        int paginasAdicionales = 2;
+        String limite = ((pagina - 1) * registros) + "," + registros;
         List<UsuariosBean> listaUsuarios = usuariosNegocio.consultarUsuarios(idPersona, nombreUsuario, perfil, activo, documento, tipoDocumento, limite);
         PrintWriter out = response.getWriter();
         out.println("<table class=\"table table-striped table-hover table-condensed bordo-tablas\">");
@@ -217,14 +218,30 @@ public class UsuariosController extends HttpServlet {
         }
         out.println("</tbody>");
         out.println("</table>");
+        
+        /* Manejo de paginación */
         int cantidadUsuarios = usuariosNegocio.cantidadUsuarios(idPersona, nombreUsuario, perfil, activo, documento, tipoDocumento);
         int cantidadPaginas = 1;
         if (cantidadUsuarios > 0) {
-            if (cantidadUsuarios % cantidadRegistros == 0) {
-                cantidadPaginas = cantidadUsuarios / cantidadRegistros;
+            if (cantidadUsuarios % registros == 0) {
+                cantidadPaginas = cantidadUsuarios / registros;
             } else {
-                cantidadPaginas = (cantidadUsuarios / cantidadRegistros) + 1;
+                cantidadPaginas = (cantidadUsuarios / registros) + 1;
             }
+        }
+        int paginasPrevias = paginasAdicionales;
+        if (pagina <= paginasAdicionales) {
+            paginasPrevias = (1 - pagina) * -1;
+        }
+        int paginasPosteriores = paginasAdicionales;
+        if (paginasPrevias < paginasAdicionales) {
+            paginasPosteriores += paginasAdicionales - paginasPrevias;
+        }
+        if (pagina + paginasPosteriores > cantidadPaginas) {
+            paginasPosteriores = cantidadPaginas - pagina;
+        }
+        if (paginasPosteriores < paginasAdicionales && pagina - (paginasPrevias + paginasAdicionales - paginasPosteriores) > 0) {
+            paginasPrevias += paginasAdicionales - paginasPosteriores;
         }
         out.println("<nav>");
         out.println("   <ul class=\"pagination\">");
@@ -232,9 +249,9 @@ public class UsuariosController extends HttpServlet {
             out.println("       <li><a href=\"javascript:void(llenarTabla(1))\"><span>&laquo;</span></a></li>");
             out.println("       <li><a href=\"javascript:void(llenarTabla(" + (pagina - 1) + "))\"><span>&lsaquo;</span></a></li>");
         }
-        for (int pag = 1; pag <= cantidadPaginas; pag++) {
+        for (int pag = pagina - paginasPrevias; pag <= pagina + paginasPosteriores; pag++) {
             if (pagina == pag) {
-                out.println("   <li class=\"active\"><a href=\"javascript:void(llenarTabla(" + pag + "))\"><span>" + pag + "</span></a></li>");
+                out.println("   <li class=\"active\"><a href=\"javascript:void(0)\"><span>" + pag + "</span></a></li>");
             } else {
                 out.println("   <li><a href=\"javascript:void(llenarTabla(" + pag + "))\"><span>" + pag + "</span></a></li>");
             }

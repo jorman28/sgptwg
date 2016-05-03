@@ -54,16 +54,16 @@ public class ArchivosNegocio {
      * filtros de búsqueda ingresados
      *
      * @param idArchivo
-     * @param contine
+     * @param contiene
      * @param fecha
      * @param idPersona
      * @return La lista de archivos que coinciden con los parámetros de búsqueda
      * ingresados
      */
-    public List<ArchivosBean> consultarArchivos(Integer idArchivo, String contine, Date fecha, Integer idPersona) {
+    public List<ArchivosBean> consultarArchivos(Integer idArchivo, String contiene, Date fecha, Integer idPersona) {
         List<ArchivosBean> listaArchivos = new ArrayList<>();
         try {
-            listaArchivos = archivosDao.consultarArchivos(idArchivo, contine, fecha, idPersona);
+            listaArchivos = archivosDao.consultarArchivos(idArchivo, contiene, fecha, idPersona);
         } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
             Logger.getLogger(ArchivosNegocio.class.getName()).log(Level.SEVERE, null, ex);
         }
