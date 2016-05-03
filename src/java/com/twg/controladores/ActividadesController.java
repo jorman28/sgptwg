@@ -428,6 +428,9 @@ public class ActividadesController extends HttpServlet {
                 out.println("<tr>");
                 out.println("<td>" + actividad.getDescripcion() + "</td>");
                 out.println("<td>" + actividad.getNombreVersion() + "</td>");
+                out.println("<td>" + sdf.format(actividad.getFechaInicio()) + "</td>");
+                out.println("<td>" + sdf.format(actividad.getFechaFin()) + "</td>");
+                out.println("<td>" + actividad.getTiempo() + "</td>");
                 out.println("<td>" + actividad.getNombreEstado() + "</td>");
                 out.println("<td>");
                 if (permisos != null && !permisos.isEmpty() && permisos.contains(Permisos.GUARDAR.getNombre())) {

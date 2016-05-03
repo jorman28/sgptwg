@@ -1,5 +1,7 @@
 package com.twg.persistencia.beans;
 
+import java.util.Date;
+
 /**
  * Esta clase define los atributos del objeto Actividades, junto con los métodos
  * get y set.
@@ -16,6 +18,9 @@ public class ActividadesBean {
     private String descripcion;
     private Integer estado;
     private String nombreEstado;
+    private Date fechaInicio;
+    private Date fechaFin;
+    private Double tiempo;
 
     /*
      * Declaración de métodos Get y Set para cada atributo de la clase.
@@ -75,4 +80,29 @@ public class ActividadesBean {
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }
+
+    public Date getFechaInicio() {
+        return fechaInicio;
+    }
+
+    public void setFechaInicio(Date fechaInicio) {
+        this.fechaInicio = fechaInicio;
+    }
+
+    public Date getFechaFin() {
+        return fechaFin;
+    }
+
+    public void setFechaFin(Date fechaFin) {
+        this.fechaFin = fechaFin;
+    }
+
+    public Double getTiempo() {
+        return tiempo;
+    }
+
+    public void setTiempo(Double tiempo) {
+        this.tiempo = tiempo;
+    }
+    
 }

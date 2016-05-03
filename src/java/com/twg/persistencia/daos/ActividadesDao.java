@@ -80,11 +80,14 @@ public class ActividadesDao {
             ActividadesBean actividad = new ActividadesBean();
             actividad.setId(rs.getInt("id"));
             actividad.setVersion(rs.getInt("version"));
-            actividad.setNombreVersion(rs.getString("nombrev"));
+            actividad.setNombreVersion(rs.getString("nombre_version"));
             actividad.setNombre(rs.getString("nombre"));
             actividad.setDescripcion(rs.getString("descripcion"));
             actividad.setEstado(rs.getInt("estado"));
-            actividad.setNombreEstado(rs.getString("nombree"));
+            actividad.setNombreEstado(rs.getString("nombre_estado"));
+            actividad.setFechaInicio(rs.getDate("fecha_estimada_inicio"));
+            actividad.setFechaFin(rs.getDate("fecha_estimada_terminacion"));
+            actividad.setTiempo(rs.getDouble("tiempo_estimado"));
             listaActividades.add(actividad);
         }
         rs.close();
