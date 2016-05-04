@@ -28,14 +28,14 @@ public class AuditoriasSql {
         if (idAuditoria != null && idAuditoria.intValue() != 0) {
             sql += "AND aud.id = " + idAuditoria + " ";
         }
-        if (clasificacion != null && !clasificacion.isEmpty()) {
+        if (clasificacion != null && !clasificacion.isEmpty() && !clasificacion.equals("0")) {
             sql += "AND aud.clasificacion = '" + clasificacion + "' ";
         }
-        if (accion != null && !accion.isEmpty()) {
+        if (accion != null && !accion.isEmpty() && !accion.equals("0")) {
             sql += "AND aud.accion = '" + accion + "' ";
         }
         if (contiene != null && !contiene.isEmpty()) {
-            sql += "AND aud.contine LIKE '%" + contiene + "%' ";
+            sql += "AND aud.descripcion LIKE '%" + contiene + "%' ";
         }
         if (fecha != null) {
             sql += "AND aud.fecha_creacion = ? ";
