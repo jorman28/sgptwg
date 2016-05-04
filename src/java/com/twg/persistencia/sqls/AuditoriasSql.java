@@ -10,6 +10,18 @@ import java.util.Date;
  */
 public class AuditoriasSql {
 
+    /**
+     * Método encargado de consultar las auditorias, aplicando diferentes filtros
+     * según los parámetros que lleguen distintos de nulos.
+     * 
+     * @param idAuditoria
+     * @param clasificacion
+     * @param accion
+     * @param contiene
+     * @param fecha
+     * @param idPersona
+     * @return 
+     */
     public String consultarAuditorias(Integer idAuditoria, String clasificacion, String accion, String contiene, Date fecha, Integer idPersona) {
         String sql = "SELECT \n"
                 + "    aud.id,\n"
@@ -46,10 +58,19 @@ public class AuditoriasSql {
         return sql;
     }
 
+    /**
+     * Método encargado de retornar el SQL para insertar una nueva auditoria.
+     * @return 
+     */
     public String insertarAuditoria() {
         return "INSERT INTO auditorias (id_persona, fecha_creacion, clasificacion, accion, descripcion) VALUES (?,?,?,?,?)";
     }
 
+    /**
+     * Método encargado de retornar el SQL para eliminar lógicamente una auditoria, 
+     * actualizando la fecha de eliminación con la fecha actual.
+     * @return 
+     */
     public String eliminarAuditoria() {
         return "UPDATE auditorias SET fecha_eliminacion = now() WHERE id = ? AND fecha_eliminacion IS NULL";
     }

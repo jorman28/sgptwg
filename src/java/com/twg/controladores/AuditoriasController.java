@@ -1,14 +1,8 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.twg.controladores;
 
 import com.twg.negocio.AuditoriasNegocio;
 import com.twg.negocio.PerfilesNegocio;
 import com.twg.persistencia.beans.AuditoriasBean;
-import com.twg.persistencia.beans.EstadosBean;
 import com.twg.persistencia.beans.Paginas;
 import com.twg.persistencia.beans.Permisos;
 import java.io.IOException;
@@ -17,17 +11,16 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 
 /**
- *
- * @author erikasta07
+ * Esta clase define métodos para controlar las peticiones y respuestas 
+ * que se hacen sobre el módulo principal de Auditorías, para la consulta y eliminación.
+ * 
+ * @author Andrés Felipe Giraldo, Jorman Rincón, Erika Jhoana Castaneda
  */
 public class AuditoriasController extends HttpServlet {
 
@@ -35,8 +28,8 @@ public class AuditoriasController extends HttpServlet {
     private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
     
     /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
+     * Método encargado de procesar las peticiones que ingresan por métodos get
+     * y post al controlador de Auditorias
      *
      * @param request servlet request
      * @param response servlet response
@@ -113,6 +106,18 @@ public class AuditoriasController extends HttpServlet {
         }
     }
 
+    /**
+     * Este método se encarga de enviar los atributos de la auditoria, al cliente que
+     * realiza la petición.
+     * 
+     * @param request
+     * @param id
+     * @param id_persona
+     * @param fecha_creacion
+     * @param clasificacion
+     * @param accionAud
+     * @param descripcion 
+     */
     private void enviarDatos(HttpServletRequest request, Integer id, String id_persona, String fecha_creacion, 
             String clasificacion, String accionAud, String descripcion) {
         request.setAttribute("id", id);
@@ -123,6 +128,21 @@ public class AuditoriasController extends HttpServlet {
         request.setAttribute("descripcion", descripcion);
     }
     
+    /**
+     * Método encargado de pintar la tabla con el listado de registros 
+     * que hay sobre las auditorias
+     * 
+     * @param response
+     * @param permisos
+     * @param id
+     * @param id_persona
+     * @param fecha_creacionStr
+     * @param clasificacion
+     * @param accionAud
+     * @param descripcion
+     * @throws ServletException
+     * @throws IOException 
+     */
     private void cargarTabla(HttpServletResponse response, List<String> permisos, Integer id, Integer id_persona, 
             String fecha_creacionStr, String clasificacion, String accionAud, String descripcion) throws ServletException, IOException {
         response.setContentType("text/html; charset=iso-8859-1");
