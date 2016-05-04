@@ -170,6 +170,12 @@ public class PersonasSql {
         return sql;
     }
 
+    /**
+     * Método encargado de consultas las personas que están asociadas a una
+     * actividad.
+     * @param personas
+     * @return 
+     */
     public String consultarPersonasAsignadasActividad(String personas, String idActividad) {
         String sql = "";
         sql += "SELECT DISTINCT p.id,\n"
