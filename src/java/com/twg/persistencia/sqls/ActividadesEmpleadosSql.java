@@ -42,16 +42,7 @@ public class ActividadesEmpleadosSql {
      * @return 
      */
     public String insertarActividad_Empleado() {
-        return "INSERT INTO actividades_empleados (actividad, empleado, fecha_estimada_inicio, fecha_estimada_terminacion, tiempo_estimado, tiempo_invertido, fecha_real_inicio, fecha_real_terminacion) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-    }
-    
-    /**
-     * Método encargado de retornar el SQL para modificar una actividad a un
-     * empleado específico
-     * @return 
-     */
-    public String actualizarActividad_Empleado() {
-        return "UPDATE actividades_empleados SET fecha_estimada_inicio = ?, fecha_estimada_terminacion = ?, tiempo_estimado = ?, tiempo_invertido = ?, fecha_real_inicio = ?, fecha_real_terminacion = ? WHERE actividad = ? AND empleado = ?";
+        return "INSERT INTO actividades_empleados (actividad, empleado) VALUES (? , ?)";
     }
     
     /**
