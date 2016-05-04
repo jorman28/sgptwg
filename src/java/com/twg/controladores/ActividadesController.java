@@ -113,7 +113,6 @@ public class ActividadesController extends HttpServlet {
                     if (fecha_real_terminacion != null && !fecha_real_terminacion.isEmpty()) {
                         actividadEmpleado.setFecha_real_terminacion(sdf.parse(fecha_real_terminacion));
                     }
-
                     if (tiempo_estimado != null && !tiempo_estimado.isEmpty()) {
                         actividadEmpleado.setTiempo_estimado(Double.valueOf(tiempo_estimado));
                     } else {
@@ -124,6 +123,32 @@ public class ActividadesController extends HttpServlet {
                     } else {
                         actividadEmpleado.setTiempo_invertido(0.0);
                     }
+                    
+                    //Atributos String
+                    actividadEmpleado.setStrEmpleado(item);
+                    if (fecha_estimada_inicio != null && !fecha_estimada_inicio.isEmpty()) {
+                        actividadEmpleado.setStrFecha_estimada_inicio(fecha_estimada_inicio);
+                    }
+                    if (fecha_estimada_terminacion != null && !fecha_estimada_terminacion.isEmpty()) {
+                        actividadEmpleado.setStrFecha_estimada_terminacion(fecha_estimada_terminacion);
+                    }
+                    if (fecha_real_inicio != null && !fecha_real_inicio.isEmpty()) {
+                        actividadEmpleado.setStrFecha_real_inicio(fecha_real_inicio);
+                    }
+                    if (fecha_real_terminacion != null && !fecha_real_terminacion.isEmpty()) {
+                        actividadEmpleado.setStrFecha_real_terminacion(fecha_real_terminacion);
+                    }
+                    if (tiempo_estimado != null && !tiempo_estimado.isEmpty()) {
+                        actividadEmpleado.setStrTiempo_estimado(tiempo_estimado);
+                    } else {
+                        actividadEmpleado.setStrTiempo_estimado("0");
+                    }
+                    if (tiempo_invertido != null && !tiempo_invertido.isEmpty()) {
+                        actividadEmpleado.setStrTiempo_invertido(tiempo_invertido);
+                    } else {
+                        actividadEmpleado.setStrTiempo_invertido("0");
+                    }
+                    actividadEmpleado.setStrNombrePersona(personasNegocio.consultarPersona(item, null, null).getNombre());
                     lstActividadesEmpleados.add(actividadEmpleado);
                 }
             }
@@ -420,19 +445,12 @@ public class ActividadesController extends HttpServlet {
      * @param tiempo_invertido
      * @param estado
      */
-    private void enviarDatosCreacionEdicion(HttpServletRequest request, String id, String proyecto, String version, String descripcion, String estado, List<ActividadesEmpleadosBean> lstActividadesEmpelados) {
+    private void enviarDatosCreacionEdicion(HttpServletRequest request, String id, String proyecto, String version, String descripcion, String estado, List<ActividadesEmpleadosBean> lstActividadesEmpleados) {
         request.setAttribute("id", id);
         request.setAttribute("proyecto", proyecto);
         request.setAttribute("version", version);
         request.setAttribute("descripcion", descripcion);
-        for (ActividadesEmpleadosBean item : lstActividadesEmpelados) {
-            request.setAttribute("fecha_estimada_inicio_" + item.getEmpleado().toString(), item.getFecha_estimada_inicio() != null ? sdf.format(item.getFecha_estimada_inicio()) : "");
-            request.setAttribute("fecha_estimada_terminacion_" + item.getEmpleado().toString(), item.getFecha_estimada_terminacion() != null ? sdf.format(item.getFecha_estimada_terminacion()) : "");
-            request.setAttribute("fecha_real_inicio_" + item.getEmpleado().toString(), item.getFecha_real_inicio() != null ? sdf.format(item.getFecha_real_inicio()) : "");
-            request.setAttribute("fecha_real_terminacion_" + item.getEmpleado().toString(), item.getFecha_real_terminacion() != null ? sdf.format(item.getFecha_real_terminacion()) : "");
-            request.setAttribute("tiempo_estimado_" + item.getEmpleado().toString(), item.getTiempo_estimado());
-            request.setAttribute("tiempo_invertido_" + item.getEmpleado().toString(), item.getTiempo_invertido());
-        }
+        request.setAttribute("listaActividadesEmpleados", lstActividadesEmpleados);
         request.setAttribute("estado", estado);
     }
 

@@ -31,7 +31,7 @@ public class ActividadesNegocio {
 
     private final ActividadesDao actividadesDao = new ActividadesDao();
     private final ActividadesEmpleadosDao actividadesEmpleadosDao = new ActividadesEmpleadosDao();
-    private final ActividadesEsfuerzosDao actividadesEsfuerzosDao = new ActividadesEsfuerzosDao();
+    //private final ActividadesEsfuerzosDao actividadesEsfuerzosDao = new ActividadesEsfuerzosDao();
     private final PersonasDao personas = new PersonasDao();
 
     private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
@@ -58,31 +58,20 @@ public class ActividadesNegocio {
                     guardado = actividadesDao.actualizarActividad(actividad);
                     //En caso de eliminar un participante existente
                     actividadesEmpleadosDao.eliminarActividadesEmpleados(Integer.valueOf(id), participantes);
-                    actividadesEsfuerzosDao.eliminarActividadesEsfuerzos(Integer.valueOf(id), participantes);
+                    //actividadesEsfuerzosDao.eliminarActividadesEsfuerzos(Integer.valueOf(id), participantes); //PENDIENTE SABER QUE PASA SI SE ELIMINA A UNA PERSONA DE LA ACTIVIDAD
 
                     for (ActividadesEmpleadosBean actividadEmpleadoBean : lstActividadesEmpleados) { //Aplica para tablas actividades_empleados y actividades_esfuerzos
                         ActividadesEmpleadosBean actividadEmpleadoBeanAux = actividadesEmpleadosDao.consultarActividadEmpleado(Integer.valueOf(id), actividadEmpleadoBean.getEmpleado());
-                        ActividadesEsfuerzosBean actividadEsfuerzoBeanAux = actividadesEsfuerzosDao.consultarActividadEsfuerzo(null, Integer.valueOf(id), actividadEmpleadoBean.getEmpleado(), null, null, null);
 
                         //las siguientes líneas es para manejar los datos en la tabla actividades_empleados
                         actividadEmpleadoBean.setActividad(actividad.getId());
-                        
-
-                        //las siguientes líneas es para manejar los datos en la tabla actividades_esfuerzos
-                        ActividadesEsfuerzosBean actividadEsfuerzoBean = new ActividadesEsfuerzosBean();
-                        actividadEsfuerzoBean.setActividad(actividad.getId());
-                        actividadEsfuerzoBean.setEmpleado(actividadEmpleadoBean.getEmpleado());
-                        actividadEsfuerzoBean.setFecha(actividadEmpleadoBean.getFecha_real_inicio());
-                        actividadEsfuerzoBean.setTiempo(actividadEmpleadoBean.getTiempo_invertido());
-                        actividadEsfuerzoBean.setDescripcion(descripcion);
 
                         //Condición si se añade información del participante
-                        if (actividadEmpleadoBeanAux.getActividad() != null && actividadEmpleadoBeanAux.getEmpleado() != null && actividadEsfuerzoBeanAux.getId() != null) {
-                            actividadesEsfuerzosDao.actualizarActividadEsfuerzo(actividadEsfuerzoBean);
+                        if (actividadEmpleadoBeanAux.getActividad() != null && actividadEmpleadoBeanAux.getEmpleado() != null) {
+                            actividadesEmpleadosDao.actualizarActividadEmpleado(actividadEmpleadoBean);
                             guardadoAct_Emp += 1;
                         } else {
                             //Condición si se añade un nuevo participante
-                            actividadesEsfuerzosDao.crearActividadEsfuerzo(actividadEsfuerzoBean);
                             actividadesEmpleadosDao.insertarActividadEmpleado(actividadEmpleadoBean);
                             guardadoAct_Emp += 1;
                         }
@@ -94,16 +83,6 @@ public class ActividadesNegocio {
                     for (ActividadesEmpleadosBean actividadEmpleadoBean : lstActividadesEmpleados) {
                         //las siguientes líneas es para insertar los datos en la tabla actividades_empleados
                         actividadEmpleadoBean.setActividad(ultActividad);
-
-                        //las siguientes líneas es para insertar los datos en la tabla actividades_esfuerzos
-                        ActividadesEsfuerzosBean actividadEsfuerzoBean = new ActividadesEsfuerzosBean();
-                        actividadEsfuerzoBean.setActividad(ultActividad);
-                        actividadEsfuerzoBean.setEmpleado(actividadEmpleadoBean.getEmpleado());
-                        actividadEsfuerzoBean.setFecha(actividadEmpleadoBean.getFecha_real_inicio());
-                        actividadEsfuerzoBean.setTiempo(actividadEmpleadoBean.getTiempo_invertido());
-                        actividadEsfuerzoBean.setDescripcion(descripcion);
-
-                        actividadesEsfuerzosDao.crearActividadEsfuerzo(actividadEsfuerzoBean);
                         actividadesEmpleadosDao.insertarActividadEmpleado(actividadEmpleadoBean);
                         guardadoAct_Emp += 1;
                     }
@@ -201,75 +180,29 @@ public class ActividadesNegocio {
                     String NombrePersona = personas.consultarPersonas(String.valueOf(item.getEmpleado()), null, null, null, null, null, null, null, null, null).get(0).getNombre();
                     if (item.getFecha_estimada_inicio() == null || item.getFecha_estimada_inicio().toString().isEmpty()) {
                         validacion += "Para " + NombrePersona + ", El campo 'Fecha estimada de inicio' no debe estar vacío<br />";
-                    } else {
-                        try {
-                            sdf.parse(item.getFecha_estimada_inicio().toString());
-                        } catch (ParseException e) {
-                            validacion += "Para " + NombrePersona + ", El valor ingresado en el campo 'Fecha estimada de inicio' no se encuentra en el formato 'día/mes/año' <br />";
-                        }
                     }
 
                     if (item.getFecha_estimada_terminacion() == null || item.getFecha_estimada_terminacion().toString().isEmpty()) {
                         validacion += "Para " + NombrePersona + ", El campo 'Fecha estimada de terminación' no debe estar vacío <br />";
-                    } else {
-                        try {
-                            sdf.parse(item.getFecha_estimada_terminacion().toString());
-                        } catch (ParseException e) {
-                            validacion += "Para " + NombrePersona + ", El valor ingresado en el campo 'Fecha estimada de terminación' no se encuentra en el formato 'día/mes/año' <br />";
-                        }
                     }
 
-                    if (item.getTiempo_estimado() == null || item.getFecha_estimada_terminacion().toString().equals("")) {
+                    if (item.getTiempo_estimado() == null || String.valueOf(item.getFecha_estimada_terminacion()).equals("")) {
                         validacion += "Para " + NombrePersona + ", El campo 'Tiempo estimado' no debe estar vacío <br />";
-                    } else if (!item.getFecha_estimada_terminacion().toString().matches("[0-9]+(\\.[0-9][0-9]?)?")) {
-                        validacion += "Para " + NombrePersona + ", El valor ingresado en el campo 'Tiempo estimado' solo debe contener números' <br />";
                     }
 
-                    if ((item.getFecha_estimada_inicio() == null || item.getFecha_estimada_inicio().toString().isEmpty()) && (item.getFecha_estimada_terminacion() == null || item.getFecha_estimada_terminacion().toString().isEmpty())) {
-                    } else {
-                        try {
-                            Date inicio = sdf.parse(item.getFecha_estimada_inicio().toString());
-                            Date fin = sdf.parse(item.getFecha_estimada_terminacion().toString());
-                            if (inicio.after(fin)) {
-                                validacion += "Para " + NombrePersona + ", La fecha estimada de inicio no debe ser mayor que la fecha estimada de terminación <br />";
-                            }
-                        } catch (ParseException e) {
-                            validacion += "Para " + NombrePersona + ", El valor ingresado en el campo 'Fecha estimada de inicio ó Fecha estimada terminacion' no se encuentra en el formato 'día/mes/año' <br />";
+                    if (item.getFecha_estimada_inicio() != null && item.getFecha_estimada_terminacion() != null) {
+                        Date inicio = item.getFecha_estimada_inicio();
+                        Date fin = item.getFecha_estimada_terminacion();
+                        if (inicio.after(fin)) {
+                            validacion += "Para " + NombrePersona + ", La fecha estimada de inicio no debe ser mayor que la fecha estimada de terminación <br />";
                         }
                     }
 
-                    if ((item.getFecha_real_inicio() == null || item.getFecha_real_inicio().toString().isEmpty()) && (item.getFecha_real_terminacion() == null || item.getFecha_real_terminacion().toString().isEmpty())) {
-                    } else {
-                        try {
-                            Date inicio = sdf.parse(item.getFecha_real_inicio().toString());
-                            Date fin = sdf.parse(item.getFecha_real_terminacion().toString());
-                            if (inicio.after(fin)) {
-                                validacion += "Para " + NombrePersona + ", La fecha real de inicio no debe ser mayor que la fecha real de terminación <br />";
-                            }
-                        } catch (ParseException e) {
-                            validacion += "Para " + NombrePersona + ", El valor ingresado en el campo 'Fecha real de inicio ó Fecha real terminacion' no se encuentra en el formato 'día/mes/año' <br />";
-                        }
-                    }
-
-                    if (item.getFecha_real_inicio() != null && !item.getFecha_real_inicio().toString().isEmpty()) {
-                        try {
-                            sdf.parse(item.getFecha_real_inicio().toString());
-                        } catch (ParseException e) {
-                            validacion += "Para " + NombrePersona + ", El valor ingresado en el campo 'Fecha real de inicio' no se encuentra en el formato 'día/mes/año' <br />";
-                        }
-                    }
-
-                    if (item.getFecha_real_terminacion() != null && !item.getFecha_real_terminacion().toString().isEmpty()) {
-                        try {
-                            sdf.parse(item.getFecha_real_terminacion().toString());
-                        } catch (ParseException e) {
-                            validacion += "Para " + NombrePersona + ", El valor ingresado en el campo 'Fecha real de terminación' no se encuentra en el formato 'día/mes/año' <br />";
-                        }
-                    }
-
-                    if (item.getTiempo_invertido() != null && !item.getTiempo_invertido().toString().isEmpty()) {
-                        if (!item.getTiempo_invertido().toString().matches("[0-9]+(\\.[0-9][0-9]?)?")) {
-                            validacion += "Para " + NombrePersona + ", El valor ingresado en el campo 'Tiempo invertido' solo debe contener números' <br />";
+                    if (item.getFecha_real_inicio() != null && item.getFecha_real_terminacion() != null) {
+                        Date inicio = item.getFecha_real_inicio();
+                        Date fin = item.getFecha_real_terminacion();
+                        if (inicio.after(fin)) {
+                            validacion += "Para " + NombrePersona + ", La fecha real de inicio no debe ser mayor que la fecha real de terminación <br />";
                         }
                     }
                 } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
@@ -363,9 +296,9 @@ public class ActividadesNegocio {
         String error = "";
         try {
             int eliminacionAct_Esf = actividadesEmpleadosDao.eliminarActividadEmpleado(idActividad, null);
-            int eliminacionAct_Empl = actividadesEsfuerzosDao.eliminarActividadEsfuerzo(idActividad);
+            //int eliminacionAct_Empl = actividadesEsfuerzosDao.eliminarActividadEsfuerzo(idActividad); //REVISAR SI AL ELIMINAR UNA PERSONA SE ELMINA DE EMPLEADOS ESFUERZOS
             int eliminacion = actividadesDao.eliminarActividad(idActividad);
-            if (eliminacion == 0 && eliminacionAct_Esf == 0 && eliminacionAct_Empl == 0) {
+            if (eliminacion == 0 && eliminacionAct_Esf == 0 /*&& eliminacionAct_Empl == 0*/) {
                 error = "La actividad no pudo ser eliminada";
             }
         } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {

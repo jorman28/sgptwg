@@ -9,6 +9,7 @@ import com.twg.persistencia.beans.ActividadesEmpleadosBean;
 import com.twg.persistencia.sqls.ActividadesEmpleadosSql;
 import com.twg.utilidades.ConexionBaseDatos;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -71,13 +72,58 @@ public class ActividadesEmpleadosDao {
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;
         ps = con.prepareStatement(sql.insertarActividad_Empleado());
-        //ps.setInt(1, estado.getId());
         ps.setInt(1, actividad_empleado.getActividad());
         ps.setInt(2, actividad_empleado.getEmpleado());
+        ps.setDate(3, new Date(actividad_empleado.getFecha_estimada_inicio().getTime()));
+        ps.setDate(4, new Date(actividad_empleado.getFecha_estimada_terminacion().getTime()));
+        if (actividad_empleado.getFecha_real_inicio() != null) {
+            ps.setDate(5, new Date(actividad_empleado.getFecha_real_inicio().getTime()));
+        } else {
+            ps.setDate(5, null);
+        }
+
+        if (actividad_empleado.getFecha_real_terminacion() != null) {
+            ps.setDate(6, new Date(actividad_empleado.getFecha_real_terminacion().getTime()));
+        } else {
+            ps.setDate(6, null);
+        }
+
+        ps.setDouble(7, actividad_empleado.getTiempo_estimado());
+        ps.setDouble(8, actividad_empleado.getTiempo_invertido());
         int insercion = ps.executeUpdate();
         ps.close();
         con.close();
         return insercion;
+    }
+
+    public int actualizarActividadEmpleado(ActividadesEmpleadosBean actividad_empleado) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
+        Connection con;
+        con = new ConexionBaseDatos().obtenerConexion();
+        PreparedStatement ps;
+        ps = con.prepareStatement(sql.actualizarActividad_Empleado());
+        ps.setInt(7, actividad_empleado.getActividad());
+        ps.setInt(8, actividad_empleado.getEmpleado());
+        ps.setDate(1, new Date(actividad_empleado.getFecha_estimada_inicio().getTime()));
+        ps.setDate(2, new Date(actividad_empleado.getFecha_estimada_terminacion().getTime()));
+
+        if (actividad_empleado.getFecha_real_inicio() != null) {
+            ps.setDate(3, new Date(actividad_empleado.getFecha_real_inicio().getTime()));
+        } else {
+            ps.setDate(3, null);
+        }
+
+        if (actividad_empleado.getFecha_real_terminacion() != null) {
+            ps.setDate(4, new Date(actividad_empleado.getFecha_real_terminacion().getTime()));
+        } else {
+            ps.setDate(4, null);
+        }
+
+        ps.setDouble(5, actividad_empleado.getTiempo_estimado());
+        ps.setDouble(6, actividad_empleado.getTiempo_invertido());
+        int actualizacion = ps.executeUpdate();
+        ps.close();
+        con.close();
+        return actualizacion;
     }
 
     public int eliminarActividadEmpleado(Integer idActividad, Integer idEmpleado) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {

@@ -65,8 +65,11 @@ jQuery(function () {
 
         $("#empleadosActividad").html('No se han agregado empleados al proyecto');
         empleadosSeleccionados = 0;
+
+        $("#modalFechas").empty();
     });
 
+//Boton que esta incluido en el campo añadir participante
     $("#limpiarParticipante").click(function () {
         $("#participante").val('');
     });
@@ -113,7 +116,7 @@ function pintarPersonas(persona) {
             + '         <div class="row">'
             + '             <input type="hidden" id="idPersona' + persona.id + '" name="idPersonas" value="' + persona.id + '" />'
             + '             <div class="col-xs-10 col-sm-11 col-md-11 col-lg-11">'
-            + '                 ' + persona.nombre + ' - <a href="#" data-toggle="modal" onclick="mostrarModal(' + persona.id + ')"> Añadir fechas y tiempos <a/>'
+            + '                 ' + persona.nombre + ' - <a href="#" data-toggle="modal" onclick="mostrarModal(' + persona.id + ')"> Añadir fechas y tiempos </a>'
             + '             </div>'
             + '             <div class="col-xs-2 col-sm-1 col-md-1 col-lg-1">'
             + '                 <span class="glyphicon glyphicon-remove" style="cursor:pointer;" onclick="eliminarPersona(' + persona.id + ' , \'' + persona.cargo + '\');"></span>'
