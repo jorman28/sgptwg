@@ -51,11 +51,117 @@
                                         </div>
                                     </div>
                                     <div class="modal-footer">
-                                        <button class="btn btn-primary" type="submit" name="accion" id="guardar" value="guardar">Continuar</button>
+                                        <!--<button class="btn btn-primary" type="submit" name="accion" id="guardar" value="guardar">Continuar</button>-->
                                         <button type="button" class="btn btn-primary" data-dismiss="modal">Cancelar</button>
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                        <div id="modalFechas">
+                            <c:choose>
+                                <c:when test="${listaActividadesEmpleados  != null || listaActividadesEmpleados.size() != 0}">
+                                    <c:forEach items="${listaActividadesEmpleados}" var="actividadEmpleado">
+                                        <div id="modal_${actividadEmpleado.empleado}" class="modal fade bs-example-modal-lg">
+                                            <div class="modal-dialog modal-lg">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <span class="glyphicon glyphicon-calendar"></span> <b> Programar actividad para ${actividadEmpleado.strNombrePersona}</b>
+                                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div class="form-group">
+                                                            <div class="row">
+                                                                <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
+                                                                    <label for="fecha_estimada_inicio_${actividadEmpleado.empleado}">*Fecha estimada inicio:</label>
+                                                                    <input class="form-control" type="text" id="fecha_estimada_inicio_${actividadEmpleado.empleado}" name="fecha_estimada_inicio_${actividadEmpleado.empleado}" value="${actividadEmpleado.strFecha_estimada_inicio}" onchange="fecha_estimada_inicio_Change(${actividadEmpleado.empleado})" readonly="true"/>
+                                                                    <script type="text/javascript">
+                                                                        $(function () {
+                                                                            /*seleccionar la fecha estimada de inicio de una actividad para una persona*/
+                                                                            $("#fecha_estimada_inicio_${actividadEmpleado.empleado}")
+                                                                                    .datetimepicker({format: "dd/mm/yyyy", language: "es", weekStart: true, todayBtn: true, autoclose: true, todayHighlight: true, startView: 2, minView: 2})
+                                                                                    .on("changeDate", function () {
+                                                                                        $("#fecha_estimada_terminacion_${actividadEmpleado.empleado}").datetimepicker("setStartDate", $("#fecha_estimada_inicio_${actividadEmpleado.empleado}").val());
+                                                                                    });
+                                                                        });
+                                                                    </script>
+                                                                </div>
+                                                                <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
+                                                                    <label for="fecha_estimada_terminacion_${actividadEmpleado.empleado}">*Fecha estimada fin:</label>
+                                                                    <input class="form-control" type="text" id="fecha_estimada_terminacionn_${actividadEmpleado.empleado}" name="fecha_estimada_terminacionn_${actividadEmpleado.empleado}" value="${actividadEmpleado.strFecha_estimada_terminacion}" disabled = "disabled"/><!--se pone el id del type text fecha_estimada_terminacionn porque a pesar de estar disabled al tener el mismo nombre del hidden el dato no llegaba a controlador-->
+                                                                    <input type="hidden" id="fecha_estimada_terminacion_${actividadEmpleado.empleado}" name="fecha_estimada_terminacion_${actividadEmpleado.empleado}" value="${actividadEmpleado.strFecha_estimada_terminacion}" />
+                                                                    <script type="text/javascript">
+                                                                        $(function () {
+                                                                            /*Función que permite seleccionar la fecha estimada de terminacion de una actividad para una persona*/
+                                                                            $("#fecha_estimada_terminacion_${actividadEmpleado.empleado}")
+                                                                                    .datetimepicker({format: "dd/mm/yyyy", language: "es", weekStart: true, todayBtn: true, autoclose: true, todayHighlight: true, startView: 2, minView: 2})
+                                                                                    .on("changeDate", function () {
+                                                                                        $("#fecha_estimada_inicio_${actividadEmpleado.empleado}").datetimepicker("setEndDate", $("#fecha_estimada_terminacion_${actividadEmpleado.empleado}").val());
+                                                                                    });
+                                                                        });
+                                                                    </script>
+                                                                </div>
+                                                                <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
+                                                                    <label for="fecha_real_inicio_${actividadEmpleado.empleado}">Fecha real de inicio:</label>
+                                                                    <input class="form-control" type="text" id="fecha_real_inicio_${actividadEmpleado.empleado}" name="fecha_real_inicio_${actividadEmpleado.empleado}" value="${actividadEmpleado.strFecha_real_inicio}" readonly="true"/>
+                                                                    <script type="text/javascript">
+                                                                        /*Función que permite seleccionar la fecha real de inicio de una actividad para una persona*/
+                                                                        $(function () {
+                                                                            $("#fecha_real_inicio_${actividadEmpleado.empleado}")
+                                                                                    .datetimepicker({format: "dd/mm/yyyy", language: "es", weekStart: true, todayBtn: true, autoclose: true, todayHighlight: true, startView: 2, minView: 2})
+                                                                                    .on("changeDate", function () {
+                                                                                        $("#fecha_real_terminacion_${actividadEmpleado.empleado}").datetimepicker("setStartDate", $("#fecha_real_inicio_${actividadEmpleado.empleado}").val());
+                                                                                    });
+                                                                        });
+                                                                    </script>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
+                                                                    <label for="fecha_real_terminacion_${actividadEmpleado.empleado}">Fecha real de terminacion:</label>
+                                                                    <input class="form-control" type="text" id="fecha_real_terminacion_${actividadEmpleado.empleado}" name="fecha_real_terminacion_${actividadEmpleado.empleado}" value="${actividadEmpleado.strFecha_real_terminacion}" readonly="true"/>
+                                                                    <script type="text/javascript">
+                                                                        $(function () {
+                                                                            /*Función que permite seleccionar la fecha real de terminacion de una actividad para una persona*/
+                                                                            $("#fecha_real_terminacion_${actividadEmpleado.empleado}")
+                                                                                    .datetimepicker({format: "dd/mm/yyyy", language: "es", weekStart: true, todayBtn: true, autoclose: true, todayHighlight: true, startView: 2, minView: 2})
+                                                                                    .on("changeDate", function () {
+                                                                                        $("#fecha_real_inicio_${actividadEmpleado.empleado}").datetimepicker("setEndDate", $("#fecha_real_terminacion_${actividadEmpleado.empleado}").val());
+                                                                                    });
+                                                                        });
+                                                                    </script>
+                                                                </div>
+                                                                <c:choose>
+                                                                    <c:when test="${actividadEmpleado.strTiempo_estimado == null || actividadEmpleado.strTiempo_estimado == ''}">
+                                                                        <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
+                                                                            <label for="tiempo_estimado_${actividadEmpleado.empleado}">*Tiempo estimado (horas):</label>
+                                                                            <input class="form-control" type="number" min="0" step="0.1" pattern="[0-9]+([,\.][0-9]+)?" id="tiempo_estimado_${actividadEmpleado.empleado}" name="tiempo_estimado_${actividadEmpleado.empleado}" onchange="calcularFechaFin(this.value, ${actividadEmpleado.empleado});" value="${actividadEmpleado.strTiempo_estimado}" disabled = "disabled"/>
+                                                                            <input type="hidden" id="tiempo_estimado_${actividadEmpleado.empleado}" name="tiempo_estimado_${actividadEmpleado.empleado}" value="${actividadEmpleado.strTiempo_estimado}"/>
+                                                                        </div>
+                                                                    </c:when>
+                                                                    <c:otherwise>
+                                                                        <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
+                                                                            <label for="tiempo_estimado_${actividadEmpleado.empleado}">*Tiempo estimado (horas):</label>
+                                                                            <input class="form-control" type="number" min="0" step="0.1" pattern="[0-9]+([,\.][0-9]+)?" id="tiempo_estimado_${actividadEmpleado.empleado}" name="tiempo_estimado_${actividadEmpleado.empleado}" value="${actividadEmpleado.strTiempo_estimado}" onchange="calcularFechaFin(this.value, ${actividadEmpleado.empleado});"/>
+                                                                        </div>
+                                                                    </c:otherwise>
+                                                                </c:choose>
+                                                                <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
+                                                                    <label for="tiempo_invertido_${actividadEmpleado.empleado}">Tiempo invertido (horas):</label>
+                                                                    <input class="form-control" type="number" min="0" step="any" id="tiempo_invertido_${actividadEmpleado.empleado}" name="tiempo_invertido_${actividadEmpleado.empleado}" value="${actividadEmpleado.strTiempo_invertido}"/>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-primary" data-dismiss="modal"><i class="glyphicon glyphicon-ok"></i> Aceptar</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </c:forEach>
+                                </c:when>
+                            </c:choose>
+
                         </div>
                         <div class="panel panel-info">
                             <div class="panel-heading">INFORMACIÓN DE LA ACTIVIDAD</div>
@@ -116,50 +222,6 @@
                                             </c:forEach>
                                         </select>
                                     </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
-                                        <label for="fecha_estimada_inicio">*Fecha estimada inicio:</label>
-                                        <input class="form-control" type="text" id="fecha_estimada_inicio" name="fecha_estimada_inicio" value="${fecha_estimada_inicio}" readonly="true"/>
-                                    </div>
-
-                                    <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
-                                        <label for="fecha_estimada_terminacion">*Fecha estimada fin:</label>
-                                        <!--se pone el id del type text fecha_estimada_terminacionn porque a pesar de estar disabled al tener el mismo nombre del hidden el dato no llegaba a controlador-->
-                                        <input class="form-control" type="text" id="fecha_estimada_terminacionn" name="fecha_estimada_terminacionn" value="${fecha_estimada_terminacion}" disabled = "disabled"/>
-                                        <input type="hidden" id="fecha_estimada_terminacion" name="fecha_estimada_terminacion" value="${fecha_estimada_terminacion}"/>
-                                    </div> 
-
-                                    <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
-                                        <label for="fecha_real_inicio">Fecha real de inicio:</label>
-                                        <input class="form-control" type="text" id="fecha_real_inicio" name="fecha_real_inicio" value="${fecha_real_inicio}" readonly="true"/>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
-                                        <label for="fecha_real_terminacion">Fecha real de terminacion:</label>
-                                        <input class="form-control" type="text" id="fecha_real_terminacion" name="fecha_real_terminacion" value="${fecha_real_terminacion}" readonly="true"/>
-                                    </div>
-                                    <c:choose>
-                                        <c:when test="${fecha_estimada_terminacion == null || fecha_estimada_terminacion == ''}">
-                                            <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
-                                                <label for="tiempo_estimado">*Tiempo estimado (horas):</label>
-                                                <input class="form-control" type="number" min="0" step="0.1" pattern="[0-9]+([,\.][0-9]+)?" id="tiempo_estimado" name="tiempo_estimado" value="${tiempo_estimado}" onchange="calcularFechaFin(this.value);" disabled = "disabled"/>
-                                                <input type="hidden" id="tiempo_estimado" name="tiempo_estimado" value="${tiempo_estimado}"/>
-                                            </div>
-                                        </c:when>
-                                        <c:otherwise>
-                                            <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
-                                                <label for="tiempo_estimado">*Tiempo estimado (horas):</label>
-                                                <input class="form-control" type="number" min="0" step="0.1" pattern="[0-9]+([,\.][0-9]+)?" id="tiempo_estimado" name="tiempo_estimado" value="${tiempo_estimado}" onchange="calcularFechaFin(this.value);"/>
-                                            </div>
-                                        </c:otherwise>
-                                    </c:choose>
-
-                                    <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
-                                        <label for="tiempo_invertido">Tiempo invertido (horas):</label>
-                                        <input class="form-control" type="number" min="0" step="any" id="tiempo_invertido" name="tiempo_invertido" value="${tiempo_invertido}"/>
-                                    </div>
                                 </div> 
                                 <div class="row">
                                     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
@@ -203,7 +265,7 @@
                                                         <li class="list-group-item" id="persona${item.id}">
                                                             <div class="row">
                                                                 <input type="hidden" id="idPersona${item.id}" name="idPersonas" value="${item.id}" />
-                                                                <div class="col-xs-10 col-sm-11 col-md-11 col-lg-11"> ${item.nombre}</div>
+                                                                <div class="col-xs-10 col-sm-11 col-md-11 col-lg-11"> ${item.nombre} - <a href="#" data-toggle="modal" onclick="mostrarModal(${item.id});"> Añadir fechas y tiempos </a></div>
                                                                 <div class="col-xs-2 col-sm-1 col-md-1 col-lg-1">
                                                                     <span class="glyphicon glyphicon-remove" style="cursor:pointer;" onclick="eliminarPersona(${item.id}, '${item.nombreCargo}');"></span>
                                                                 </div>
@@ -231,7 +293,7 @@
                                                         <li class="list-group-item" id="persona${item.id}">
                                                             <div class="row">
                                                                 <input type="hidden" id="idPersona${item.id}" name="idPersonas" value="${item.id}" />
-                                                                <div class="col-xs-10 col-sm-11 col-md-11 col-lg-11"> ${item.nombre}</div>
+                                                                <div class="col-xs-10 col-sm-11 col-md-11 col-lg-11"> ${item.nombre} - <a href="#" data-toggle="modal" onclick="mostrarModal(${item.id});"> Añadir fechas y tiempos </a></div>
                                                                 <div class="col-xs-2 col-sm-1 col-md-1 col-lg-1">
                                                                     <span class="glyphicon glyphicon-remove" style="cursor:pointer;" onclick="eliminarPersona(${item.id}, '${item.nombreCargo}');"></span>
                                                                 </div>
@@ -249,7 +311,8 @@
                             </div>                          
                         </div>
                         <div class="row form-group" align="center">
-                            <button class="btn btn-default" type="button" name="accion" id="crear" value="Guardar" onclick="Validar()">Guardar</button>
+                        <!--<button class="btn btn-default" type="button" name="accion" id="crear" value="guardar" <%/*onclick="ValidarActividades()"*/%>>Guardar</button> Boton que funciona con el modal de warning-->
+                            <button class="btn btn-default" type="submit" name="accion" id="guardar" value="guardar" <%/*onclick="ValidarActividades()"*/%>>Guardar</button>
                             <c:choose>
                                 <c:when test="${id == null || id == ''}">
                                     <button class="btn btn-default" type="submit" name="accion" id="limpiarCreacion" value="limpiarCreacion">Limpiar</button>

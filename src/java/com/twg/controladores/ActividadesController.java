@@ -8,6 +8,7 @@ import com.twg.negocio.PersonasNegocio;
 import com.twg.negocio.ProyectosNegocio;
 import com.twg.negocio.VersionesNegocio;
 import com.twg.persistencia.beans.ActividadesBean;
+import com.twg.persistencia.beans.ActividadesEmpleadosBean;
 import com.twg.persistencia.beans.Paginas;
 import com.twg.persistencia.beans.Permisos;
 import com.twg.persistencia.beans.PersonasBean;
@@ -44,7 +45,7 @@ public class ActividadesController extends HttpServlet {
     private final PersonasNegocio personasNegocio = new PersonasNegocio();
     private final ComentariosNegocio comentariosNegocio = new ComentariosNegocio();
 
-    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+    private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
     private static final String INSERTAR_O_EDITAR = "jsp/gestionActividades.jsp";
     private static final String LISTAR_ACTIVIDADES = "jsp/actividades.jsp";
@@ -87,12 +88,71 @@ public class ActividadesController extends HttpServlet {
             String fechaStr = request.getParameter("fecha"); //consulta Er
             String responsable = request.getParameter("responsable"); //consulta y creacion Er en creación se recibe el objeto hidden
 
-            String fecha_estimada_inicioStr = request.getParameter("fecha_estimada_inicio");//creacion
-            String fecha_estimada_terminacionStr = request.getParameter("fecha_estimada_terminacion");//creacion
-            String fecha_real_inicioStr = request.getParameter("fecha_real_inicio");//creacion
-            String fecha_real_terminacionStr = request.getParameter("fecha_real_terminacion");//creacion
-            String tiempo_estimadoStr = request.getParameter("tiempo_estimado");//creacion
-            String tiempo_invertidoStr = request.getParameter("tiempo_invertido");//creacion
+            List<ActividadesEmpleadosBean> lstActividadesEmpleados = new ArrayList<>();
+            if (idPersonasActividad != null) {
+                for (String item : idPersonasActividad) {
+                    ActividadesEmpleadosBean actividadEmpleado = new ActividadesEmpleadosBean();
+
+                    String fecha_estimada_inicio = request.getParameter("fecha_estimada_inicio_" + item);
+                    String fecha_estimada_terminacion = request.getParameter("fecha_estimada_terminacion_" + item);
+                    String fecha_real_inicio = request.getParameter("fecha_real_inicio_" + item);
+                    String fecha_real_terminacion = request.getParameter("fecha_real_terminacion_" + item);
+                    String tiempo_estimado = request.getParameter("tiempo_estimado_" + item);
+                    String tiempo_invertido = request.getParameter("tiempo_invertido_" + item);
+
+                    actividadEmpleado.setEmpleado(Integer.valueOf(item));
+                    if (fecha_estimada_inicio != null && !fecha_estimada_inicio.isEmpty()) {
+                        actividadEmpleado.setFecha_estimada_inicio(sdf.parse(fecha_estimada_inicio));
+                    }
+                    if (fecha_estimada_terminacion != null && !fecha_estimada_terminacion.isEmpty()) {
+                        actividadEmpleado.setFecha_estimada_terminacion(sdf.parse(fecha_estimada_terminacion));
+                    }
+                    if (fecha_real_inicio != null && !fecha_real_inicio.isEmpty()) {
+                        actividadEmpleado.setFecha_real_inicio(sdf.parse(fecha_real_inicio));
+                    }
+                    if (fecha_real_terminacion != null && !fecha_real_terminacion.isEmpty()) {
+                        actividadEmpleado.setFecha_real_terminacion(sdf.parse(fecha_real_terminacion));
+                    }
+                    if (tiempo_estimado != null && !tiempo_estimado.isEmpty()) {
+                        actividadEmpleado.setTiempo_estimado(Double.valueOf(tiempo_estimado));
+                    } else {
+                        actividadEmpleado.setTiempo_estimado(0.0);
+                    }
+                    if (tiempo_invertido != null && !tiempo_invertido.isEmpty()) {
+                        actividadEmpleado.setTiempo_invertido(Double.valueOf(tiempo_invertido));
+                    } else {
+                        actividadEmpleado.setTiempo_invertido(0.0);
+                    }
+                    
+                    //Atributos String
+                    actividadEmpleado.setStrEmpleado(item);
+                    if (fecha_estimada_inicio != null && !fecha_estimada_inicio.isEmpty()) {
+                        actividadEmpleado.setStrFecha_estimada_inicio(fecha_estimada_inicio);
+                    }
+                    if (fecha_estimada_terminacion != null && !fecha_estimada_terminacion.isEmpty()) {
+                        actividadEmpleado.setStrFecha_estimada_terminacion(fecha_estimada_terminacion);
+                    }
+                    if (fecha_real_inicio != null && !fecha_real_inicio.isEmpty()) {
+                        actividadEmpleado.setStrFecha_real_inicio(fecha_real_inicio);
+                    }
+                    if (fecha_real_terminacion != null && !fecha_real_terminacion.isEmpty()) {
+                        actividadEmpleado.setStrFecha_real_terminacion(fecha_real_terminacion);
+                    }
+                    if (tiempo_estimado != null && !tiempo_estimado.isEmpty()) {
+                        actividadEmpleado.setStrTiempo_estimado(tiempo_estimado);
+                    } else {
+                        actividadEmpleado.setStrTiempo_estimado("0");
+                    }
+                    if (tiempo_invertido != null && !tiempo_invertido.isEmpty()) {
+                        actividadEmpleado.setStrTiempo_invertido(tiempo_invertido);
+                    } else {
+                        actividadEmpleado.setStrTiempo_invertido("0");
+                    }
+                    actividadEmpleado.setStrNombrePersona(personasNegocio.consultarPersona(item, null, null).getNombre());
+                    lstActividadesEmpleados.add(actividadEmpleado);
+                }
+            }
+
             String busqueda = request.getParameter("busqueda");
 
             Integer id = null;
@@ -161,12 +221,12 @@ public class ActividadesController extends HttpServlet {
                         version = actividad.getVersion();
                         request.setAttribute("version", version.toString());
                         request.setAttribute("descripcion", actividad.getDescripcion());
-                        request.setAttribute("fecha_estimada_inicio", actividad.getFecha_estimada_inicio() != null ? sdf.format(actividad.getFecha_estimada_inicio()) : "");
-                        request.setAttribute("fecha_estimada_terminacion", actividad.getFecha_estimada_terminacion() != null ? sdf.format(actividad.getFecha_estimada_terminacion()) : "");
-                        request.setAttribute("fecha_real_inicio", actividad.getFecha_real_inicio() != null ? sdf.format(actividad.getFecha_real_inicio()) : "");
-                        request.setAttribute("fecha_real_terminacion", actividad.getFecha_real_terminacion() != null ? sdf.format(actividad.getFecha_real_terminacion()) : "");
-                        request.setAttribute("tiempo_estimado", actividad.getTiempo_estimado());
-                        request.setAttribute("tiempo_invertido", actividad.getTiempo_invertido());
+//                        request.setAttribute("fecha_estimada_inicio", actividad.getFecha_estimada_inicio() != null ? sdf.format(actividad.getFecha_estimada_inicio()) : "");
+//                        request.setAttribute("fecha_estimada_terminacion", actividad.getFecha_estimada_terminacion() != null ? sdf.format(actividad.getFecha_estimada_terminacion()) : "");
+//                        request.setAttribute("fecha_real_inicio", actividad.getFecha_real_inicio() != null ? sdf.format(actividad.getFecha_real_inicio()) : "");
+//                        request.setAttribute("fecha_real_terminacion", actividad.getFecha_real_terminacion() != null ? sdf.format(actividad.getFecha_real_terminacion()) : "");
+//                        request.setAttribute("tiempo_estimado", actividad.getTiempo_estimado());
+//                        request.setAttribute("tiempo_invertido", actividad.getTiempo_invertido());
                         estadoStr = actividad.getEstado().toString();
                         request.setAttribute("estado", Integer.parseInt(estadoStr));
                         request.setAttribute("listaComentarios", comentariosNegocio.listaComentarios(comentariosNegocio.TIPO_ACTIVIDAD, actividad.getId()));
@@ -198,19 +258,19 @@ public class ActividadesController extends HttpServlet {
                         version = actividad.getVersion();
                         request.setAttribute("version", version.toString());
                         request.setAttribute("descripcion", actividad.getDescripcion());
-                        request.setAttribute("fecha_estimada_inicio", actividad.getFecha_estimada_inicio() != null ? sdf.format(actividad.getFecha_estimada_inicio()) : "");
-                        request.setAttribute("fecha_estimada_terminacion", actividad.getFecha_estimada_terminacion() != null ? sdf.format(actividad.getFecha_estimada_terminacion()) : "");
-                        request.setAttribute("fecha_real_inicio", actividad.getFecha_real_inicio() != null ? sdf.format(actividad.getFecha_real_inicio()) : "");
-                        request.setAttribute("fecha_real_terminacion", actividad.getFecha_real_terminacion() != null ? sdf.format(actividad.getFecha_real_terminacion()) : "");
-                        request.setAttribute("tiempo_estimado", actividad.getTiempo_estimado());
-                        request.setAttribute("tiempo_invertido", actividad.getTiempo_invertido());
+//                        request.setAttribute("fecha_estimada_inicio", actividad.getFecha_estimada_inicio() != null ? sdf.format(actividad.getFecha_estimada_inicio()) : "");
+//                        request.setAttribute("fecha_estimada_terminacion", actividad.getFecha_estimada_terminacion() != null ? sdf.format(actividad.getFecha_estimada_terminacion()) : "");
+//                        request.setAttribute("fecha_real_inicio", actividad.getFecha_real_inicio() != null ? sdf.format(actividad.getFecha_real_inicio()) : "");
+//                        request.setAttribute("fecha_real_terminacion", actividad.getFecha_real_terminacion() != null ? sdf.format(actividad.getFecha_real_terminacion()) : "");
+//                        request.setAttribute("tiempo_estimado", actividad.getTiempo_estimado());
+//                        request.setAttribute("tiempo_invertido", actividad.getTiempo_invertido());
                         estadoStr = actividad.getEstado().toString();
                         request.setAttribute("estado", Integer.parseInt(estadoStr));
                     }
                     redireccion = INSERTAR_O_EDITAR;
                     break;
                 case "guardar":
-                    Map<String, Object> result = actividadesNegocio.guardarActividad(idStr, proyectoStr, versionStr, idPersonasActividad, descripcion, fecha_estimada_inicioStr, fecha_estimada_terminacionStr, fecha_real_inicioStr, fecha_real_terminacionStr, tiempo_estimadoStr, tiempo_invertidoStr, estadoStr);
+                    Map<String, Object> result = actividadesNegocio.guardarActividad(idStr, proyectoStr, versionStr, descripcion, estadoStr, idPersonasActividad, lstActividadesEmpleados);
                     if (result.get("mensajeError") != null) {
                         mensajeError = (String) result.get("mensajeError");
                         request.setAttribute("mensajeError", mensajeError);
@@ -238,14 +298,14 @@ public class ActividadesController extends HttpServlet {
                             request.setAttribute("clientesActividad", null);
                             request.setAttribute("empleadosActividad", null);
                         }
-                        enviarDatosCreacionEdicion(request, idStr, proyectoStr, versionStr, descripcion, fecha_estimada_inicioStr, fecha_estimada_terminacionStr, fecha_real_inicioStr, fecha_real_terminacionStr, tiempo_estimadoStr, tiempo_invertidoStr, estadoStr);
+                        enviarDatosCreacionEdicion(request, idStr, proyectoStr, versionStr, descripcion, estadoStr, lstActividadesEmpleados);
                         accion = "gestionarActividad";
                         redireccion = INSERTAR_O_EDITAR;
                         break;
                     }
                     if (result.get("mensajeExito") != null) {
                         mensajeExito = (String) result.get("mensajeExito");
-                        enviarDatosCreacionEdicion(request, null, null, null, null, null, null, null, null, null, null, null);
+                        enviarDatosCreacionEdicion(request, null, null, null, null, null, null);
                     }
                     break;
                 case "eliminar":
@@ -385,17 +445,12 @@ public class ActividadesController extends HttpServlet {
      * @param tiempo_invertido
      * @param estado
      */
-    private void enviarDatosCreacionEdicion(HttpServletRequest request, String id, String proyecto, String version, String descripcion, String fecha_estimada_inicio, String fecha_estimada_terminacion, String fecha_real_inicio, String fecha_real_terminacion, String tiempo_estimado, String tiempo_invertido, String estado) {
+    private void enviarDatosCreacionEdicion(HttpServletRequest request, String id, String proyecto, String version, String descripcion, String estado, List<ActividadesEmpleadosBean> lstActividadesEmpleados) {
         request.setAttribute("id", id);
         request.setAttribute("proyecto", proyecto);
         request.setAttribute("version", version);
         request.setAttribute("descripcion", descripcion);
-        request.setAttribute("fecha_estimada_inicio", fecha_estimada_inicio);
-        request.setAttribute("fecha_estimada_terminacion", fecha_estimada_terminacion);
-        request.setAttribute("fecha_real_inicio", fecha_real_inicio);
-        request.setAttribute("fecha_real_terminacion", fecha_real_terminacion);
-        request.setAttribute("tiempo_estimado", tiempo_estimado);
-        request.setAttribute("tiempo_invertido", tiempo_invertido);
+        request.setAttribute("listaActividadesEmpleados", lstActividadesEmpleados);
         request.setAttribute("estado", estado);
     }
 
@@ -440,9 +495,9 @@ public class ActividadesController extends HttpServlet {
                 out.println("<tr>");
                 out.println("<td>" + actividad.getDescripcion() + "</td>");
                 out.println("<td>" + actividad.getNombreV() + "</td>");
-                out.println("<td>" + actividad.getFecha_estimada_inicio() + "</td>");
-                out.println("<td>" + actividad.getFecha_estimada_terminacion() + "</td>");
-                out.println("<td>" + actividad.getTiempo_estimado() + "</td>");
+//                out.println("<td>" + actividad.getFecha_estimada_inicio() + "</td>");
+//                out.println("<td>" + actividad.getFecha_estimada_terminacion() + "</td>");
+//                out.println("<td>" + actividad.getTiempo_estimado() + "</td>");
                 out.println("<td>" + actividad.getNombreE() + "</td>");
                 out.println("<td>");
                 if (permisos != null && !permisos.isEmpty() && permisos.contains(Permisos.GUARDAR.getNombre())) {
