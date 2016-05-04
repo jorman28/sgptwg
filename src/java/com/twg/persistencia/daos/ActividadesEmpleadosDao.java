@@ -76,20 +76,20 @@ public class ActividadesEmpleadosDao {
         ps.setInt(2, actividad_empleado.getEmpleado());
         ps.setDate(3, new Date(actividad_empleado.getFecha_estimada_inicio().getTime()));
         ps.setDate(4, new Date(actividad_empleado.getFecha_estimada_terminacion().getTime()));
+        ps.setDouble(5, actividad_empleado.getTiempo_estimado());
+        ps.setDouble(6, actividad_empleado.getTiempo_invertido());
         if (actividad_empleado.getFecha_real_inicio() != null) {
-            ps.setDate(5, new Date(actividad_empleado.getFecha_real_inicio().getTime()));
+            ps.setDate(7, new Date(actividad_empleado.getFecha_real_inicio().getTime()));
         } else {
-            ps.setDate(5, null);
+            ps.setDate(7, null);
         }
 
         if (actividad_empleado.getFecha_real_terminacion() != null) {
-            ps.setDate(6, new Date(actividad_empleado.getFecha_real_terminacion().getTime()));
+            ps.setDate(8, new Date(actividad_empleado.getFecha_real_terminacion().getTime()));
         } else {
-            ps.setDate(6, null);
+            ps.setDate(8, null);
         }
-
-        ps.setDouble(7, actividad_empleado.getTiempo_estimado());
-        ps.setDouble(8, actividad_empleado.getTiempo_invertido());
+        
         int insercion = ps.executeUpdate();
         ps.close();
         con.close();
