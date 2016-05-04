@@ -10,6 +10,18 @@ import java.util.Date;
  */
 public class AuditoriasSql {
 
+    /**
+     * Método encargado de consultar las auditorias, aplicando diferentes filtros
+     * según los parámetros que lleguen distintos de nulos.
+     * 
+     * @param idAuditoria
+     * @param clasificacion
+     * @param accion
+     * @param contiene
+     * @param fecha
+     * @param idPersona
+     * @return 
+     */
     public String consultarAuditorias(Integer idAuditoria, String clasificacion, String accion, String contiene, Date fecha, Integer idPersona) {
         String sql = "SELECT \n"
                 + "    aud.id,\n"
@@ -28,14 +40,14 @@ public class AuditoriasSql {
         if (idAuditoria != null && idAuditoria.intValue() != 0) {
             sql += "AND aud.id = " + idAuditoria + " ";
         }
-        if (clasificacion != null && !clasificacion.isEmpty()) {
+        if (clasificacion != null && !clasificacion.isEmpty() && !clasificacion.equals("0")) {
             sql += "AND aud.clasificacion = '" + clasificacion + "' ";
         }
-        if (accion != null && !accion.isEmpty()) {
+        if (accion != null && !accion.isEmpty() && !accion.equals("0")) {
             sql += "AND aud.accion = '" + accion + "' ";
         }
         if (contiene != null && !contiene.isEmpty()) {
-            sql += "AND aud.contine LIKE '%" + contiene + "%' ";
+            sql += "AND aud.descripcion LIKE '%" + contiene + "%' ";
         }
         if (fecha != null) {
             sql += "AND aud.fecha_creacion = ? ";
@@ -46,10 +58,19 @@ public class AuditoriasSql {
         return sql;
     }
 
+    /**
+     * Método encargado de retornar el SQL para insertar una nueva auditoria.
+     * @return 
+     */
     public String insertarAuditoria() {
         return "INSERT INTO auditorias (id_persona, fecha_creacion, clasificacion, accion, descripcion) VALUES (?,?,?,?,?)";
     }
 
+    /**
+     * Método encargado de retornar el SQL para eliminar lógicamente una auditoria, 
+     * actualizando la fecha de eliminación con la fecha actual.
+     * @return 
+     */
     public String eliminarAuditoria() {
         return "UPDATE auditorias SET fecha_eliminacion = now() WHERE id = ? AND fecha_eliminacion IS NULL";
     }

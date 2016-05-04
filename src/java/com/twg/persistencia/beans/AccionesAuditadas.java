@@ -8,9 +8,9 @@ package com.twg.persistencia.beans;
  */
 public enum AccionesAuditadas {
 
-    CREACION("CREACIÓN"),
-    EDICION("EDICIÓN"),
-    ELIMINACION("ELIMINACIÓN");
+    CREACION("CREACION"),
+    EDICION("EDICION"),
+    ELIMINACION("ELIMINACION");
 
     /**
      * Declaración del atributo Nombre para la definición de una acción.

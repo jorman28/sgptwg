@@ -56,6 +56,10 @@
         <servlet-name>ArchivosController</servlet-name>
         <servlet-class>com.twg.controladores.ArchivosController</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>AuditoriasController</servlet-name>
+        <servlet-class>com.twg.controladores.AuditoriasController</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>UsuariosController</servlet-name>
         <url-pattern>/UsuariosController</url-pattern>
@@ -103,6 +107,10 @@
     <servlet-mapping>
         <servlet-name>ArchivosController</servlet-name>
         <url-pattern>/ArchivosController</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AuditoriasController</servlet-name>
+        <url-pattern>/AuditoriasController</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
