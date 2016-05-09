@@ -242,7 +242,7 @@ function Validar() {
                         empleados += "</ul>";
                     }
 
-                    html += clientes + empleados + '<b>¿Desea Continuar Con El Registro?</b>';
+                    html += clientes + empleados + '<b>¿Desea continuar con el registro?</b>';
                     $("#contenidoWarning").html(html);
                     $("#modalWarning").modal("show");
                 } else {
