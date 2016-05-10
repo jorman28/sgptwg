@@ -1,4 +1,4 @@
-$(document).ready(function() {
+$(document).ready(function () {
     consultarDatos();
 });
 
@@ -9,7 +9,7 @@ jQuery(function () {
             return false;
         }
     });
-    
+
     $("#celular").keypress(function (e) {
         if (e.which !== 8 && e.which !== 0 && (e.which < 48 || e.which > 57)) {
             //alert("Digits Only");
@@ -23,7 +23,10 @@ function editarPersona(idPersona) {
     $('#editar').click();
 }
 
-function consultarDatos() {
+function consultarDatos(pagina) {
+    if (pagina === undefined) {
+        pagina = 1;
+    }
     var tipoDocumento = $('#tipoDocumento').val() !== undefined && $('#tipoDocumento').val() !== "0" ? $('#tipoDocumento').val() : null;
     var documento = $('#documento').val() !== undefined && $('#documento').val() !== "" ? $('#documento').val() : null;
     var nombres = $('#nombres').val() !== undefined && $('#nombres').val() !== "" ? $('#nombres').val() : null;
@@ -36,7 +39,7 @@ function consultarDatos() {
         type: "POST",
         url: "PersonasController",
         dataType: "html",
-        data: {accion: "consultar", documento: documento, tipoDocumento: tipoDocumento, nombres: nombres, apellidos: apellidos, correo: correo, cargo: cargo, usuario: usuario, perfil: perfil},
+        data: {accion: "consultar", documento: documento, tipoDocumento: tipoDocumento, nombres: nombres, apellidos: apellidos, correo: correo, cargo: cargo, usuario: usuario, perfil: perfil, pagina: pagina},
         success: function (data) {
             if (data !== undefined) {
                 $('#tablaPersonas').html(data);

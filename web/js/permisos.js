@@ -1,4 +1,4 @@
-$(document).ready(function() {
+$(document).ready(function () {
     llenarTabla();
 });
 
@@ -14,30 +14,33 @@ function consultarPerfil(idPerfil) {
         url: "PermisosController",
         dataType: "json",
         data: {idPerfil: idPerfil, accion: "editar"},
-        success: function(data) {
+        success: function (data) {
             if (data !== undefined) {
                 $("#idPerfil").val(data.idPerfil !== undefined ? data.idPerfil : "");
                 $("#nombrePerfil").val(data.nombrePerfil !== undefined ? data.nombrePerfil : "");
             }
         },
-        error: function() {
+        error: function () {
         }
     });
 }
 
-function llenarTabla() {
+function llenarTabla(pagina) {
+    if (pagina === undefined) {
+        pagina = 1;
+    }
     var nombrePerfil = $('#nombrePerfil').val() !== undefined && $('#nombrePerfil').val() !== "" ? $('#nombrePerfil').val() : null;
     $.ajax({
         type: "POST",
         url: "PermisosController",
         dataType: "html",
-        data: {accion: "consultar", nombrePerfil: nombrePerfil},
-        success: function(data) {
+        data: {accion: "consultar", nombrePerfil: nombrePerfil, pagina: pagina},
+        success: function (data) {
             if (data !== undefined) {
                 $('#tablaPerfiles').html(data);
             }
         },
-        error: function() {
+        error: function () {
         }
     });
 }
@@ -48,7 +51,7 @@ function obtenerPermisos(idPerfil) {
         url: "PermisosController",
         dataType: "json",
         data: {accion: "consultarPermisos", idPerfil: idPerfil},
-        success: function(data) {
+        success: function (data) {
             if (data !== undefined) {
                 $("#permiso_1").prop("checked", data.permiso_1 !== undefined ? data.permiso_1 : false);
                 $("#permiso_1_1").prop("checked", data.permiso_40 !== undefined ? data.permiso_40 : false);
@@ -98,7 +101,7 @@ function obtenerPermisos(idPerfil) {
                 $("#modalPermisos").modal('show');
             }
         },
-        error: function() {
+        error: function () {
         }
     });
 }

@@ -94,14 +94,13 @@
                                     </div>
                                 </div>
                                 <div class="row" align="center">
+                                    <button class="btn btn-default" type="button" name="accion" id="crear" value="crear" onclick="nuevoArchivo();">Nuevo</button>
                                     <button class="btn btn-default" type="button" name="accion" id="consultar" value="consultar" onclick="llenarTabla();">Consultar</button>
+                                    <button class="btn btn-default" type="button" name="accion" id="consultar" value="consultar" onclick="limpiar();">Limpiar</button>
                                 </div>
                             </div>                            
                         </div>
                         <div id="tablaArchivos"></div>
-                        <div class="row form-group" align="center">
-                            <button class="btn btn-default" type="button" name="accion" id="crear" value="crear" onclick="nuevoArchivo();">Nuevo</button>
-                        </div>
                     </form>
                 </div>
             </div>
