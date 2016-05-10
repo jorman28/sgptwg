@@ -25,8 +25,9 @@
                             <div class="panel-body">
                                 <div class="row">
                                     <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                        <input type="hidden" id="id_personaH" name="id_personaH" value="${id_personaH}" />
                                         <label for="id_persona">Persona:</label>
-                                        <input class="form-control" type="text" id="id_persona" name="id_persona" value="${id_persona}" maxlength="50"/>                                       
+                                        <input class="form-control" type="search" id="id_persona" name="id_persona" value="${id_persona}" maxlength="50"/>                                       
                                     </div>
 
                                     <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">

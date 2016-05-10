@@ -96,6 +96,7 @@ public class PersonasNegocio {
                                 usuario.setClave(usuarios.get(0).getClave());
                             }
                         }
+                        usuario.setFechaEliminacion(null);
                         guardado = usuariosDao.actualizarUsuario(usuario);
                     } else {
                         usuario.setIdPersona(personaConsultada.getId());
@@ -125,6 +126,14 @@ public class PersonasNegocio {
             String correo, String direccion, String cargo, String usuario, String perfil, String clave, String clave2) {
         String error = "";
 
+        try {
+            Integer persona = personasDao.consultarIdPersona(documento, tipoDocumento);
+            if(persona!=null){
+                error += "Ya existe una persona con documento: "+documento+" y tipo de documento: "+tipoDocumento; 
+            }
+        } catch (Exception e) {
+        }
+        
         //Obligatorios
         if (tipoDocumento == null || tipoDocumento.trim().isEmpty() || tipoDocumento.trim().equals("0")) {
             error += "El campo 'Tipo de documento' es obligatorio <br />";

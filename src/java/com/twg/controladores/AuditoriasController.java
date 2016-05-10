@@ -2,6 +2,7 @@ package com.twg.controladores;
 
 import com.twg.negocio.AuditoriasNegocio;
 import com.twg.negocio.PerfilesNegocio;
+import com.twg.negocio.PersonasNegocio;
 import com.twg.persistencia.beans.AuditoriasBean;
 import com.twg.persistencia.beans.Paginas;
 import com.twg.persistencia.beans.Permisos;
@@ -15,6 +16,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.json.simple.JSONArray;
 
 /**
  * Esta clase define métodos para controlar las peticiones y respuestas 
@@ -84,6 +86,12 @@ public class AuditoriasController extends HttpServlet {
                     mensajeExito = "La auditoría se elminó correctamente";
                     enviarDatos(request, null, null, null, null, null, null);
                 }
+                break;
+            case "consultarPersonas":
+                String strNombrePerson = request.getParameter("nombrePerson");
+                PersonasNegocio personasNegocio = new PersonasNegocio();
+                JSONArray arrayPersonas = personasNegocio.completarPersonas(strNombrePerson);
+                response.getWriter().write(arrayPersonas.toString());
                 break;
             default:
                 enviarDatos(request, null, null, null,null,null,null);

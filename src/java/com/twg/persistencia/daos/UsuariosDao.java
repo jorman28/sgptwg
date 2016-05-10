@@ -136,6 +136,7 @@ public class UsuariosDao {
             usuario.setPerfil(rs.getInt("id_perfil"));
             usuario.setDescripcionPerfil(rs.getString("descripcion_perfil"));
             usuario.setActivo(rs.getString("activo"));
+            usuario.setFechaEliminacion(rs.getString("fecha_eliminacion"));
 
             listaUsuarios.add(usuario);
         }
@@ -191,7 +192,8 @@ public class UsuariosDao {
         ps.setString(2, usuario.getClave());
         ps.setInt(3, usuario.getPerfil());
         ps.setString(4, usuario.getActivo());
-        ps.setInt(5, usuario.getIdPersona());
+        ps.setString(5, usuario.getFechaEliminacion());
+        ps.setInt(6, usuario.getIdPersona());
         int actualizacion = ps.executeUpdate();
         ps.close();
         con.close();

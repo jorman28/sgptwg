@@ -81,7 +81,14 @@ public class UsuariosController extends HttpServlet {
         }
 
         List<String> permisosPagina = PerfilesNegocio.permisosPorPagina(request, Paginas.USUARIOS);
-
+        
+        String personaSesion = "";
+        try {
+            personaSesion = String.valueOf(request.getSession().getAttribute("personaSesion"));
+        } catch (Exception e) {
+            System.err.print("Error obteniendo la persona en sesion");
+        }
+        
         switch (accion) {
             case "consultar":
                 cargarTabla(response, permisosPagina, idPersona, nombreUsuario, perfil, activo, documento, tipoDocumento, pagina);
@@ -91,7 +98,7 @@ public class UsuariosController extends HttpServlet {
                 response.getWriter().write(object.toString());
                 break;
             case "guardar":
-                Map<String, Object> result = usuariosNegocio.crearUsuario(idPersona, nombreUsuario, clave, clave2, perfil, activo, documento, tipoDocumento);
+                Map<String, Object> result = usuariosNegocio.crearUsuario(idPersona, nombreUsuario, clave, clave2, perfil, activo, documento, tipoDocumento, personaSesion);
                 if (result.get("mensajeError") != null) {
                     mensajeError = (String) result.get("mensajeError");
                     enviarDatos(request, idPersona, nombreUsuario, perfil, activo, (String) result.get("documento"), (String) result.get("tipoDocumento"));
@@ -102,7 +109,7 @@ public class UsuariosController extends HttpServlet {
                 }
                 break;
             case "eliminar":
-                result = usuariosNegocio.eliminarUsuario(idPersona);
+                result = usuariosNegocio.eliminarUsuario(idPersona, personaSesion);
                 if (result.get("mensajeError") != null) {
                     mensajeError = (String) result.get("mensajeError");
                     enviarDatos(request, idPersona, nombreUsuario, perfil, activo, documento, tipoDocumento);

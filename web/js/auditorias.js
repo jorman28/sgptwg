@@ -1,14 +1,44 @@
 $(document).ready(function () {
     $('#fecha_creacion').datetimepicker({
-        format: 'dd/mm/yyyy', 
-        language: 'es', 
-        weekStart: true, 
-        todayBtn: true, 
-        autoclose: true, 
-        todayHighlight: true, 
-        startView: 2, 
+        format: 'dd/mm/yyyy',
+        language: 'es',
+        weekStart: true,
+        todayBtn: true,
+        autoclose: true,
+        todayHighlight: true,
+        startView: 2,
         minView: 2});
     llenarTablaAuditorias();
+});
+
+var personas = {};
+jQuery(function () {
+    $("#id_persona")
+            .typeahead({
+                onSelect: function (item) {
+                    var persona = personas[item.value];
+                    $('#id_persona').val(persona.id);
+                },
+                ajax: {
+                    url: "AuditoriasController",
+                    timeout: 500,
+                    displayField: "nombre",
+                    valueField: 'id',
+                    triggerLength: 1,
+                    items: 10,
+                    method: "POST",
+                    preDispatch: function (nombrePerson) {
+                        return {nombrePerson: nombrePerson, accion: "consultarPersonas"};
+                    },
+                    preProcess: function (data) {
+                        for (var i = 0; i < data.length; i++) {
+                            var persona = data[i];
+                            personas[persona.id] = persona;
+                        }
+                        return data;
+                    }
+                }
+            });
 });
 
 function llenarTablaAuditorias() {

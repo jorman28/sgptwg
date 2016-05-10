@@ -1,6 +1,8 @@
 package com.twg.negocio;
 
 import com.twg.controladores.UsuariosController;
+import com.twg.persistencia.beans.AccionesAuditadas;
+import com.twg.persistencia.beans.ClasificacionAuditorias;
 import com.twg.persistencia.beans.UsuariosBean;
 import com.twg.persistencia.daos.PersonasDao;
 import com.twg.persistencia.daos.UsuariosDao;
@@ -23,6 +25,7 @@ public class UsuariosNegocio {
 
     private final UsuariosDao usuariosDao = new UsuariosDao();
     private final PersonasDao personasDao = new PersonasDao();
+    private final AuditoriasNegocio auditoria = new AuditoriasNegocio();
     private final PerfilesNegocio perfilesNegocio = new PerfilesNegocio();
 
     /**
@@ -111,7 +114,7 @@ public class UsuariosNegocio {
      * @param tipoDocumento
      * @return
      */
-    public Map<String, Object> crearUsuario(Integer idPersona, String nombreUsuario, String clave, String clave2, Integer perfil, String activo, String documento, String tipoDocumento) {
+    public Map<String, Object> crearUsuario(Integer idPersona, String nombreUsuario, String clave, String clave2, Integer perfil, String activo, String documento, String tipoDocumento, String personaSesionStr) {
         UsuariosBean usuario = new UsuariosBean();
         usuario.setUsuario(nombreUsuario);
         usuario.setClave(clave);
@@ -120,40 +123,83 @@ public class UsuariosNegocio {
         usuario.setDocumento(documento);
         usuario.setTipoDocumento(tipoDocumento);
         usuario.setIdPersona(idPersona);
+        int personaSesion = 0;
+        try {
+            personaSesion = Integer.parseInt(personaSesionStr);
+        } catch (Exception e) {
+        }
 
         String mensajeExito = "";
         String mensajeError = validarDatos(usuario, clave2);
         if (mensajeError.isEmpty()) {
             try {
+                List<UsuariosBean> usuarios = new ArrayList<>();
                 if (idPersona != null) {
                     if (usuario.getClave() == null || usuario.getClave().isEmpty()) {
-                        List<UsuariosBean> usuarios = usuariosDao.consultarUsuarios(idPersona);
+                        usuarios = usuariosDao.consultarUsuarios(idPersona);
                         if (usuarios != null && !usuarios.isEmpty()) {
                             usuario.setClave(usuarios.get(0).getClave());
                         }
                     }
+                    usuario.setFechaEliminacion(null);
                     int actualizacion = usuariosDao.actualizarUsuario(usuario);
                     if (actualizacion > 0) {
                         mensajeExito = "El usuario ha sido guardado con éxito";
+                        //AUDITORIA
+                        try {
+                            List<UsuariosBean> usuarioActual = usuariosDao.consultarUsuarios(idPersona);
+                            String descripcioAudit = "Se actualizó la información del usuario asociado a la persona con documento "+usuarios.get(0).getDocumento()+": Antes ("+usuarios.get(0).getUsuario()+", "+usuarios.get(0).getDescripcionPerfil()+", "+(usuarios.get(0).getActivo().equals("T")?"Activo":"Inactivo")+")";
+                            descripcioAudit += " Después ("+usuario.getUsuario()+", "+usuarioActual.get(0).getDescripcionPerfil()+", "+(usuario.getActivo().equals("T")?"Activo":"Inactivo")+")";
+                            String guardarAuditoria = auditoria.guardarAuditoria(personaSesion, ClasificacionAuditorias.USUARIO.getNombre(), AccionesAuditadas.EDICION.getNombre(), descripcioAudit);
+                        } catch (Exception e) {
+                            Logger.getLogger(UsuariosNegocio.class.getName()).log(Level.SEVERE, null, e);
+                        }
                     } else {
                         mensajeError = "El usuario no pudo ser guardado";
                     }
                 } else {
                     idPersona = personasDao.consultarIdPersona(documento, tipoDocumento);
                     if (idPersona != null) {
+                        usuario.setIdPersona(idPersona);
                         List<UsuariosBean> existente = usuariosDao.consultarUsuarios(idPersona);
                         if (existente != null && !existente.isEmpty()) {
-                            mensajeError = "La persona seleccionada ya tiene un usuario asignado";
+                            if(existente.get(0).getFechaEliminacion() != null){
+                                usuario.setFechaEliminacion(null);
+                                int actualizarUsuario = usuariosDao.actualizarUsuario(usuario);
+                                if (actualizarUsuario > 0) {
+                                    mensajeExito = "El usuario ha sido guardado con éxito";
+                                    //AUDITORIA
+                                    try {
+                                        usuarios = usuariosDao.consultarUsuarios(idPersona);
+                                        String descripcioAudit = "Se creó un nuevo usuario para la persona con documento "+documento+", actualizando "
+                                                + "la informacion del usuario anterior ("+existente.get(0).getUsuario()+") que se encontraba eliminado. Nuevo usuario: ("+usuario.getUsuario()+", "+usuarios.get(0).getDescripcionPerfil()+", "
+                                                +(usuario.getActivo().equals("T")?"Activo":"Inactivo")+")";
+                                        String guardarAuditoria = auditoria.guardarAuditoria(personaSesion, ClasificacionAuditorias.USUARIO.getNombre(), AccionesAuditadas.CREACION.getNombre(), descripcioAudit);
+                                    } catch (Exception e) {
+                                        Logger.getLogger(UsuariosNegocio.class.getName()).log(Level.SEVERE, null, e);
+                                    }
+                                } else {
+                                    mensajeError = "El usuario no pudo ser guardado";
+                                }
+                            }else{
+                                mensajeError = "Ya existe un usuario registrado para ese documento";
+                            }
                         } else {
-                            usuario.setIdPersona(idPersona);
                             int insercion = usuariosDao.insertarUsuario(usuario);
                             if (insercion > 0) {
                                 mensajeExito = "El usuario ha sido guardado con éxito";
+                                //AUDITORIA
+                                try {
+                                    usuarios = usuariosDao.consultarUsuarios(idPersona);
+                                    String descripcioAudit = "Se creó un nuevo usuario para la persona con documento "+documento+" ("+usuario.getUsuario()+", "+usuarios.get(0).getDescripcionPerfil()+", "+(usuario.getActivo().equals("T")?"Activo":"Inactivo")+")";
+                                    String guardarAuditoria = auditoria.guardarAuditoria(personaSesion, ClasificacionAuditorias.USUARIO.getNombre(), AccionesAuditadas.CREACION.getNombre(), descripcioAudit);
+                                } catch (Exception e) {
+                                    Logger.getLogger(UsuariosNegocio.class.getName()).log(Level.SEVERE, null, e);
+                                }
                             } else {
                                 mensajeError = "El usuario no pudo ser guardado";
                             }
                         }
-
                     } else {
                         mensajeError = "La persona seleccionada no está registrada en el sistema";
                     }
@@ -182,14 +228,28 @@ public class UsuariosNegocio {
      * @param idPersona
      * @return
      */
-    public Map<String, Object> eliminarUsuario(Integer idPersona) {
+    public Map<String, Object> eliminarUsuario(Integer idPersona, String personaSesionStr) {
         String mensajeExito = "";
         String mensajeError = "";
+        int personaSesion = 0;
+        try {
+            personaSesion = Integer.parseInt(personaSesionStr);
+        } catch (Exception e) {
+        }
+        
         if (idPersona != null) {
             try {
+                List<UsuariosBean> usuarios = usuariosDao.consultarUsuarios(idPersona);
                 int eliminacion = usuariosDao.eliminarUsuario(idPersona);
                 if (eliminacion > 0) {
                     mensajeExito = "El usuario fue eliminado con éxito";
+                    //AUDITORIA
+                    try {
+                        String descripcioAudit = "Se eliminó el usuario "+usuarios.get(0).getUsuario()+" asociado a la persona con documento "+usuarios.get(0).getDocumento();
+                        String guardarAuditoria = auditoria.guardarAuditoria(personaSesion, ClasificacionAuditorias.USUARIO.getNombre(), AccionesAuditadas.ELIMINACION.getNombre(), descripcioAudit);
+                    } catch (Exception e) {
+                        Logger.getLogger(UsuariosNegocio.class.getName()).log(Level.SEVERE, null, e);
+                    }
                 } else {
                     mensajeError = "El usuario no pudo ser eliminado";
                 }
@@ -228,7 +288,7 @@ public class UsuariosNegocio {
         if (usuario.getIdPersona() == null && (usuario.getDocumento() == null || usuario.getDocumento().isEmpty())) {
             error += "El campo 'Documento' es obligatorio <br />";
         } else {
-            if (usuario.getDocumento().length() > 15) {
+            if (usuario.getDocumento()!=null && usuario.getDocumento().length() > 15) {
                 error += "El campo 'Documento' no debe contener más de 15 caracteres, has dígitado " + usuario.getDocumento().length() + " caracteres <br />";
             }
         }
