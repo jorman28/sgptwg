@@ -15,10 +15,10 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.simple.JSONObject;
 
 /**
- * Esta clase define métodos para controlar las peticiones y respuestas 
- * que se hacen sobre el módulo principal de Permisos, así como guardar, 
- * consultar, modificar o eliminar la información.
- * 
+ * Esta clase define métodos para controlar las peticiones y respuestas que se
+ * hacen sobre el módulo principal de Permisos, así como guardar, consultar,
+ * modificar o eliminar la información.
+ *
  * @author Andrés Felipe Giraldo, Jorman Rincón, Erika Jhoana Castaneda
  */
 public class PermisosController extends HttpServlet {
@@ -40,10 +40,19 @@ public class PermisosController extends HttpServlet {
         String mensajeError = "";
         String mensajeExito = "";
         String nombrePerfil = request.getParameter("nombrePerfil");
+        String paginaStr = request.getParameter("pagina");
+
         Integer idPerfil = null;
         try {
             idPerfil = Integer.valueOf(request.getParameter("idPerfil"));
         } catch (NumberFormatException e) {
+        }
+
+        Integer pagina;
+        try {
+            pagina = Integer.valueOf(paginaStr);
+        } catch (NumberFormatException e) {
+            pagina = 1;
         }
 
         String[] permisosSeleccionados;
@@ -58,7 +67,7 @@ public class PermisosController extends HttpServlet {
 
         switch (accion) {
             case "consultar":
-                cargarTabla(response, permisosPagina, nombrePerfil);
+                cargarTabla(response, permisosPagina, nombrePerfil, pagina);
                 break;
             case "editar":
                 JSONObject perfil = perfilesNegocio.consultarPerfil(idPerfil, null);
@@ -121,19 +130,21 @@ public class PermisosController extends HttpServlet {
     }
 
     /**
-     * Método encargado de pintar la tabla con el listado de registros 
-     * que hay sobre los Permisos.
-     * 
+     * Método encargado de pintar la tabla con el listado de registros que hay
+     * sobre los Permisos.
+     *
      * @param response
      * @param permisos
      * @param nombrePerfil
      * @throws ServletException
-     * @throws IOException 
+     * @throws IOException
      */
-    private void cargarTabla(HttpServletResponse response, List<String> permisos, String nombrePerfil) throws ServletException, IOException {
+    private void cargarTabla(HttpServletResponse response, List<String> permisos, String nombrePerfil, int pagina) throws ServletException, IOException {
         response.setContentType("text/html; charset=iso-8859-1");
-
-        List<PerfilesBean> listaPerfiles = perfilesNegocio.consultarPerfiles(null, nombrePerfil);
+        int registros = 10;
+        int paginasAdicionales = 2;
+        String limite = ((pagina - 1) * registros) + "," + registros;
+        List<PerfilesBean> listaPerfiles = perfilesNegocio.consultarPerfiles(null, nombrePerfil, limite);
         PrintWriter out = response.getWriter();
         out.println("<table class=\"table table-striped table-hover table-condensed bordo-tablas\">");
         out.println("<thead>");
@@ -165,6 +176,50 @@ public class PermisosController extends HttpServlet {
         }
         out.println("</tbody>");
         out.println("</table>");
+
+        /* Manejo de paginación */
+        int cantidadPerfiles = perfilesNegocio.cantidadPerfiles(null, nombrePerfil);
+        int cantidadPaginas = 1;
+        if (cantidadPerfiles > 0) {
+            if (cantidadPerfiles % registros == 0) {
+                cantidadPaginas = cantidadPerfiles / registros;
+            } else {
+                cantidadPaginas = (cantidadPerfiles / registros) + 1;
+            }
+        }
+        int paginasPrevias = paginasAdicionales;
+        if (pagina <= paginasAdicionales) {
+            paginasPrevias = (1 - pagina) * -1;
+        }
+        int paginasPosteriores = paginasAdicionales;
+        if (paginasPrevias < paginasAdicionales) {
+            paginasPosteriores += paginasAdicionales - paginasPrevias;
+        }
+        if (pagina + paginasPosteriores > cantidadPaginas) {
+            paginasPosteriores = cantidadPaginas - pagina;
+        }
+        if (paginasPosteriores < paginasAdicionales && pagina - (paginasPrevias + paginasAdicionales - paginasPosteriores) > 0) {
+            paginasPrevias += paginasAdicionales - paginasPosteriores;
+        }
+        out.println("<nav>");
+        out.println("   <ul class=\"pagination\">");
+        if (pagina != 1) {
+            out.println("       <li><a href=\"javascript:void(llenarTabla(1))\"><span>&laquo;</span></a></li>");
+            out.println("       <li><a href=\"javascript:void(llenarTabla(" + (pagina - 1) + "))\"><span>&lsaquo;</span></a></li>");
+        }
+        for (int pag = pagina - paginasPrevias; pag <= pagina + paginasPosteriores; pag++) {
+            if (pagina == pag) {
+                out.println("   <li class=\"active\"><a href=\"javascript:void(0)\"><span>" + pag + "</span></a></li>");
+            } else {
+                out.println("   <li><a href=\"javascript:void(llenarTabla(" + pag + "))\"><span>" + pag + "</span></a></li>");
+            }
+        }
+        if (pagina != cantidadPaginas) {
+            out.println("       <li><a href=\"javascript:void(llenarTabla(" + (pagina + 1) + "))\"><span>&rsaquo;</span></a></li>");
+            out.println("       <li><a href=\"javascript:void(llenarTabla(" + cantidadPaginas + "))\"><span>&raquo;</span></a></li>");
+        }
+        out.println("   </ul>");
+        out.println("</nav>");
     }
 
     /**

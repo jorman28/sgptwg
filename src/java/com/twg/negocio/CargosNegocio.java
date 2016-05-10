@@ -17,14 +17,32 @@ public class CargosNegocio {
 
     private final CargosDao cargosDao = new CargosDao();
 
-    public List<CargosBean> consultarCargos(String nombre, boolean nombreExacto) {
+    public List<CargosBean> consultarCargos(String nombre, boolean nombreExacto, String limite) {
         List<CargosBean> listaCargos = new ArrayList<>();
         try {
-            listaCargos = cargosDao.consultarCargos(nombre, nombreExacto);
+            listaCargos = cargosDao.consultarCargos(nombre, nombreExacto, limite);
         } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
             Logger.getLogger(CargosNegocio.class.getName()).log(Level.SEVERE, null, ex);
         }
         return listaCargos;
+    }
+    
+    /**
+     * Método encargado de contar la cantidad total de registros que se
+     * encuentran en base de datos con base en los filtros ingresados
+     *
+     * @param nombre
+     * @param nombreExacto
+     * @return
+     */
+    public int cantidadCargos(String nombre, boolean nombreExacto) {
+        int cantidadCargos = 0;
+        try {
+            cantidadCargos = cargosDao.cantidadCargos(nombre, nombreExacto);
+        } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
+            Logger.getLogger(TiposDocumentoNegocio.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return cantidadCargos;
     }
 
     public JSONObject consultarCargo(Integer id) {
@@ -72,7 +90,7 @@ public class CargosNegocio {
                 error += "El campo 'Nombre del cargo' no debe contener más de 50 caracteres, has dígitado " + nombre.length() + " caracteres <br />";
             } else {
                 try {
-                    List<CargosBean> listaCargos = cargosDao.consultarCargos(nombre, true);
+                    List<CargosBean> listaCargos = cargosDao.consultarCargos(nombre, true, null);
                     if (listaCargos != null && !listaCargos.isEmpty()) {
                         if (id == null || id.isEmpty() || !id.equals(listaCargos.get(0).getId().toString())) {
                             error += "El nombre del cargo ingresado ya existe en el sistema \n";

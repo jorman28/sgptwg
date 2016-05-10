@@ -227,7 +227,7 @@ public class ActividadesNegocio {
                     if (actividadAntigua != null) {
                         //Si el estado seleccionado es distinto al que ya tenía, se valida que sea el previo o el siguiente
                         if (actividadAntigua.getEstado() != est) {
-                            List<EstadosBean> listaEstados = eDao.consultarEstados(actividadAntigua.getEstado(), null, null, null, null, null);
+                            List<EstadosBean> listaEstados = eDao.consultarEstados(actividadAntigua.getEstado(), null, null, null, null, null, null);
                             if (listaEstados != null && !listaEstados.isEmpty()) {
                                 if (listaEstados.get(0).getEstadoPrevio() != null && listaEstados.get(0).getEstadoPrevio() > 0
                                         || listaEstados.get(0).getEstadoSiguiente() != null && listaEstados.get(0).getEstadoSiguiente() > 0) {
@@ -239,7 +239,7 @@ public class ActividadesNegocio {
                         }
                     }
                 } else {//Actividad nueva: se valida contra estado final unicamente
-                    List<EstadosBean> eBean = eDao.consultarEstados(null, "ACTIVIDADES", null, null, null, "T");
+                    List<EstadosBean> eBean = eDao.consultarEstados(null, "ACTIVIDADES", null, null, null, "T", null);
                     if (eBean != null && !eBean.isEmpty()) {
                         if (eBean.get(0).getId() == est) {
                             validacion += "El estado seleccionado no es válido para una nueva actividad <br />";

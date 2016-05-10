@@ -128,7 +128,7 @@ public class ActividadesController extends HttpServlet {
                     break;
                 case "crearActividad":
                 case "limpiarCreacion":
-                    request.setAttribute("estados", estadosNegocio.consultarEstados(null, "ACTIVIDADES", null, null, null, null));
+                    request.setAttribute("estados", estadosNegocio.consultarEstados(null, "ACTIVIDADES", null, null, null, null, null));
                     request.setAttribute("proyectos", proyectosNegocio.consultarProyectos(null, null, false));
                     request.setAttribute("clientesActividad", null);
                     request.setAttribute("empleadosActividad", null);
@@ -138,7 +138,7 @@ public class ActividadesController extends HttpServlet {
                 case "limpiarGestion":
                     if (idStr != null && !idStr.isEmpty()) {
                         ActividadesBean actividad = actividadesNegocio.consultarActividadI(id);
-                        request.setAttribute("estados", estadosNegocio.consultarEstados(null, "ACTIVIDADES", null, null, null, null));
+                        request.setAttribute("estados", estadosNegocio.consultarEstados(null, "ACTIVIDADES", null, null, null, null, null));
                         request.setAttribute("proyectos", proyectosNegocio.consultarProyectos(null, null, false));
                         request.setAttribute("clientesActividad", null);
                         request.setAttribute("empleadosActividad", null);
@@ -176,7 +176,7 @@ public class ActividadesController extends HttpServlet {
                 case "duplicarActividad":
                     if (idStr != null && !idStr.isEmpty()) {
                         ActividadesBean actividad = actividadesNegocio.consultarActividadI(id);
-                        request.setAttribute("estados", estadosNegocio.consultarEstados(null, "ACTIVIDADES", null, null, null, null));
+                        request.setAttribute("estados", estadosNegocio.consultarEstados(null, "ACTIVIDADES", null, null, null, null, null));
                         request.setAttribute("proyectos", proyectosNegocio.consultarProyectos(null, null, false));
                         request.setAttribute("clientesActividad", null);
                         request.setAttribute("empleadosActividad", null);
@@ -214,13 +214,13 @@ public class ActividadesController extends HttpServlet {
                     if (result.get("mensajeError") != null) {
                         mensajeError = (String) result.get("mensajeError");
                         request.setAttribute("mensajeError", mensajeError);
-                        request.setAttribute("estados", estadosNegocio.consultarEstados(null, "ACTIVIDADES", null, null, null, null));
+                        request.setAttribute("estados", estadosNegocio.consultarEstados(null, "ACTIVIDADES", null, null, null, null, null));
                         request.setAttribute("proyectos", proyectosNegocio.consultarProyectos(null, null, false));
                         request.setAttribute("versiones", versionesNegocio.consultarVersiones(null, Integer.parseInt(proyectoStr), null, false));
                         if (idPersonasActividad != null) {
                             List<PersonasBean> personas = new ArrayList<>();
                             for (String idPersona : idPersonasActividad) {
-                                personas.add(personasNegocio.consultarPersona(idPersona, null, null));
+                                personas.add(personasNegocio.consultarPersona(Integer.valueOf(idPersona), null, null));
                             }
                             List<PersonasBean> empleados = new ArrayList<>();
                             List<PersonasBean> clientes = new ArrayList<>();
@@ -329,7 +329,7 @@ public class ActividadesController extends HttpServlet {
             request.setAttribute("mensajeExito", mensajeExito);
             request.setAttribute("mensajeError", mensajeError);
             request.setAttribute("proyectos", proyectosNegocio.consultarProyectos(null, null, false));
-            request.setAttribute("estados", estadosNegocio.consultarEstados(null, "ACTIVIDADES", null, null, null, null));
+            request.setAttribute("estados", estadosNegocio.consultarEstados(null, "ACTIVIDADES", null, null, null, null, null));
             if (accion.isEmpty() || accion.equals("limpiar") || accion.equals("crearActividad") || accion.equals("limpiarCreacion") || accion.equals("gestionarActividad")
                     || accion.equals("limpiarGestion") || accion.equals("duplicarActividad") || accion.equals("guardar") || accion.equals("eliminar")) {
                 if (permisosPagina != null && !permisosPagina.isEmpty()) {
@@ -346,7 +346,7 @@ public class ActividadesController extends HttpServlet {
                     request.setAttribute("versiones", versionesNegocio.consultarVersiones(null, proyecto, null, false));
                 }
                 if (filtroPersona != null) {
-                    PersonasBean persona = personasNegocio.consultarPersona(filtroPersona.toString(), null, null);
+                    PersonasBean persona = personasNegocio.consultarPersona(filtroPersona, null, null);
                     if (persona != null) {
                         request.setAttribute("nombreResponsable", persona.getTipoDocumento() + persona.getDocumento() + " " + persona.getNombres() + " " + persona.getApellidos());
                     }

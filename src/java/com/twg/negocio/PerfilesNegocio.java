@@ -22,13 +22,31 @@ public class PerfilesNegocio {
     private final UsuariosDao usuariosDao = new UsuariosDao();
 
     public List<PerfilesBean> consultarPerfiles() {
-        return consultarPerfiles(null, null);
+        return consultarPerfiles(null, null, null);
     }
 
-    public List<PerfilesBean> consultarPerfiles(Integer idPerfil, String nombrePersona) {
+    /**
+     * Método encargado de contar la cantidad total de registros que se
+     * encuentran en base de datos con base en los filtros ingresados
+     *
+     * @param idPerfil
+     * @param nombrePerfil
+     * @return
+     */
+    public int cantidadPerfiles(Integer idPerfil, String nombrePerfil) {
+        int cantidadPerfiles = 0;
+        try {
+            cantidadPerfiles = perfilesDao.cantidadPerfiles(idPerfil, nombrePerfil, false);
+        } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
+            Logger.getLogger(TiposDocumentoNegocio.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return cantidadPerfiles;
+    }
+    
+    public List<PerfilesBean> consultarPerfiles(Integer idPerfil, String nombrePersona, String limite) {
         List<PerfilesBean> perfiles = new ArrayList<>();
         try {
-            perfiles = perfilesDao.consultarPerfiles(idPerfil, nombrePersona, false);
+            perfiles = perfilesDao.consultarPerfiles(idPerfil, nombrePersona, false, limite);
         } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
             Logger.getLogger(PerfilesNegocio.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -38,7 +56,7 @@ public class PerfilesNegocio {
     public JSONObject consultarPerfil(Integer idPerfil, String nombrePersona) {
         JSONObject perfil = new JSONObject();
         try {
-            List<PerfilesBean> perfiles = perfilesDao.consultarPerfiles(idPerfil, nombrePersona, false);
+            List<PerfilesBean> perfiles = perfilesDao.consultarPerfiles(idPerfil, nombrePersona, false, null);
             if (perfiles != null && !perfiles.isEmpty()) {
                 perfil.put("idPerfil", perfiles.get(0).getId());
                 perfil.put("nombrePerfil", perfiles.get(0).getNombre());
@@ -76,7 +94,7 @@ public class PerfilesNegocio {
             perfil.setNombre(nombrePerfil);
             try {
                 if (idPerfil != null) {
-                    List<PerfilesBean> existente = perfilesDao.consultarPerfiles(null, nombrePerfil, true);
+                    List<PerfilesBean> existente = perfilesDao.consultarPerfiles(null, nombrePerfil, true, null);
                     if (existente != null && !existente.isEmpty() && existente.get(0).getId().intValue() != idPerfil) {
                         mensajeError = "El nombre de perfil seleccionado ya está registrado en el sistema";
                     } else {
@@ -88,7 +106,7 @@ public class PerfilesNegocio {
                         }
                     }
                 } else {
-                    List<PerfilesBean> existente = perfilesDao.consultarPerfiles(null, nombrePerfil, true);
+                    List<PerfilesBean> existente = perfilesDao.consultarPerfiles(null, nombrePerfil, true, null);
                     if (existente != null && !existente.isEmpty()) {
                         mensajeError = "El nombre de perfil seleccionado ya está registrado en el sistema";
                     } else {

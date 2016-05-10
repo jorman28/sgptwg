@@ -70,6 +70,15 @@ public class ArchivosController extends HttpServlet {
         String nombre = request.getParameter("nombre");
         String descripcion = request.getParameter("descripcion");
         String nombreArchivo = request.getParameter("nombreArchivo");
+        String paginaStr = request.getParameter("pagina");
+
+        Integer pagina;
+        try {
+            pagina = Integer.valueOf(paginaStr);
+        } catch (NumberFormatException e) {
+            pagina = 1;
+        }
+
         String mensajeAlerta = "";
         String mensajeError = "";
         String mensajeExito = "";
@@ -85,7 +94,7 @@ public class ArchivosController extends HttpServlet {
                 response.getWriter().write(archivoConsultado.toJSONString());
                 break;
             case "consultar":
-                cargarTabla(response, contiene, filtroFecha, idPersona);
+                cargarTabla(response, contiene, filtroFecha, idPersona, pagina);
                 break;
             case "eliminar":
                 mensajeError = archivosNegocio.eliminarArchivo(idArchivo);
@@ -153,7 +162,7 @@ public class ArchivosController extends HttpServlet {
             request.setAttribute("mensajeError", mensajeError);
             request.setAttribute("mensajeAlerta", mensajeAlerta);
             Integer persona = (Integer) request.getSession(false).getAttribute("personaSesion");
-            PersonasBean objetoPersona = personasNegocio.consultarPersona(persona.toString(), null, null);
+            PersonasBean objetoPersona = personasNegocio.consultarPersona(persona, null, null);
             if (objetoPersona != null) {
                 request.setAttribute("hiddenCreador", objetoPersona.getNombres() + " " + objetoPersona.getApellidos());
                 request.setAttribute("hiddenFecha", archivosNegocio.sdf.format(new Date()));
@@ -173,10 +182,12 @@ public class ArchivosController extends HttpServlet {
      * @throws ServletException
      * @throws IOException
      */
-    private void cargarTabla(HttpServletResponse response, String contiene, Date fecha, Integer persona) throws ServletException, IOException {
+    private void cargarTabla(HttpServletResponse response, String contiene, Date fecha, Integer persona, int pagina) throws ServletException, IOException {
         response.setContentType("text/html; charset=iso-8859-1");
-
-        List<ArchivosBean> listaArchivos = archivosNegocio.consultarArchivos(null, contiene, fecha, persona);
+        int registros = 10;
+        int paginasAdicionales = 2;
+        String limite = ((pagina - 1) * registros) + "," + registros;
+        List<ArchivosBean> listaArchivos = archivosNegocio.consultarArchivos(null, contiene, fecha, persona, limite);
 
         PrintWriter out = response.getWriter();
         out.println("<table class=\"table table-striped table-hover table-condensed bordo-tablas\">");
@@ -211,6 +222,50 @@ public class ArchivosController extends HttpServlet {
         }
         out.println("</tbody>");
         out.println("</table>");
+
+        /* Manejo de paginación */
+        int cantidadArchivos = archivosNegocio.cantidadArchivos(null, contiene, fecha, persona);
+        int cantidadPaginas = 1;
+        if (cantidadArchivos > 0) {
+            if (cantidadArchivos % registros == 0) {
+                cantidadPaginas = cantidadArchivos / registros;
+            } else {
+                cantidadPaginas = (cantidadArchivos / registros) + 1;
+            }
+        }
+        int paginasPrevias = paginasAdicionales;
+        if (pagina <= paginasAdicionales) {
+            paginasPrevias = (1 - pagina) * -1;
+        }
+        int paginasPosteriores = paginasAdicionales;
+        if (paginasPrevias < paginasAdicionales) {
+            paginasPosteriores += paginasAdicionales - paginasPrevias;
+        }
+        if (pagina + paginasPosteriores > cantidadPaginas) {
+            paginasPosteriores = cantidadPaginas - pagina;
+        }
+        if (paginasPosteriores < paginasAdicionales && pagina - (paginasPrevias + paginasAdicionales - paginasPosteriores) > 0) {
+            paginasPrevias += paginasAdicionales - paginasPosteriores;
+        }
+        out.println("<nav>");
+        out.println("   <ul class=\"pagination\">");
+        if (pagina != 1) {
+            out.println("       <li><a href=\"javascript:void(llenarTabla(1))\"><span>&laquo;</span></a></li>");
+            out.println("       <li><a href=\"javascript:void(llenarTabla(" + (pagina - 1) + "))\"><span>&lsaquo;</span></a></li>");
+        }
+        for (int pag = pagina - paginasPrevias; pag <= pagina + paginasPosteriores; pag++) {
+            if (pagina == pag) {
+                out.println("   <li class=\"active\"><a href=\"javascript:void(0)\"><span>" + pag + "</span></a></li>");
+            } else {
+                out.println("   <li><a href=\"javascript:void(llenarTabla(" + pag + "))\"><span>" + pag + "</span></a></li>");
+            }
+        }
+        if (pagina != cantidadPaginas) {
+            out.println("       <li><a href=\"javascript:void(llenarTabla(" + (pagina + 1) + "))\"><span>&rsaquo;</span></a></li>");
+            out.println("       <li><a href=\"javascript:void(llenarTabla(" + cantidadPaginas + "))\"><span>&raquo;</span></a></li>");
+        }
+        out.println("   </ul>");
+        out.println("</nav>");
     }
 
     /**

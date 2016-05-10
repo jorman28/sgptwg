@@ -17,10 +17,10 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 /**
- * Esta clase define métodos para controlar las peticiones y respuestas 
- * que se hacen sobre el módulo principal de Estados, así como guardar, consultar,
+ * Esta clase define métodos para controlar las peticiones y respuestas que se
+ * hacen sobre el módulo principal de Estados, así como guardar, consultar,
  * modificar o eliminar la información.
- * 
+ *
  * @author Andrés Felipe Giraldo, Jorman Rincón, Erika Jhoana Castaneda
  */
 public class EstadosController extends HttpServlet {
@@ -54,7 +54,8 @@ public class EstadosController extends HttpServlet {
         String estadoPrevStr = request.getParameter("estadoPrev");
         String estadoSigStr = request.getParameter("estadoSig");
         String eFinal = request.getParameter("eFinal");
-        
+        String paginaStr = request.getParameter("pagina");
+
         String busquedaAsincronica = request.getParameter("busquedaAsincronica");//variable que me permite realizar la busqueda de los estados desde una funcion ajax
 
         Integer id = null;
@@ -62,29 +63,36 @@ public class EstadosController extends HttpServlet {
             id = Integer.valueOf(idStr);
         } catch (NumberFormatException e) {
         }
-        
+
         Integer estadoPrev = null;
         try {
             estadoPrev = Integer.valueOf(estadoPrevStr);
         } catch (NumberFormatException e) {
         }
-        
+
         Integer estadoSig = null;
         try {
             estadoSig = Integer.valueOf(estadoSigStr);
         } catch (NumberFormatException e) {
         }
 
+        Integer pagina;
+        try {
+            pagina = Integer.valueOf(paginaStr);
+        } catch (NumberFormatException e) {
+            pagina = 1;
+        }
+
         List<String> permisosPagina = PerfilesNegocio.permisosPorPagina(request, Paginas.ESTADOS);
 
         switch (accion) {
             case "consultar":
-                cargarTabla(response, permisosPagina, id, tipoEstado, nombre, estadoPrev, estadoSig, eFinal);
+                cargarTabla(response, permisosPagina, id, tipoEstado, nombre, estadoPrev, estadoSig, eFinal, pagina);
                 break;
             case "editar":
                 JSONObject obj = estadosNegocio.consultarEstado(id);
                 response.getWriter().write(obj.toString());
-                
+
                 break;
             case "guardar":
                 Map<String, Object> result = estadosNegocio.crearEstado(id, tipoEstado, nombre, estadoPrev, estadoSig, eFinal);
@@ -110,7 +118,7 @@ public class EstadosController extends HttpServlet {
                 break;
             case "ConsultarEstados":
                 JSONArray array = new JSONArray();
-                List<EstadosBean> listaEstados = estadosNegocio.consultarEstados(null, tipoEstado, null, null, null, null);
+                List<EstadosBean> listaEstados = estadosNegocio.consultarEstados(null, tipoEstado, null, null, null, null, null);
                 if (listaEstados != null && !listaEstados.isEmpty()) {
                     for (EstadosBean estadoBean : listaEstados) {
                         JSONObject object = new JSONObject();
@@ -130,7 +138,7 @@ public class EstadosController extends HttpServlet {
         request.setAttribute("mensajeError", mensajeError);
         //request.setAttribute("estadosPrev", estadosNegocio.consultarEstados(null, null, null, null, null, null));
         //request.setAttribute("estadosSig", estadosNegocio.consultarEstados(null, null, null, null, null, null));
-        if (!accion.equals("consultar") && !accion.equals("editar") && busquedaAsincronica == null){
+        if (!accion.equals("consultar") && !accion.equals("editar") && busquedaAsincronica == null) {
             if (permisosPagina != null && !permisosPagina.isEmpty()) {
                 if (permisosPagina.contains(Permisos.CONSULTAR.getNombre())) {
                     request.setAttribute("opcionConsultar", "T");
@@ -146,14 +154,14 @@ public class EstadosController extends HttpServlet {
     /**
      * Este método se encarga de enviar los atributos del Estado, al cliente que
      * realiza la petición.
-     * 
+     *
      * @param request
      * @param id
      * @param tipoEstado
      * @param nombre
      * @param estadoPrev
      * @param estadoSig
-     * @param eFinal 
+     * @param eFinal
      */
     private void enviarDatos(HttpServletRequest request, Integer id, String tipoEstado, String nombre, Integer estadoPrev,
             Integer estadoSig, String eFinal) {
@@ -166,9 +174,9 @@ public class EstadosController extends HttpServlet {
     }
 
     /**
-     * Método encargado de pintar la tabla con el listado de registros 
-     * que hay sobre los Estados
-     * 
+     * Método encargado de pintar la tabla con el listado de registros que hay
+     * sobre los Estados
+     *
      * @param response
      * @param permisos
      * @param id
@@ -178,13 +186,15 @@ public class EstadosController extends HttpServlet {
      * @param estadoSig
      * @param eFinal
      * @throws ServletException
-     * @throws IOException 
+     * @throws IOException
      */
-    private void cargarTabla(HttpServletResponse response, List<String> permisos, Integer id, String tipoEstado, String nombre, 
-            Integer estadoPrev, Integer estadoSig, String eFinal) throws ServletException, IOException {
+    private void cargarTabla(HttpServletResponse response, List<String> permisos, Integer id, String tipoEstado, String nombre,
+            Integer estadoPrev, Integer estadoSig, String eFinal, int pagina) throws ServletException, IOException {
         response.setContentType("text/html; charset=iso-8859-1");
-
-        List<EstadosBean> listaEstados = estadosNegocio.consultarEstados(id, tipoEstado, nombre, estadoPrev, estadoSig, eFinal);
+        int registros = 10;
+        int paginasAdicionales = 2;
+        String limite = ((pagina - 1) * registros) + "," + registros;
+        List<EstadosBean> listaEstados = estadosNegocio.consultarEstados(id, tipoEstado, nombre, estadoPrev, estadoSig, eFinal, limite);
         PrintWriter out = response.getWriter();
         out.println("<table class=\"table table-striped table-hover table-condensed bordo-tablas\">");
         out.println("<thead>");
@@ -204,21 +214,21 @@ public class EstadosController extends HttpServlet {
 //                out.println(    "<td>"+estado.getId()+"</td>");                
                 out.println("<td>" + estado.getTipoEstado() + "</td>");
                 out.println("<td>" + estado.getNombre() + "</td>");
-                List<EstadosBean> estadoP = estadosNegocio.consultarEstados(estado.getEstadoPrevio(), null, null, null, null, null);
-                if(estadoP!=null&&estadoP.size()>0){
+                List<EstadosBean> estadoP = estadosNegocio.consultarEstados(estado.getEstadoPrevio(), null, null, null, null, null, null);
+                if (estadoP != null && estadoP.size() > 0) {
                     out.println("<td>" + estadoP.get(0).getNombre() + "</td>");
-                }else{
+                } else {
                     out.println("<td>" + "" + "</td>");
                 }
-                List<EstadosBean> estadoS = estadosNegocio.consultarEstados(estado.getEstadoSiguiente(), null, null, null, null, null);
-                if(estadoS!=null&&estadoS.size()>0){
+                List<EstadosBean> estadoS = estadosNegocio.consultarEstados(estado.getEstadoSiguiente(), null, null, null, null, null, null);
+                if (estadoS != null && estadoS.size() > 0) {
                     out.println("<td>" + estadoS.get(0).getNombre() + "</td>");
-                }else{
+                } else {
                     out.println("<td>" + "" + "</td>");
                 }
-                if(estado.getEstadoFinal()!=null && !estado.getEstadoFinal().isEmpty() && estado.getEstadoFinal().equals("T")){
+                if (estado.getEstadoFinal() != null && !estado.getEstadoFinal().isEmpty() && estado.getEstadoFinal().equals("T")) {
                     out.println("<td>Sí</td>");
-                }else{
+                } else {
                     out.println("<td>No</td>");
                 }
                 out.println("<td>");
@@ -236,14 +246,58 @@ public class EstadosController extends HttpServlet {
         }
         out.println("</tbody>");
         out.println("</table>");
+        
+        /* Manejo de paginación */
+        int cantidadEstados = estadosNegocio.cantidadEstados(id, tipoEstado, nombre, estadoPrev, estadoSig, eFinal);
+        int cantidadPaginas = 1;
+        if (cantidadEstados > 0) {
+            if (cantidadEstados % registros == 0) {
+                cantidadPaginas = cantidadEstados / registros;
+            } else {
+                cantidadPaginas = (cantidadEstados / registros) + 1;
+            }
+        }
+        int paginasPrevias = paginasAdicionales;
+        if (pagina <= paginasAdicionales) {
+            paginasPrevias = (1 - pagina) * -1;
+        }
+        int paginasPosteriores = paginasAdicionales;
+        if (paginasPrevias < paginasAdicionales) {
+            paginasPosteriores += paginasAdicionales - paginasPrevias;
+        }
+        if (pagina + paginasPosteriores > cantidadPaginas) {
+            paginasPosteriores = cantidadPaginas - pagina;
+        }
+        if (paginasPosteriores < paginasAdicionales && pagina - (paginasPrevias + paginasAdicionales - paginasPosteriores) > 0) {
+            paginasPrevias += paginasAdicionales - paginasPosteriores;
+        }
+        out.println("<nav>");
+        out.println("   <ul class=\"pagination\">");
+        if (pagina != 1) {
+            out.println("       <li><a href=\"javascript:void(llenarTablaEstados(1))\"><span>&laquo;</span></a></li>");
+            out.println("       <li><a href=\"javascript:void(llenarTablaEstados(" + (pagina - 1) + "))\"><span>&lsaquo;</span></a></li>");
+        }
+        for (int pag = pagina - paginasPrevias; pag <= pagina + paginasPosteriores; pag++) {
+            if (pagina == pag) {
+                out.println("   <li class=\"active\"><a href=\"javascript:void(0)\"><span>" + pag + "</span></a></li>");
+            } else {
+                out.println("   <li><a href=\"javascript:void(llenarTablaEstados(" + pag + "))\"><span>" + pag + "</span></a></li>");
+            }
+        }
+        if (pagina != cantidadPaginas) {
+            out.println("       <li><a href=\"javascript:void(llenarTablaEstados(" + (pagina + 1) + "))\"><span>&rsaquo;</span></a></li>");
+            out.println("       <li><a href=\"javascript:void(llenarTablaEstados(" + cantidadPaginas + "))\"><span>&raquo;</span></a></li>");
+        }
+        out.println("   </ul>");
+        out.println("</nav>");
     }
 
     /**
-     * 
+     *
      * @param reqeust
      * @param response
      * @throws ServletException
-     * @throws IOException 
+     * @throws IOException
      */
     @Override
     protected void doGet(HttpServletRequest reqeust, HttpServletResponse response) throws ServletException, IOException {
@@ -251,11 +305,11 @@ public class EstadosController extends HttpServlet {
     }
 
     /**
-     * 
+     *
      * @param reqeust
      * @param response
      * @throws ServletException
-     * @throws IOException 
+     * @throws IOException
      */
     @Override
     protected void doPost(HttpServletRequest reqeust, HttpServletResponse response) throws ServletException, IOException {

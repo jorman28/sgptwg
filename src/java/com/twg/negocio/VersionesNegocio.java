@@ -123,7 +123,7 @@ public class VersionesNegocio {
                     List<VersionesBean> versionAntigua = consultarVersiones(idVersion, null, null, false);
                     if (versionAntigua != null && !versionAntigua.isEmpty()) {
                         if (versionAntigua.get(0).getEstado() != est) {
-                            List<EstadosBean> listaEstados = eDao.consultarEstados(versionAntigua.get(0).getEstado(), null, null, null, null, null);
+                            List<EstadosBean> listaEstados = eDao.consultarEstados(versionAntigua.get(0).getEstado(), null, null, null, null, null, null);
                             if (listaEstados != null && !listaEstados.isEmpty()) {
                                 if (listaEstados.get(0).getEstadoPrevio() != null && listaEstados.get(0).getEstadoPrevio() > 0
                                         || listaEstados.get(0).getEstadoSiguiente() != null && listaEstados.get(0).getEstadoSiguiente() > 0) {
@@ -135,7 +135,7 @@ public class VersionesNegocio {
                         }
                     }
                 } else {//Versión nueva: se valida contra estado final unicamente
-                    List<EstadosBean> eBean = eDao.consultarEstados(null, "VERSIONES", null, null, null, "T");
+                    List<EstadosBean> eBean = eDao.consultarEstados(null, "VERSIONES", null, null, null, "T", null);
                     if (eBean != null && !eBean.isEmpty()) {
                         if (eBean.get(0).getId() == est) {
                             validacion += "El estado seleccionado no es válido para una nueva versión <br />";

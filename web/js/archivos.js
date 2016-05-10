@@ -35,7 +35,26 @@ function nuevoArchivo() {
     $("#modalArchivos").modal("show");
 }
 
-function llenarTabla() {
+function limpiar() {
+    $("#id").val("");
+    $("#nombre").val("");
+    $("#descripcion").val("");
+    $("#fechaCreacion").val($("#hiddenFecha").val());
+    $("#creador").val($("#hiddenCreador").val());
+    $("#divArchivo").show();
+    $("#divDescarga").hide();
+    $("#divComentarios").hide();
+    
+    $("#filtroContiene").val("");
+    $("#filtroFecha").val("");
+    $("#filtroCreador").val("");
+    llenarTabla();
+}
+
+function llenarTabla(pagina) {
+    if (pagina === undefined) {
+        pagina = 1;
+    }
     var contiene = $('#filtroContiene').val() !== undefined && $('#filtroContiene').val() !== "" ? $('#filtroContiene').val() : null;
     var fecha = $('#filtroFecha').val() !== undefined && $('#filtroFecha').val() !== "" ? $('#filtroFecha').val() : null;
     var idPersona = $('#idPersona').val() !== undefined && $('#idPersona').val() !== "" ? $('#idPersona').val() : null;
@@ -46,7 +65,7 @@ function llenarTabla() {
         type: "POST",
         url: "ArchivosController",
         dataType: "html",
-        data: {accion: "consultar", filtroContiene: contiene, filtroFecha: fecha, idPersona: idPersona},
+        data: {accion: "consultar", filtroContiene: contiene, filtroFecha: fecha, idPersona: idPersona, pagina: pagina},
         success: function(data) {
             if (data !== undefined) {
                 $('#tablaArchivos').html(data);
