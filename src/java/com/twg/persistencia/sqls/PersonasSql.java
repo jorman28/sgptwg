@@ -143,7 +143,7 @@ public class PersonasSql {
      * @param idActividad
      * @return
      */
-    public String consultarPersonasActividad(String idActividad) {
+    public String consultarPersonasActividad(Integer idActividad) {
         String sql = "";
         sql += "SELECT  p.id,\n"
                 + "		p.documento,\n"
@@ -171,12 +171,13 @@ public class PersonasSql {
     }
 
     /**
-     * Método encargado de consultas las personas que están asociadas a una
-     * actividad.
-     * @param personas
-     * @return 
+     * Método encargado de consultas las actividades asociadas a una persona.
+     *
+     * @param idPersona
+     * @param idActividad
+     * @return
      */
-    public String consultarPersonasAsignadasActividad(String personas, String idActividad) {
+    public String consultarPersonasAsignadasActividad(Integer idPersona, Integer idActividad) {
         String sql = "";
         sql += "SELECT DISTINCT p.id,\n"
                 + "        p.documento,\n"
@@ -200,10 +201,10 @@ public class PersonasSql {
                 + "        INNER JOIN cargos car ON car.id = p.cargo \n"
                 + "        LEFT JOIN usuarios u ON p.id = u.id_persona AND u.fecha_eliminacion IS NULL \n"
                 + "        LEFT JOIN perfiles pf ON pf.id = u.perfil AND pf.fecha_eliminacion IS NULL \n"
-                + "WHERE   1 = 1 AND p.fecha_eliminacion IS NULL AND act.fecha_estimada_inicio >= ? AND act.fecha_estimada_terminacion <= ? AND ae.empleado IN (" + personas + ") ";
+                + "WHERE   1 = 1 AND p.fecha_eliminacion IS NULL AND act.fecha_estimada_inicio >= ? AND act.fecha_estimada_terminacion <= ? AND ae.empleado = " + idPersona + " ";
 
-        if (idActividad != null && !idActividad.isEmpty()) {
-            sql += "AND act.id <> " + idActividad + "";
+        if (idActividad != null && idActividad.intValue() != 0) {
+            sql += "AND act.id != " + idActividad + "";
         }
 
         return sql;

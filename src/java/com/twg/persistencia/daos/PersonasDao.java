@@ -55,7 +55,7 @@ public class PersonasDao {
         con.close();
         return listaPersonas;
     }
-    
+
     public List<PersonasBean> consultarPersonasProyecto(String idProyecto, String Busqueda) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         List<PersonasBean> listaPersonas = new ArrayList<>();
         PreparedStatement ps;
@@ -88,9 +88,18 @@ public class PersonasDao {
         con.close();
         return listaPersonas;
     }
-    
-    //Consultar las personas que estan en una actividad especifica
-    public List<PersonasBean> consultarPersonasActividad(String idActividad) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
+
+    /**
+     * Consultar las personas que estan en una actividad especifica
+     *
+     * @param idActividad
+     * @return
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws SQLException
+     * @throws IllegalAccessException
+     */
+    public List<PersonasBean> consultarPersonasActividad(Integer idActividad) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         List<PersonasBean> listaPersonas = new ArrayList<>();
         PreparedStatement ps;
         Connection con;
@@ -123,9 +132,21 @@ public class PersonasDao {
         con.close();
         return listaPersonas;
     }
-    
-    //Personas que ya estan asignadas en una actividad para mostrar warning
-    public List<PersonasBean> consultarPersonasAsignadasActividad(String idPersonas, java.util.Date fechaEstimadaInicio, java.util.Date fechaEstimadaFin, String idActividad) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
+
+    /**
+     * Método encargado de consultar la disponibilidad de una persona
+     *
+     * @param idPersonas
+     * @param fechaEstimadaInicio
+     * @param fechaEstimadaFin
+     * @param idActividad
+     * @return
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws SQLException
+     * @throws IllegalAccessException
+     */
+    public List<PersonasBean> consultarActividadesAsociadasPersona(Integer idPersonas, java.util.Date fechaEstimadaInicio, java.util.Date fechaEstimadaFin, Integer idActividad) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         List<PersonasBean> listaPersonas = new ArrayList<>();
         PreparedStatement ps;
         Connection con;

@@ -5,71 +5,61 @@ var empleadosSeleccionados = 0;
 var horasTrabajadasDia = 9;
 
 jQuery(function() {
-    $('#fecha_estimada_inicio')
+    $('#fechaInicio')
             .datetimepicker({format: 'dd/mm/yyyy', language: 'es', weekStart: true, todayBtn: true, autoclose: true, todayHighlight: true, startView: 2, minView: 2})
             .on('changeDate', function() {
-                $('#fecha_estimada_terminacion').datetimepicker('setStartDate', $('#fecha_estimada_inicio').val());
+                $('#fechaFin').datetimepicker('setStartDate', $('#fechaInicio').val());
             });
-    $('#fecha_estimada_terminacion')
+    $('#fechaFin')
             .datetimepicker({format: 'dd/mm/yyyy', language: 'es', weekStart: true, todayBtn: true, autoclose: true, todayHighlight: true, startView: 2, minView: 2})
             .on('changeDate', function() {
-                $('#fecha_estimada_inicio').datetimepicker('setEndDate', $('#fecha_estimada_terminacion').val());
-            });
-    $('#fecha_real_inicio')
-            .datetimepicker({format: 'dd/mm/yyyy', language: 'es', weekStart: true, todayBtn: true, autoclose: true, todayHighlight: true, startView: 2, minView: 2})
-            .on('changeDate', function() {
-                $('#fecha_real_terminacion').datetimepicker('setStartDate', $('#fecha_real_inicio').val());
-            });
-    $('#fecha_real_terminacion')
-            .datetimepicker({format: 'dd/mm/yyyy', language: 'es', weekStart: true, todayBtn: true, autoclose: true, todayHighlight: true, startView: 2, minView: 2})
-            .on('changeDate', function() {
-                $('#fecha_real_inicio').datetimepicker('setEndDate', $('#fecha_real_terminacion').val());
+                $('#fechaInicio').datetimepicker('setEndDate', $('#fechaFin').val());
             });
 
-    $("#participante")
-            .typeahead({
-                onSelect: function(item) {
-                    if ($("#persona" + item.value)[0] === undefined) {
-                        var persona = personasActividades[item.value];
-                        var html = pintarPersonas(persona);
-                        if (persona.cargo.toLowerCase() === "cliente") {
-                            if (clientesSeleccionados === 0) {
-                                $("#clientesActividad").html(html);
-                            } else {
-                                $("#clientesActividad").append(html);
-                            }
-                            clientesSeleccionados++;
-                        } else {
-                            if (empleadosSeleccionados === 0) {
-                                $("#empleadosActividad").html(html);
-                            } else {
-                                $("#empleadosActividad").append(html);
-                            }
-                            empleadosSeleccionados++;
-                        }
+    $("#participante").typeahead({
+        onSelect: function(item) {
+            if ($("#persona" + item.value)[0] === undefined) {
+                var persona = personasActividades[item.value];
+                var html = pintarPersonas(persona);
+                if (persona.cargo.toLowerCase() === "cliente") {
+                    if (clientesSeleccionados === 0) {
+                        $("#clientesActividad").html(html);
+                    } else {
+                        $("#clientesActividad").append(html);
                     }
-                },
-                ajax: {
-                    url: "ActividadesController",
-                    timeout: 500,
-                    displayField: "nombre",
-                    valueField: 'id',
-                    triggerLength: 1,
-                    items: 10,
-                    method: "POST",
-                    preDispatch: function(query) {
-                        var proyecto = $("#proyecto").val();
-                        return {search: query, search1: proyecto, accion: "consultarPersonasProyecto"};
-                    },
-                    preProcess: function(data) {
-                        for (var i = 0; i < data.length; i++) {
-                            var persona = data[i];
-                            personasActividades[persona.id] = persona;
-                        }
-                        return data;
+                    clientesSeleccionados++;
+                } else {
+                    if (empleadosSeleccionados === 0) {
+                        $("#empleadosActividad").html(html);
+                    } else {
+                        $("#empleadosActividad").append(html);
                     }
+                    empleadosSeleccionados++;
                 }
-            });
+                $('#idPersona').val(persona.id);
+                guardarPersonaActividad();
+            }
+        },
+        ajax: {
+            url: "ActividadesController",
+            timeout: 500,
+            displayField: "nombre",
+            valueField: 'id',
+            triggerLength: 1,
+            items: 10,
+            method: "POST",
+            preDispatch: function(busqueda) {
+                return {busqueda: busqueda, proyecto: $("#proyecto").val(), accion: "consultarPersonasProyecto"};
+            },
+            preProcess: function(data) {
+                for (var i = 0; i < data.length; i++) {
+                    var persona = data[i];
+                    personasActividades[persona.id] = persona;
+                }
+                return data;
+            }
+        }
+    });
 
     $('#proyecto').change(function() {
         var dato = $('#proyecto').val();
@@ -80,26 +70,20 @@ jQuery(function() {
             $("#participante").val("");
             $("#participante").prop("disabled", true);
         }
-
         $("#clientesActividad").html('No se han agregado clientes al proyecto');
         clientesSeleccionados = 0;
-
         $("#empleadosActividad").html('No se han agregado empleados al proyecto');
         empleadosSeleccionados = 0;
     });
 
-    $('#fecha_estimada_inicio').change(function() {
-        var dato = $('#fecha_estimada_inicio').val();
+    $('#fechaInicio').change(function() {
+        $("#tiempo").val("0");
+        $("#fechaFin").val("");
+        var dato = $('#fechaInicio').val();
         if (dato !== undefined && dato !== "") {
-            $("#tiempo_estimado").val("0");
-            $("#fecha_estimada_terminacionn").val("");
-            $("#fecha_estimada_terminacion").val("");
-            $("#tiempo_estimado").prop("disabled", false);
+            $("#tiempo").prop("disabled", false);
         } else {
-            $("#tiempo_estimado").val("0");
-            $("#fecha_estimada_terminacionn").val("");
-            $("#fecha_estimada_terminacion").val("");
-            $("#tiempo_estimado").prop("disabled", true);
+            $("#tiempo").prop("disabled", true);
         }
     });
 
@@ -135,7 +119,6 @@ function consultarVersiones(idProyecto) {
         }
     });
 }
-
 
 function pintarListaPersonas(listaPersonas) {
     var html = "";
@@ -177,7 +160,7 @@ function eliminarPersona(idPersona, cargo) {
 
 function calcularFechaFin(horas) {
     var diasEstimados = 0;
-    var varFechaInicial = $("#fecha_estimada_inicio").val();
+    var varFechaInicial = $("#fechaInicio").val();
 
     var arrFecha = varFechaInicial.split('/');
     var dia = arrFecha[0];
@@ -185,8 +168,8 @@ function calcularFechaFin(horas) {
     var anno = arrFecha[2];
     var fechaInicial = anno + "-" + mes + "-" + dia;
 
-    $("#tiempo_estimado").data("old", $("#tiempo_estimado").data("new") || "");
-    $("#tiempo_estimado").data("new", $("#tiempo_estimado").val());
+    $("#tiempo").data("old", $("#tiempo").data("new") || "");
+    $("#tiempo").data("new", $("#tiempo").val());
 
     var totalDias = (parseInt(horas) + 1) / parseInt(horasTrabajadasDia);
     diasEstimados = Math.ceil(totalDias);
@@ -197,66 +180,79 @@ function calcularFechaFin(horas) {
     var y = date.getFullYear();
     var edate = new Date(y, m, d + diasEstimados);
     var ndate = ("0" + edate.getDate()).slice(-2) + '/' + ("0" + (edate.getMonth() + 1)).slice(-2) + "/" + edate.getFullYear();
-    $("#fecha_estimada_terminacionn").val(ndate);
-    $("#fecha_estimada_terminacion").val(ndate);
+    $("#fechaFin").val(ndate);
 }
 
-function Validar() {
-    var empleados = $("input[name='idPersonas']").map(function() {
-        return $(this).val();
-    }).get();
-
+function validarEstimacion() {
     var idActividad = $("#id").val();
-    var varFechaInicial = $("#fecha_estimada_inicio").val();
-    var varFechaFin = $("#fecha_estimada_terminacion").val();
+    var idResponsable = $("#idPersona").val();
+    var fechaInicio = $("#fechaInicio").val();
+    var fechaFin = $("#fechaFin").val();
 
-    if (empleados.toString() !== "" && varFechaInicial !== "" && varFechaFin !== "") {
+    if (idResponsable !== "" && fechaInicio !== "" && fechaFin !== "") {
         $.ajax({
             type: "POST",
             url: "ActividadesController",
             dataType: "json",
-            data: {empleadosSeleccionados: empleados.toString(), strFechaEstimadaInicial: varFechaInicial, strFechaEstimadaFin: varFechaFin, strIdActividad: idActividad, accion: "consultarFechasActividades"},
+            data: {responsable: idResponsable, fechaInicio: fechaInicio, fechaFin: fechaFin, id: idActividad, accion: "consultarFechasActividades"},
             success: function(data) {
-                var arrayLength = data.length;
-                if (data !== undefined && arrayLength !== 0) {
-                    var html = "Las siguientes personas tienen otras actividades asignadas entre las fechas " + varFechaInicial + " y " + varFechaFin + "<br /><br />";
-                    var clientes = "<b>Clientes:</b><ul>";
-                    var empleados = "<b>Empleados:</b><ul>";
-                    for (var persona in data) {
-                        persona = data[persona];
-                        if (persona.cargo.toLowerCase() === "cliente") {
-                            clientes += '<li>' + persona.nombre + '</li>';
-                        } else {
-                            empleados += '<li>' + persona.nombre + '</li>';
-                        }
-                    }
-                    if (clientes === "<b>Clientes:</b><ul>") {
-                        clientes = "";
-                    } else {
-                        clientes += "</ul>";
-                    }
-
-                    if (empleados === "<b>Empleados:</b><ul>") {
-                        empleados = "";
-                    } else {
-                        empleados += "</ul>";
-                    }
-
-                    html += clientes + empleados + '<b>¿Desea continuar con el registro?</b>';
+                if (data !== undefined && data !== "") {
+                    var html = "Esta persona ya tiene actividades asociadas entre las fechas " + fechaInicio + " y " + fechaFin + "<br/><br/>";
+                    html += '<b>¿Desea continuar con el registro?</b>';
                     $("#contenidoWarning").html(html);
                     $("#modalWarning").modal("show");
                 } else {
-                    $('#guardar').click();
+                    $('#confirmarEstimacion').click();
                 }
-
             },
             error: function(err) {
                 alert(err);
             }
         });
-    } else {
-        $('#guardar').click();
     }
+}
+
+function actualizarFechas(idVersion) {
+    var fechasVersion = fechasVersiones[idVersion];
+    $('#fechaInicio').val('');
+    $('#fechaInicio').datetimepicker('setStartDate', fechasVersion.fechaInicio);
+    $('#fechaInicio').datetimepicker('setEndDate', fechasVersion.fechaTerminacion);
+    $('#fechaFin').val('');
+    $('#fechaFin').datetimepicker('setStartDate', fechasVersion.fechaInicio);
+    $('#fechaFin').datetimepicker('setEndDate', fechasVersion.fechaTerminacion);
+    $('#tiempo').val('0');
+    $('#idPersona').val('');
+}
+
+function guardarPersonaActividad(estimacion) {
+    var fechaInicio = $("#fechaInicio").val();
+    var fechaFin = $("#fechaFin").val();
+    var tiempo = $("#tiempo").val();
+    if (estimacion !== unefined && (fechaInicio === '' || fechaFin === '' || tiempo === '')) {
+        return;
+    }
+    $.ajax({
+        type: "POST",
+        url: "ActividadesController",
+        dataType: "json",
+        data: {accion: "guardarPersonaActividad", id: $("#id").val(), responsable: jQuery("#idPersona").val()},
+        success: function(data) {
+            if (data !== undefined) {
+                if (data.comentarios !== undefined && data.comentarios !== '') {
+                    $("#comentario").val('');
+                    $("#listaComentarios").html(data.comentarios);
+                }
+            }
+        },
+        error: function() {
+        }
+    });
+}
+
+function limpiarEstimacion() {
+    $("#fechaInicio").val('');
+    $("#fechaFin").val('');
+    $("#tiempo").val('0');
 }
 
 function guardarComentario() {
@@ -295,21 +291,4 @@ function eliminarComentario(idComentario) {
         error: function() {
         }
     });
-}
-
-function actualizarFechas(idVersion) {
-    var fechasVersion = fechasVersiones[idVersion];
-    $('#fecha_estimada_inicio').val('');
-    $('#fecha_estimada_inicio').datetimepicker('setStartDate', fechasVersion.fechaInicio);
-    $('#fecha_estimada_inicio').datetimepicker('setEndDate', fechasVersion.fechaTerminacion);
-    $('#fecha_estimada_terminacion').val('');
-    $('#fecha_estimada_terminacion').datetimepicker('setStartDate', fechasVersion.fechaInicio);
-    $('#fecha_estimada_terminacion').datetimepicker('setEndDate', fechasVersion.fechaTerminacion);
-    $('#fecha_real_inicio').val('');
-    $('#fecha_real_inicio').datetimepicker('setStartDate', fechasVersion.fechaInicio);
-    $('#fecha_real_inicio').datetimepicker('setEndDate', fechasVersion.fechaTerminacion);
-    $('#fecha_real_terminacion').val('');
-    $('#fecha_real_terminacion').datetimepicker('setStartDate', fechasVersion.fechaInicio);
-    $('#fecha_real_terminacion').datetimepicker('setEndDate', fechasVersion.fechaTerminacion);
-    $('#tiempo_estimado').val('0');
 }

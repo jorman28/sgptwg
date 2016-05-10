@@ -21,6 +21,8 @@ public class ActividadesBean {
     private Date fechaInicio;
     private Date fechaFin;
     private Double tiempo;
+    private Integer proyecto;
+    private String nombreProyecto;
 
     /*
      * Declaración de métodos Get y Set para cada atributo de la clase.
@@ -103,6 +105,22 @@ public class ActividadesBean {
 
     public void setTiempo(Double tiempo) {
         this.tiempo = tiempo;
+    }
+
+    public Integer getProyecto() {
+        return proyecto;
+    }
+
+    public void setProyecto(Integer proyecto) {
+        this.proyecto = proyecto;
+    }
+    
+    public String getNombreProyecto() {
+        return nombreProyecto;
+    }
+
+    public void setNombreProyecto(String nombreProyecto) {
+        this.nombreProyecto = nombreProyecto;
     }
     
 }

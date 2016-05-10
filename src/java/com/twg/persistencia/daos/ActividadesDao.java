@@ -79,6 +79,8 @@ public class ActividadesDao {
         while (rs.next()) {
             ActividadesBean actividad = new ActividadesBean();
             actividad.setId(rs.getInt("id"));
+            actividad.setProyecto((Integer)rs.getObject("proyecto"));
+            actividad.setNombreProyecto(rs.getString("nombre_proyecto"));
             actividad.setVersion(rs.getInt("version"));
             actividad.setNombreVersion(rs.getString("nombre_version"));
             actividad.setNombre(rs.getString("nombre"));

@@ -286,7 +286,7 @@ public class PersonasNegocio {
         return listaPersonas;
     }
 
-    public List<PersonasBean> consultarPersonasActividad(String idActividad) {
+    public List<PersonasBean> consultarPersonasActividad(Integer idActividad) {
         List<PersonasBean> listaPersonas = new ArrayList<>();
         try {
             listaPersonas = personasDao.consultarPersonasActividad(idActividad);
@@ -296,11 +296,20 @@ public class PersonasNegocio {
         return listaPersonas;
     }
 
-    //Jara 25/03/2016 - Método para consultar el grupo de personas ocupadas en en las fechas seleccionadas
-    public JSONArray consultarPersonasAsignadasActividad(String idPersonas, java.util.Date fechaEstimadaInicio, java.util.Date fechaEstimadaFin, String idActividad) {
+    /**
+     * Método para consultar si la persona evaluada presenta actividades para
+     * las fechas seleccionadas
+     *
+     * @param idPersona
+     * @param fechaEstimadaInicio
+     * @param fechaEstimadaFin
+     * @param idActividad
+     * @return
+     */
+    public JSONArray consultarPersonasAsignadasActividad(Integer idPersona, java.util.Date fechaEstimadaInicio, java.util.Date fechaEstimadaFin, Integer idActividad) {
         JSONArray array = new JSONArray();
         try {
-            List<PersonasBean> listaPersonas = personasDao.consultarPersonasAsignadasActividad(idPersonas, fechaEstimadaInicio, fechaEstimadaFin, idActividad);
+            List<PersonasBean> listaPersonas = personasDao.consultarActividadesAsociadasPersona(idPersona, fechaEstimadaInicio, fechaEstimadaFin, idActividad);
             if (listaPersonas != null && !listaPersonas.isEmpty()) {
                 for (PersonasBean persona : listaPersonas) {
                     JSONObject object = new JSONObject();
