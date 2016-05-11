@@ -20,9 +20,10 @@ public class AuditoriasSql {
      * @param contiene
      * @param fecha
      * @param idPersona
+     * @param limite
      * @return 
      */
-    public String consultarAuditorias(Integer idAuditoria, String clasificacion, String accion, String contiene, Date fecha, Integer idPersona) {
+    public String consultarAuditorias(Integer idAuditoria, String clasificacion, String accion, String contiene, Date fecha, Integer idPersona, String limite) {
         String sql = "SELECT \n"
                 + "    aud.id,\n"
                 + "    aud.id_persona,\n"
@@ -37,7 +38,7 @@ public class AuditoriasSql {
                 + "    personas per ON aud.id_persona = per.id\n"
                 + "WHERE\n"
                 + "    aud.fecha_eliminacion IS NULL\n";
-        if (idAuditoria != null && idAuditoria.intValue() != 0) {
+        if (idAuditoria != null && idAuditoria != 0) {
             sql += "AND aud.id = " + idAuditoria + " ";
         }
         if (clasificacion != null && !clasificacion.isEmpty() && !clasificacion.equals("0")) {
@@ -52,12 +53,56 @@ public class AuditoriasSql {
         if (fecha != null) {
             sql += "AND aud.fecha_creacion = ? ";
         }
-        if (idPersona != null && idPersona.intValue() != 0) {
+        if (idPersona != null) {
             sql += "AND aud.id_persona = " + idPersona + " ";
+        }
+        if (limite != null && !limite.isEmpty()) {
+            sql += "	LIMIT " + limite + " ";
         }
         return sql;
     }
 
+    /**
+     * Método encargado de consultar las auditorias, aplicando diferentes filtros
+     * según los parámetros que lleguen distintos de nulos.
+     * 
+     * @param idAuditoria
+     * @param clasificacion
+     * @param accion
+     * @param contiene
+     * @param fecha
+     * @param idPersona
+     * @return 
+     */
+    public String cantidadAuditorias(Integer idAuditoria, String clasificacion, String accion, String contiene, Date fecha, Integer idPersona) {
+        String sql = "SELECT COUNT(*) AS cantidadAuditorias \n"
+                + "FROM\n"
+                + "    auditorias aud\n"
+                + "        INNER JOIN\n"
+                + "    personas per ON aud.id_persona = per.id\n"
+                + "WHERE\n"
+                + "    aud.fecha_eliminacion IS NULL\n";
+        if (idAuditoria != null && idAuditoria != 0) {
+            sql += "AND aud.id = " + idAuditoria + " ";
+        }
+        if (clasificacion != null && !clasificacion.isEmpty() && !clasificacion.equals("0")) {
+            sql += "AND aud.clasificacion = '" + clasificacion + "' ";
+        }
+        if (accion != null && !accion.isEmpty() && !accion.equals("0")) {
+            sql += "AND aud.accion = '" + accion + "' ";
+        }
+        if (contiene != null && !contiene.isEmpty()) {
+            sql += "AND aud.descripcion LIKE '%" + contiene + "%' ";
+        }
+        if (fecha != null) {
+            sql += "AND aud.fecha_creacion = ? ";
+        }
+        if (idPersona != null && idPersona != 0) {
+            sql += "AND aud.id_persona = " + idPersona + " ";
+        }
+        return sql;
+    }
+    
     /**
      * Método encargado de retornar el SQL para insertar una nueva auditoria.
      * @return 
