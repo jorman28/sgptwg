@@ -21,7 +21,7 @@ public class ActividadesEmpleadosSql {
      * @param idEmpleado
      * @return
      */
-    public String consultarEmpleadosxActividad(Integer idActividad, Integer idEmpleado) {
+    public String consultarActividadEmpleado(Integer idActividad, Integer idEmpleado) {
         String sql = "SELECT * FROM actividades_empleados WHERE 1 = 1 ";
         if (idActividad != null && !idActividad.toString().isEmpty()) {
             sql += "AND actividad = " + idActividad + " ";
@@ -32,6 +32,10 @@ public class ActividadesEmpleadosSql {
         return sql;
     }
 
+    public String actualizarActividadEmpleado(){
+        return "UPDATE actividades_empleados SET fecha_estimada_inicio = ?, fecha_estimada_terminacion = ?, tiempo_estimado = ? WHERE actividad = ? AND empleado = ?";
+    }
+    
     /**
      * Método encargado de retornar el SQL para insertar una actividad a un
      * empleado específico
@@ -39,7 +43,7 @@ public class ActividadesEmpleadosSql {
      * @return
      */
     public String insertarActividadEmpleado() {
-        return "INSERT INTO actividades_empleados (actividad, empleado, fecha_estimada_inicio, fecha_estimada_terminacion, tiempo_estimado) VALUES (?,?,?,?,?)";
+        return "INSERT INTO actividades_empleados (actividad, empleado) VALUES (?,?)";
     }
 
     /**

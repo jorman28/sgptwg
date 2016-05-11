@@ -54,10 +54,10 @@ public class ActividadesNegocio {
             try {
                 int guardado;
                 ActividadesBean actividad = new ActividadesBean();
-                actividad.setVersion(Integer.valueOf(idVersion));
+                actividad.setVersion(idVersion);
                 actividad.setNombre(nombre);
                 actividad.setDescripcion(descripcion);
-                actividad.setEstado(Integer.valueOf(idEstado));
+                actividad.setEstado(idEstado);
                 if (idActividad != null) {
                     actividad.setId(idActividad);
                     result.put("idActividad", idActividad);
@@ -160,6 +160,47 @@ public class ActividadesNegocio {
             }
         }
         return validacion;
+    }
+
+    public String guardarActividadPersona(Integer idActividad, Integer idPersona, String fechaInicio, String fechaFin, String tiempo, boolean estimacion) {
+        String error = "";
+        ActividadesEmpleadosBean actividadesEmpleados = new ActividadesEmpleadosBean();
+        actividadesEmpleados.setActividad(idActividad);
+        actividadesEmpleados.setEmpleado(idPersona);
+        if (estimacion) {
+            try {
+                actividadesEmpleados.setFechaEstimadaInicio(sdf.parse(fechaInicio));
+                actividadesEmpleados.setFechaEstimadaTerminacion(sdf.parse(fechaFin));
+                actividadesEmpleados.setTiempoEstimado(Double.valueOf(tiempo));
+            } catch (NumberFormatException | ParseException ex) {
+                Logger.getLogger(ActividadesNegocio.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        List<ActividadesEmpleadosBean> listaActividadesEmpleados;
+        try {
+            listaActividadesEmpleados = actividadesEmpleadosDao.consultarActividadesEmpleados(idActividad, idPersona);
+        } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
+            Logger.getLogger(ActividadesNegocio.class.getName()).log(Level.SEVERE, null, ex);
+            listaActividadesEmpleados = null;
+        }
+        try {
+            int guardado = 0;
+            if (listaActividadesEmpleados != null && !listaActividadesEmpleados.isEmpty()) {
+                guardado = actividadesEmpleadosDao.insertarActividadEmpleado(actividadesEmpleados);
+                if (guardado == 0) {
+                    error = "El reponsable no pudo ser asociado a la actividad";
+                }
+            } else {
+                guardado = actividadesEmpleadosDao.actualizarActividadEmpleado(actividadesEmpleados);
+                if (guardado == 0) {
+                    error = "La estimación de trabajo del responsable no pudo ser guardada";
+                }
+            }
+        } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
+            Logger.getLogger(ActividadesNegocio.class.getName()).log(Level.SEVERE, null, ex);
+            error = "Ocurrió un error guardando el reponsable de la actividad";
+        }
+        return error;
     }
 
     /**

@@ -83,6 +83,7 @@ public class ActividadesController extends HttpServlet {
             String fechaInicio = request.getParameter("fechaInicio");
             String fechaFin = request.getParameter("fechaFin");
             String tiempo = request.getParameter("tiempo");
+            String estimacion = request.getParameter("estimacion");
 
             Integer idActividad = null;
             try {
@@ -182,6 +183,17 @@ public class ActividadesController extends HttpServlet {
                     request.setAttribute("nombre", nombre);
                     request.setAttribute("descripcion", descripcion);
                     redireccion = gestionActividades;
+                    break;
+                case "guardarPersonaActividad":
+                    mensajeError = actividadesNegocio.guardarActividadPersona(idActividad, idResponsable, fechaInicio, fechaFin, tiempo, true);
+                    JSONObject resultado = new JSONObject();
+                    if (mensajeError.isEmpty()) {
+                        resultado.put("resultado", "ok");
+                    } else {
+                        resultado.put("resultado", "falla");
+                        resultado.put("mensaje", mensajeError);
+                    }
+                    response.getWriter().write(resultado.toJSONString());
                     break;
                 case "eliminar":
                     mensajeError = actividadesNegocio.eliminarActividad(idActividad);

@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.twg.persistencia.daos;
 
 import com.twg.persistencia.beans.ActividadesEmpleadosBean;
@@ -13,6 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -26,58 +22,56 @@ public class ActividadesEmpleadosDao {
     public ActividadesEmpleadosDao() {
     }
 
-    public List<ActividadesEmpleadosBean> consultarActividadesEmpleados(Integer actividad, Integer empleado) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
-        List<ActividadesEmpleadosBean> listaEmpleados = new ArrayList<>();
+    public List<ActividadesEmpleadosBean> consultarActividadesEmpleados(Integer idActividad, Integer idEmpleado) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
+        List<ActividadesEmpleadosBean> listaActividadesEmpleados = new ArrayList<>();
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;
-        ps = con.prepareStatement(sql.consultarEmpleadosxActividad(actividad, empleado));
+        ps = con.prepareStatement(sql.consultarActividadEmpleado(idActividad, idEmpleado));
         ResultSet rs;
         rs = ps.executeQuery();
         while (rs.next()) {
-            ActividadesEmpleadosBean acti = new ActividadesEmpleadosBean();
-            acti.setActividad(rs.getInt("actividad"));
-            acti.setEmpleado(rs.getInt("empleado"));
-            listaEmpleados.add(acti);
+            ActividadesEmpleadosBean actividadEmpleado = new ActividadesEmpleadosBean();
+            actividadEmpleado.setActividad(rs.getInt("actividad"));
+            actividadEmpleado.setEmpleado(rs.getInt("empleado"));
+            actividadEmpleado.setFechaEstimadaInicio((Date)rs.getObject("fecha_estimada_inicio"));
+            actividadEmpleado.setFechaEstimadaTerminacion((Date)rs.getObject("fecha_estimada_terminacion"));
+            actividadEmpleado.setTiempoEstimado((Double)rs.getObject("tiempo_estimado"));
+            listaActividadesEmpleados.add(actividadEmpleado);
         }
         rs.close();
         ps.close();
         con.close();
-        return listaEmpleados;
+        return listaActividadesEmpleados;
     }
 
-    public ActividadesEmpleadosBean consultarActividadEmpleado(Integer idActividad, Integer idEmpleado) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
-        ActividadesEmpleadosBean ActividadEmpleado = new ActividadesEmpleadosBean();
-        Connection con;
-        con = new ConexionBaseDatos().obtenerConexion();
-        PreparedStatement ps;
-        ps = con.prepareStatement(sql.consultarEmpleadosxActividad(idActividad, idEmpleado));
-        ResultSet rs;
-        rs = ps.executeQuery();
-        while (rs.next()) {
-            ActividadesEmpleadosBean acti = new ActividadesEmpleadosBean();
-            acti.setActividad(rs.getInt("actividad"));
-            acti.setEmpleado(rs.getInt("empleado"));
-            ActividadEmpleado = acti;
-        }
-        rs.close();
-        ps.close();
-        con.close();
-        return ActividadEmpleado;
-    }
-
-    public int insertarActividadEmpleado(ActividadesEmpleadosBean actividad_empleado) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
+    public int insertarActividadEmpleado(ActividadesEmpleadosBean actividadEmpleado) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;
         ps = con.prepareStatement(sql.insertarActividadEmpleado());
-        //ps.setInt(1, estado.getId());
-        ps.setInt(1, actividad_empleado.getActividad());
-        ps.setInt(2, actividad_empleado.getEmpleado());
+        ps.setInt(1, actividadEmpleado.getActividad());
+        ps.setInt(2, actividadEmpleado.getEmpleado());
         int insercion = ps.executeUpdate();
         ps.close();
         con.close();
         return insercion;
+    }
+    
+    public int actualizarActividadEmpleado(ActividadesEmpleadosBean actividadEmpleado) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
+        Connection con;
+        con = new ConexionBaseDatos().obtenerConexion();
+        PreparedStatement ps;
+        ps = con.prepareStatement(sql.actualizarActividadEmpleado());
+        ps.setObject(1, actividadEmpleado.getFechaEstimadaInicio());
+        ps.setObject(2, actividadEmpleado.getFechaEstimadaTerminacion());
+        ps.setObject(3, actividadEmpleado.getTiempoEstimado());
+        ps.setInt(4, actividadEmpleado.getActividad());
+        ps.setInt(5, actividadEmpleado.getEmpleado());
+        int actualizacion = ps.executeUpdate();
+        ps.close();
+        con.close();
+        return actualizacion;
     }
 
     public int eliminarActividadEmpleado(Integer idActividad, Integer idEmpleado) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
@@ -85,8 +79,6 @@ public class ActividadesEmpleadosDao {
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;
         ps = con.prepareStatement(sql.eliminarActividadEmpleado(idActividad, idEmpleado));
-//        ps.setInt(1, idActividad);
-//        ps.setInt(2, idEmpleado);
         int eliminacion = ps.executeUpdate();
         ps.close();
         con.close();

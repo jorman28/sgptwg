@@ -228,20 +228,19 @@ function guardarPersonaActividad(estimacion) {
     var fechaInicio = $("#fechaInicio").val();
     var fechaFin = $("#fechaFin").val();
     var tiempo = $("#tiempo").val();
-    if (estimacion !== unefined && (fechaInicio === '' || fechaFin === '' || tiempo === '')) {
-        return;
+    if (estimacion === undefined) {
+        estimacion = '';
     }
     $.ajax({
         type: "POST",
         url: "ActividadesController",
         dataType: "json",
-        data: {accion: "guardarPersonaActividad", id: $("#id").val(), responsable: jQuery("#idPersona").val()},
+        data: {accion: "guardarPersonaActividad", id: $("#id").val(), responsable: jQuery("#idPersona").val(),
+            fechaInicio: fechaInicio, fechaFin: fechaFin, tiempo: tiempo, estimacion: estimacion},
         success: function(data) {
-            if (data !== undefined) {
-                if (data.comentarios !== undefined && data.comentarios !== '') {
-                    $("#comentario").val('');
-                    $("#listaComentarios").html(data.comentarios);
-                }
+            if (data !== undefined && data.resultado !== undefined && data.resultado !== '') {
+            } else {
+                
             }
         },
         error: function() {
