@@ -128,7 +128,7 @@ public class ActividadesNegocio {
                     if (actividadAntigua.getEstado() != idEstado) {
                         List<EstadosBean> listaEstados;
                         try {
-                            listaEstados = estadosDao.consultarEstados(actividadAntigua.getEstado(), null, null, null, null, null);
+                            listaEstados = estadosDao.consultarEstados(actividadAntigua.getEstado(), null, null, null, null, null, null);
                         } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
                             Logger.getLogger(ActividadesNegocio.class.getName()).log(Level.SEVERE, null, ex);
                             listaEstados = null;
@@ -147,7 +147,7 @@ public class ActividadesNegocio {
                 /* Actividad nueva: se valida contra estado final unicamente */
                 List<EstadosBean> listaEstados;
                 try {
-                    listaEstados = estadosDao.consultarEstados(null, "ACTIVIDADES", null, null, null, "T");
+                    listaEstados = estadosDao.consultarEstados(null, "ACTIVIDADES", null, null, null, "T", null);
                 } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
                     Logger.getLogger(ActividadesNegocio.class.getName()).log(Level.SEVERE, null, ex);
                     listaEstados = null;
