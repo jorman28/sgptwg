@@ -36,7 +36,7 @@ function consultarEstado(id) {
                     }
                 }
                 $("#estadoPrev").html(html);
-                
+
                 html = "<option value='0'>SELECCIONE</option>";
                 for (var estado in data.estadoSig) {
                     var estadoSiguiente = data.estadoSiguiente.estadoSiguienteId !== undefined ? data.estadoSiguiente.estadoSiguienteId : "0";
@@ -61,7 +61,10 @@ function consultarEstado(id) {
     });
 }
 
-function llenarTablaEstados() {
+function llenarTablaEstados(pagina) {
+    if (pagina === undefined) {
+        pagina = 1;
+    }
     var id = $('#id').val() !== undefined && $('#id').val() !== "" ? $('#id').val() : null;
     var tipoEstado = $('#tipoEstado').val() !== undefined && $('#tipoEstado').val() !== "0" ? $('#tipoEstado').val() : null;
     var nombre = $('#nombre').val() !== undefined && $('#nombre').val() !== "" ? $('#nombre').val() : null;
@@ -72,7 +75,7 @@ function llenarTablaEstados() {
         type: "POST",
         url: "EstadosController",
         dataType: "html",
-        data: {accion: "consultar", id: id, tipoEstado: tipoEstado, nombre: nombre, estadoPrev: estadoPrev, estadoSig: estadoSig, eFinal: eFinal},
+        data: {accion: "consultar", id: id, tipoEstado: tipoEstado, nombre: nombre, estadoPrev: estadoPrev, estadoSig: estadoSig, eFinal: eFinal, pagina: pagina},
         success: function (data) {
             if (data !== undefined) {
                 $('#tablaEstados').html(data);

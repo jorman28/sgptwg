@@ -22,12 +22,12 @@ public class PersonasDao {
     public PersonasDao() {
     }
 
-    public List<PersonasBean> consultarPersonas(String idPersona, String documento, String tipoDocumento, String nombres, String apellidos, String correo, String usuario, String perfil, String cargo, String nombreCompleto) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
+    public List<PersonasBean> consultarPersonas(Integer idPersona, String documento, String tipoDocumento, String nombres, String apellidos, String correo, String usuario, String perfil, String cargo, String nombreCompleto, String limite) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         List<PersonasBean> listaPersonas = new ArrayList<>();
         PreparedStatement ps;
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
-        ps = con.prepareStatement(sql.consultarPersonas(idPersona, documento, tipoDocumento, nombres, apellidos, correo, usuario, perfil, cargo, nombreCompleto));
+        ps = con.prepareStatement(sql.consultarPersonas(idPersona, documento, tipoDocumento, nombres, apellidos, correo, usuario, perfil, cargo, nombreCompleto, limite));
         ResultSet rs;
         rs = ps.executeQuery();
         while (rs.next()) {
@@ -54,6 +54,43 @@ public class PersonasDao {
         ps.close();
         con.close();
         return listaPersonas;
+    }
+
+    /**
+     * Método encargado de consultar la cantidad de usuarios existentes en base
+     * de datos relacionados con los filtros ingresados
+     *
+     * @param idPersona
+     * @param documento
+     * @param tipoDocumento
+     * @param perfil
+     * @param nombres
+     * @param apellidos
+     * @param usuario
+     * @param correo
+     * @param cargo
+     * @param nombreCompleto
+     * @return
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws SQLException
+     * @throws IllegalAccessException
+     */
+    public int cantidadPersonas(Integer idPersona, String documento, String tipoDocumento, String nombres, String apellidos, String correo, String usuario, String perfil, String cargo, String nombreCompleto) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
+        int cantidadPersonas = 0;
+        Connection con;
+        con = new ConexionBaseDatos().obtenerConexion();
+        PreparedStatement ps;
+        ps = con.prepareStatement(sql.cantidadPersonas(idPersona, documento, tipoDocumento, nombres, apellidos, correo, usuario, perfil, cargo, nombreCompleto));
+        ResultSet rs;
+        rs = ps.executeQuery();
+        if (rs.next()) {
+            cantidadPersonas = rs.getInt("cantidadPersonas");
+        }
+        rs.close();
+        ps.close();
+        con.close();
+        return cantidadPersonas;
     }
 
     public List<PersonasBean> consultarPersonasProyecto(String idProyecto, String Busqueda) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {

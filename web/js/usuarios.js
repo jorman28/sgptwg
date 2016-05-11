@@ -37,7 +37,7 @@ function llenarTabla(pagina) {
     if (pagina === undefined) {
         pagina = 1;
     }
-    var documento = $('#documento').val() !== undefined && $('#documento').val() !== "" ? $('#idPersona').val() : null;
+    var documento = $('#documento').val() !== undefined && $('#documento').val() !== "" ? $('#documento').val() : null;
     var tipoDocumento = $('#tipoDocumento').val() !== undefined && $('#tipoDocumento').val() !== "0" ? $('#tipoDocumento').val() : null;
     var usuario = $('#usuario').val() !== undefined && $('#usuario').val() !== "" ? $('#usuario').val() : null;
     var perfil = $('#perfil').val() !== undefined && $('#perfil').val() !== "0" ? $('#perfil').val() : null;

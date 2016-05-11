@@ -23,24 +23,50 @@ public class PersonasNegocio {
     private final PersonasDao personasDao = new PersonasDao();
     private final UsuariosDao usuariosDao = new UsuariosDao();
 
-    public List<PersonasBean> consultarPersonas(String documento, String tipoDocumento, String nombre, String apellidos, String correo, String usuario, String perfil, String cargo, String nombreCompleto) {
+    public List<PersonasBean> consultarPersonas(Integer idPersona, String documento, String tipoDocumento, String nombre, String apellidos, String correo, String usuario, String perfil, String cargo, String nombreCompleto, String limite) {
         List<PersonasBean> listaPersonas = new ArrayList<>();
         try {
-            listaPersonas = personasDao.consultarPersonas(null, documento, tipoDocumento, nombre, apellidos, correo, usuario, perfil, cargo, nombreCompleto);
+            listaPersonas = personasDao.consultarPersonas(idPersona, documento, tipoDocumento, nombre, apellidos, correo, usuario, perfil, cargo, nombreCompleto, limite);
         } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
             Logger.getLogger(PersonasNegocio.class.getName()).log(Level.SEVERE, null, ex);
         }
         return listaPersonas;
     }
+    
+    /**
+     * Método encargado de contar la cantidad total de registros que se
+     * encuentran en base de datos con base en los filtros ingresados
+     *
+     * @param idPersona
+     * @param documento
+     * @param tipoDocumento
+     * @param perfil
+     * @param nombre
+     * @param apellidos
+     * @param usuario
+     * @param correo
+     * @param cargo
+     * @param nombreCompleto
+     * @return
+     */
+    public int cantidadPersonas(Integer idPersona, String documento, String tipoDocumento, String nombre, String apellidos, String correo, String usuario, String perfil, String cargo, String nombreCompleto) {
+        int cantidadPersonas = 0;
+        try {
+            cantidadPersonas = personasDao.cantidadPersonas(idPersona, documento, tipoDocumento, nombre, apellidos, correo, usuario, perfil, cargo, nombreCompleto);
+        } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
+            Logger.getLogger(TiposDocumentoNegocio.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return cantidadPersonas;
+    }
 
-    public PersonasBean consultarPersona(String idPersona, String documento, String tipoDocumento) {
+    public PersonasBean consultarPersona(Integer idPersona, String documento, String tipoDocumento) {
         PersonasBean persona = null;
         List<PersonasBean> listaPersonas = null;
         try {
             if (idPersona != null) {
-                listaPersonas = personasDao.consultarPersonas(idPersona, null, null, null, null, null, null, null, null, null);
+                listaPersonas = personasDao.consultarPersonas(idPersona, null, null, null, null, null, null, null, null, null, null);
             } else if (documento != null && !documento.isEmpty() && tipoDocumento != null && !tipoDocumento.isEmpty()) {
-                listaPersonas = personasDao.consultarPersonas(null, documento, tipoDocumento, null, null, null, null, null, null, null);
+                listaPersonas = personasDao.consultarPersonas(null, documento, tipoDocumento, null, null, null, null, null, null, null, null);
             }
         } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
             Logger.getLogger(PersonasNegocio.class.getName()).log(Level.SEVERE, null, ex);
@@ -247,7 +273,7 @@ public class PersonasNegocio {
 
     public JSONArray completarPersonas(String busqueda) {
         JSONArray array = new JSONArray();
-        List<PersonasBean> listaPersonas = consultarPersonas(null, null, null, null, null, null, null, null, busqueda);
+        List<PersonasBean> listaPersonas = consultarPersonas(null, null, null, null, null, null, null, null, null, busqueda, null);
         if (listaPersonas != null && !listaPersonas.isEmpty()) {
             for (PersonasBean persona : listaPersonas) {
                 JSONObject object = new JSONObject();

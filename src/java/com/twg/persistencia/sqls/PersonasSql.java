@@ -27,9 +27,10 @@ public class PersonasSql {
      * @param perfil
      * @param cargo
      * @param nombreCompleto
+     * @param limite
      * @return
      */
-    public String consultarPersonas(String idPersona, String documento, String tipoDocumento, String nombres, String apellidos, String correo, String usuario, String perfil, String cargo, String nombreCompleto) {
+    public String consultarPersonas(Integer idPersona, String documento, String tipoDocumento, String nombres, String apellidos, String correo, String usuario, String perfil, String cargo, String nombreCompleto, String limite) {
         String sql = "";
         sql += "SELECT  "
                 + "    p.id, "
@@ -59,7 +60,75 @@ public class PersonasSql {
                 + "    perfiles pf ON pf.id = u.perfil AND pf.fecha_eliminacion IS NULL "
                 + "WHERE "
                 + "    1 = 1 AND p.fecha_eliminacion IS NULL ";
-        if (idPersona != null && !idPersona.isEmpty() && !idPersona.equals("0")) {
+        if (idPersona != null) {
+            sql += "and p.id = " + idPersona + " ";
+        }
+        if (documento != null && !documento.isEmpty()) {
+            sql += "and p.documento like '%" + documento + "%' ";
+        }
+        if (tipoDocumento != null && !tipoDocumento.isEmpty() && !tipoDocumento.equals("0")) {
+            sql += "and d.tipo = '" + tipoDocumento + "' ";
+        }
+        if (nombres != null && !nombres.isEmpty()) {
+            sql += "and p.nombres like '%" + nombres + "%' ";
+        }
+        if (apellidos != null && !apellidos.isEmpty()) {
+            sql += "and p.apellidos like '%" + apellidos + "%' ";
+        }
+        if (correo != null && !correo.isEmpty()) {
+            sql += "and p.correo like '%" + correo + "%' ";
+        }
+        if (usuario != null && !usuario.isEmpty()) {
+            sql += "and u.usuario like '%" + usuario + "%' ";
+        }
+        if (perfil != null && !perfil.isEmpty() && !perfil.equals("0")) {
+            sql += "and u.perfil = " + perfil + " ";
+        }
+        if (cargo != null && !cargo.isEmpty() && !cargo.equals("0")) {
+            sql += "and p.cargo = " + cargo + " ";
+        }
+        if (nombreCompleto != null && !nombreCompleto.isEmpty()) {
+            sql += "and (CONCAT(p.nombres, ' ', p.apellidos) LIKE '%" + nombreCompleto + "%' OR p.documento like '%" + nombreCompleto + "%')";
+        }
+        if (limite != null && !limite.isEmpty()) {
+            sql += "	LIMIT " + limite + " ";
+        }
+        return sql;
+    }
+
+    
+    /**
+     * Método encargado de consultar la cantidad de personas, aplicando diferentes filtros
+     * según los parámetros que lleguen distintos de nulos.
+     *
+     * @param idPersona
+     * @param documento
+     * @param tipoDocumento
+     * @param nombres
+     * @param apellidos
+     * @param correo
+     * @param usuario
+     * @param perfil
+     * @param cargo
+     * @param nombreCompleto
+     * @return
+     */
+    public String cantidadPersonas(Integer idPersona, String documento, String tipoDocumento, String nombres, String apellidos, String correo, String usuario, String perfil, String cargo, String nombreCompleto) {
+        String sql = "";
+        sql += "SELECT COUNT(*) AS cantidadPersonas "
+                + "FROM "
+                + "    personas p "
+                + "        INNER JOIN "
+                + "    tipos_documentos d ON d.tipo = p.tipo_documento "
+                + "        INNER JOIN "
+                + "    cargos car ON car.id = p.cargo "
+                + "        LEFT JOIN "
+                + "    usuarios u ON p.id = u.id_persona AND u.fecha_eliminacion IS NULL "
+                + "        LEFT JOIN "
+                + "    perfiles pf ON pf.id = u.perfil AND pf.fecha_eliminacion IS NULL "
+                + "WHERE "
+                + "    1 = 1 AND p.fecha_eliminacion IS NULL ";
+        if (idPersona != null) {
             sql += "and p.id = " + idPersona + " ";
         }
         if (documento != null && !documento.isEmpty()) {
@@ -91,7 +160,7 @@ public class PersonasSql {
         }
         return sql;
     }
-
+    
     /**
      * Método encargado de retornar el SQL para consultar las personas
      * pertenecientes a un proyecto, por nombres, apellidos o documento.

@@ -26,20 +26,50 @@ public class PerfilesDao {
 
     /* Eliminar cuando se arregle la pantalla de personas */
     public PerfilesBean consultarPerfil(Integer idPerfil) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
-        List<PerfilesBean> listaPerfiles = consultarPerfiles(idPerfil, null, false);
+        List<PerfilesBean> listaPerfiles = consultarPerfiles(idPerfil, null, false, null);
         return listaPerfiles.get(0);
     }
     
     public List<PerfilesBean> consultarPerfiles() throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
-        return consultarPerfiles(null, null, false);
+        return consultarPerfiles(null, null, false, null);
     }
     
-    public List<PerfilesBean> consultarPerfiles(Integer idPerfil, String nombrePerfil, boolean nombreExacto) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
+    /**
+     * Método encargado de consultar la cantidad de usuarios existentes en base
+     * de datos relacionados con los filtros ingresados
+     *
+     * @param idPerfil
+     * @param nombrePerfil
+     * @param nombreExacto
+     * @return
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws SQLException
+     * @throws IllegalAccessException
+     */
+    public int cantidadPerfiles(Integer idPerfil, String nombrePerfil, boolean nombreExacto) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
+        int cantidadPerfiles = 0;
+        Connection con;
+        con = new ConexionBaseDatos().obtenerConexion();
+        PreparedStatement ps;
+        ps = con.prepareStatement(sql.cantidadPerfiles(idPerfil, nombrePerfil, nombreExacto));
+        ResultSet rs;
+        rs = ps.executeQuery();
+        if (rs.next()) {
+            cantidadPerfiles = rs.getInt("cantidadPerfiles");
+        }
+        rs.close();
+        ps.close();
+        con.close();
+        return cantidadPerfiles;
+    }
+    
+    public List<PerfilesBean> consultarPerfiles(Integer idPerfil, String nombrePerfil, boolean nombreExacto, String limite) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
         List<PerfilesBean> listaPerfiles = new ArrayList<>();
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;
-        ps = con.prepareStatement(sql.consultarPerfiles(idPerfil, nombrePerfil, nombreExacto));
+        ps = con.prepareStatement(sql.consultarPerfiles(idPerfil, nombrePerfil, nombreExacto, limite));
         ResultSet rs;
         rs = ps.executeQuery();
         while(rs.next()){
