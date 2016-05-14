@@ -88,26 +88,29 @@
                                         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                             <label>Clientes</label>
                                             <ul class="list-group" id="clientesActividad">
-                                                <c:choose>
-                                                    <c:when test="${clientesActividad  == null || clientesActividad.size() == 0}">
-                                                        No se han agregado clientes al proyecto
-                                                    </c:when>
-                                                    <c:otherwise>
-                                                        <c:forEach items="${clientesActividad}" var="item">
-                                                            <li class="list-group-item" id="persona${item.id}">
-                                                                <div class="row">
-                                                                    <div class="col-xs-10 col-sm-11 col-md-11 col-lg-11"> ${item.nombre}</div>
-                                                                    <div class="col-xs-2 col-sm-1 col-md-1 col-lg-1">
-                                                                        <span class="glyphicon glyphicon-remove" style="cursor:pointer;" onclick="eliminarPersona(${item.id}, '${item.nombreCargo}');"></span>
+                                                <c:if test="${empty clientesActividad}">
+                                                    No se han agregado clientes al proyecto
+                                                </c:if>
+                                                <c:if test="${not empty clientesActividad}">
+                                                    <c:forEach items="${clientesActividad}" var="item">
+                                                        <li class="list-group-item" id="persona${item.idPersona}">
+                                                            <div class="row">
+                                                                <div class="col-xs-10 col-sm-11 col-md-11 col-lg-11">
+                                                                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                                                                        ${item.nombre}
+                                                                    </div>
+                                                                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                                                                        ${item.fechaInicio} - ${item.fechaFin} (${item.tiempo} h)
                                                                     </div>
                                                                 </div>
-                                                            </li>
-                                                        </c:forEach>
-                                                        <script type="text/javascript">
-                                                            clientesSeleccionados = ${clientesActividad.size()};
-                                                        </script>
-                                                    </c:otherwise>
-                                                </c:choose>                                             
+                                                                <div class="col-xs-2 col-sm-1 col-md-1 col-lg-1">
+                                                                    <span class="glyphicon glyphicon-time" style="cursor:pointer;" onclick="estimar(${item.idPersona}, '${item.fechaInicio}', '${item.fechaFin}', ${item.tiempo});"></span>
+                                                                    <span class="glyphicon glyphicon-remove" style="cursor:pointer;" onclick="eliminarPersona(${item.idPersona});"></span>
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                    </c:forEach>
+                                                </c:if>
                                             </ul>
                                         </div>
                                     </div>
@@ -115,26 +118,29 @@
                                         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                             <label>Empleados</label>
                                             <ul class="list-group" id="empleadosActividad">
-                                                <c:choose>
-                                                    <c:when test="${empleadosActividad  == null || empleadosActividad.size() == 0}">
-                                                        No se han agregado empleados al proyecto
-                                                    </c:when>
-                                                    <c:otherwise>
-                                                        <c:forEach items="${empleadosActividad}" var="item">
-                                                            <li class="list-group-item" id="persona${item.id}">
-                                                                <div class="row">
-                                                                    <div class="col-xs-10 col-sm-11 col-md-11 col-lg-11"> ${item.nombre}</div>
-                                                                    <div class="col-xs-2 col-sm-1 col-md-1 col-lg-1">
-                                                                        <span class="glyphicon glyphicon-remove" style="cursor:pointer;" onclick="eliminarPersona(${item.id}, '${item.nombreCargo}');"></span>
+                                                <c:if test="${empty empleadosActividad}">
+                                                    No se han agregado empleados al proyecto
+                                                </c:if>
+                                                <c:if test="${not empty empleadosActividad}">
+                                                    <c:forEach items="${empleadosActividad}" var="item">
+                                                        <li class="list-group-item" id="persona${item.idPersona}">
+                                                            <div class="row">
+                                                                <div class="col-xs-10 col-sm-11 col-md-11 col-lg-11">
+                                                                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                                                                        ${item.nombre}
+                                                                    </div>
+                                                                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                                                                        ${item.fechaInicio} - ${item.fechaFin} (${item.tiempo} h)
                                                                     </div>
                                                                 </div>
-                                                            </li>
-                                                        </c:forEach>
-                                                        <script type="text/javascript">
-                                                            empleadosSeleccionados = ${empleadosActividad.size()};
-                                                        </script>
-                                                    </c:otherwise>
-                                                </c:choose>
+                                                                <div class="col-xs-2 col-sm-1 col-md-1 col-lg-1">
+                                                                    <span class="glyphicon glyphicon-time" style="cursor:pointer;" onclick="estimar(${item.idPersona}, '${item.fechaInicio}', '${item.fechaFin}', ${item.tiempo});"></span>
+                                                                    <span class="glyphicon glyphicon-remove" style="cursor:pointer;" onclick="eliminarPersona(${item.idPersona});"></span>
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                    </c:forEach>
+                                                </c:if>
                                             </ul>
                                         </div>
                                     </div>
@@ -142,6 +148,18 @@
                             </div>
                         </c:if>
 
+                        <c:if test="${not empty listaComentarios}">
+                            <div class="panel panel-info">
+                                <div class="panel-heading">COMENTARIOS</div>
+                                <div class="panel-body">
+                                    <div class="row">
+                                        <div id="divComentarios" class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                            <c:import url="/jsp/general/comentarios.jsp"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </c:if>
                         <div class="row form-group" align="center">
                             <c:if test="${opcionGuardar == 'T'}">
                                 <button class="btn btn-primary" type="submit" name="accion" id="guardar" value="guardar">Guardar</button>
@@ -154,13 +172,6 @@
                             </c:if>
                             <button class="btn btn-default" type="submit" name="accion" id="limpiar" value="limpiar">Volver a Actividades</button>
                         </div>
-                        <c:if test="${not empty listaComentarios}">
-                            <div class="row">
-                                <div id="divComentarios" class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                    <c:import url="/jsp/general/comentarios.jsp"/>
-                                </div>
-                            </div>
-                        </c:if>
                     </form>
                     <div id="modalWarning" class="modal fade">
                         <div class="modal-dialog" role="document">

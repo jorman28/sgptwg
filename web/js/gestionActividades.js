@@ -1,7 +1,4 @@
-var personasActividades = {};
 var fechasVersiones = {};
-var clientesSeleccionados = 0;
-var empleadosSeleccionados = 0;
 var horasTrabajadasDia = 9;
 
 jQuery(function() {
@@ -19,24 +16,7 @@ jQuery(function() {
     $("#participante").typeahead({
         onSelect: function(item) {
             if ($("#persona" + item.value)[0] === undefined) {
-                var persona = personasActividades[item.value];
-                var html = pintarPersonas(persona);
-                if (persona.cargo.toLowerCase() === "cliente") {
-                    if (clientesSeleccionados === 0) {
-                        $("#clientesActividad").html(html);
-                    } else {
-                        $("#clientesActividad").append(html);
-                    }
-                    clientesSeleccionados++;
-                } else {
-                    if (empleadosSeleccionados === 0) {
-                        $("#empleadosActividad").html(html);
-                    } else {
-                        $("#empleadosActividad").append(html);
-                    }
-                    empleadosSeleccionados++;
-                }
-                $('#idPersona').val(persona.id);
+                jQuery("#idPersona").val(item.value);
                 guardarPersonaActividad();
             }
         },
@@ -52,28 +32,9 @@ jQuery(function() {
                 return {busqueda: busqueda, proyecto: $("#proyecto").val(), accion: "consultarPersonasProyecto"};
             },
             preProcess: function(data) {
-                for (var i = 0; i < data.length; i++) {
-                    var persona = data[i];
-                    personasActividades[persona.id] = persona;
-                }
                 return data;
             }
         }
-    });
-
-    $('#proyecto').change(function() {
-        var dato = $('#proyecto').val();
-        if (dato !== undefined && dato !== "" && dato !== "0") {
-            $("#participante").val("");
-            $("#participante").prop("disabled", false);
-        } else {
-            $("#participante").val("");
-            $("#participante").prop("disabled", true);
-        }
-        $("#clientesActividad").html('No se han agregado clientes al proyecto');
-        clientesSeleccionados = 0;
-        $("#empleadosActividad").html('No se han agregado empleados al proyecto');
-        empleadosSeleccionados = 0;
     });
 
     $('#fechaInicio').change(function() {
@@ -90,7 +51,6 @@ jQuery(function() {
     $("#limpiarParticipante").click(function() {
         $("#participante").val('');
     });
-
 });
 
 function consultarVersiones(idProyecto) {
@@ -129,33 +89,27 @@ function pintarListaPersonas(listaPersonas) {
 }
 
 function pintarPersonas(persona) {
-    var html = '    <li class="list-group-item" id="persona' + persona.id + '">'
-            + '         <div class="row">'
-            + '             <input type="hidden" id="idPersona' + persona.id + '" name="idPersonas" value="' + persona.id + '" />'
-            + '             <div class="col-xs-10 col-sm-11 col-md-11 col-lg-11">'
-            + '                 ' + persona.nombre
-            + '             </div>'
-            + '             <div class="col-xs-2 col-sm-1 col-md-1 col-lg-1">'
-            + '                 <span class="glyphicon glyphicon-remove" style="cursor:pointer;" onclick="eliminarPersona(' + persona.id + ' , \'' + persona.cargo + '\');"></span>'
-            + '             </div>'
-            + '         </div>'
-            + '     </li>';
+    var html = '<li class="list-group-item" id="persona' + persona.idPersona + '">';
+    html += '    <div class="row">';
+    html += '        <div class="col-xs-10 col-sm-11 col-md-11 col-lg-11">';
+    html += '           <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">';
+    html += persona.nombre;
+    html += '           </div>';
+    html += '           <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">';
+    html += persona.fechaInicio + ' - ' + persona.fechaFin + ' (' + persona.tiempo + ' h)';
+    html += '           </div>';
+    html += '        </div>';
+    html += '        <div class="col-xs-2 col-sm-1 col-md-1 col-lg-1">';
+    html += '           <span class="glyphicon glyphicon-time" style="cursor:pointer;" onclick="estimar(' + persona.idPersona + ', \'' + persona.fechaInicio + '\', \'' + persona.fechaFin + '\', ' + persona.tiempo + ');"></span>';
+    html += '           <span class="glyphicon glyphicon-remove" style="cursor:pointer;" onclick="eliminarPersona(' + persona.idPersona + ');"></span>';
+    html += '        </div>';
+    html += '   </div>';
+    html += '</li>';
     return html;
 }
 
-function eliminarPersona(idPersona, cargo) {
+function eliminarPersona(idPersona) {
     $("#persona" + idPersona).remove();
-    if (cargo.toLowerCase() === "cliente") {
-        clientesSeleccionados--;
-        if (clientesSeleccionados === 0) {
-            $("#clientesActividad").html('No se han agregado clientes al proyecto');
-        }
-    } else {
-        empleadosSeleccionados--;
-        if (empleadosSeleccionados === 0) {
-            $("#empleadosActividad").html('No se han agregado empleados al proyecto');
-        }
-    }
 }
 
 function calcularFechaFin(horas) {
@@ -195,9 +149,13 @@ function validarEstimacion() {
             url: "ActividadesController",
             dataType: "json",
             data: {responsable: idResponsable, fechaInicio: fechaInicio, fechaFin: fechaFin, id: idActividad, accion: "consultarFechasActividades"},
-            success: function(data) {
-                if (data !== undefined && data !== "") {
-                    var html = "Esta persona ya tiene actividades asociadas entre las fechas " + fechaInicio + " y " + fechaFin + "<br/><br/>";
+            success: function(actividades) {
+                if (actividades !== undefined && actividades.length > 0) {
+                    var html = "Esta persona ya tiene actividades asociadas entre las fechas " + fechaInicio + " y " + fechaFin + "<br>";
+                    for (var i in actividades) {
+                        var actividad = actividades[i];
+                        html += actividad.nombre + ' ' + actividad.fechaInicio + ' - ' + actividad.fechaFin + ' (' + actividad.tiempo + ' h) <br>';
+                    }
                     html += '<b>¿Desea continuar con el registro?</b>';
                     $("#contenidoWarning").html(html);
                     $("#modalWarning").modal("show");
@@ -237,13 +195,32 @@ function guardarPersonaActividad(estimacion) {
         dataType: "json",
         data: {accion: "guardarPersonaActividad", id: $("#id").val(), responsable: jQuery("#idPersona").val(),
             fechaInicio: fechaInicio, fechaFin: fechaFin, tiempo: tiempo, estimacion: estimacion},
-        success: function(data) {
-            if (data !== undefined && data.resultado !== undefined && data.resultado !== '') {
+        success: function(almacenamiento) {
+            if (almacenamiento.resultado !== undefined && almacenamiento.resultado === 'ok') {
+                jQuery('#mensajeExito').html('El responsable ha sido guardado con éxito');
+                jQuery('#alertaExito').show();
+                if (almacenamiento.clientesActividad !== undefined && almacenamiento.clientesActividad.length > 0) {
+                    jQuery('#clientesActividad').html(pintarListaPersonas(almacenamiento.clientesActividad));
+                } else {
+                    jQuery('#clientesActividad').html('No se han agregado clientes al proyecto');
+                }
+                if (almacenamiento.empleadosActividad !== undefined && almacenamiento.empleadosActividad.length > 0) {
+                    jQuery('#empleadosActividad').html(pintarListaPersonas(almacenamiento.empleadosActividad));
+                } else {
+                    jQuery('#empleadosActividad').html('No se han agregado empleados al proyecto');
+                }
+                $("#participante").val('');
+            } else if (almacenamiento.mensaje !== undefined && almacenamiento.mensaje !== '') {
+                jQuery('#mensajeError').html(almacenamiento.mensaje);
+                jQuery('#alertaError').show();
             } else {
-                
+                jQuery('#mensajeError').html('Error guardando datos de responsable');
+                jQuery('#alertaError').show();
             }
         },
         error: function() {
+            jQuery('#mensajeError').html('Error guardando datos de responsable');
+            jQuery('#alertaError').show();
         }
     });
 }

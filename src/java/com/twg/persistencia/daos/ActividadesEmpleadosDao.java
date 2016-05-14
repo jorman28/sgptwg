@@ -22,21 +22,45 @@ public class ActividadesEmpleadosDao {
     public ActividadesEmpleadosDao() {
     }
 
-    public List<ActividadesEmpleadosBean> consultarActividadesEmpleados(Integer idActividad, Integer idEmpleado) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
+    /**
+     * Método encargado de consultar las personas relacionadas con una actividad
+     * o las actividades relacionadas a una persona. Se puede consultar además
+     * si una persona ya tiene actividades asignadas para unas fechas
+     * específicas
+     *
+     * @param idActividad
+     * @param idEmpleado
+     * @param fechaEstimadaInicio
+     * @param fechaEstimadaFin
+     * @param evaluarEstado
+     * @param actividadIgual
+     * @return
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws SQLException
+     * @throws IllegalAccessException
+     */
+    public List<ActividadesEmpleadosBean> consultarActividadesEmpleados(Integer idActividad, Integer idEmpleado, Date fechaEstimadaInicio, Date fechaEstimadaFin, boolean evaluarEstado, boolean actividadIgual) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         List<ActividadesEmpleadosBean> listaActividadesEmpleados = new ArrayList<>();
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;
-        ps = con.prepareStatement(sql.consultarActividadEmpleado(idActividad, idEmpleado));
+        ps = con.prepareStatement(sql.consultarActividadEmpleado(idActividad, idEmpleado, fechaEstimadaInicio, fechaEstimadaFin, evaluarEstado, actividadIgual));
         ResultSet rs;
         rs = ps.executeQuery();
         while (rs.next()) {
             ActividadesEmpleadosBean actividadEmpleado = new ActividadesEmpleadosBean();
             actividadEmpleado.setActividad(rs.getInt("actividad"));
+            actividadEmpleado.setNombreActividad(rs.getString("nombre_actividad"));
+            actividadEmpleado.setEstado(rs.getString("nombre_estado"));
             actividadEmpleado.setEmpleado(rs.getInt("empleado"));
-            actividadEmpleado.setFechaEstimadaInicio((Date)rs.getObject("fecha_estimada_inicio"));
-            actividadEmpleado.setFechaEstimadaTerminacion((Date)rs.getObject("fecha_estimada_terminacion"));
-            actividadEmpleado.setTiempoEstimado((Double)rs.getObject("tiempo_estimado"));
+            actividadEmpleado.setTipoDocumento(rs.getString("tipo_documento"));
+            actividadEmpleado.setDocumento(rs.getString("documento"));
+            actividadEmpleado.setNombrePersona(rs.getString("nombre_persona"));
+            actividadEmpleado.setCargo(rs.getString("nombre_cargo"));
+            actividadEmpleado.setFechaEstimadaInicio((Date) rs.getObject("fecha_estimada_inicio"));
+            actividadEmpleado.setFechaEstimadaTerminacion((Date) rs.getObject("fecha_estimada_terminacion"));
+            actividadEmpleado.setTiempoEstimado((Double) rs.getObject("tiempo_estimado"));
             listaActividadesEmpleados.add(actividadEmpleado);
         }
         rs.close();
@@ -45,6 +69,16 @@ public class ActividadesEmpleadosDao {
         return listaActividadesEmpleados;
     }
 
+    /**
+     * Método encargado de asociar una persona a una actividad
+     *
+     * @param actividadEmpleado
+     * @return
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws SQLException
+     * @throws IllegalAccessException
+     */
     public int insertarActividadEmpleado(ActividadesEmpleadosBean actividadEmpleado) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
@@ -57,7 +91,18 @@ public class ActividadesEmpleadosDao {
         con.close();
         return insercion;
     }
-    
+
+    /**
+     * Método encargado de actualizar los tiempos estimados de una persona
+     * asociada a una actividad
+     *
+     * @param actividadEmpleado
+     * @return
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws SQLException
+     * @throws IllegalAccessException
+     */
     public int actualizarActividadEmpleado(ActividadesEmpleadosBean actividadEmpleado) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
@@ -74,45 +119,26 @@ public class ActividadesEmpleadosDao {
         return actualizacion;
     }
 
+    /**
+     * Método encargado de eliminar la asociación de una persona a una actividad
+     *
+     * @param idActividad
+     * @param idEmpleado
+     * @return
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws SQLException
+     * @throws IllegalAccessException
+     */
     public int eliminarActividadEmpleado(Integer idActividad, Integer idEmpleado) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;
-        ps = con.prepareStatement(sql.eliminarActividadEmpleado(idActividad, idEmpleado));
+        ps = con.prepareStatement(sql.eliminarActividadEmpleado());
+        ps.setInt(1, idActividad);
+        ps.setInt(2, idEmpleado);
         int eliminacion = ps.executeUpdate();
         ps.close();
-        con.close();
-        return eliminacion;
-    }
-
-    public int eliminarActividadesEmpleados(Integer Actividad, String[] empleados) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
-        Connection con;
-        con = new ConexionBaseDatos().obtenerConexion();
-        int eliminacion = 0;
-
-        if (empleados != null && empleados.length > 0) {
-            StringBuilder strEmpleados = new StringBuilder("");
-            for (int i = 0; i < empleados.length; i++) {
-                strEmpleados.append(empleados[i]);
-                if (i < empleados.length - 1) {
-                    strEmpleados.append(',');
-                }
-            }
-
-            PreparedStatement ps;
-            ps = con.prepareStatement(sql.eliminarActividadesEmpleados());
-            ps.setInt(1, Actividad);
-            ps.setString(2, strEmpleados.toString());
-            eliminacion = ps.executeUpdate();
-            ps.close();
-
-        } else {
-            PreparedStatement ps;
-            ps = con.prepareStatement(sql.eliminarActividadEmpleado(Actividad, null));
-            eliminacion = ps.executeUpdate();
-            ps.close();
-        }
-
         con.close();
         return eliminacion;
     }

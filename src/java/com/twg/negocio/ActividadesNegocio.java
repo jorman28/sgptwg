@@ -19,6 +19,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.sf.dynamicreports.report.datasource.DRDataSource;
 import net.sf.jasperreports.engine.JRDataSource;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 /**
  * Clase encargada de realizar la conexión entre la vista y las operaciones en
@@ -162,6 +164,17 @@ public class ActividadesNegocio {
         return validacion;
     }
 
+    /**
+     * Método encargado de asociar un responsable a una actividad
+     *
+     * @param idActividad
+     * @param idPersona
+     * @param fechaInicio
+     * @param fechaFin
+     * @param tiempo
+     * @param estimacion
+     * @return
+     */
     public String guardarActividadPersona(Integer idActividad, Integer idPersona, String fechaInicio, String fechaFin, String tiempo, boolean estimacion) {
         String error = "";
         ActividadesEmpleadosBean actividadesEmpleados = new ActividadesEmpleadosBean();
@@ -178,7 +191,7 @@ public class ActividadesNegocio {
         }
         List<ActividadesEmpleadosBean> listaActividadesEmpleados;
         try {
-            listaActividadesEmpleados = actividadesEmpleadosDao.consultarActividadesEmpleados(idActividad, idPersona);
+            listaActividadesEmpleados = actividadesEmpleadosDao.consultarActividadesEmpleados(idActividad, idPersona, null, null, false, true);
         } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
             Logger.getLogger(ActividadesNegocio.class.getName()).log(Level.SEVERE, null, ex);
             listaActividadesEmpleados = null;
@@ -186,12 +199,12 @@ public class ActividadesNegocio {
         try {
             int guardado = 0;
             if (listaActividadesEmpleados != null && !listaActividadesEmpleados.isEmpty()) {
-                guardado = actividadesEmpleadosDao.insertarActividadEmpleado(actividadesEmpleados);
+                guardado = actividadesEmpleadosDao.actualizarActividadEmpleado(actividadesEmpleados);
                 if (guardado == 0) {
                     error = "El reponsable no pudo ser asociado a la actividad";
                 }
             } else {
-                guardado = actividadesEmpleadosDao.actualizarActividadEmpleado(actividadesEmpleados);
+                guardado = actividadesEmpleadosDao.insertarActividadEmpleado(actividadesEmpleados);
                 if (guardado == 0) {
                     error = "La estimación de trabajo del responsable no pudo ser guardada";
                 }
@@ -204,20 +217,77 @@ public class ActividadesNegocio {
     }
 
     /**
-     * Método encargado de consultar la asociación de empleados a una actividad
+     * Método encargado de consultar los responsables asociados a una actividad
+     *
+     * @param idActividad
+     * @return
+     */
+    public JSONArray consultarActividadesEmpleados(Integer idActividad) {
+        JSONArray responsablesActividad = new JSONArray();
+        List<ActividadesEmpleadosBean> actividadesEmplados = consultarActividadesEmpleados(idActividad, null, null, null, false, true);
+        if (actividadesEmplados != null && !actividadesEmplados.isEmpty()) {
+            for (ActividadesEmpleadosBean actividadEmpleado : actividadesEmplados) {
+                JSONObject actividad = new JSONObject();
+                actividad.put("idPersona", actividadEmpleado.getEmpleado());
+                actividad.put("nombre", actividadEmpleado.getTipoDocumento() + actividadEmpleado.getDocumento() + " " + actividadEmpleado.getNombrePersona());
+                actividad.put("cargo", actividadEmpleado.getCargo());
+                actividad.put("fechaInicio", actividadEmpleado.getFechaEstimadaInicio() != null ? sdf.format(actividadEmpleado.getFechaEstimadaInicio()) : "");
+                actividad.put("fechaFin", actividadEmpleado.getFechaEstimadaTerminacion() != null ? sdf.format(actividadEmpleado.getFechaEstimadaTerminacion()) : "");
+                actividad.put("tiempo", actividadEmpleado.getTiempoEstimado() != null ? actividadEmpleado.getTiempoEstimado() : 0);
+                responsablesActividad.add(actividad);
+            }
+        }
+        return responsablesActividad;
+    }
+
+    /**
+     * Método encargado de consultar los responsables de una actividad o las
+     * actividades asociadas a un responsable en un periodo de tiempo
      *
      * @param idActividad
      * @param idEmpleado
+     * @param fechaEstimadaInicio
+     * @param fechaEstimadaFin
+     * @param evaluarEstado
+     * @param actividadIgual
      * @return
      */
-    public List<ActividadesEmpleadosBean> consultarActividadesEmpleados(Integer idActividad, Integer idEmpleado) {
+    public List<ActividadesEmpleadosBean> consultarActividadesEmpleados(Integer idActividad, Integer idEmpleado, Date fechaEstimadaInicio, Date fechaEstimadaFin, boolean evaluarEstado, boolean actividadIgual) {
         List<ActividadesEmpleadosBean> listaActividadesEmpleados = new ArrayList<>();
         try {
-            listaActividadesEmpleados = actividadesEmpleadosDao.consultarActividadesEmpleados(idActividad, idEmpleado);
+            listaActividadesEmpleados = actividadesEmpleadosDao.consultarActividadesEmpleados(idActividad, idEmpleado, fechaEstimadaInicio, fechaEstimadaFin, evaluarEstado, actividadIgual);
         } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
             Logger.getLogger(ActividadesNegocio.class.getName()).log(Level.SEVERE, null, ex);
         }
         return listaActividadesEmpleados;
+    }
+
+    /**
+     * Método encargado de consultar si una persona ya tiene actividades
+     * previamente asignadas en las fechas de inicio y fin seleccionadas para
+     * una nueva actividad
+     *
+     * @param idActividad
+     * @param idEmpleado
+     * @param fechaEstimadaInicio
+     * @param fechaEstimadaFin
+     * @return
+     */
+    public JSONArray consultarActividadesAsociadas(Integer idActividad, Integer idEmpleado, Date fechaEstimadaInicio, Date fechaEstimadaFin) {
+        JSONArray actividadesAsociadas = new JSONArray();
+        List<ActividadesEmpleadosBean> actividadesEmplados = consultarActividadesEmpleados(idActividad, idEmpleado, fechaEstimadaInicio, fechaEstimadaFin, true, false);
+        if (actividadesEmplados != null && !actividadesEmplados.isEmpty()) {
+            for (ActividadesEmpleadosBean actividadEmpleado : actividadesEmplados) {
+                JSONObject actividad = new JSONObject();
+                actividad.put("nombre", actividadEmpleado.getNombreActividad());
+                actividad.put("estado", actividadEmpleado.getEstado());
+                actividad.put("fechaInicio", actividadEmpleado.getFechaEstimadaInicio() != null ? sdf.format(actividadEmpleado.getFechaEstimadaInicio()) : "");
+                actividad.put("fechaFin", actividadEmpleado.getFechaEstimadaTerminacion() != null ? sdf.format(actividadEmpleado.getFechaEstimadaTerminacion()) : "");
+                actividad.put("tiempo", actividadEmpleado.getTiempoEstimado() != null ? actividadEmpleado.getTiempoEstimado() : 0);
+                actividadesAsociadas.add(actividad);
+            }
+        }
+        return actividadesAsociadas;
     }
 
     /**

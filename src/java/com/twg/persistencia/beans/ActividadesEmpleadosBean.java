@@ -10,9 +10,14 @@ import java.util.Date;
  */
 public class ActividadesEmpleadosBean {
 
-    //Definición de atributos.
     private Integer actividad;
+    private String nombreActividad;
+    private String estado;
     private Integer empleado;
+    private String tipoDocumento;
+    private String documento;
+    private String nombrePersona;
+    private String cargo;
     private Date fechaEstimadaInicio;
     private Date fechaEstimadaTerminacion;
     private Double tiempoEstimado;
@@ -28,12 +33,60 @@ public class ActividadesEmpleadosBean {
         this.actividad = actividad;
     }
 
+    public String getNombreActividad() {
+        return nombreActividad;
+    }
+
+    public void setNombreActividad(String nombreActividad) {
+        this.nombreActividad = nombreActividad;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
+
     public Integer getEmpleado() {
         return empleado;
     }
 
     public void setEmpleado(Integer empleado) {
         this.empleado = empleado;
+    }
+
+    public String getTipoDocumento() {
+        return tipoDocumento;
+    }
+
+    public void setTipoDocumento(String tipoDocumento) {
+        this.tipoDocumento = tipoDocumento;
+    }
+
+    public String getDocumento() {
+        return documento;
+    }
+
+    public void setDocumento(String documento) {
+        this.documento = documento;
+    }
+
+    public String getNombrePersona() {
+        return nombrePersona;
+    }
+
+    public void setNombrePersona(String nombrePersona) {
+        this.nombrePersona = nombrePersona;
+    }
+
+    public String getCargo() {
+        return cargo;
+    }
+
+    public void setCargo(String cargo) {
+        this.cargo = cargo;
     }
 
     public Date getFechaEstimadaInicio() {
@@ -59,4 +112,5 @@ public class ActividadesEmpleadosBean {
     public void setTiempoEstimado(Double tiempoEstimado) {
         this.tiempoEstimado = tiempoEstimado;
     }
+    
 }
