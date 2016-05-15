@@ -54,3 +54,8 @@ h2, .h2 {
     cursor: pointer;
     color: #ccc;
 }
+
+.linkAyuda{
+    font-size: 180%;
+    float: right
+}
