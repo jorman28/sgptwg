@@ -20,7 +20,8 @@ public class ActividadesBean {
     private String nombreEstado;
     private Date fechaInicio;
     private Date fechaFin;
-    private Double tiempo;
+    private Double tiempoEstimado;
+    private Double tiempoInvertido;
     private Integer proyecto;
     private String nombreProyecto;
 
@@ -99,12 +100,12 @@ public class ActividadesBean {
         this.fechaFin = fechaFin;
     }
 
-    public Double getTiempo() {
-        return tiempo;
+    public Double getTiempoEstimado() {
+        return tiempoEstimado;
     }
 
-    public void setTiempo(Double tiempo) {
-        this.tiempo = tiempo;
+    public void setTiempoEstimado(Double tiempo) {
+        this.tiempoEstimado = tiempo;
     }
 
     public Integer getProyecto() {
@@ -114,7 +115,7 @@ public class ActividadesBean {
     public void setProyecto(Integer proyecto) {
         this.proyecto = proyecto;
     }
-    
+
     public String getNombreProyecto() {
         return nombreProyecto;
     }
@@ -122,5 +123,13 @@ public class ActividadesBean {
     public void setNombreProyecto(String nombreProyecto) {
         this.nombreProyecto = nombreProyecto;
     }
-    
+
+    public Double getTiempoInvertido() {
+        return tiempoInvertido;
+    }
+
+    public void setTiempoInvertido(Double tiempoInvertido) {
+        this.tiempoInvertido = tiempoInvertido;
+    }
+
 }

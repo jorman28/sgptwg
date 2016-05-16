@@ -66,11 +66,11 @@ public class ActividadesController extends HttpServlet {
             String mensajeError = "";
 
             String accion = request.getParameter("accion");
-            String actividad = request.getParameter("id");
             if (accion == null) {
                 accion = "";
             }
 
+            String actividad = request.getParameter("id");
             String proyecto = request.getParameter("proyecto");
             String version = request.getParameter("version");
             String nombre = request.getParameter("nombre");
@@ -83,6 +83,7 @@ public class ActividadesController extends HttpServlet {
             String fechaFin = request.getParameter("fechaFin");
             String tiempo = request.getParameter("tiempo");
             String estimacion = request.getParameter("estimacion");
+            String esfuerzo = request.getParameter("esfuerzo");
 
             Integer idActividad = null;
             try {
@@ -110,6 +111,12 @@ public class ActividadesController extends HttpServlet {
                 idEstado = Integer.valueOf(estado);
             } catch (NumberFormatException e) {
                 idEstado = null;
+            }
+            Integer idEsfuerzo;
+            try {
+                idEsfuerzo = Integer.valueOf(esfuerzo);
+            } catch (NumberFormatException e) {
+                idEsfuerzo = null;
             }
             List<String> permisosPagina = PerfilesNegocio.permisosPorPagina(request, Paginas.ACTIVIDADES);
 
@@ -190,21 +197,20 @@ public class ActividadesController extends HttpServlet {
                     JSONObject resultado = new JSONObject();
                     if (mensajeError.isEmpty()) {
                         resultado.put("resultado", "ok");
-                        JSONArray personas = actividadesNegocio.consultarActividadesEmpleados(idActividad);
-                        JSONArray empleados = new JSONArray();
-                        JSONArray clientes = new JSONArray();
-                        for (Object persona : personas) {
-                            JSONObject personaJSON = (JSONObject) persona;
-                            if (personaJSON.get("cargo") != null && personaJSON.get("cargo").toString().equalsIgnoreCase("cliente")) {
-                                clientes.add(persona);
-                            } else {
-                                empleados.add(persona);
-                            }
-                        }
-                        resultado.put("clientesActividad", clientes);
-                        resultado.put("empleadosActividad", empleados);
+                        consultarEmpleadosActividad(resultado, idActividad);
                     } else {
-                        resultado.put("resultado", "falla");
+                        resultado.put("mensaje", mensajeError);
+                    }
+                    response.getWriter().write(resultado.toJSONString());
+                    break;
+                case "guardarEsfuerzo":
+                    resultado = new JSONObject();
+                    mensajeError = actividadesNegocio.guardarActividadEsfuerzo(idEsfuerzo, idActividad, idResponsable, fecha, tiempo, descripcion);
+                    if (mensajeError.isEmpty()) {
+                        resultado.put("resultado", "ok");
+                        consultarEmpleadosActividad(resultado, idActividad);
+                        resultado.put("historialTrabajo", actividadesNegocio.consultarHistorialTrabajo(idActividad, idResponsable));
+                    } else {
                         resultado.put("mensaje", mensajeError);
                     }
                     response.getWriter().write(resultado.toJSONString());
@@ -214,6 +220,29 @@ public class ActividadesController extends HttpServlet {
                     if (mensajeError.isEmpty()) {
                         mensajeExito = "La actividad ha sido eliminada con éxito";
                     }
+                    break;
+                case "eliminarEmpleado":
+                    resultado = new JSONObject();
+                    mensajeError = actividadesNegocio.eliminarActividadEmpleado(idActividad, idResponsable);
+                    if (mensajeError.isEmpty()) {
+                        resultado.put("resultado", "ok");
+                        consultarEmpleadosActividad(resultado, idActividad);
+                    } else {
+                        resultado.put("mensaje", mensajeError);
+                    }
+                    response.getWriter().write(resultado.toJSONString());
+                    break;
+                case "eliminarEsfuerzo":
+                    resultado = new JSONObject();
+                    mensajeError = actividadesNegocio.eliminarActividadEsfuerzo(idEsfuerzo);
+                    if (mensajeError.isEmpty()) {
+                        resultado.put("resultado", "ok");
+                        consultarEmpleadosActividad(resultado, idActividad);
+                        resultado.put("historialTrabajo", actividadesNegocio.consultarHistorialTrabajo(idActividad, idResponsable));
+                    } else {
+                        resultado.put("mensaje", mensajeError);
+                    }
+                    response.getWriter().write(resultado.toJSONString());
                     break;
                 case "consultarVersiones":
                     JSONArray array = new JSONArray();
@@ -237,8 +266,12 @@ public class ActividadesController extends HttpServlet {
                 case "consultarFechasActividades":
                     Date dateFechaEstimadaInicial = sdf.parse(fechaInicio);
                     Date dateFechaEstimadaFin = sdf.parse(fechaFin);
-                    JSONArray arrayPersonasAsignadasActividad = actividadesNegocio.consultarActividadesAsociadas(idActividad, idResponsable, dateFechaEstimadaInicial, dateFechaEstimadaFin);
-                    response.getWriter().write(arrayPersonasAsignadasActividad.toString());
+                    array = actividadesNegocio.consultarActividadesAsociadas(idActividad, idResponsable, dateFechaEstimadaInicial, dateFechaEstimadaFin);
+                    response.getWriter().write(array.toJSONString());
+                    break;
+                case "consultarHistorialTrabajo":
+                    array = actividadesNegocio.consultarHistorialTrabajo(idActividad, idResponsable);
+                    response.getWriter().write(array.toJSONString());
                     break;
                 case "guardarComentario":
                     String comentario = request.getParameter("comentario");
@@ -317,6 +350,22 @@ public class ActividadesController extends HttpServlet {
         }
     }
 
+    private void consultarEmpleadosActividad(JSONObject resultado, Integer idActividad) {
+        JSONArray personas = actividadesNegocio.consultarActividadesEmpleados(idActividad);
+        JSONArray empleados = new JSONArray();
+        JSONArray clientes = new JSONArray();
+        for (Object persona : personas) {
+            JSONObject personaJSON = (JSONObject) persona;
+            if (personaJSON.get("cargo") != null && personaJSON.get("cargo").toString().equalsIgnoreCase("cliente")) {
+                clientes.add(persona);
+            } else {
+                empleados.add(persona);
+            }
+        }
+        resultado.put("clientesActividad", clientes);
+        resultado.put("empleadosActividad", empleados);
+    }
+
     /**
      * Método encargado de pintar la tabla con el listado de registros que hay
      * sobre las Actividades.
@@ -348,6 +397,7 @@ public class ActividadesController extends HttpServlet {
         out.println("<th>Inicio estimado</th>");
         out.println("<th>Terminacion estimada</th>");
         out.println("<th>Duración estimada (h)</th>");
+        out.println("<th>Tiempo invertido (h)</th>");
         out.println("<th>Estado</th>");
         out.println("<th>Acciones</th>");
         out.println("</tr>");
@@ -362,7 +412,8 @@ public class ActividadesController extends HttpServlet {
                 out.println("<td>" + actividad.getNombre() + "</td>");
                 out.println("<td>" + (actividad.getFechaInicio() != null ? sdf.format(actividad.getFechaInicio()) : "") + "</td>");
                 out.println("<td>" + (actividad.getFechaFin() != null ? sdf.format(actividad.getFechaFin()) : "") + "</td>");
-                out.println("<td>" + (actividad.getTiempo() != null ? actividad.getTiempo() : "") + "</td>");
+                out.println("<td>" + (actividad.getTiempoEstimado() != null ? actividad.getTiempoEstimado() : 0) + "</td>");
+                out.println("<td>" + (actividad.getTiempoInvertido() != null ? actividad.getTiempoInvertido() : 0) + "</td>");
                 out.println("<td>" + actividad.getNombreEstado() + "</td>");
                 out.println("<td>");
                 out.println("<div class=\"btn-group\" role=\"group\">");
@@ -385,7 +436,7 @@ public class ActividadesController extends HttpServlet {
             }
         } else {
             out.println("<tr>");
-            out.println("<td colspan=\"8\">No se encontraron registros</td>");
+            out.println("<td colspan=\"9\">No se encontraron registros</td>");
             out.println("</tr>");
         }
         out.println("</tbody>");

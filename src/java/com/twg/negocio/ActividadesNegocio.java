@@ -2,6 +2,7 @@ package com.twg.negocio;
 
 import com.twg.persistencia.beans.ActividadesBean;
 import com.twg.persistencia.beans.ActividadesEmpleadosBean;
+import com.twg.persistencia.beans.ActividadesEsfuerzosBean;
 import com.twg.persistencia.beans.EstadosBean;
 import com.twg.persistencia.daos.ActividadesDao;
 import com.twg.persistencia.daos.ActividadesEmpleadosDao;
@@ -233,7 +234,8 @@ public class ActividadesNegocio {
                 actividad.put("cargo", actividadEmpleado.getCargo());
                 actividad.put("fechaInicio", actividadEmpleado.getFechaEstimadaInicio() != null ? sdf.format(actividadEmpleado.getFechaEstimadaInicio()) : "");
                 actividad.put("fechaFin", actividadEmpleado.getFechaEstimadaTerminacion() != null ? sdf.format(actividadEmpleado.getFechaEstimadaTerminacion()) : "");
-                actividad.put("tiempo", actividadEmpleado.getTiempoEstimado() != null ? actividadEmpleado.getTiempoEstimado() : 0);
+                actividad.put("tiempoEstimado", actividadEmpleado.getTiempoEstimado());
+                actividad.put("tiempoInvertido", actividadEmpleado.getTiempoInvertido());
                 responsablesActividad.add(actividad);
             }
         }
@@ -344,15 +346,120 @@ public class ActividadesNegocio {
     public String eliminarActividad(Integer idActividad) {
         String error = "";
         try {
-            int eliminacionAct_Esf = actividadesEmpleadosDao.eliminarActividadEmpleado(idActividad, null);
-            int eliminacionAct_Empl = actividadesEsfuerzosDao.eliminarActividadEsfuerzo(idActividad);
+            actividadesEmpleadosDao.eliminarActividadEmpleado(idActividad, null);
+            actividadesEsfuerzosDao.eliminarActividadEsfuerzo(null, idActividad, null);
             int eliminacion = actividadesDao.eliminarActividad(idActividad);
-            if (eliminacion == 0 && eliminacionAct_Esf == 0 && eliminacionAct_Empl == 0) {
+            if (eliminacion == 0) {
                 error = "La actividad no pudo ser eliminada";
             }
         } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
             Logger.getLogger(ActividadesNegocio.class.getName()).log(Level.SEVERE, null, ex);
             error = "Ocurrió un error eliminando la actividad";
+        }
+        return error;
+    }
+
+    /**
+     * Método encargado de eliminar la asociación del responsable con una
+     * actividad, eliminando además el tiempo invertido en la actividad por
+     * dicho responsable
+     *
+     * @param idActividad
+     * @param idEmpleado
+     * @return
+     */
+    public String eliminarActividadEmpleado(Integer idActividad, Integer idEmpleado) {
+        String error = "";
+        try {
+            actividadesEsfuerzosDao.eliminarActividadEsfuerzo(null, idActividad, idEmpleado);
+            int eliminacionEmpleado = actividadesEmpleadosDao.eliminarActividadEmpleado(idActividad, idEmpleado);
+            if (eliminacionEmpleado == 0) {
+                error = "El responsable de la actividad no pudo ser eliminado";
+            }
+        } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
+            Logger.getLogger(ActividadesNegocio.class.getName()).log(Level.SEVERE, null, ex);
+            error = "Ocurrió un error eliminando el responsable de la actividad";
+        }
+        return error;
+    }
+
+    /**
+     * Método encargado de eliminar un registro de tiempo ingresado por un
+     * empleado para una actividad
+     *
+     * @param idEsfuerzo
+     * @return
+     */
+    public String eliminarActividadEsfuerzo(Integer idEsfuerzo) {
+        String error = "";
+        try {
+            int eliminacion = actividadesEsfuerzosDao.eliminarActividadEsfuerzo(idEsfuerzo, null, null);
+            if (eliminacion == 0) {
+                error = "El registro de tiempo no pudo ser eliminado";
+            }
+        } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
+            Logger.getLogger(ActividadesNegocio.class.getName()).log(Level.SEVERE, null, ex);
+            error = "Ocurrió un error eliminando el registro de tiempo";
+        }
+        return error;
+    }
+
+    /**
+     * Método encargado de consultar el tiempo que una persona ha invertido en
+     * la atención de una actividad
+     *
+     * @param idActividad
+     * @param idEmpleado
+     * @return
+     */
+    public JSONArray consultarHistorialTrabajo(Integer idActividad, Integer idEmpleado) {
+        JSONArray historial = new JSONArray();
+        try {
+            List<ActividadesEsfuerzosBean> listaActividadesEsfuerzos = actividadesEsfuerzosDao.consultarActividadesEsfuerzos(null, idActividad, idEmpleado, null, null);
+            if (listaActividadesEsfuerzos != null && !listaActividadesEsfuerzos.isEmpty()) {
+                for (ActividadesEsfuerzosBean actividadEsfuerzo : listaActividadesEsfuerzos) {
+                    JSONObject esfuerzo = new JSONObject();
+                    esfuerzo.put("id", actividadEsfuerzo.getId());
+                    esfuerzo.put("actividad", actividadEsfuerzo.getActividad());
+                    esfuerzo.put("empleado", actividadEsfuerzo.getEmpleado());
+                    esfuerzo.put("fecha", sdf.format(actividadEsfuerzo.getFecha()));
+                    esfuerzo.put("tiempo", actividadEsfuerzo.getTiempo());
+                    esfuerzo.put("descripcion", actividadEsfuerzo.getDescripcion());
+                    historial.add(esfuerzo);
+                }
+            }
+        } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
+            Logger.getLogger(ActividadesNegocio.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return historial;
+    }
+
+    public String guardarActividadEsfuerzo(Integer idEsfuerzo, Integer idActividad, Integer idEmpleado, String fecha, String tiempo, String descripcion) {
+        String error = "";
+        ActividadesEsfuerzosBean actividadesEsfuerzos = new ActividadesEsfuerzosBean();
+        actividadesEsfuerzos.setActividad(idActividad);
+        actividadesEsfuerzos.setEmpleado(idEmpleado);
+        actividadesEsfuerzos.setTiempo(Double.valueOf(tiempo));
+        try {
+            actividadesEsfuerzos.setFecha(sdf.parse(fecha));
+        } catch (ParseException ex) {
+            Logger.getLogger(ActividadesNegocio.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        actividadesEsfuerzos.setDescripcion(descripcion);
+        try {
+            int guardado = 0;
+            if (idEsfuerzo != null) {
+                actividadesEsfuerzos.setId(idEsfuerzo);
+                guardado = actividadesEsfuerzosDao.actualizarActividadEsfuerzo(actividadesEsfuerzos);
+            } else {
+                guardado = actividadesEsfuerzosDao.crearActividadEsfuerzo(actividadesEsfuerzos);
+            }
+            if (guardado == 0) {
+                error = "El tiempo invertido en la actividad no pudo ser guardado";
+            }
+        } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
+            Logger.getLogger(ActividadesNegocio.class.getName()).log(Level.SEVERE, null, ex);
+            error = "Ocurrió un error guardando el tiempo invertido en la actividad";
         }
         return error;
     }

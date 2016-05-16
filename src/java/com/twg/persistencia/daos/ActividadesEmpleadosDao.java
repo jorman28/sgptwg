@@ -46,6 +46,10 @@ public class ActividadesEmpleadosDao {
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;
         ps = con.prepareStatement(sql.consultarActividadEmpleado(idActividad, idEmpleado, fechaEstimadaInicio, fechaEstimadaFin, evaluarEstado, actividadIgual));
+        if (fechaEstimadaInicio != null && fechaEstimadaFin != null) {
+            ps.setObject(1, fechaEstimadaInicio);
+            ps.setObject(2, fechaEstimadaFin);
+        }
         ResultSet rs;
         rs = ps.executeQuery();
         while (rs.next()) {
@@ -60,7 +64,8 @@ public class ActividadesEmpleadosDao {
             actividadEmpleado.setCargo(rs.getString("nombre_cargo"));
             actividadEmpleado.setFechaEstimadaInicio((Date) rs.getObject("fecha_estimada_inicio"));
             actividadEmpleado.setFechaEstimadaTerminacion((Date) rs.getObject("fecha_estimada_terminacion"));
-            actividadEmpleado.setTiempoEstimado((Double) rs.getObject("tiempo_estimado"));
+            actividadEmpleado.setTiempoEstimado(rs.getObject("tiempo_estimado") != null ? rs.getDouble("tiempo_estimado") : 0);
+            actividadEmpleado.setTiempoInvertido(rs.getObject("tiempo_invertido") != null ? rs.getDouble("tiempo_invertido") : 0);
             listaActividadesEmpleados.add(actividadEmpleado);
         }
         rs.close();
@@ -134,9 +139,7 @@ public class ActividadesEmpleadosDao {
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;
-        ps = con.prepareStatement(sql.eliminarActividadEmpleado());
-        ps.setInt(1, idActividad);
-        ps.setInt(2, idEmpleado);
+        ps = con.prepareStatement(sql.eliminarActividadEmpleado(idActividad, idEmpleado));
         int eliminacion = ps.executeUpdate();
         ps.close();
         con.close();

@@ -67,7 +67,7 @@
                                 <div class="row">
                                     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                         <label for="descripcion">*Descripción:</label>
-                                        <textarea class="form-control" id="descripcion" name="descripcion" maxlength="1000">${descripcion}</textarea>
+                                        <textarea class="form-control" id="descripcion" name="descripcion" maxlength="1000" rows="5">${descripcion}</textarea>
                                     </div>
                                 </div>
                             </div>  
@@ -100,11 +100,17 @@
                                                                         ${item.nombre}
                                                                     </div>
                                                                     <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
-                                                                        ${item.fechaInicio} - ${item.fechaFin} (${item.tiempo} h)
+                                                                        <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+                                                                            ${item.tiempoEstimado}h - ${item.tiempoInvertido}h
+                                                                        </div>
+                                                                        <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+                                                                            ${item.fechaInicio} - ${item.fechaFin}
+                                                                        </div>
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-xs-2 col-sm-1 col-md-1 col-lg-1">
-                                                                    <span class="glyphicon glyphicon-time" style="cursor:pointer;" onclick="estimar(${item.idPersona}, '${item.fechaInicio}', '${item.fechaFin}', ${item.tiempo});"></span>
+                                                                    <span class="glyphicon glyphicon-time" style="cursor:pointer;" onclick="registrarTiempo(${item.idPersona});"></span>
+                                                                    <span class="glyphicon glyphicon-calendar" style="cursor:pointer;" onclick="estimar(${item.idPersona}, '${item.fechaInicio}', '${item.fechaFin}', ${item.tiempoEstimado});"></span>
                                                                     <span class="glyphicon glyphicon-remove" style="cursor:pointer;" onclick="eliminarPersona(${item.idPersona});"></span>
                                                                 </div>
                                                             </div>
@@ -130,11 +136,17 @@
                                                                         ${item.nombre}
                                                                     </div>
                                                                     <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
-                                                                        ${item.fechaInicio} - ${item.fechaFin} (${item.tiempo} h)
+                                                                        <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+                                                                            ${item.tiempoEstimado}h - ${item.tiempoInvertido}h  
+                                                                        </div>
+                                                                        <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+                                                                            ${item.fechaInicio} - ${item.fechaFin}
+                                                                        </div>
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-xs-2 col-sm-1 col-md-1 col-lg-1">
-                                                                    <span class="glyphicon glyphicon-time" style="cursor:pointer;" onclick="estimar(${item.idPersona}, '${item.fechaInicio}', '${item.fechaFin}', ${item.tiempo});"></span>
+                                                                    <span class="glyphicon glyphicon-time" style="cursor:pointer;" onclick="registrarTiempo(${item.idPersona});"></span>
+                                                                    <span class="glyphicon glyphicon-calendar" style="cursor:pointer;" onclick="estimar(${item.idPersona}, '${item.fechaInicio}', '${item.fechaFin}', ${item.tiempoEstimado});"></span>
                                                                     <span class="glyphicon glyphicon-remove" style="cursor:pointer;" onclick="eliminarPersona(${item.idPersona});"></span>
                                                                 </div>
                                                             </div>
@@ -222,6 +234,7 @@
                             </div>
                         </div>
                     </div>
+                    <input type="hidden" id="idHistorial" />
                     <div id="inversionTiempo" class="modal fade">
                         <div class="modal-dialog">
                             <div class="modal-content">
@@ -231,22 +244,27 @@
                                 </div>
                                 <div class="modal-body">
                                     <div class="row">
-                                        <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
+                                        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                             <label for="fechaTrabajo">*Fecha trabajada:</label>
                                             <input type="text" class="form-control" id="fechaTrabajo" name="fechaTrabajo" readonly="true"/>
                                         </div>
-                                        <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
+                                        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                             <label for="tiempoTrabajado">*Tiempo trabajado:</label>
                                             <input type="text" class="form-control" id="tiempoTrabajado" name="tiempoTrabajado" />
                                         </div>
-                                        <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
+                                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                             <label for="detalleTrabajo">*Detalle de trabajo:</label>
-                                            <textarea class="form-control" id="detalleTrabajo" name="detalleTrabajo" maxlength="1000"></textarea>
+                                            <textarea class="form-control" id="detalleTrabajo" name="detalleTrabajo" maxlength="1000" rows="5"></textarea>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                            <label for="detalleTrabajo">Historial de trabajo</label>
+                                            <ul class="list-group" id="historialTrabajo">
+                                            </ul>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-primary" id="guardarEstimacion" onclick="guardarReporteTiempo();">Guardar</button>
+                                    <button type="button" class="btn btn-primary" id="guardarTiempo" onclick="guardarReporteTiempo();">Guardar</button>
                                     <button type="button" class="btn btn-primary" data-dismiss="modal">Cancelar</button>
                                 </div>
                             </div>

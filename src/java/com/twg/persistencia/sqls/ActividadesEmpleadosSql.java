@@ -38,7 +38,15 @@ public class ActividadesEmpleadosSql {
                 + "    c.nombre AS nombre_cargo,\n"
                 + "    ae.fecha_estimada_inicio,\n"
                 + "    ae.fecha_estimada_terminacion,\n"
-                + "    ae.tiempo_estimado\n"
+                + "    ae.tiempo_estimado,\n"
+                + "    (SELECT \n"
+                + "            IFNULL(SUM(tiempo), 0)\n"
+                + "        FROM\n"
+                + "            actividades_esfuerzos\n"
+                + "        WHERE\n"
+                + "            fecha_eliminacion IS NULL\n"
+                + "            AND actividad = ae.actividad\n"
+                + "                AND empleado = ae.empleado) AS tiempo_invertido\n"
                 + "FROM\n"
                 + "    actividades_empleados ae\n"
                 + "        INNER JOIN\n"
@@ -61,10 +69,8 @@ public class ActividadesEmpleadosSql {
         if (idEmpleado != null && idEmpleado.intValue() != 0) {
             sql += "        AND ae.empleado = " + idEmpleado + "\n";
         }
-        if (fechaEstimadaInicio != null) {
+        if (fechaEstimadaInicio != null && fechaEstimadaFin != null) {
             sql += "        AND ? BETWEEN ae.fecha_estimada_inicio AND ae.fecha_estimada_terminacion\n";
-        }
-        if (fechaEstimadaFin != null) {
             sql += "        AND ? BETWEEN ae.fecha_estimada_inicio AND ae.fecha_estimada_terminacion\n";
         }
         if (evaluarEstado) {
@@ -92,10 +98,18 @@ public class ActividadesEmpleadosSql {
      * actividad de un empleado, actualizando la fecha de eliminación con la
      * fecha actual.
      *
+     * @param idActividad
+     * @param idEmpleado
      * @return
      */
-    public String eliminarActividadEmpleado() {
-        String sql = "UPDATE actividades_empleados SET fecha_eliminacion = now() WHERE actividad = ? AND empleado = ?";
+    public String eliminarActividadEmpleado(Integer idActividad, Integer idEmpleado) {
+        String sql = "UPDATE actividades_empleados SET fecha_eliminacion = now() WHERE 1 = 1 ";
+        if (idActividad != null) {
+            sql += "AND actividad = " + idActividad + " ";
+        }
+        if (idEmpleado != null) {
+            sql += "AND empleado = " + idEmpleado + " ";
+        }
         return sql;
     }
 

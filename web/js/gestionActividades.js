@@ -1,7 +1,7 @@
 var fechasVersiones = {};
 var horasTrabajadasDia = 9;
 
-jQuery(function() {
+$(function() {
     $('#fechaInicio')
             .datetimepicker({format: 'dd/mm/yyyy', language: 'es', weekStart: true, todayBtn: true, autoclose: true, todayHighlight: true, startView: 2, minView: 2})
             .on('changeDate', function() {
@@ -12,11 +12,13 @@ jQuery(function() {
             .on('changeDate', function() {
                 $('#fechaInicio').datetimepicker('setEndDate', $('#fechaFin').val());
             });
+    $('#fechaTrabajo')
+            .datetimepicker({format: 'dd/mm/yyyy', language: 'es', weekStart: true, todayBtn: true, autoclose: true, todayHighlight: true, startView: 2, minView: 2});
 
     $("#participante").typeahead({
         onSelect: function(item) {
             if ($("#persona" + item.value)[0] === undefined) {
-                jQuery("#idPersona").val(item.value);
+                $("#idPersona").val(item.value);
                 guardarPersonaActividad();
             }
         },
@@ -34,17 +36,6 @@ jQuery(function() {
             preProcess: function(data) {
                 return data;
             }
-        }
-    });
-
-    $('#fechaInicio').change(function() {
-        $("#tiempo").val("0");
-        $("#fechaFin").val("");
-        var dato = $('#fechaInicio').val();
-        if (dato !== undefined && dato !== "") {
-            $("#tiempo").prop("disabled", false);
-        } else {
-            $("#tiempo").prop("disabled", true);
         }
     });
 
@@ -74,8 +65,8 @@ function consultarVersiones(idProyecto) {
                 $("#version").html(html);
             }
         },
-        error: function(err) {
-            alert(err);
+        error: function() {
+            mostrarError('Error consultando las fechas de la versión');
         }
     });
 }
@@ -83,91 +74,57 @@ function consultarVersiones(idProyecto) {
 function pintarListaPersonas(listaPersonas) {
     var html = "";
     for (var persona in listaPersonas) {
-        html += pintarPersonas(listaPersonas[persona]);
+        persona = listaPersonas[persona];
+        html += '<li class="list-group-item" id="persona' + persona.idPersona + '">';
+        html += '    <div class="row">';
+        html += '        <div class="col-xs-10 col-sm-11 col-md-11 col-lg-11">';
+        html += '           <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">';
+        html += persona.nombre;
+        html += '           </div>';
+        html += '           <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">';
+        html += '           <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">';
+        html += persona.tiempoEstimado + 'h - ' + persona.tiempoInvertido + 'h';
+        html += '</div>';
+        html += '<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">';
+        html += persona.fechaInicio + ' - ' + persona.fechaFin;
+        html += '</div>';
+        html += '           </div>';
+        html += '        </div>';
+        html += '        <div class="col-xs-2 col-sm-1 col-md-1 col-lg-1">';
+        html += '           <span class="glyphicon glyphicon-time" style="cursor:pointer;" onclick="registrarTiempo(' + persona.idPersona + ');"></span>';
+        html += '           <span class="glyphicon glyphicon-calendar" style="cursor:pointer;" onclick="estimar(' + persona.idPersona + ', \'' + persona.fechaInicio + '\', \'' + persona.fechaFin + '\', ' + persona.tiempoEstimado + ');"></span>';
+        html += '           <span class="glyphicon glyphicon-remove" style="cursor:pointer;" onclick="eliminarPersona(' + persona.idPersona + ');"></span>';
+        html += '        </div>';
+        html += '   </div>';
+        html += '</li>';
     }
     return html;
 }
 
-function pintarPersonas(persona) {
-    var html = '<li class="list-group-item" id="persona' + persona.idPersona + '">';
-    html += '    <div class="row">';
-    html += '        <div class="col-xs-10 col-sm-11 col-md-11 col-lg-11">';
-    html += '           <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">';
-    html += persona.nombre;
-    html += '           </div>';
-    html += '           <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">';
-    html += persona.fechaInicio + ' - ' + persona.fechaFin + ' (' + persona.tiempo + ' h)';
-    html += '           </div>';
-    html += '        </div>';
-    html += '        <div class="col-xs-2 col-sm-1 col-md-1 col-lg-1">';
-    html += '           <span class="glyphicon glyphicon-time" style="cursor:pointer;" onclick="estimar(' + persona.idPersona + ', \'' + persona.fechaInicio + '\', \'' + persona.fechaFin + '\', ' + persona.tiempo + ');"></span>';
-    html += '           <span class="glyphicon glyphicon-remove" style="cursor:pointer;" onclick="eliminarPersona(' + persona.idPersona + ');"></span>';
-    html += '        </div>';
-    html += '   </div>';
-    html += '</li>';
-    return html;
-}
-
-function eliminarPersona(idPersona) {
-    $("#persona" + idPersona).remove();
-}
-
-function calcularFechaFin(horas) {
-    var diasEstimados = 0;
-    var varFechaInicial = $("#fechaInicio").val();
-
-    var arrFecha = varFechaInicial.split('/');
-    var dia = arrFecha[0];
-    var mes = arrFecha[1];
-    var anno = arrFecha[2];
-    var fechaInicial = anno + "-" + mes + "-" + dia;
-
-    $("#tiempo").data("old", $("#tiempo").data("new") || "");
-    $("#tiempo").data("new", $("#tiempo").val());
-
-    var totalDias = (parseInt(horas) + 1) / parseInt(horasTrabajadasDia);
-    diasEstimados = Math.ceil(totalDias);
-
-    var date = new Date(fechaInicial);
-    var d = date.getDate();
-    var m = date.getMonth();
-    var y = date.getFullYear();
-    var edate = new Date(y, m, d + diasEstimados);
-    var ndate = ("0" + edate.getDate()).slice(-2) + '/' + ("0" + (edate.getMonth() + 1)).slice(-2) + "/" + edate.getFullYear();
-    $("#fechaFin").val(ndate);
-}
-
-function validarEstimacion() {
-    var idActividad = $("#id").val();
-    var idResponsable = $("#idPersona").val();
-    var fechaInicio = $("#fechaInicio").val();
-    var fechaFin = $("#fechaFin").val();
-
-    if (idResponsable !== "" && fechaInicio !== "" && fechaFin !== "") {
-        $.ajax({
-            type: "POST",
-            url: "ActividadesController",
-            dataType: "json",
-            data: {responsable: idResponsable, fechaInicio: fechaInicio, fechaFin: fechaFin, id: idActividad, accion: "consultarFechasActividades"},
-            success: function(actividades) {
-                if (actividades !== undefined && actividades.length > 0) {
-                    var html = "Esta persona ya tiene actividades asociadas entre las fechas " + fechaInicio + " y " + fechaFin + "<br>";
-                    for (var i in actividades) {
-                        var actividad = actividades[i];
-                        html += actividad.nombre + ' ' + actividad.fechaInicio + ' - ' + actividad.fechaFin + ' (' + actividad.tiempo + ' h) <br>';
-                    }
-                    html += '<b>¿Desea continuar con el registro?</b>';
-                    $("#contenidoWarning").html(html);
-                    $("#modalWarning").modal("show");
-                } else {
-                    $('#confirmarEstimacion').click();
-                }
-            },
-            error: function(err) {
-                alert(err);
-            }
-        });
+function pintarHistorialTrabajo(historialTrabajo) {
+    var html = '';
+    for (var trabajo in historialTrabajo) {
+        trabajo = historialTrabajo[trabajo];
+        html += '<li class="list-group-item" id="historial1">';
+        html += '   <div class="row">';
+        html += '       <div class="col-xs-10 col-sm-10 col-md-10 col-lg-10">';
+        html += '           <div class="row">';
+        html += '               <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">';
+        html += trabajo.fecha;
+        html += '               </div>';
+        html += '               <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">';
+        html += trabajo.tiempo + ' h';
+        html += '               </div>';
+        html += '           </div>';
+        html += '       </div>';
+        html += '       <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">';
+        html += '           <span class="glyphicon glyphicon-pencil" style="cursor:pointer;" onclick="editarHistorial(' + trabajo.id + ', \'' + trabajo.fecha + '\', ' + trabajo.tiempo + ',\'' + trabajo.descripcion + '\');"></span>';
+        html += '           <span class="glyphicon glyphicon-remove" style="cursor:pointer;" onclick="eliminarHistorial(' + trabajo.id + ');"></span>';
+        html += '       </div>';
+        html += '   </div>';
+        html += '</li>';
     }
+    return html;
 }
 
 function actualizarFechas(idVersion) {
@@ -193,42 +150,219 @@ function guardarPersonaActividad(estimacion) {
         type: "POST",
         url: "ActividadesController",
         dataType: "json",
-        data: {accion: "guardarPersonaActividad", id: $("#id").val(), responsable: jQuery("#idPersona").val(),
+        data: {accion: "guardarPersonaActividad", id: $("#id").val(), responsable: $("#idPersona").val(),
             fechaInicio: fechaInicio, fechaFin: fechaFin, tiempo: tiempo, estimacion: estimacion},
         success: function(almacenamiento) {
             if (almacenamiento.resultado !== undefined && almacenamiento.resultado === 'ok') {
-                jQuery('#mensajeExito').html('El responsable ha sido guardado con éxito');
-                jQuery('#alertaExito').show();
                 if (almacenamiento.clientesActividad !== undefined && almacenamiento.clientesActividad.length > 0) {
-                    jQuery('#clientesActividad').html(pintarListaPersonas(almacenamiento.clientesActividad));
+                    $('#clientesActividad').html(pintarListaPersonas(almacenamiento.clientesActividad));
                 } else {
-                    jQuery('#clientesActividad').html('No se han agregado clientes al proyecto');
+                    $('#clientesActividad').html('No se han agregado clientes al proyecto');
                 }
                 if (almacenamiento.empleadosActividad !== undefined && almacenamiento.empleadosActividad.length > 0) {
-                    jQuery('#empleadosActividad').html(pintarListaPersonas(almacenamiento.empleadosActividad));
+                    $('#empleadosActividad').html(pintarListaPersonas(almacenamiento.empleadosActividad));
                 } else {
-                    jQuery('#empleadosActividad').html('No se han agregado empleados al proyecto');
+                    $('#empleadosActividad').html('No se han agregado empleados al proyecto');
                 }
                 $("#participante").val('');
             } else if (almacenamiento.mensaje !== undefined && almacenamiento.mensaje !== '') {
-                jQuery('#mensajeError').html(almacenamiento.mensaje);
-                jQuery('#alertaError').show();
+                mostrarError(almacenamiento.mensaje);
             } else {
-                jQuery('#mensajeError').html('Error guardando datos de responsable');
-                jQuery('#alertaError').show();
+                mostrarError('Error guardando datos de responsable');
             }
         },
         error: function() {
-            jQuery('#mensajeError').html('Error guardando datos de responsable');
-            jQuery('#alertaError').show();
+            mostrarError('Error guardando datos de responsable');
         }
     });
 }
 
-function limpiarEstimacion() {
-    $("#fechaInicio").val('');
-    $("#fechaFin").val('');
-    $("#tiempo").val('0');
+function eliminarPersona(idPersona) {
+    $.ajax({
+        type: "POST",
+        url: "ActividadesController",
+        dataType: "json",
+        data: {accion: "eliminarEmpleado", id: $("#id").val(), responsable: idPersona},
+        success: function(eliminacion) {
+            if (eliminacion.resultado !== undefined && eliminacion.resultado === 'ok') {
+                if (eliminacion.clientesActividad !== undefined && eliminacion.clientesActividad.length > 0) {
+                    $('#clientesActividad').html(pintarListaPersonas(eliminacion.clientesActividad));
+                } else {
+                    $('#clientesActividad').html('No se han agregado clientes al proyecto');
+                }
+                if (eliminacion.empleadosActividad !== undefined && eliminacion.empleadosActividad.length > 0) {
+                    $('#empleadosActividad').html(pintarListaPersonas(eliminacion.empleadosActividad));
+                } else {
+                    $('#empleadosActividad').html('No se han agregado empleados al proyecto');
+                }
+            } else if (eliminacion.mensaje !== undefined && eliminacion.mensaje !== '') {
+                mostrarError(eliminacion.mensaje);
+            } else {
+                mostrarError('El responsable de la actividad no pudo ser eliminado');
+            }
+        },
+        error: function() {
+            mostrarError('Error eliminando responsable de la actividad');
+        }
+    });
+}
+
+function estimar(idPersona, fechaInicio, fechaFin, tiempo) {
+    $("#idPersona").val(idPersona);
+    $("#fechaInicio").val(fechaInicio);
+    $("#fechaFin").val(fechaFin);
+    $("#tiempo").val(tiempo);
+    $("#estimacionTiempo").modal("show");
+}
+
+function validarEstimacion() {
+    var idActividad = $("#id").val();
+    var idResponsable = $("#idPersona").val();
+    var fechaInicio = $("#fechaInicio").val();
+    var fechaFin = $("#fechaFin").val();
+    if (idResponsable !== "" && fechaInicio !== "" && fechaFin !== "") {
+        $.ajax({
+            type: "POST",
+            url: "ActividadesController",
+            dataType: "json",
+            data: {responsable: idResponsable, fechaInicio: fechaInicio, fechaFin: fechaFin, id: idActividad, accion: "consultarFechasActividades"},
+            success: function(actividades) {
+                if (actividades !== undefined && actividades.length > 0) {
+                    var html = "Esta persona ya tiene actividades asociadas entre las fechas " + fechaInicio + " y " + fechaFin + "<br>";
+                    for (var i in actividades) {
+                        var actividad = actividades[i];
+                        html += actividad.nombre + ' ' + actividad.fechaInicio + ' - ' + actividad.fechaFin + ' (' + actividad.tiempoEstimado + ' h) - (' + actividad.tiempoInvertido + ' h) <br>';
+                    }
+                    html += '<b>¿Desea continuar con el registro?</b>';
+                    $("#contenidoWarning").html(html);
+                    $("#modalWarning").modal("show");
+                } else {
+                    $('#confirmarEstimacion').click();
+                }
+            },
+            error: function() {
+                mostrarError('Error validando la estimación de trabajo');
+            }
+        });
+    }
+}
+
+function registrarTiempo(idPersona) {
+    $.ajax({
+        type: "POST",
+        url: "ActividadesController",
+        dataType: "json",
+        data: {accion: "consultarHistorialTrabajo", id: $("#id").val(), responsable: idPersona},
+        success: function(historialTrabajo) {
+            $("#idPersona").val(idPersona);
+            $("#fechaTrabajo").val('');
+            $("#tiempoTrabajado").val('');
+            $("#detalleTrabajo").val('');
+            $("#idHistorial").val('');
+            if (historialTrabajo !== undefined && historialTrabajo.length > 0) {
+                $("#historialTrabajo").html(pintarHistorialTrabajo(historialTrabajo));
+            } else {
+                $("#historialTrabajo").html('No se ha registrado trabajo para la actividad');
+            }
+            $("#inversionTiempo").modal("show");
+        },
+        error: function() {
+            mostrarError('Error consultando el historial de trabajo');
+            $("#inversionTiempo").modal("hide");
+        }
+    });
+}
+
+function editarHistorial(idHistorial, fecha, tiempo, descripcion) {
+    $("#idHistorial").val(idHistorial);
+    $("#fechaTrabajo").val(fecha);
+    $("#tiempoTrabajado").val(tiempo);
+    $("#detalleTrabajo").val(descripcion);
+}
+
+function guardarReporteTiempo() {
+    $.ajax({
+        type: "POST",
+        url: "ActividadesController",
+        dataType: "json",
+        data: {accion: "guardarEsfuerzo", esfuerzo: $("#idHistorial").val(), id: $("#id").val(), responsable: $("#idPersona").val(),
+            fecha: $("#fechaTrabajo").val(), tiempo: $("#tiempoTrabajado").val(), descripcion: $("#detalleTrabajo").val()},
+        success: function(resultado) {
+            if (resultado !== undefined && resultado.resultado === 'ok') {
+                $("#fechaTrabajo").val('');
+                $("#tiempoTrabajado").val('');
+                $("#detalleTrabajo").val('');
+                $("#idHistorial").val('');
+                if (resultado.clientesActividad !== undefined && resultado.clientesActividad.length > 0) {
+                    $('#clientesActividad').html(pintarListaPersonas(resultado.clientesActividad));
+                } else {
+                    $('#clientesActividad').html('No se han agregado clientes al proyecto');
+                }
+                if (resultado.empleadosActividad !== undefined && resultado.empleadosActividad.length > 0) {
+                    $('#empleadosActividad').html(pintarListaPersonas(resultado.empleadosActividad));
+                } else {
+                    $('#empleadosActividad').html('No se han agregado empleados al proyecto');
+                }
+                if (resultado.historialTrabajo !== undefined && resultado.historialTrabajo.length > 0) {
+                    $("#historialTrabajo").html(pintarHistorialTrabajo(resultado.historialTrabajo));
+                } else {
+                    $("#inversionTiempo").modal("hide");
+                }
+            } else if (resultado.mensaje !== undefined && resultado.mensaje !== '') {
+                mostrarError(resultado.mensaje);
+                $("#inversionTiempo").modal("hide");
+            } else {
+                mostrarError('El registro de tiempo no pudo ser guardado');
+                $("#inversionTiempo").modal("hide");
+            }
+        },
+        error: function() {
+            mostrarError('Error guardando el registro de tiempo');
+            $("#inversionTiempo").modal("hide");
+        }
+    });
+}
+
+function eliminarHistorial(idHistorial) {
+    $.ajax({
+        type: "POST",
+        url: "ActividadesController",
+        dataType: "json",
+        data: {accion: "eliminarEsfuerzo", esfuerzo: idHistorial, responsable: $("#idPersona").val()},
+        success: function(resultado) {
+            if (resultado !== undefined && resultado.resultado === 'ok') {
+                $("#fechaTrabajo").val('');
+                $("#tiempoTrabajado").val('');
+                $("#detalleTrabajo").val('');
+                $("#idHistorial").val('');
+                if (resultado.clientesActividad !== undefined && resultado.clientesActividad.length > 0) {
+                    $('#clientesActividad').html(pintarListaPersonas(resultado.clientesActividad));
+                } else {
+                    $('#clientesActividad').html('No se han agregado clientes al proyecto');
+                }
+                if (resultado.empleadosActividad !== undefined && resultado.empleadosActividad.length > 0) {
+                    $('#empleadosActividad').html(pintarListaPersonas(resultado.empleadosActividad));
+                } else {
+                    $('#empleadosActividad').html('No se han agregado empleados al proyecto');
+                }
+                if (resultado.historialTrabajo !== undefined && resultado.historialTrabajo.length > 0) {
+                    $("#historialTrabajo").html(pintarHistorialTrabajo(resultado.historialTrabajo));
+                } else {
+                    $("#historialTrabajo").html("No se ha registrado trabajo para la actividad");
+                }
+            } else if (resultado.mensaje !== undefined && resultado.mensaje !== '') {
+                mostrarError(resultado.mensaje);
+                $("#inversionTiempo").modal("hide");
+            } else {
+                mostrarError('El registro de tiempo no pudo ser eliminado');
+                $("#inversionTiempo").modal("hide");
+            }
+        },
+        error: function() {
+            mostrarError('Error eliminando el registro de tiempo');
+            $("#inversionTiempo").modal("hide");
+        }
+    });
 }
 
 function guardarComentario() {
@@ -236,7 +370,7 @@ function guardarComentario() {
         type: "POST",
         url: "ActividadesController",
         dataType: "json",
-        data: {accion: "guardarComentario", comentario: jQuery("#comentario").val(), id: $("#id").val()},
+        data: {accion: "guardarComentario", comentario: $("#comentario").val(), id: $("#id").val()},
         success: function(data) {
             if (data !== undefined) {
                 if (data.comentarios !== undefined && data.comentarios !== '') {
@@ -246,6 +380,7 @@ function guardarComentario() {
             }
         },
         error: function() {
+            mostrarError('Error guardando comentario');
         }
     });
 }
@@ -265,6 +400,7 @@ function eliminarComentario(idComentario) {
             }
         },
         error: function() {
+            mostrarError('Error eliminando comentario');
         }
     });
 }

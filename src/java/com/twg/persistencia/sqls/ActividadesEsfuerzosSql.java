@@ -1,60 +1,72 @@
 package com.twg.persistencia.sqls;
 
+import java.util.Date;
+
 /**
  * Esta clase define métodos para contruír los SQLs utilizados en el DAO.
- * 
+ *
  * @author Andrés Felipe Giraldo, Jorman Rincón, Erika Jhoana Castaneda
  */
 public class ActividadesEsfuerzosSql {
 
     /**
      * Método encargado de retornar el SQL para consultar los esfuerzos por
-     * actividad, aplicando filtros según los parámetros que lleguen
-     * distintos de nulo.
+     * actividad, aplicando filtros según los parámetros que lleguen distintos
+     * de nulo.
+     *
      * @param id
      * @param actividad
      * @param empleado
      * @param fecha
      * @param tiempo
      * @param descripcion
-     * @return 
+     * @return
      */
-    public String consultarActividadesEsfuerzos(Integer id, Integer actividad, Integer empleado, String fecha, Double tiempo, String descripcion) {
-        String sql = "SELECT * FROM actividades_esfuerzos WHERE fecha_eliminacion IS NULL ";
+    public String consultarActividadesEsfuerzos(Integer id, Integer actividad, Integer empleado, Date fecha, String descripcion) {
+        String sql = "SELECT \n"
+                + "    ae.id,\n"
+                + "    ae.actividad,\n"
+                + "    ae.empleado,\n"
+                + "    ae.fecha,\n"
+                + "    ae.tiempo,\n"
+                + "    ae.descripcion\n"
+                + "FROM\n"
+                + "    actividades_esfuerzos ae\n"
+                + "WHERE\n"
+                + "    ae.fecha_eliminacion IS NULL ";
         if (id != null && !id.toString().isEmpty()) {
             sql += "AND id = " + id + " ";
         }
-        if (actividad != null && !actividad.toString().isEmpty()) {
+        if (actividad != null && actividad.intValue() != 0) {
             sql += "AND actividad = " + actividad + " ";
         }
-        if (empleado != null && !empleado.toString().isEmpty()) {
+        if (empleado != null && empleado.intValue() != 0) {
             sql += "AND empleado = " + empleado + " ";
         }
-        if (fecha != null && !fecha.isEmpty()) {
-            sql += "AND fecha = " + fecha + " ";
-        }
-        if (tiempo != null && !tiempo.toString().isEmpty()) {
-            sql += "AND tiempo = " + tiempo + " ";
+        if (fecha != null) {
+            sql += "AND fecha = ? ";
         }
         if (descripcion != null && !descripcion.isEmpty()) {
-            sql += "AND descripcion = " + descripcion + " ";
+            sql += "AND descripcion LIKE '%" + descripcion + "%' ";
         }
         return sql;
     }
 
     /**
-     * Método encargado de retornar el SQL para insertar un esfuerzo a una 
+     * Método encargado de retornar el SQL para insertar un esfuerzo a una
      * actividad.
-     * @return 
+     *
+     * @return
      */
     public String insertarActividadEsfuerzo() {
         return "INSERT INTO actividades_esfuerzos (actividad, empleado, fecha, tiempo, descripcion) VALUES (?, ?, ?, ?, ?)";
     }
 
     /**
-     * Método encargado de retornar el SQL para actualizar los esfuerzos de 
-     * una actividad.
-     * @return 
+     * Método encargado de retornar el SQL para actualizar los esfuerzos de una
+     * actividad.
+     *
+     * @return
      */
     public String actualizarActividadEsfuerzo() {
         return "UPDATE actividades_esfuerzos SET fecha = ?, tiempo = ?, descripcion = ? WHERE id = ?";
@@ -62,24 +74,16 @@ public class ActividadesEsfuerzosSql {
 
     /**
      * Método encargado de retornar el SQL para eliminar lógicamente todos los
-     * esfuerzos de una actividad, actualizando la fecha de eliminación con 
-     * la fecha actual.
-     * @return 
-     */
-    public String eliminarActividadEsfuerzo() {
-        return "UPDATE actividades_esfuerzos SET fecha_eliminacion = now() WHERE id = ?";
-    }
-    
-    /**
-     * Método encargado de retornar el SQL para eliminar físicamente un esfuerzo
-     * de una actividad.
+     * esfuerzos de una actividad, actualizando la fecha de eliminación con la
+     * fecha actual.
+     *
      * @param idActividadEsfuerzo
      * @param idActividad
      * @param idEmpleado
-     * @return 
+     * @return
      */
     public String eliminarActividadEsfuerzo(Integer idActividadEsfuerzo, Integer idActividad, Integer idEmpleado) {
-        String sql = "DELETE FROM actividades_esfuerzos WHERE 1 = 1 ";
+        String sql = "UPDATE actividades_esfuerzos SET fecha_eliminacion = now() WHERE 1 = 1 ";
         if (idActividadEsfuerzo != null && !idActividadEsfuerzo.toString().isEmpty()) {
             sql += "AND id = " + idActividadEsfuerzo + " ";
         }
@@ -90,14 +94,5 @@ public class ActividadesEsfuerzosSql {
             sql += "AND empleado = " + idEmpleado + " ";
         }
         return sql;
-    }
-    
-    /**
-     * Método encargado de eliminar los esfuerzos de una actividad y un
-     * empleado específico.
-     * @return 
-     */
-    public String eliminarActividadesEsfuerzos() {
-        return "DELETE FROM actividades_esfuerzos WHERE actividad = ? AND empleado NOT IN (?)";
     }
 }

@@ -21,6 +21,7 @@ public class ActividadesEmpleadosBean {
     private Date fechaEstimadaInicio;
     private Date fechaEstimadaTerminacion;
     private Double tiempoEstimado;
+    private Double tiempoInvertido;
 
     /*
      * Declaración de métodos Get y Set para cada atributo de la clase.
@@ -111,6 +112,14 @@ public class ActividadesEmpleadosBean {
 
     public void setTiempoEstimado(Double tiempoEstimado) {
         this.tiempoEstimado = tiempoEstimado;
+    }
+
+    public Double getTiempoInvertido() {
+        return tiempoInvertido;
+    }
+
+    public void setTiempoInvertido(Double tiempoInvertido) {
+        this.tiempoInvertido = tiempoInvertido;
     }
     
 }
