@@ -71,3 +71,8 @@ h2, .h2 {
 textarea {
    resize: none;
 } 
+
+.linkAyuda{
+    font-size: 180%;
+    float: right
+}
