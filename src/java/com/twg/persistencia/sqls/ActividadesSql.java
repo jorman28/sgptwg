@@ -16,121 +16,147 @@ public class ActividadesSql {
     }
 
     /**
-     * Método encargado de retornar el SQL para consultar todas las atividades.
-     *
-     * @return
-     */
-    public String consultarActividades() {
-        return "SELECT * FROM actividades WHERE fecha_eliminacion IS NULL ";
-    }
-
-    /**
      * Método encargado de retornar el SQL para consultar las actividades,
      * aplicando diferentes filtros según los parámetros que lleguen distintos
      * de nulos.
      *
-     * @param id
-     * @param version
-     * @param descripcion
-     * @param fecha_estimada_inicio
-     * @param fecha_estimada_terminacion
-     * @param fecha_real_inicio
-     * @param fecha_real_terminacion
-     * @param tiempo_estimado
-     * @param tiempo_invertido
-     * @param estado
-     * @return
-     */
-    public String consultarActividades(Integer id, Integer version, String descripcion, Date fecha_estimada_inicio, Date fecha_estimada_terminacion, Date fecha_real_inicio, Date fecha_real_terminacion, Integer tiempo_estimado, Integer tiempo_invertido, Integer estado) {
-        String sql = "SELECT * FROM actividades WHERE fecha_eliminacion IS NULL ";
-        if (id != null) {
-            sql += "AND id = " + id + " ";
-        }
-        if (version != null && !version.toString().isEmpty()) {
-            sql += "AND version = '" + version + "' ";
-        }
-        if (descripcion != null && !descripcion.isEmpty()) {
-            sql += "AND descripcion LIKE '%" + descripcion + "%' ";
-        }
-        if (fecha_estimada_inicio != null && !fecha_estimada_inicio.toString().isEmpty()) {
-            sql += "AND fecha_estimada_inicio = '" + fecha_estimada_inicio + "' ";
-        }
-        if (fecha_estimada_terminacion != null && !fecha_estimada_terminacion.toString().isEmpty()) {
-            sql += "AND fecha_estimada_terminacion = '" + fecha_estimada_terminacion + "' ";
-        }
-        if (fecha_real_inicio != null && !fecha_real_inicio.toString().isEmpty()) {
-            sql += "AND fecha_real_inicio = '" + fecha_real_inicio + "' ";
-        }
-        if (fecha_real_terminacion != null && !fecha_real_terminacion.toString().isEmpty()) {
-            sql += "AND fecha_real_terminacion = '" + fecha_real_terminacion + "' ";
-        }
-        if (tiempo_estimado != null && !tiempo_estimado.toString().isEmpty()) {
-            sql += "AND tiempo_estimado = '" + tiempo_estimado + "' ";
-        }
-        if (tiempo_invertido != null && !tiempo_invertido.toString().isEmpty()) {
-            sql += "AND tiempo_invertido = '" + tiempo_invertido + "' ";
-        }
-        if (estado != null && !estado.toString().isEmpty()) {
-            sql += "AND estado = '" + estado + "' ";
-        }
-        return sql;
-    }
-
-    /**
-     * Método encargado de retornar el SQL para consultar las actividades,
-     * aplicando diferentes filtros según los parámetros que lleguen distintos
-     * de nulos.
-     *
+     * @param idActividad
      * @param proyecto
-     * @param id
      * @param version
-     * @param descripcion
+     * @param contiene
      * @param fecha
      * @param responsable
      * @param estado
+     * @param limite
      * @return
      */
-    public String consultarActividades(Integer proyecto, Integer version, String descripcion, Date fecha, Integer estado, Integer responsable) {
+    public String consultarActividades(Integer idActividad, Integer proyecto, Integer version, String contiene, Date fecha, Integer estado, Integer responsable, String limite) {
         String sql = "SELECT DISTINCT\n"
                 + "    a.id,\n"
                 + "    a.version,\n"
+                + "    a.nombre,\n"
                 + "    a.descripcion,\n"
-                + "    a.fecha_estimada_inicio,\n"
-                + "    a.fecha_estimada_terminacion,\n"
-                + "    a.fecha_real_inicio,\n"
-                + "    a.fecha_real_terminacion,\n"
-                + "    a.tiempo_estimado,\n"
-                + "    a.tiempo_invertido,\n"
                 + "    a.estado,\n"
-                + "    e.nombre AS nombree,\n"
-                + "    v.nombre AS nombrev\n"
+                + "    e.nombre AS nombre_estado,\n"
+                + "    v.nombre AS nombre_version,\n"
+                + "    v.proyecto,\n"
+                + "    p.nombre AS nombre_proyecto,\n"
+                + "    (SELECT \n"
+                + "            fecha_estimada_inicio\n"
+                + "        FROM\n"
+                + "            actividades_empleados\n"
+                + "        WHERE\n"
+                + "            fecha_eliminacion IS NULL\n"
+                + "            AND actividad = a.id AND fecha_estimada_inicio IS NOT NULL\n"
+                + "        ORDER BY fecha_estimada_inicio ASC\n"
+                + "        LIMIT 1) AS fecha_estimada_inicio,\n"
+                + "    (SELECT \n"
+                + "            fecha_estimada_terminacion\n"
+                + "        FROM\n"
+                + "            actividades_empleados\n"
+                + "        WHERE\n"
+                + "            fecha_eliminacion IS NULL\n"
+                + "            AND actividad = a.id AND fecha_estimada_terminacion IS NOT NULL\n"
+                + "        ORDER BY fecha_estimada_terminacion DESC\n"
+                + "        LIMIT 1) AS fecha_estimada_terminacion,\n"
+                + "    (SELECT \n"
+                + "            CAST(IFNULL(SUM(tiempo_estimado), 0) AS DECIMAL (10 , 2 ))\n"
+                + "        FROM\n"
+                + "            actividades_empleados\n"
+                + "        WHERE\n"
+                + "            fecha_eliminacion IS NULL\n"
+                + "            AND actividad = a.id\n"
+                + "        ORDER BY fecha_estimada_terminacion DESC\n"
+                + "        LIMIT 1) AS tiempo_estimado,\n"
+                + "    (SELECT \n"
+                + "            IFNULL(SUM(tiempo), 0)\n"
+                + "        FROM\n"
+                + "            actividades_esfuerzos\n"
+                + "        WHERE\n"
+                + "            fecha_eliminacion IS NULL\n"
+                + "            AND actividad = a.id) AS tiempo_invertido\n"
                 + "FROM\n"
                 + "    actividades a\n"
                 + "        INNER JOIN\n"
                 + "    estados e ON e.id = a.estado\n"
                 + "        INNER JOIN\n"
                 + "    versiones v ON v.id = a.version\n"
+                + "        INNER JOIN\n"
+                + "    proyectos p ON p.id = v.proyecto\n"
+                + "        LEFT JOIN\n"
+                + "    actividades_empleados ae ON ae.actividad = a.id\n"
+                + "WHERE\n"
+                + "    a.fecha_eliminacion IS NULL ";
+        if (idActividad != null && idActividad.intValue() != 0) {
+            sql += "AND a.id = " + idActividad + " ";
+        }
+        if (proyecto != null && proyecto.intValue() != 0) {
+            sql += "AND v.proyecto = " + proyecto + " ";
+        }
+        if (version != null && version.intValue() != 0) {
+            sql += "AND a.version = " + version + " ";
+        }
+        if (contiene != null && !contiene.isEmpty()) {
+            sql += "AND (a.nombre LIKE '%" + contiene + "%' OR a.descripcion LIKE '%" + contiene + "%') ";
+        }
+        if (fecha != null) {
+            sql += "AND ? BETWEEN ae.fecha_estimada_inicio AND ae.fecha_estimada_terminacion ";
+        }
+        if (estado != null && estado.intValue() != 0) {
+            sql += "AND a.estado = " + estado + " ";
+        }
+        if (responsable != null && responsable.intValue() != 0) {
+            sql += "AND ae.empleado = " + responsable + " ";
+        }
+        if (limite != null && !limite.isEmpty()) {
+            sql += "LIMIT " + limite + " ";
+        }
+        return sql;
+    }
+
+    /**
+     * Método encargado de retornar el SQL para el conteo de las actividades
+     * relacionadas con los filtros ingresados
+     *
+     * @param proyecto
+     * @param version
+     * @param contiene
+     * @param fecha
+     * @param estado
+     * @param responsable
+     * @return
+     */
+    public String contarActividades(Integer proyecto, Integer version, String contiene, Date fecha, Integer estado, Integer responsable) {
+        String sql = "SELECT COUNT(*) AS cantidad_actividades\n"
+                + "FROM\n"
+                + "    actividades a\n"
+                + "        INNER JOIN\n"
+                + "    estados e ON e.id = a.estado\n"
+                + "        INNER JOIN\n"
+                + "    versiones v ON v.id = a.version\n"
+                + "        INNER JOIN\n"
+                + "    proyectos p ON p.id = v.proyecto\n"
                 + "        LEFT JOIN\n"
                 + "    actividades_empleados ae ON ae.actividad = a.id\n"
                 + "WHERE\n"
                 + "    a.fecha_eliminacion IS NULL ";
         if (proyecto != null && proyecto.intValue() != 0) {
-            sql += "AND v.proyecto = '" + proyecto + "' ";
+            sql += "AND v.proyecto = " + proyecto + " ";
         }
         if (version != null && version.intValue() != 0) {
-            sql += "AND a.version = '" + version + "' ";
+            sql += "AND a.version = " + version + " ";
         }
-        if (descripcion != null && !descripcion.isEmpty()) {
-            sql += "AND a.descripcion LIKE '%" + descripcion + "%' ";
+        if (contiene != null && !contiene.isEmpty()) {
+            sql += "AND (a.nombre LIKE '%" + contiene + "%' OR a.descripcion LIKE '%" + contiene + "%') ";
         }
         if (fecha != null) {
-            sql += "AND (a.fecha_estimada_inicio = ? OR a.fecha_estimada_terminacion = ? OR a.fecha_real_inicio = ? OR a.fecha_real_terminacion = ?) ";
+            sql += "AND ? BETWEEN ae.fecha_estimada_inicio AND ae.fecha_estimada_terminacion ";
         }
         if (estado != null && estado.intValue() != 0) {
-            sql += "AND a.estado = '" + estado + "' ";
+            sql += "AND a.estado = " + estado + " ";
         }
         if (responsable != null && responsable.intValue() != 0) {
-            sql += "AND ae.empleado = '" + responsable + "' ";
+            sql += "AND ae.empleado = " + responsable + " ";
         }
         return sql;
     }
@@ -151,7 +177,7 @@ public class ActividadesSql {
      * @return
      */
     public String insertarActividad() {
-        return "INSERT INTO actividades (descripcion, fecha_estimada_inicio, fecha_estimada_terminacion, fecha_real_inicio, fecha_real_terminacion, tiempo_estimado, tiempo_invertido, version, estado) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        return "INSERT INTO actividades (version, nombre, descripcion, estado) VALUES (?, ?, ?, ?)";
     }
 
     /**
@@ -161,7 +187,7 @@ public class ActividadesSql {
      * @return
      */
     public String actualizarActividad() {
-        return "UPDATE actividades SET  descripcion = ?, fecha_estimada_inicio=?, fecha_estimada_terminacion=?, fecha_real_inicio=?, fecha_real_terminacion=?, tiempo_estimado=?, tiempo_invertido=?, version=?, estado=?  WHERE id = ?";
+        return "UPDATE actividades SET version = ?, nombre = ?, descripcion = ?, estado = ?  WHERE id = ?";
     }
 
     /**

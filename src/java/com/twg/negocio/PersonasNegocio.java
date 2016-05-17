@@ -23,16 +23,16 @@ public class PersonasNegocio {
     private final PersonasDao personasDao = new PersonasDao();
     private final UsuariosDao usuariosDao = new UsuariosDao();
 
-    public List<PersonasBean> consultarPersonas(Integer idPersona, String documento, String tipoDocumento, String nombre, String apellidos, String correo, String usuario, String perfil, String cargo, String nombreCompleto, String limite) {
+    public List<PersonasBean> consultarPersonas(Integer idPersona, String documento, String tipoDocumento, String nombre, String apellidos, String correo, String usuario, String perfil, String cargo, String nombreCompleto, Integer idProyecto, String limite) {
         List<PersonasBean> listaPersonas = new ArrayList<>();
         try {
-            listaPersonas = personasDao.consultarPersonas(idPersona, documento, tipoDocumento, nombre, apellidos, correo, usuario, perfil, cargo, nombreCompleto, limite);
+            listaPersonas = personasDao.consultarPersonas(idPersona, documento, tipoDocumento, nombre, apellidos, correo, usuario, perfil, cargo, nombreCompleto, idProyecto, limite);
         } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
             Logger.getLogger(PersonasNegocio.class.getName()).log(Level.SEVERE, null, ex);
         }
         return listaPersonas;
     }
-    
+
     /**
      * Método encargado de contar la cantidad total de registros que se
      * encuentran en base de datos con base en los filtros ingresados
@@ -64,9 +64,9 @@ public class PersonasNegocio {
         List<PersonasBean> listaPersonas = null;
         try {
             if (idPersona != null) {
-                listaPersonas = personasDao.consultarPersonas(idPersona, null, null, null, null, null, null, null, null, null, null);
+                listaPersonas = personasDao.consultarPersonas(idPersona, null, null, null, null, null, null, null, null, null, null, null);
             } else if (documento != null && !documento.isEmpty() && tipoDocumento != null && !tipoDocumento.isEmpty()) {
-                listaPersonas = personasDao.consultarPersonas(null, documento, tipoDocumento, null, null, null, null, null, null, null, null);
+                listaPersonas = personasDao.consultarPersonas(null, documento, tipoDocumento, null, null, null, null, null, null, null, null, null);
             }
         } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
             Logger.getLogger(PersonasNegocio.class.getName()).log(Level.SEVERE, null, ex);
@@ -271,9 +271,29 @@ public class PersonasNegocio {
         return error;
     }
 
+    /**
+     * Método encargado de consultar las personas asociadas con los datos
+     * digitados en los autocompletar de personas del sistema
+     *
+     * @param busqueda
+     * @return
+     */
     public JSONArray completarPersonas(String busqueda) {
+        return completarPersonas(busqueda, null);
+    }
+
+    /**
+     * Método encargado de consultar las personas asociadas con los datos
+     * digitados en los autocompletar de personas del sistema que necesitan
+     * estar asociados a un proyecto
+     *
+     * @param busqueda
+     * @param idProyecto
+     * @return
+     */
+    public JSONArray completarPersonas(String busqueda, Integer idProyecto) {
         JSONArray array = new JSONArray();
-        List<PersonasBean> listaPersonas = consultarPersonas(null, null, null, null, null, null, null, null, null, busqueda, null);
+        List<PersonasBean> listaPersonas = consultarPersonas(null, null, null, null, null, null, null, null, null, busqueda, idProyecto, null);
         if (listaPersonas != null && !listaPersonas.isEmpty()) {
             for (PersonasBean persona : listaPersonas) {
                 JSONObject object = new JSONObject();
@@ -282,62 +302,6 @@ public class PersonasNegocio {
                 object.put("cargo", persona.getNombreCargo().equalsIgnoreCase("Cliente") ? "Cliente" : persona.getNombreCargo());
                 array.add(object);
             }
-        }
-        return array;
-    }
-
-    //Jara 23/02/2015 - Método para consultar el grupo de personas en determinado proyecto
-    public JSONArray consultarPersonasProyecto(String idProyecto, String Busqueda) {
-        JSONArray array = new JSONArray();
-        List<PersonasBean> listaPersonas = consultarPersonasxProyecto(idProyecto, Busqueda);
-        if (listaPersonas != null && !listaPersonas.isEmpty()) {
-            for (PersonasBean persona : listaPersonas) {
-                JSONObject object = new JSONObject();
-                object.put("id", persona.getId());
-                object.put("nombre", persona.getTipoDocumento() + persona.getDocumento() + " " + persona.getNombres() + " " + persona.getApellidos());
-                object.put("cargo", persona.getNombreCargo().equalsIgnoreCase("Cliente") ? "Cliente" : persona.getNombreCargo());
-                array.add(object);
-            }
-        }
-        return array;
-    }
-
-    public List<PersonasBean> consultarPersonasxProyecto(String idProyecto, String Busqueda) {
-        List<PersonasBean> listaPersonas = new ArrayList<>();
-        try {
-            listaPersonas = personasDao.consultarPersonasProyecto(idProyecto, Busqueda);
-        } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
-            Logger.getLogger(PersonasNegocio.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return listaPersonas;
-    }
-
-    public List<PersonasBean> consultarPersonasActividad(String idActividad) {
-        List<PersonasBean> listaPersonas = new ArrayList<>();
-        try {
-            listaPersonas = personasDao.consultarPersonasActividad(idActividad);
-        } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
-            Logger.getLogger(PersonasNegocio.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return listaPersonas;
-    }
-
-    //Jara 25/03/2016 - Método para consultar el grupo de personas ocupadas en en las fechas seleccionadas
-    public JSONArray consultarPersonasAsignadasActividad(String idPersonas, java.util.Date fechaEstimadaInicio, java.util.Date fechaEstimadaFin, String idActividad) {
-        JSONArray array = new JSONArray();
-        try {
-            List<PersonasBean> listaPersonas = personasDao.consultarPersonasAsignadasActividad(idPersonas, fechaEstimadaInicio, fechaEstimadaFin, idActividad);
-            if (listaPersonas != null && !listaPersonas.isEmpty()) {
-                for (PersonasBean persona : listaPersonas) {
-                    JSONObject object = new JSONObject();
-                    object.put("id", persona.getId());
-                    object.put("nombre", persona.getTipoDocumento() + persona.getDocumento() + " " + persona.getNombres() + " " + persona.getApellidos());
-                    object.put("cargo", persona.getNombreCargo().equalsIgnoreCase("Cliente") ? "Cliente" : persona.getNombreCargo());
-                    array.add(object);
-                }
-            }
-        } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
-            Logger.getLogger(PersonasNegocio.class.getName()).log(Level.SEVERE, null, ex);
         }
         return array;
     }

@@ -1,25 +1,45 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<c:if test="${not empty mensajeExito}">
-    <div class="alert alert-success fade in" role="alert">
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+<div id="alertaExito" class="alert alert-success fade in" hidden="true">
+    <button type="button" class="close" aria-label="Close" onclick="cerrarExito();"><span aria-hidden="true">&times;</span></button>
+    <div id="mensajeExito">
         ${mensajeExito}
     </div>
-</c:if>
-<c:if test="${not empty mensajeError}">
-    <div class="alert alert-danger fade in" role="alert">
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+</div>
+<div id="alertaError" class="alert alert-danger fade in" hidden="true">
+    <button type="button" class="close" aria-label="Close" onclick="cerrarError();"><span aria-hidden="true">&times;</span></button>
+    <div id="mensajeError">
         ${mensajeError}
     </div>
-</c:if>
-<c:if test="${not empty mensajeAlerta}">
-    <div class="alert alert-warning fade in" role="alert">
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+</div>
+<div id="alertaAdvertencia" class="alert alert-warning fade in" hidden="true">
+    <button type="button" class="close" aria-label="Close" onclick="cerrarAdvertencia();"><span aria-hidden="true">&times;</span></button>
+    <div id="mensajeAdvertencia">
         ${mensajeAlerta}
     </div>
-</c:if>
-<c:if test="${not empty mensajeInformacion}">
-    <div class="alert alert-info fade in" role="alert">
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+</div>
+<div id="alertaInformacion" class="alert alert-info fade in" hidden="true">
+    <button type="button" class="close" aria-label="Close" onclick="cerrarInformacion();"><span aria-hidden="true">&times;</span></button>
+    <div id="mensajeInformacion">
         ${mensajeInformacion}
     </div>
+</div>
+<c:if test="${not empty mensajeExito}">
+    <script>
+        $("#alertaExito").show();
+    </script>
+</c:if>
+<c:if test="${not empty mensajeError}">
+    <script>
+        $("#alertaError").show();
+    </script>
+</c:if>
+<c:if test="${not empty mensajeAlerta}">
+    <script>
+        $("#alertaAdvertencia").show();
+    </script>
+</c:if>
+<c:if test="${not empty mensajeInformacion}">
+    <script>
+        $("#alertaInformacion").show();
+    </script>
 </c:if>

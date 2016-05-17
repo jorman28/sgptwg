@@ -32,7 +32,7 @@
                             <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                 <label for="tipoDocumento">*Tipo de documento:</label>
                                 <select class="form-control" id="tipoDocumento" name="tipoDocumento" value="${tipoDocumento}" <c:if test="${not empty idPersona}">disabled</c:if>>
-                                    <option value="0">SELECCIONE</option>
+                                        <option value="0">SELECCIONE</option>
                                     <c:forEach items="${tiposDocumentos}" var="tipo">
                                         <option value="${tipo.tipo}" <c:if test="${tipoDocumento == tipo.tipo}">selected</c:if> >${tipo.nombre}</option>
                                     </c:forEach>
@@ -41,10 +41,10 @@
                             <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                 <label for="documento">*Documento:</label> 
                                 <input class="form-control" type="text" id="documento" name="documento" value="${documento}" maxlength="15" <c:if test="${not empty idPersona}">disabled</c:if>/>
-                            </div>
-                            <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                                <label for="usuario">*Usuario:</label> 
-                                <input class="form-control" type="text" id="usuario" name="usuario" value="${usuario}" maxlength="15"/>
+                                </div>
+                                <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                    <label for="usuario">*Usuario:</label> 
+                                    <input class="form-control" type="text" id="usuario" name="usuario" value="${usuario}" maxlength="15"/>
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                 <label for="perfil">*Perfil:</label> 
@@ -67,13 +67,13 @@
                                 <label for="activo">*Estado:</label> 
                                 <select class="form-control" id="activo" name="activo">
                                     <option value="">SELECCIONE</option>
-                                    <option value="T" <c:if test="${activo == 'T'}">selected</c:if> >Activo</option>
-                                    <option value="F" <c:if test="${activo == 'F'}">selected</c:if> >Inactivo</option>
-                                    </select>
-                                </div>
+                                    <option value="T" <c:if test="${activo == 'T'}">selected</c:if>>Activo</option>
+                                    <option value="F" <c:if test="${activo == 'F'}">selected</c:if>>Inactivo</option>
+                                </select>
                             </div>
-                            <br>
-                            <div class="row" align="center">
+                        </div>
+                        <br>
+                        <div class="row" align="center">
                             <c:if test="${opcionConsultar == 'T'}">
                                 <button class="btn btn-default" type="button" name="accion" id="consultar" value="consultar" onclick="llenarTabla()">Consultar</button>
                             </c:if>

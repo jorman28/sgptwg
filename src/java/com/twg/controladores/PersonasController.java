@@ -187,7 +187,7 @@ public class PersonasController extends HttpServlet {
         int registros = 10;
         int paginasAdicionales = 2;
         String limite = ((pagina - 1) * registros) + "," + registros;
-        List<PersonasBean> listaPersonas = personasNegocio.consultarPersonas(idPersona, documento, tipoDocumento, nombres, apellidos, correo, usuario, perfil, cargo, null, limite);
+        List<PersonasBean> listaPersonas = personasNegocio.consultarPersonas(idPersona, documento, tipoDocumento, nombres, apellidos, correo, usuario, perfil, cargo, null, null, limite);
         PrintWriter out = response.getWriter();
         out.println("<table class=\"table table-striped table-hover table-condensed bordo-tablas\">");
         out.println("<thead>");

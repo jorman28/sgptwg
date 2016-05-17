@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -43,11 +43,9 @@ public class ActividadesController extends HttpServlet {
     private final EstadosNegocio estadosNegocio = new EstadosNegocio();
     private final PersonasNegocio personasNegocio = new PersonasNegocio();
     private final ComentariosNegocio comentariosNegocio = new ComentariosNegocio();
-
-    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-
-    private static final String INSERTAR_O_EDITAR = "jsp/gestionActividades.jsp";
-    private static final String LISTAR_ACTIVIDADES = "jsp/actividades.jsp";
+    private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+    private final String gestionActividades = "jsp/gestionActividades.jsp";
+    private final String consultaActividades = "jsp/actividades.jsp";
 
     /**
      * Método encargado de procesar las peticiones que ingresan por métodos get
@@ -61,202 +59,220 @@ public class ActividadesController extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8");
-        String redireccion = LISTAR_ACTIVIDADES;
+        String redireccion = consultaActividades;
         try {
             String mensajeAlerta = "";
             String mensajeExito = "";
             String mensajeError = "";
 
             String accion = request.getParameter("accion");
-            String idStr = request.getParameter("id"); //consulta y creacion Er
             if (accion == null) {
                 accion = "";
-            } else if (accion.contains("_")) { //esto se hace por tema de modificación, para poder extraer el id del registro
-                String[] arrayGetId = accion.split("_");
-                if (arrayGetId[1] != null) {
-                    idStr = arrayGetId[1];
-                    accion = arrayGetId[0];
-                }
             }
 
-            String[] idPersonasActividad = request.getParameterValues("idPersonas");// Personas que estan en la lista 2 Participantes en la actividad
-            String proyectoStr = request.getParameter("proyecto"); //consulta y creacion Er
-            String versionStr = request.getParameter("version"); //consulta y creacion Er
-            String descripcion = request.getParameter("descripcion"); //consulta y creacion Er
-            String estadoStr = request.getParameter("estado"); //consulta y creacion Er
-            String fechaStr = request.getParameter("fecha"); //consulta Er
-            String responsable = request.getParameter("responsable"); //consulta y creacion Er en creación se recibe el objeto hidden
-
-            String fecha_estimada_inicioStr = request.getParameter("fecha_estimada_inicio");//creacion
-            String fecha_estimada_terminacionStr = request.getParameter("fecha_estimada_terminacion");//creacion
-            String fecha_real_inicioStr = request.getParameter("fecha_real_inicio");//creacion
-            String fecha_real_terminacionStr = request.getParameter("fecha_real_terminacion");//creacion
-            String tiempo_estimadoStr = request.getParameter("tiempo_estimado");//creacion
-            String tiempo_invertidoStr = request.getParameter("tiempo_invertido");//creacion
+            String nombreProyecto = "";
+            String nombreVersion = "";
+            String actividad = request.getParameter("id");
+            String proyecto = request.getParameter("proyecto");
+            String version = request.getParameter("version");
+            String nombre = request.getParameter("nombre");
+            String descripcion = request.getParameter("descripcion");
+            String estado = request.getParameter("estado");
+            String fecha = request.getParameter("fecha");
+            String responsable = request.getParameter("responsable");
             String busqueda = request.getParameter("busqueda");
+            String fechaInicio = request.getParameter("fechaInicio");
+            String fechaFin = request.getParameter("fechaFin");
+            String tiempo = request.getParameter("tiempo");
+            String estimacion = request.getParameter("estimacion");
+            String esfuerzo = request.getParameter("esfuerzo");
+            String paginaStr = request.getParameter("pagina");
 
-            Integer id = null;
+            Integer idActividad = null;
             try {
-                id = Integer.valueOf(idStr);
+                idActividad = Integer.valueOf(actividad);
             } catch (NumberFormatException e) {
             }
-
-            Integer proyecto = null;
+            Integer idProyecto = null;
             try {
-                proyecto = Integer.valueOf(proyectoStr);
+                idProyecto = Integer.valueOf(proyecto);
             } catch (NumberFormatException e) {
             }
-
-            Integer version = null;
+            Integer idVersion = null;
             try {
-                version = Integer.valueOf(versionStr);
+                idVersion = Integer.valueOf(version);
             } catch (NumberFormatException e) {
             }
-
-            Integer filtroPersona;
+            Integer idResponsable;
             try {
-                filtroPersona = Integer.valueOf(responsable);
+                idResponsable = Integer.valueOf(responsable);
             } catch (NumberFormatException e) {
-                filtroPersona = null;
+                idResponsable = null;
+            }
+            Integer idEstado;
+            try {
+                idEstado = Integer.valueOf(estado);
+            } catch (NumberFormatException e) {
+                idEstado = null;
+            }
+            Integer idEsfuerzo;
+            try {
+                idEsfuerzo = Integer.valueOf(esfuerzo);
+            } catch (NumberFormatException e) {
+                idEsfuerzo = null;
+            }
+            Integer pagina;
+            try {
+                pagina = Integer.valueOf(paginaStr);
+            } catch (NumberFormatException e) {
+                pagina = 1;
             }
 
             List<String> permisosPagina = PerfilesNegocio.permisosPorPagina(request, Paginas.ACTIVIDADES);
 
             switch (accion) {
                 case "consultar":
-                    cargarTabla(response, permisosPagina, proyecto, version, descripcion, estadoStr, fechaStr, filtroPersona);
+                    cargarTabla(response, permisosPagina, idProyecto, idVersion, descripcion, idEstado, fecha, idResponsable, pagina);
                     break;
                 case "crearActividad":
                 case "limpiarCreacion":
-                    request.setAttribute("estados", estadosNegocio.consultarEstados(null, "ACTIVIDADES", null, null, null, null, null));
-                    request.setAttribute("proyectos", proyectosNegocio.consultarProyectos(null, null, false));
                     request.setAttribute("clientesActividad", null);
                     request.setAttribute("empleadosActividad", null);
-                    redireccion = INSERTAR_O_EDITAR;
+                    redireccion = gestionActividades;
                     break;
-                case "gestionarActividad":
                 case "limpiarGestion":
-                    if (idStr != null && !idStr.isEmpty()) {
-                        ActividadesBean actividad = actividadesNegocio.consultarActividadI(id);
-                        request.setAttribute("estados", estadosNegocio.consultarEstados(null, "ACTIVIDADES", null, null, null, null, null));
-                        request.setAttribute("proyectos", proyectosNegocio.consultarProyectos(null, null, false));
-                        request.setAttribute("clientesActividad", null);
-                        request.setAttribute("empleadosActividad", null);
-                        proyecto = proyectosNegocio.consultarProyectoPorVersion(actividad.getVersion()).getId();
-                        List<PersonasBean> personas = personasNegocio.consultarPersonasActividad(idStr);
-                        List<PersonasBean> empleados = new ArrayList<>();
-                        List<PersonasBean> clientes = new ArrayList<>();
-                        for (PersonasBean persona : personas) {
-                            if (persona.getNombreCargo().toLowerCase().equalsIgnoreCase("cliente")) {
-                                clientes.add(persona);
-                            } else {
-                                empleados.add(persona);
-                            }
-                        }
-                        request.setAttribute("clientesActividad", clientes);
-                        request.setAttribute("empleadosActividad", empleados);
-                        request.setAttribute("id", actividad.getId().toString());
-                        request.setAttribute("proyecto", proyecto.toString());
-                        request.setAttribute("versiones", versionesNegocio.consultarVersiones(null, proyecto, null, false));
-                        version = actividad.getVersion();
-                        request.setAttribute("version", version.toString());
-                        request.setAttribute("descripcion", actividad.getDescripcion());
-                        request.setAttribute("fecha_estimada_inicio", actividad.getFecha_estimada_inicio() != null ? sdf.format(actividad.getFecha_estimada_inicio()) : "");
-                        request.setAttribute("fecha_estimada_terminacion", actividad.getFecha_estimada_terminacion() != null ? sdf.format(actividad.getFecha_estimada_terminacion()) : "");
-                        request.setAttribute("fecha_real_inicio", actividad.getFecha_real_inicio() != null ? sdf.format(actividad.getFecha_real_inicio()) : "");
-                        request.setAttribute("fecha_real_terminacion", actividad.getFecha_real_terminacion() != null ? sdf.format(actividad.getFecha_real_terminacion()) : "");
-                        request.setAttribute("tiempo_estimado", actividad.getTiempo_estimado());
-                        request.setAttribute("tiempo_invertido", actividad.getTiempo_invertido());
-                        estadoStr = actividad.getEstado().toString();
-                        request.setAttribute("estado", Integer.parseInt(estadoStr));
-                        request.setAttribute("listaComentarios", comentariosNegocio.listaComentarios(comentariosNegocio.TIPO_ACTIVIDAD, actividad.getId()));
-                    }
-                    redireccion = INSERTAR_O_EDITAR;
-                    break;
                 case "duplicarActividad":
-                    if (idStr != null && !idStr.isEmpty()) {
-                        ActividadesBean actividad = actividadesNegocio.consultarActividadI(id);
-                        request.setAttribute("estados", estadosNegocio.consultarEstados(null, "ACTIVIDADES", null, null, null, null, null));
-                        request.setAttribute("proyectos", proyectosNegocio.consultarProyectos(null, null, false));
-                        request.setAttribute("clientesActividad", null);
-                        request.setAttribute("empleadosActividad", null);
-                        proyecto = proyectosNegocio.consultarProyectoPorVersion(actividad.getVersion()).getId();
-                        List<PersonasBean> personas = personasNegocio.consultarPersonasActividad(idStr);
-                        List<PersonasBean> empleados = new ArrayList<>();
-                        List<PersonasBean> clientes = new ArrayList<>();
-                        for (PersonasBean persona : personas) {
-                            if (persona.getNombreCargo().toLowerCase().equalsIgnoreCase("cliente")) {
-                                clientes.add(persona);
-                            } else {
-                                empleados.add(persona);
-                            }
-                        }
-                        request.setAttribute("clientesActividad", clientes);
-                        request.setAttribute("empleadosActividad", empleados);
-                        request.setAttribute("proyecto", proyecto.toString());
-                        request.setAttribute("versiones", versionesNegocio.consultarVersiones(null, proyecto, null, false));
-                        version = actividad.getVersion();
-                        request.setAttribute("version", version.toString());
-                        request.setAttribute("descripcion", actividad.getDescripcion());
-                        request.setAttribute("fecha_estimada_inicio", actividad.getFecha_estimada_inicio() != null ? sdf.format(actividad.getFecha_estimada_inicio()) : "");
-                        request.setAttribute("fecha_estimada_terminacion", actividad.getFecha_estimada_terminacion() != null ? sdf.format(actividad.getFecha_estimada_terminacion()) : "");
-                        request.setAttribute("fecha_real_inicio", actividad.getFecha_real_inicio() != null ? sdf.format(actividad.getFecha_real_inicio()) : "");
-                        request.setAttribute("fecha_real_terminacion", actividad.getFecha_real_terminacion() != null ? sdf.format(actividad.getFecha_real_terminacion()) : "");
-                        request.setAttribute("tiempo_estimado", actividad.getTiempo_estimado());
-                        request.setAttribute("tiempo_invertido", actividad.getTiempo_invertido());
-                        estadoStr = actividad.getEstado().toString();
-                        request.setAttribute("estado", Integer.parseInt(estadoStr));
-                    }
-                    redireccion = INSERTAR_O_EDITAR;
-                    break;
-                case "guardar":
-                    Map<String, Object> result = actividadesNegocio.guardarActividad(idStr, proyectoStr, versionStr, idPersonasActividad, descripcion, fecha_estimada_inicioStr, fecha_estimada_terminacionStr, fecha_real_inicioStr, fecha_real_terminacionStr, tiempo_estimadoStr, tiempo_invertidoStr, estadoStr);
-                    if (result.get("mensajeError") != null) {
-                        mensajeError = (String) result.get("mensajeError");
-                        request.setAttribute("mensajeError", mensajeError);
-                        request.setAttribute("estados", estadosNegocio.consultarEstados(null, "ACTIVIDADES", null, null, null, null, null));
-                        request.setAttribute("proyectos", proyectosNegocio.consultarProyectos(null, null, false));
-                        request.setAttribute("versiones", versionesNegocio.consultarVersiones(null, Integer.parseInt(proyectoStr), null, false));
-                        if (idPersonasActividad != null) {
-                            List<PersonasBean> personas = new ArrayList<>();
-                            for (String idPersona : idPersonasActividad) {
-                                personas.add(personasNegocio.consultarPersona(Integer.valueOf(idPersona), null, null));
-                            }
-                            List<PersonasBean> empleados = new ArrayList<>();
-                            List<PersonasBean> clientes = new ArrayList<>();
-
-                            for (PersonasBean persona : personas) {
-                                if (persona.getNombreCargo().toLowerCase().equalsIgnoreCase("cliente")) {
+                case "gestionarActividad":
+                    if (idActividad != null) {
+                        ActividadesBean actividadExistente = actividadesNegocio.consultarActividadPorId(idActividad);
+                        if (actividadExistente != null) {
+                            JSONArray personas = actividadesNegocio.consultarActividadesEmpleados(idActividad);
+                            JSONArray empleados = new JSONArray();
+                            JSONArray clientes = new JSONArray();
+                            for (Object persona : personas) {
+                                JSONObject personaJSON = (JSONObject) persona;
+                                if (personaJSON.get("cargo") != null && personaJSON.get("cargo").toString().equalsIgnoreCase("cliente")) {
                                     clientes.add(persona);
                                 } else {
                                     empleados.add(persona);
                                 }
                             }
-                            request.setAttribute("clientesActividad", clientes);
-                            request.setAttribute("empleadosActividad", empleados);
-                        } else {
-                            request.setAttribute("clientesActividad", null);
-                            request.setAttribute("empleadosActividad", null);
+                            request.setAttribute("clientesActividad", clientes.isEmpty() ? "" : clientes);
+                            request.setAttribute("empleadosActividad", empleados.isEmpty() ? "" : empleados);
+                            request.setAttribute("nombre", actividadExistente.getNombre());
+                            request.setAttribute("descripcion", actividadExistente.getDescripcion());
+                            idProyecto = actividadExistente.getProyecto();
+                            idVersion = actividadExistente.getVersion();
+                            idEstado = actividadExistente.getEstado();
+                            nombreProyecto = actividadExistente.getNombreProyecto();
+                            nombreVersion = actividadExistente.getNombreVersion();
+                            if (!accion.equals("duplicarActividad")) {
+                                request.setAttribute("id", idActividad);
+                                request.setAttribute("listaComentarios", comentariosNegocio.listaComentarios(comentariosNegocio.TIPO_ACTIVIDAD, actividadExistente.getId()));
+                            }
                         }
-                        enviarDatosCreacionEdicion(request, idStr, proyectoStr, versionStr, descripcion, fecha_estimada_inicioStr, fecha_estimada_terminacionStr, fecha_real_inicioStr, fecha_real_terminacionStr, tiempo_estimadoStr, tiempo_invertidoStr, estadoStr);
-                        accion = "gestionarActividad";
-                        redireccion = INSERTAR_O_EDITAR;
-                        break;
                     }
-                    if (result.get("mensajeExito") != null) {
-                        mensajeExito = (String) result.get("mensajeExito");
-                        enviarDatosCreacionEdicion(request, null, null, null, null, null, null, null, null, null, null, null);
+                    redireccion = gestionActividades;
+                    break;
+                case "guardar":
+                    Map<String, Object> guardado = actividadesNegocio.guardarActividad(idActividad, idProyecto, idVersion, nombre, descripcion, idEstado);
+                    if (guardado.get("mensajeError") != null) {
+                        mensajeError = (String) guardado.get("mensajeError");
                     }
+                    if (guardado.get("mensajeExito") != null) {
+                        mensajeExito = (String) guardado.get("mensajeExito");
+                    }
+                    idActividad = (Integer) guardado.get("idActividad");
+                    if (idActividad != null) {
+                        JSONArray personas = actividadesNegocio.consultarActividadesEmpleados(idActividad);
+                        JSONArray empleados = new JSONArray();
+                        JSONArray clientes = new JSONArray();
+                        for (Object persona : personas) {
+                            JSONObject personaJSON = (JSONObject) persona;
+                            if (personaJSON.get("cargo") != null && personaJSON.get("cargo").toString().equalsIgnoreCase("cliente")) {
+                                clientes.add(persona);
+                            } else {
+                                empleados.add(persona);
+                            }
+                        }
+                        request.setAttribute("clientesActividad", clientes.isEmpty() ? "" : clientes);
+                        request.setAttribute("empleadosActividad", empleados.isEmpty() ? "" : empleados);
+                        request.setAttribute("id", idActividad);
+                        request.setAttribute("listaComentarios", comentariosNegocio.listaComentarios(comentariosNegocio.TIPO_ACTIVIDAD, idActividad));
+                    }
+                    request.setAttribute("nombre", nombre);
+                    request.setAttribute("descripcion", descripcion);
+                    redireccion = gestionActividades;
+                    break;
+                case "guardarPersonaActividad":
+                    JSONObject resultado = new JSONObject();
+                    if (estimacion != null && estimacion.equals("true")) {
+                        mensajeAlerta = actividadesNegocio.validarActividadEmpleado(fechaInicio, fechaFin, tiempo);
+                    }
+                    if (mensajeAlerta.isEmpty()) {
+                        mensajeError = actividadesNegocio.guardarActividadPersona(idActividad, idResponsable, fechaInicio, fechaFin, tiempo, estimacion != null && estimacion.equals("true"));
+                        if (mensajeError.isEmpty()) {
+                            resultado.put("resultado", "ok");
+                            consultarEmpleadosActividad(resultado, idActividad);
+                        } else {
+                            resultado.put("mensaje", mensajeError);
+                        }
+                    } else {
+                        resultado.put("resultado", "advertencia");
+                        resultado.put("mensaje", mensajeAlerta);
+                    }
+                    response.getWriter().write(resultado.toJSONString());
+                    break;
+                case "guardarEsfuerzo":
+                    resultado = new JSONObject();
+                    mensajeAlerta = actividadesNegocio.validarActividadEsfuerzo(fecha, tiempo, descripcion);
+                    if (mensajeAlerta.isEmpty()) {
+                        mensajeError = actividadesNegocio.guardarActividadEsfuerzo(idEsfuerzo, idActividad, idResponsable, fecha, tiempo, descripcion);
+                        if (mensajeError.isEmpty()) {
+                            resultado.put("resultado", "ok");
+                            consultarEmpleadosActividad(resultado, idActividad);
+                            resultado.put("historialTrabajo", actividadesNegocio.consultarHistorialTrabajo(idActividad, idResponsable));
+                        } else {
+                            resultado.put("mensaje", mensajeError);
+                        }
+                    } else {
+                        resultado.put("resultado", "advertencia");
+                        resultado.put("mensaje", mensajeAlerta);
+                    }
+                    response.getWriter().write(resultado.toJSONString());
                     break;
                 case "eliminar":
-                    mensajeError = actividadesNegocio.eliminarActividad(id);
+                    mensajeError = actividadesNegocio.eliminarActividad(idActividad);
                     if (mensajeError.isEmpty()) {
                         mensajeExito = "La actividad ha sido eliminada con éxito";
                     }
                     break;
+                case "eliminarEmpleado":
+                    resultado = new JSONObject();
+                    mensajeError = actividadesNegocio.eliminarActividadEmpleado(idActividad, idResponsable);
+                    if (mensajeError.isEmpty()) {
+                        resultado.put("resultado", "ok");
+                        consultarEmpleadosActividad(resultado, idActividad);
+                    } else {
+                        resultado.put("mensaje", mensajeError);
+                    }
+                    response.getWriter().write(resultado.toJSONString());
+                    break;
+                case "eliminarEsfuerzo":
+                    resultado = new JSONObject();
+                    mensajeError = actividadesNegocio.eliminarActividadEsfuerzo(idEsfuerzo);
+                    if (mensajeError.isEmpty()) {
+                        resultado.put("resultado", "ok");
+                        consultarEmpleadosActividad(resultado, idActividad);
+                        resultado.put("historialTrabajo", actividadesNegocio.consultarHistorialTrabajo(idActividad, idResponsable));
+                    } else {
+                        resultado.put("mensaje", mensajeError);
+                    }
+                    response.getWriter().write(resultado.toJSONString());
+                    break;
                 case "consultarVersiones":
                     JSONArray array = new JSONArray();
-                    List<VersionesBean> listaVersiones = versionesNegocio.consultarVersiones(null, proyecto, null, false);
+                    List<VersionesBean> listaVersiones = versionesNegocio.consultarVersiones(null, idProyecto, null, false);
                     if (listaVersiones != null && !listaVersiones.isEmpty()) {
                         for (VersionesBean versionBean : listaVersiones) {
                             JSONObject object = new JSONObject();
@@ -267,23 +283,24 @@ public class ActividadesController extends HttpServlet {
                             array.add(object);
                         }
                     }
-                    response.getWriter().write(array.toString());
+                    response.getWriter().write(array.toJSONString());
                     break;
                 case "consultarPersonasProyecto":
-                    String strParticipante = request.getParameter("search");
-                    String strProyecto = request.getParameter("search1");
-                    JSONArray arrayPersonas = personasNegocio.consultarPersonasProyecto(strProyecto, strParticipante);
-                    response.getWriter().write(arrayPersonas.toString());
+                    array = personasNegocio.completarPersonas(busqueda, idProyecto);
+                    response.getWriter().write(array.toJSONString());
                     break;
                 case "consultarFechasActividades":
-                    String strParticipantes = request.getParameter("empleadosSeleccionados");
-                    String strFechaEstimadaInicial = request.getParameter("strFechaEstimadaInicial");
-                    String strFechaEstimadaFin = request.getParameter("strFechaEstimadaFin");
-                    String strIdActividad = request.getParameter("strIdActividad");
-                    java.util.Date dateFechaEstimadaInicial = sdf.parse(strFechaEstimadaInicial);
-                    java.util.Date dateFechaEstimadaFin = sdf.parse(strFechaEstimadaFin);
-                    JSONArray arrayPersonasAsignadasActividad = personasNegocio.consultarPersonasAsignadasActividad(strParticipantes, dateFechaEstimadaInicial, dateFechaEstimadaFin, strIdActividad);
-                    response.getWriter().write(arrayPersonasAsignadasActividad.toString());
+                    array = new JSONArray();
+                    if (fechaInicio != null && !fechaInicio.isEmpty() && fechaFin != null && !fechaFin.isEmpty()) {
+                        Date dateFechaEstimadaInicial = sdf.parse(fechaInicio);
+                        Date dateFechaEstimadaFin = sdf.parse(fechaFin);
+                        array = actividadesNegocio.consultarActividadesAsociadas(idActividad, idResponsable, dateFechaEstimadaInicial, dateFechaEstimadaFin);
+                    }
+                    response.getWriter().write(array.toJSONString());
+                    break;
+                case "consultarHistorialTrabajo":
+                    array = actividadesNegocio.consultarHistorialTrabajo(idActividad, idResponsable);
+                    response.getWriter().write(array.toJSONString());
                     break;
                 case "guardarComentario":
                     String comentario = request.getParameter("comentario");
@@ -296,9 +313,9 @@ public class ActividadesController extends HttpServlet {
                     JSONObject comentarioGuardado = new JSONObject();
                     mensajeAlerta = comentariosNegocio.validarDatos(comentario);
                     if (mensajeAlerta.isEmpty()) {
-                        mensajeError = comentariosNegocio.guardarComentario(null, persona, comentario, comentariosNegocio.TIPO_ACTIVIDAD, id);
+                        mensajeError = comentariosNegocio.guardarComentario(null, persona, comentario, comentariosNegocio.TIPO_ACTIVIDAD, idActividad);
                         if (mensajeError.isEmpty()) {
-                            comentarioGuardado.put("comentarios", comentariosNegocio.listaComentarios(comentariosNegocio.TIPO_ACTIVIDAD, id));
+                            comentarioGuardado.put("comentarios", comentariosNegocio.listaComentarios(comentariosNegocio.TIPO_ACTIVIDAD, idActividad));
                         } else {
                             comentarioGuardado.put("mensajeError", mensajeError);
                         }
@@ -312,7 +329,7 @@ public class ActividadesController extends HttpServlet {
                     JSONObject comentarioEliminado = new JSONObject();
                     mensajeError = comentariosNegocio.eliminarComentario(idComentario);
                     if (mensajeError.isEmpty()) {
-                        comentarioEliminado.put("comentarios", comentariosNegocio.listaComentarios(comentariosNegocio.TIPO_ACTIVIDAD, id));
+                        comentarioEliminado.put("comentarios", comentariosNegocio.listaComentarios(comentariosNegocio.TIPO_ACTIVIDAD, idActividad));
                     } else {
                         comentarioEliminado.put("mensajeError", mensajeError);
                     }
@@ -325,13 +342,13 @@ public class ActividadesController extends HttpServlet {
                 default:
                     break;
             }
-            request.setAttribute("mensajeAlerta", mensajeAlerta);
-            request.setAttribute("mensajeExito", mensajeExito);
-            request.setAttribute("mensajeError", mensajeError);
-            request.setAttribute("proyectos", proyectosNegocio.consultarProyectos(null, null, false));
-            request.setAttribute("estados", estadosNegocio.consultarEstados(null, "ACTIVIDADES", null, null, null, null, null));
             if (accion.isEmpty() || accion.equals("limpiar") || accion.equals("crearActividad") || accion.equals("limpiarCreacion") || accion.equals("gestionarActividad")
                     || accion.equals("limpiarGestion") || accion.equals("duplicarActividad") || accion.equals("guardar") || accion.equals("eliminar")) {
+                request.setAttribute("mensajeAlerta", mensajeAlerta);
+                request.setAttribute("mensajeExito", mensajeExito);
+                request.setAttribute("mensajeError", mensajeError);
+                request.setAttribute("proyectos", proyectosNegocio.consultarProyectos(null, null, false));
+                request.setAttribute("estados", estadosNegocio.consultarEstados(null, "ACTIVIDADES", null, null, null, null, null));
                 if (permisosPagina != null && !permisosPagina.isEmpty()) {
                     if (permisosPagina.contains(Permisos.CONSULTAR.getNombre())) {
                         request.setAttribute("opcionConsultar", "T");
@@ -340,27 +357,31 @@ public class ActividadesController extends HttpServlet {
                         request.setAttribute("opcionGuardar", "T");
                     }
                 }
-
-                /* Filtros en pantalla de actividades */
-                if (proyecto != null) {
-                    request.setAttribute("versiones", versionesNegocio.consultarVersiones(null, proyecto, null, false));
+                if (idProyecto != null) {
+                    request.setAttribute("versiones", versionesNegocio.consultarVersiones(null, idProyecto, null, false));
                 }
-                if (filtroPersona != null) {
-                    PersonasBean persona = personasNegocio.consultarPersona(filtroPersona, null, null);
+                if (idResponsable != null) {
+                    PersonasBean persona = personasNegocio.consultarPersona(idResponsable, null, null);
                     if (persona != null) {
                         request.setAttribute("nombreResponsable", persona.getTipoDocumento() + persona.getDocumento() + " " + persona.getNombres() + " " + persona.getApellidos());
                     }
                 }
-                if (!accion.equals("crearActividad") && !accion.equals("limpiarCreacion")) {
-                    request.setAttribute("proyecto", proyecto);
-                    request.setAttribute("version", version);
-                    if (estadoStr != null && !"".equals(estadoStr)) {
-                        request.setAttribute("estado", Integer.parseInt(estadoStr));
+                if (!accion.equals("crearActividad") && !accion.equals("limpiar") && !accion.equals("limpiarCreacion")) {
+                    request.setAttribute("proyecto", idProyecto);
+                    request.setAttribute("version", idVersion);
+                    if (accion.equals("guardar")) {
+                        ActividadesBean actividadExistente = actividadesNegocio.consultarActividadPorId(idActividad);
+                        if (actividadExistente != null) {
+                            request.setAttribute("nombreProyecto", actividadExistente.getNombreProyecto());
+                            request.setAttribute("nombreVersion", actividadExistente.getNombreVersion());
+                        }
                     } else {
-                        request.setAttribute("estado", request.getParameter("estado"));
+                        request.setAttribute("nombreProyecto", nombreProyecto);
+                        request.setAttribute("nombreVersion", nombreVersion);
                     }
+                    request.setAttribute("estado", idEstado);
                 }
-                request.setAttribute("responsable", filtroPersona);
+                request.setAttribute("responsable", idResponsable);
                 request.getRequestDispatcher(redireccion).forward(request, response);
             }
         } catch (ParseException ex) {
@@ -368,35 +389,20 @@ public class ActividadesController extends HttpServlet {
         }
     }
 
-    /**
-     * Este método se encarga de enviar los atributos de las Actividades, al
-     * cliente que realiza la petición.
-     *
-     * @param request
-     * @param id
-     * @param proyecto
-     * @param version
-     * @param descripcion
-     * @param fecha_estimada_inicio
-     * @param fecha_estimada_terminacion
-     * @param fecha_real_inicio
-     * @param fecha_real_terminacion
-     * @param tiempo_estimado
-     * @param tiempo_invertido
-     * @param estado
-     */
-    private void enviarDatosCreacionEdicion(HttpServletRequest request, String id, String proyecto, String version, String descripcion, String fecha_estimada_inicio, String fecha_estimada_terminacion, String fecha_real_inicio, String fecha_real_terminacion, String tiempo_estimado, String tiempo_invertido, String estado) {
-        request.setAttribute("id", id);
-        request.setAttribute("proyecto", proyecto);
-        request.setAttribute("version", version);
-        request.setAttribute("descripcion", descripcion);
-        request.setAttribute("fecha_estimada_inicio", fecha_estimada_inicio);
-        request.setAttribute("fecha_estimada_terminacion", fecha_estimada_terminacion);
-        request.setAttribute("fecha_real_inicio", fecha_real_inicio);
-        request.setAttribute("fecha_real_terminacion", fecha_real_terminacion);
-        request.setAttribute("tiempo_estimado", tiempo_estimado);
-        request.setAttribute("tiempo_invertido", tiempo_invertido);
-        request.setAttribute("estado", estado);
+    private void consultarEmpleadosActividad(JSONObject resultado, Integer idActividad) {
+        JSONArray personas = actividadesNegocio.consultarActividadesEmpleados(idActividad);
+        JSONArray empleados = new JSONArray();
+        JSONArray clientes = new JSONArray();
+        for (Object persona : personas) {
+            JSONObject personaJSON = (JSONObject) persona;
+            if (personaJSON.get("cargo") != null && personaJSON.get("cargo").toString().equalsIgnoreCase("cliente")) {
+                clientes.add(persona);
+            } else {
+                empleados.add(persona);
+            }
+        }
+        resultado.put("clientesActividad", clientes);
+        resultado.put("empleadosActividad", empleados);
     }
 
     /**
@@ -406,29 +412,32 @@ public class ActividadesController extends HttpServlet {
      * @param response
      * @param permisos
      * @param id
-     * @param proyecto
-     * @param version
-     * @param descripcion
-     * @param estado
+     * @param idProyecto
+     * @param idVersion
+     * @param contiene
+     * @param idEstado
      * @param fecha
-     * @param responsable
+     * @param idResponsable
      * @throws ServletException
      * @throws IOException
      */
-    private void cargarTabla(HttpServletResponse response, List<String> permisos, Integer proyecto, Integer version, String descripcion, String estado, String fecha, Integer responsable) throws ServletException, IOException {
+    private void cargarTabla(HttpServletResponse response, List<String> permisos, Integer idProyecto, Integer idVersion, String contiene, Integer idEstado, String fecha, Integer idResponsable, int pagina) throws ServletException, IOException {
         response.setContentType("text/html; charset=iso-8859-1");
-
-        List<ActividadesBean> listaActividades = actividadesNegocio.consultarActividades(proyecto, version, descripcion, fecha, estado, responsable);
-
+        int registros = 10;
+        int paginasAdicionales = 2;
+        String limite = ((pagina - 1) * registros) + "," + registros;
+        List<ActividadesBean> listaActividades = actividadesNegocio.consultarActividades(null, idProyecto, idVersion, contiene, fecha, idEstado, idResponsable, limite);
         PrintWriter out = response.getWriter();
         out.println("<table class=\"table table-striped table-hover table-condensed bordo-tablas\">");
         out.println("<thead>");
         out.println("<tr>");
-        out.println("<th>Descripción</th>");
+        out.println("<th>Proyecto</th>");
         out.println("<th>Versión</th>");
-        out.println("<th>Fecha estimada inicio</th>");
-        out.println("<th>Fecha estimada fin</th>");
-        out.println("<th>Tiempo estimado (h)</th>");
+        out.println("<th>Nombre</th>");
+        out.println("<th>Inicio estimado</th>");
+        out.println("<th>Terminacion estimada</th>");
+        out.println("<th>Duración estimada (h)</th>");
+        out.println("<th>Tiempo invertido (h)</th>");
         out.println("<th>Estado</th>");
         out.println("<th>Acciones</th>");
         out.println("</tr>");
@@ -438,30 +447,84 @@ public class ActividadesController extends HttpServlet {
             for (ActividadesBean actividad : listaActividades) {
                 out.println("<input type=\"hidden\" id=\"id\" name=\"id\" value=" + actividad.getId() + " />");
                 out.println("<tr>");
-                out.println("<td>" + actividad.getDescripcion() + "</td>");
-                out.println("<td>" + actividad.getNombreV() + "</td>");
-                out.println("<td>" + actividad.getFecha_estimada_inicio() + "</td>");
-                out.println("<td>" + actividad.getFecha_estimada_terminacion() + "</td>");
-                out.println("<td>" + actividad.getTiempo_estimado() + "</td>");
-                out.println("<td>" + actividad.getNombreE() + "</td>");
+                out.println("<td>" + actividad.getNombreProyecto() + "</td>");
+                out.println("<td>" + actividad.getNombreVersion() + "</td>");
+                out.println("<td>" + actividad.getNombre() + "</td>");
+                out.println("<td>" + (actividad.getFechaInicio() != null ? sdf.format(actividad.getFechaInicio()) : "") + "</td>");
+                out.println("<td>" + (actividad.getFechaFin() != null ? sdf.format(actividad.getFechaFin()) : "") + "</td>");
+                out.println("<td>" + (actividad.getTiempoEstimado() != null ? actividad.getTiempoEstimado() : 0) + "</td>");
+                out.println("<td>" + (actividad.getTiempoInvertido() != null ? actividad.getTiempoInvertido() : 0) + "</td>");
+                out.println("<td>" + actividad.getNombreEstado() + "</td>");
                 out.println("<td>");
+                out.println("<div class=\"btn-group\" role=\"group\">");
+                out.println("   <button type=\"button\" class=\"btn btn-default dropdown-toggle\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"false\">");
+                out.println("       <span class=\"caret\"></span>");
+                out.println("   </button>");
+                out.println("   <ul class=\"dropdown-menu dropdown-menu-right\">");
                 if (permisos != null && !permisos.isEmpty() && permisos.contains(Permisos.GUARDAR.getNombre())) {
-                    out.println("<button class=\"btn btn-default\" type=\"submit\" name=\"accion\" id=\"gestionarActividad\" value='gestionarActividad_" + actividad.getId() + "'> Gestionar</button>");
-                    out.println("<button class=\"btn btn-default\" type=\"submit\" name=\"accion\" id=\"duplicarActividad\" value='duplicarActividad_" + actividad.getId() + "'> Duplicar</button>");
+                    out.println("   <li><a onclick=\"jQuery('#id').val('" + actividad.getId() + "'); jQuery('#gestionarActividad').click();\">Gestionar</a></li>");
+                    out.println("   <li><a onclick=\"jQuery('#id').val('" + actividad.getId() + "'); jQuery('#duplicarActividad').click();\">Duplicar</a></li>");
                 }
-                if (permisos != null && !permisos.isEmpty() && permisos.contains(Permisos.ELIMINAR.getNombre())) {
-                    out.println("<button class=\"btn btn-default\" type=\"button\" data-toggle=\"modal\" data-target=\"#confirmationMessage\" onclick=\"jQuery('#id').val('" + actividad.getId() + "');\">Eliminar</button>");
+                if (permisos != null && !permisos.isEmpty() && permisos.contains(Permisos.GUARDAR.getNombre())) {
+                    out.println("   <button hidden type=\"button\" >Eliminar</button>");
+                    out.println("   <li><a data-toggle=\"modal\" data-target=\"#confirmationMessage\" onclick=\"jQuery('#id').val('" + actividad.getId() + "');\">Eliminar</a></li>");
                 }
+                out.println("   </ul>");
+                out.println("</div>");
                 out.println("</td>");
                 out.println("</tr>");
             }
         } else {
             out.println("<tr>");
-            out.println("<td colspan=\"7\">No se encontraron registros</td>");
+            out.println("<td colspan=\"9\">No se encontraron registros</td>");
             out.println("</tr>");
         }
         out.println("</tbody>");
         out.println("</table>");
+
+        /* Manejo de paginación */
+        int cantidadActividades = actividadesNegocio.contarActividades(idProyecto, idVersion, contiene, fecha, idEstado, idResponsable);
+        int cantidadPaginas = 1;
+        if (cantidadActividades > 0) {
+            if (cantidadActividades % registros == 0) {
+                cantidadPaginas = cantidadActividades / registros;
+            } else {
+                cantidadPaginas = (cantidadActividades / registros) + 1;
+            }
+        }
+        int paginasPrevias = paginasAdicionales;
+        if (pagina <= paginasAdicionales) {
+            paginasPrevias = (1 - pagina) * -1;
+        }
+        int paginasPosteriores = paginasAdicionales;
+        if (paginasPrevias < paginasAdicionales) {
+            paginasPosteriores += paginasAdicionales - paginasPrevias;
+        }
+        if (pagina + paginasPosteriores > cantidadPaginas) {
+            paginasPosteriores = cantidadPaginas - pagina;
+        }
+        if (paginasPosteriores < paginasAdicionales && pagina - (paginasPrevias + paginasAdicionales - paginasPosteriores) > 0) {
+            paginasPrevias += paginasAdicionales - paginasPosteriores;
+        }
+        out.println("<nav>");
+        out.println("   <ul class=\"pagination\">");
+        if (pagina != 1) {
+            out.println("       <li><a href=\"javascript:void(llenarTablaActividades(1))\"><span>&laquo;</span></a></li>");
+            out.println("       <li><a href=\"javascript:void(llenarTablaActividades(" + (pagina - 1) + "))\"><span>&lsaquo;</span></a></li>");
+        }
+        for (int pag = pagina - paginasPrevias; pag <= pagina + paginasPosteriores; pag++) {
+            if (pagina == pag) {
+                out.println("   <li class=\"active\"><a href=\"javascript:void(0)\"><span>" + pag + "</span></a></li>");
+            } else {
+                out.println("   <li><a href=\"javascript:void(llenarTablaActividades(" + pag + "))\"><span>" + pag + "</span></a></li>");
+            }
+        }
+        if (pagina != cantidadPaginas) {
+            out.println("       <li><a href=\"javascript:void(llenarTablaActividades(" + (pagina + 1) + "))\"><span>&rsaquo;</span></a></li>");
+            out.println("       <li><a href=\"javascript:void(llenarTablaActividades(" + cantidadPaginas + "))\"><span>&raquo;</span></a></li>");
+        }
+        out.println("   </ul>");
+        out.println("</nav>");
     }
 
     /**

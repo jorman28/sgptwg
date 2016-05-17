@@ -23,9 +23,7 @@
                 <div class="col-xs-12 col-sm-9 col-md-10 col-lg-10" id="contenido">
                     <form autocomplete="off" action="./ArchivosController" method="POST" id="formularioArchivos" enctype="multipart/form-data">
                         <c:import url="/jsp/general/eliminacion.jsp"/>
-                        <center>
-                            <h2>ARCHIVOS</h2>
-                        </center>
+                        <h2>ARCHIVOS</h2>
                         <input type="hidden" id="id" name="id" value="${id}" />
                         <input type="hidden" id="hiddenCreador" name="hiddenCreador" value="${hiddenCreador}" />
                         <input type="hidden" id="hiddenFecha" name="hiddenFecha" value="${hiddenFecha}" />

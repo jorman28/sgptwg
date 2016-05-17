@@ -27,12 +27,13 @@ public class PersonasSql {
      * @param perfil
      * @param cargo
      * @param nombreCompleto
+     * @param idProyecto
      * @param limite
      * @return
      */
-    public String consultarPersonas(Integer idPersona, String documento, String tipoDocumento, String nombres, String apellidos, String correo, String usuario, String perfil, String cargo, String nombreCompleto, String limite) {
+    public String consultarPersonas(Integer idPersona, String documento, String tipoDocumento, String nombres, String apellidos, String correo, String usuario, String perfil, String cargo, String nombreCompleto, Integer idProyecto, String limite) {
         String sql = "";
-        sql += "SELECT  "
+        sql += "SELECT DISTINCT "
                 + "    p.id, "
                 + "    p.documento, "
                 + "    p.tipo_documento, "
@@ -58,6 +59,8 @@ public class PersonasSql {
                 + "    usuarios u ON p.id = u.id_persona AND u.fecha_eliminacion IS NULL "
                 + "        LEFT JOIN "
                 + "    perfiles pf ON pf.id = u.perfil AND pf.fecha_eliminacion IS NULL "
+                + "        LEFT JOIN "
+                + "    personas_proyectos pro ON pro.id_persona = p.id  "
                 + "WHERE "
                 + "    1 = 1 AND p.fecha_eliminacion IS NULL ";
         if (idPersona != null) {
@@ -90,16 +93,18 @@ public class PersonasSql {
         if (nombreCompleto != null && !nombreCompleto.isEmpty()) {
             sql += "and (CONCAT(p.nombres, ' ', p.apellidos) LIKE '%" + nombreCompleto + "%' OR p.documento like '%" + nombreCompleto + "%')";
         }
+        if (idProyecto != null && idProyecto.intValue() != 0) {
+            sql += "and pro.id_proyecto = " + idProyecto + " ";
+        }
         if (limite != null && !limite.isEmpty()) {
             sql += "	LIMIT " + limite + " ";
         }
         return sql;
     }
 
-    
     /**
-     * Método encargado de consultar la cantidad de personas, aplicando diferentes filtros
-     * según los parámetros que lleguen distintos de nulos.
+     * Método encargado de consultar la cantidad de personas, aplicando
+     * diferentes filtros según los parámetros que lleguen distintos de nulos.
      *
      * @param idPersona
      * @param documento
@@ -158,123 +163,6 @@ public class PersonasSql {
         if (nombreCompleto != null && !nombreCompleto.isEmpty()) {
             sql += "and (CONCAT(p.nombres, ' ', p.apellidos) LIKE '%" + nombreCompleto + "%' OR p.documento like '%" + nombreCompleto + "%')";
         }
-        return sql;
-    }
-    
-    /**
-     * Método encargado de retornar el SQL para consultar las personas
-     * pertenecientes a un proyecto, por nombres, apellidos o documento.
-     *
-     * @param idProyecto
-     * @param Busqueda
-     * @return
-     */
-    public String consultarPersonasProyecto(String idProyecto, String Busqueda) {
-        String sql = "";
-        sql += "SELECT p.id,\n"
-                + "        p.documento,\n"
-                + "        p.tipo_documento,\n"
-                + "        d.nombre AS nombre_tipo_documento,\n"
-                + "        p.nombres,\n"
-                + "        p.apellidos, \n"
-                + "        p.telefono, \n"
-                + "        p.celular, \n"
-                + "        p.correo, \n"
-                + "        p.direccion, \n"
-                + "        p.cargo, \n"
-                + "        car.nombre nombre_cargo, \n"
-                + "        u.usuario, \n"
-                + "        u.perfil AS id_perfil, \n"
-                + "        pf.nombre AS nombre_perfil \n"
-                + "FROM    personas p \n"
-                + "		INNER JOIN personas_proyectos pro ON pro.id_persona = p.id \n"
-                + "		INNER JOIN tipos_documentos d ON d.tipo = p.tipo_documento \n"
-                + "        INNER JOIN cargos car ON car.id = p.cargo \n"
-                + "        LEFT JOIN usuarios u ON p.id = u.id_persona AND u.fecha_eliminacion IS NULL \n"
-                + "        LEFT JOIN perfiles pf ON pf.id = u.perfil AND pf.fecha_eliminacion IS NULL \n"
-                + "WHERE   1 = 1 AND p.fecha_eliminacion IS NULL ";
-
-        if (idProyecto != null && !idProyecto.isEmpty()) {
-            sql += "AND pro.id_proyecto = " + idProyecto + " ";
-        }
-
-        if (Busqueda != null && !Busqueda.isEmpty()) {
-            sql += "AND (CONCAT(p.nombres, ' ', p.apellidos) LIKE '%" + Busqueda + "%' OR p.documento like '%" + Busqueda + "%')";
-        }
-
-        return sql;
-    }
-
-    /**
-     * Método encargado de retornar el SQL para consultar las personas que
-     * pertenezcan a una actividad en específico.
-     *
-     * @param idActividad
-     * @return
-     */
-    public String consultarPersonasActividad(String idActividad) {
-        String sql = "";
-        sql += "SELECT  p.id,\n"
-                + "		p.documento,\n"
-                + "		p.tipo_documento,\n"
-                + "		d.nombre AS nombre_tipo_documento,\n"
-                + "		p.nombres,\n"
-                + "		p.apellidos, \n"
-                + "		p.telefono, \n"
-                + "		p.celular, \n"
-                + "		p.correo, \n"
-                + "		p.direccion, \n"
-                + "		p.cargo, \n"
-                + "		car.nombre nombre_cargo, \n"
-                + "		u.usuario, \n"
-                + "		u.perfil AS id_perfil, \n"
-                + "		pf.nombre AS nombre_perfil \n"
-                + "FROM    personas p \n"
-                + "		INNER JOIN actividades_empleados ae ON ae.empleado = p.id \n"
-                + "		INNER JOIN tipos_documentos d ON d.tipo = p.tipo_documento \n"
-                + "		INNER JOIN cargos car ON car.id = p.cargo \n"
-                + "		LEFT JOIN usuarios u ON p.id = u.id_persona AND u.fecha_eliminacion IS NULL \n"
-                + "		LEFT JOIN perfiles pf ON pf.id = u.perfil AND pf.fecha_eliminacion IS NULL \n"
-                + "WHERE   1 = 1 AND p.fecha_eliminacion IS NULL AND ae.actividad = " + idActividad + "";
-        return sql;
-    }
-
-    /**
-     * Método encargado de consultas las personas que están asociadas a una
-     * actividad.
-     * @param personas
-     * @return 
-     */
-    public String consultarPersonasAsignadasActividad(String personas, String idActividad) {
-        String sql = "";
-        sql += "SELECT DISTINCT p.id,\n"
-                + "        p.documento,\n"
-                + "        p.tipo_documento,\n"
-                + "        d.nombre AS nombre_tipo_documento,\n"
-                + "        p.nombres,\n"
-                + "        p.apellidos, \n"
-                + "        p.telefono, \n"
-                + "        p.celular, \n"
-                + "        p.correo, \n"
-                + "        p.direccion, \n"
-                + "        p.cargo, \n"
-                + "        car.nombre nombre_cargo, \n"
-                + "        u.usuario, \n"
-                + "        u.perfil AS id_perfil, \n"
-                + "        pf.nombre AS nombre_perfil \n"
-                + "FROM    personas p \n"
-                + "	   INNER JOIN actividades_empleados ae ON ae.empleado = p.id \n"
-                + "	   INNER JOIN actividades act ON act.id = ae.actividad\n"
-                + "	   INNER JOIN tipos_documentos d ON d.tipo = p.tipo_documento \n"
-                + "        INNER JOIN cargos car ON car.id = p.cargo \n"
-                + "        LEFT JOIN usuarios u ON p.id = u.id_persona AND u.fecha_eliminacion IS NULL \n"
-                + "        LEFT JOIN perfiles pf ON pf.id = u.perfil AND pf.fecha_eliminacion IS NULL \n"
-                + "WHERE   1 = 1 AND p.fecha_eliminacion IS NULL AND act.fecha_estimada_inicio >= ? AND act.fecha_estimada_terminacion <= ? AND ae.empleado IN (" + personas + ") ";
-
-        if (idActividad != null && !idActividad.isEmpty()) {
-            sql += "AND act.id <> " + idActividad + "";
-        }
-
         return sql;
     }
 

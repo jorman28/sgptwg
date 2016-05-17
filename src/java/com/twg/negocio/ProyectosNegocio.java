@@ -158,23 +158,6 @@ public class ProyectosNegocio {
         return object;
     }
 
-    //JARA 17/02/2016 Método para encontrar los proyectos de una versión determinada
-    public ProyectosBean consultarProyectoPorVersion(Integer idVersion) {
-        ProyectosBean proyBean = new ProyectosBean();
-        if (idVersion != null) {
-            try {
-                List<ProyectosBean> listaProyectos = proyectosDao.consultarProyectosPorVersion(idVersion);
-                if (listaProyectos != null && !listaProyectos.isEmpty()) {
-                    ProyectosBean proyectoBean = listaProyectos.get(0);
-                    proyBean = proyectoBean;
-                }
-            } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
-                Logger.getLogger(EstadosNegocio.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-        return proyBean;
-    }
-
     public String eliminarProyecto(Integer idProyecto) {
         String error = "";
         try {

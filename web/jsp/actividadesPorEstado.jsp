@@ -22,9 +22,7 @@
                 <c:import url="/jsp/general/about.jsp"/>
                 <div class="col-xs-12 col-sm-9 col-md-10 col-lg-10" id="contenido">
                     <form autocomplete="off" action="./ActividadesPorEstadoController" method="POST" id="formularioActividades">
-                        <center>
-                            <h2>ACTIVIDADES POR ESTADO</h2>
-                        </center>
+                        <h2>ACTIVIDADES POR ESTADO</h2>
                         <div class="panel panel-info">
                             <div class="panel-heading">FILTROS</div>
                             <div class="panel-body">

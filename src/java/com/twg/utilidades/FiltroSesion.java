@@ -38,7 +38,6 @@ public class FiltroSesion implements Filter {
         String context = req.getContextPath();
         String uri = req.getRequestURI();
         if ((uri.endsWith("Controller") && !uri.equals(context + "/CerrarSesionController")) || uri.equals(context + "/")) {
-            System.out.println("Se ingresa al filtro con URI: " + uri + ". Contexto: " + context);
             if (uri.equals(context + "/") || uri.equals(context + "/InicioSesionController")) {
                 if (sesion != null && sesion.getAttribute("permisos") != null) {
                     /* "Se redirige a la primera página que tenga asociada el perfil"); */

@@ -23,9 +23,7 @@
                 <div class="col-xs-12 col-sm-9 col-md-10 col-lg-10" id="contenido">
                     <form autocomplete="off" action="./ActividadesController" method="POST" id="formularioActividades">
                         <c:import url="/jsp/general/eliminacion.jsp"/>
-                        <center>
-                            <h2>ACTIVIDADES</h2>
-                        </center>
+                        <h2>ACTIVIDADES</h2>
                         <input type="hidden" id="id" name="id" value="${id}" />
                         <div class="panel panel-info">
                             <div class="panel-heading">FILTROS</div>
@@ -52,7 +50,7 @@
                                     </div>
 
                                     <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
-                                        <label for="descripcion">Descripción</label>
+                                        <label for="descripcion">Contiene</label>
                                         <input class="form-control" type="text" id="descripcion" name="descripcion" value="${descripcion}" maxlength="1000"/>
                                     </div>
                                 </div>
@@ -69,7 +67,7 @@
 
                                     <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
                                         <label for="fecha">Fecha</label>
-                                        <input type="text" id="fecha" name="fecha" class="form form-control" readonly="true"/>
+                                        <input type="text" id="fecha" name="fecha" class="form form-control"/>
                                     </div>
 
                                     <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
@@ -95,6 +93,8 @@
                         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                             <div id="tablaActividades"></div>
                         </div>
+                        <button hidden type="submit" name="accion" id="gestionarActividad" value="gestionarActividad"></button>
+                        <button hidden type="submit" name="accion" id="duplicarActividad" value="duplicarActividad"></button>
                     </form>
                 </div>
             </div>

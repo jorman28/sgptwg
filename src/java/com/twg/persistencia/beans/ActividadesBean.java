@@ -3,9 +3,9 @@ package com.twg.persistencia.beans;
 import java.util.Date;
 
 /**
- * Esta clase define los atributos del objeto Actividades, 
- * junto con los métodos get y set.
- * 
+ * Esta clase define los atributos del objeto Actividades, junto con los métodos
+ * get y set.
+ *
  * @author Andrés Felipe Giraldo, Jorman Rincón, Erika Jhoana Castaneda
  */
 public class ActividadesBean {
@@ -13,22 +13,21 @@ public class ActividadesBean {
     //Definición de atributos.
     private Integer id;
     private Integer version;
-    private String nombreV;
+    private String nombreVersion;
+    private String nombre;
     private String descripcion;
-    private Date fecha_estimada_inicio;
-    private Date fecha_estimada_terminacion;
-    private Date fecha_real_inicio;
-    private Date fecha_real_terminacion;
-    private double tiempo_estimado;
-    private double tiempo_invertido;
     private Integer estado;
-    private String nombreE;
-    private Date fecha_eliminacion;
+    private String nombreEstado;
+    private Date fechaInicio;
+    private Date fechaFin;
+    private Double tiempoEstimado;
+    private Double tiempoInvertido;
+    private Integer proyecto;
+    private String nombreProyecto;
 
     /*
      * Declaración de métodos Get y Set para cada atributo de la clase.
      */
-    
     public Integer getId() {
         return id;
     }
@@ -45,12 +44,12 @@ public class ActividadesBean {
         this.version = version;
     }
 
-    public String getNombreV() {
-        return nombreV;
+    public String getNombreVersion() {
+        return nombreVersion;
     }
 
-    public void setNombreV(String nombreV) {
-        this.nombreV = nombreV;
+    public void setNombreVersion(String nombreV) {
+        this.nombreVersion = nombreV;
     }
 
     public String getDescripcion() {
@@ -61,54 +60,6 @@ public class ActividadesBean {
         this.descripcion = descripcion;
     }
 
-    public Date getFecha_estimada_inicio() {
-        return fecha_estimada_inicio;
-    }
-
-    public void setFecha_estimada_inicio(Date fecha_estimada_inicio) {
-        this.fecha_estimada_inicio = fecha_estimada_inicio;
-    }
-
-    public Date getFecha_estimada_terminacion() {
-        return fecha_estimada_terminacion;
-    }
-
-    public void setFecha_estimada_terminacion(Date fecha_estimada_terminacion) {
-        this.fecha_estimada_terminacion = fecha_estimada_terminacion;
-    }
-
-    public Date getFecha_real_inicio() {
-        return fecha_real_inicio;
-    }
-
-    public void setFecha_real_inicio(Date fecha_real_inicio) {
-        this.fecha_real_inicio = fecha_real_inicio;
-    }
-
-    public Date getFecha_real_terminacion() {
-        return fecha_real_terminacion;
-    }
-
-    public void setFecha_real_terminacion(Date fecha_real_terminacion) {
-        this.fecha_real_terminacion = fecha_real_terminacion;
-    }
-
-    public double getTiempo_estimado() {
-        return tiempo_estimado;
-    }
-
-    public void setTiempo_estimado(double tiempo_estimado) {
-        this.tiempo_estimado = tiempo_estimado;
-    }
-
-    public double getTiempo_invertido() {
-        return tiempo_invertido;
-    }
-
-    public void setTiempo_invertido(double tiempo_invertido) {
-        this.tiempo_invertido = tiempo_invertido;
-    }
-
     public Integer getEstado() {
         return estado;
     }
@@ -117,20 +68,68 @@ public class ActividadesBean {
         this.estado = estado;
     }
 
-    public Date getFecha_eliminacion() {
-        return fecha_eliminacion;
+    public String getNombreEstado() {
+        return nombreEstado;
     }
 
-    public void setFecha_eliminacion(Date fecha_eliminacion) {
-        this.fecha_eliminacion = fecha_eliminacion;
+    public void setNombreEstado(String nombreE) {
+        this.nombreEstado = nombreE;
     }
 
-    public String getNombreE() {
-        return nombreE;
+    public String getNombre() {
+        return nombre;
     }
 
-    public void setNombreE(String nombreE) {
-        this.nombreE = nombreE;
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public Date getFechaInicio() {
+        return fechaInicio;
+    }
+
+    public void setFechaInicio(Date fechaInicio) {
+        this.fechaInicio = fechaInicio;
+    }
+
+    public Date getFechaFin() {
+        return fechaFin;
+    }
+
+    public void setFechaFin(Date fechaFin) {
+        this.fechaFin = fechaFin;
+    }
+
+    public Double getTiempoEstimado() {
+        return tiempoEstimado;
+    }
+
+    public void setTiempoEstimado(Double tiempo) {
+        this.tiempoEstimado = tiempo;
+    }
+
+    public Integer getProyecto() {
+        return proyecto;
+    }
+
+    public void setProyecto(Integer proyecto) {
+        this.proyecto = proyecto;
+    }
+
+    public String getNombreProyecto() {
+        return nombreProyecto;
+    }
+
+    public void setNombreProyecto(String nombreProyecto) {
+        this.nombreProyecto = nombreProyecto;
+    }
+
+    public Double getTiempoInvertido() {
+        return tiempoInvertido;
+    }
+
+    public void setTiempoInvertido(Double tiempoInvertido) {
+        this.tiempoInvertido = tiempoInvertido;
     }
 
 }
