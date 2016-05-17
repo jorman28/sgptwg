@@ -93,12 +93,19 @@ function pintarListaPersonas(listaPersonas) {
         html += '        <div class="col-xs-2 col-sm-1 col-md-1 col-lg-1">';
         html += '           <span class="glyphicon glyphicon-time" style="cursor:pointer;" onclick="registrarTiempo(' + persona.idPersona + ');"></span>';
         html += '           <span class="glyphicon glyphicon-calendar" style="cursor:pointer;" onclick="estimar(' + persona.idPersona + ', \'' + persona.fechaInicio + '\', \'' + persona.fechaFin + '\', ' + persona.tiempoEstimado + ');"></span>';
-        html += '           <span class="glyphicon glyphicon-remove" style="cursor:pointer;" onclick="eliminarPersona(' + persona.idPersona + ');"></span>';
+        html += '           <span class="glyphicon glyphicon-remove" style="cursor:pointer;" onclick="botonEliminarPersona(' + persona.idPersona + ');"></span>';
         html += '        </div>';
         html += '   </div>';
         html += '</li>';
     }
     return html;
+}
+
+function botonEliminarPersona(idPersona) {
+    var html = '<button type="button" class="btn btn-primary" onclick="eliminarPersona(' + idPersona + ');">Si</button> ';
+    html += '<button type="button" class="btn btn-primary" data-dismiss="modal">No</button>';
+    $("#botonEliminacion").html(html);
+    $("#eliminacionDatos").modal('show');
 }
 
 function pintarHistorialTrabajo(historialTrabajo) {
@@ -119,12 +126,19 @@ function pintarHistorialTrabajo(historialTrabajo) {
         html += '       </div>';
         html += '       <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">';
         html += '           <span class="glyphicon glyphicon-pencil" style="cursor:pointer;" onclick="editarHistorial(' + trabajo.id + ', \'' + trabajo.fecha + '\', ' + trabajo.tiempo + ',\'' + trabajo.descripcion + '\');"></span>';
-        html += '           <span class="glyphicon glyphicon-remove" style="cursor:pointer;" onclick="eliminarHistorial(' + trabajo.id + ');"></span>';
+        html += '           <span class="glyphicon glyphicon-remove" style="cursor:pointer;" onclick="botonEliminarHistorial(' + trabajo.id + ');"></span>';
         html += '       </div>';
         html += '   </div>';
         html += '</li>';
     }
     return html;
+}
+
+function botonEliminarHistorial(idHistorial) {
+    var html = '<button type="button" class="btn btn-primary" onclick="eliminarHistorial(' + idHistorial + ');">Si</button> ';
+    html += '<button type="button" class="btn btn-primary" data-dismiss="modal">No</button>';
+    $("#botonEliminacion").html();
+    $("#eliminacionDatos").modal('show');
 }
 
 function actualizarFechas(idVersion) {
@@ -165,14 +179,18 @@ function guardarPersonaActividad(estimacion) {
                     $('#empleadosActividad').html('No se han agregado empleados al proyecto');
                 }
                 $("#participante").val('');
+            } else if (almacenamiento !== undefined && almacenamiento.resultado === 'advertencia') {
+                mostrarAdvertencia(almacenamiento.mensaje);
             } else if (almacenamiento.mensaje !== undefined && almacenamiento.mensaje !== '') {
                 mostrarError(almacenamiento.mensaje);
             } else {
                 mostrarError('Error guardando datos de responsable');
             }
+            $("#estimacionTiempo").modal("hide");
         },
         error: function() {
             mostrarError('Error guardando datos de responsable');
+            $("#estimacionTiempo").modal("hide");
         }
     });
 }
@@ -212,6 +230,8 @@ function estimar(idPersona, fechaInicio, fechaFin, tiempo) {
     $("#fechaInicio").val(fechaInicio);
     $("#fechaFin").val(fechaFin);
     $("#tiempo").val(tiempo);
+    $('#fechaFin').datetimepicker('setStartDate', fechaInicio);
+    $('#fechaInicio').datetimepicker('setEndDate', fechaFin);
     $("#estimacionTiempo").modal("show");
 }
 
@@ -220,31 +240,29 @@ function validarEstimacion() {
     var idResponsable = $("#idPersona").val();
     var fechaInicio = $("#fechaInicio").val();
     var fechaFin = $("#fechaFin").val();
-    if (idResponsable !== "" && fechaInicio !== "" && fechaFin !== "") {
-        $.ajax({
-            type: "POST",
-            url: "ActividadesController",
-            dataType: "json",
-            data: {responsable: idResponsable, fechaInicio: fechaInicio, fechaFin: fechaFin, id: idActividad, accion: "consultarFechasActividades"},
-            success: function(actividades) {
-                if (actividades !== undefined && actividades.length > 0) {
-                    var html = "Esta persona ya tiene actividades asociadas entre las fechas " + fechaInicio + " y " + fechaFin + "<br>";
-                    for (var i in actividades) {
-                        var actividad = actividades[i];
-                        html += actividad.nombre + ' ' + actividad.fechaInicio + ' - ' + actividad.fechaFin + ' (' + actividad.tiempoEstimado + ' h) - (' + actividad.tiempoInvertido + ' h) <br>';
-                    }
-                    html += '<b>¿Desea continuar con el registro?</b>';
-                    $("#contenidoWarning").html(html);
-                    $("#modalWarning").modal("show");
-                } else {
-                    $('#confirmarEstimacion').click();
+    $.ajax({
+        type: "POST",
+        url: "ActividadesController",
+        dataType: "json",
+        data: {accion: "consultarFechasActividades", responsable: idResponsable, fechaInicio: fechaInicio, fechaFin: fechaFin, id: idActividad},
+        success: function(actividades) {
+            if (actividades !== undefined && actividades.length > 0) {
+                var html = "Esta persona ya tiene actividades asociadas entre las fechas " + fechaInicio + " y " + fechaFin + "<br>";
+                for (var i in actividades) {
+                    var actividad = actividades[i];
+                    html += actividad.nombre + ' ' + actividad.fechaInicio + ' - ' + actividad.fechaFin + ' (' + actividad.tiempoEstimado + ' h) - (' + actividad.tiempoInvertido + ' h) <br>';
                 }
-            },
-            error: function() {
-                mostrarError('Error validando la estimación de trabajo');
+                html += '<b>¿Desea continuar con el registro?</b>';
+                $("#contenidoWarning").html(html);
+                $("#modalWarning").modal("show");
+            } else {
+                $('#confirmarEstimacion').click();
             }
-        });
-    }
+        },
+        error: function() {
+            mostrarError('Error validando la estimación de trabajo');
+        }
+    });
 }
 
 function registrarTiempo(idPersona) {
@@ -308,6 +326,9 @@ function guardarReporteTiempo() {
                 } else {
                     $("#inversionTiempo").modal("hide");
                 }
+            } else if (resultado !== undefined && resultado.resultado === 'advertencia') {
+                mostrarAdvertencia(resultado.mensaje);
+                $("#inversionTiempo").modal("hide");
             } else if (resultado.mensaje !== undefined && resultado.mensaje !== '') {
                 mostrarError(resultado.mensaje);
                 $("#inversionTiempo").modal("hide");

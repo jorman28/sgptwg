@@ -59,18 +59,19 @@ public class ActividadesDao {
      * @param fecha
      * @param estado
      * @param responsable
+     * @param limite
      * @return
      * @throws ClassNotFoundException
      * @throws InstantiationException
      * @throws SQLException
      * @throws IllegalAccessException
      */
-    public List<ActividadesBean> consultarActividades(Integer idActividad, Integer proyecto, Integer version, String contiene, java.util.Date fecha, Integer estado, Integer responsable) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
+    public List<ActividadesBean> consultarActividades(Integer idActividad, Integer proyecto, Integer version, String contiene, java.util.Date fecha, Integer estado, Integer responsable, String limite) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         List<ActividadesBean> listaActividades = new ArrayList();
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;
-        ps = con.prepareStatement(sql.consultarActividades(idActividad, proyecto, version, contiene, fecha, estado, responsable));
+        ps = con.prepareStatement(sql.consultarActividades(idActividad, proyecto, version, contiene, fecha, estado, responsable, limite));
         if (fecha != null) {
             ps.setObject(1, fecha);
         }
@@ -79,7 +80,7 @@ public class ActividadesDao {
         while (rs.next()) {
             ActividadesBean actividad = new ActividadesBean();
             actividad.setId(rs.getInt("id"));
-            actividad.setProyecto((Integer)rs.getObject("proyecto"));
+            actividad.setProyecto((Integer) rs.getObject("proyecto"));
             actividad.setNombreProyecto(rs.getString("nombre_proyecto"));
             actividad.setVersion(rs.getInt("version"));
             actividad.setNombreVersion(rs.getString("nombre_version"));
@@ -97,6 +98,42 @@ public class ActividadesDao {
         ps.close();
         con.close();
         return listaActividades;
+    }
+
+    /**
+     * Método encargado de retornar la cantidad de actividades relacionada con
+     * los filtros de búsqueda ingresados
+     *
+     * @param proyecto
+     * @param version
+     * @param contiene
+     * @param fecha
+     * @param estado
+     * @param responsable
+     * @return
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws SQLException
+     * @throws IllegalAccessException
+     */
+    public int contarActividades(Integer proyecto, Integer version, String contiene, java.util.Date fecha, Integer estado, Integer responsable) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
+        int actividades = 0;
+        Connection con;
+        con = new ConexionBaseDatos().obtenerConexion();
+        PreparedStatement ps;
+        ps = con.prepareStatement(sql.contarActividades(proyecto, version, contiene, fecha, estado, responsable));
+        if (fecha != null) {
+            ps.setObject(1, fecha);
+        }
+        ResultSet rs;
+        rs = ps.executeQuery();
+        if (rs.next()) {
+            actividades = rs.getInt("cantidad_actividades");
+        }
+        rs.close();
+        ps.close();
+        con.close();
+        return actividades;
     }
 
     /**

@@ -105,23 +105,23 @@ public class ActividadesNegocio {
     public String validarDatos(Integer idActividad, Integer idProyecto, Integer idVersion, String nombre, String descripcion, Integer idEstado) {
         String validacion = "";
         if (idProyecto == null || idProyecto.intValue() == 0) {
-            validacion += "El campo 'Proyecto' no debe estar vacío <br/>";
+            validacion += "El campo 'Proyecto' es obligatorio <br/>";
         }
         if (idVersion == null || idVersion.intValue() == 0) {
-            validacion += "El campo 'Versión' no debe estar vacío <br/>";
+            validacion += "El campo 'Versión' es obligatorio <br/>";
         }
         if (nombre == null || nombre.isEmpty()) {
-            validacion += "El campo 'Nombre' no debe estar vacío <br/>";
+            validacion += "El campo 'Nombre' es obligatorio <br/>";
         } else if (nombre.length() > 80) {
-            validacion += "El campo 'Nombre' no debe contener más de 80 caracteres, has dígitado " + nombre.length() + " caracteres <br/>";
+            validacion += "El campo 'Nombre' no debe contener más de 80 caracteres. Has dígitado " + nombre.length() + " caracteres <br/>";
         }
         if (descripcion == null || descripcion.isEmpty()) {
-            validacion += "El campo 'Descripción' no debe estar vacío <br/>";
+            validacion += "El campo 'Descripción' es obligatorio <br/>";
         } else if (descripcion.length() > 1000) {
-            validacion += "El campo 'Descripción' no debe contener más de 1000 caracteres, has dígitado " + descripcion.length() + " caracteres <br/>";
+            validacion += "El campo 'Descripción' no debe contener más de 1000 caracteres. Has dígitado " + descripcion.length() + " caracteres <br/>";
         }
         if (idEstado == null || idEstado.intValue() == 0) {
-            validacion += "El campo 'Estado' no debe estar vacío <br/>";
+            validacion += "El campo 'Estado' es obligatorio <br/>";
         } else {
             /* Actividad existente: se valida contra estados previo y siguiente */
             if (idActividad != null) {
@@ -303,9 +303,10 @@ public class ActividadesNegocio {
      * @param fecha
      * @param idEstado
      * @param responsable
+     * @param limite
      * @return
      */
-    public List<ActividadesBean> consultarActividades(Integer idActividad, Integer proyecto, Integer version, String contiene, String fecha, Integer idEstado, Integer responsable) {
+    public List<ActividadesBean> consultarActividades(Integer idActividad, Integer proyecto, Integer version, String contiene, String fecha, Integer idEstado, Integer responsable, String limite) {
         List<ActividadesBean> listaActividades = new ArrayList<>();
         Date filtroFecha = null;
         if (fecha != null && !fecha.isEmpty()) {
@@ -315,11 +316,40 @@ public class ActividadesNegocio {
             }
         }
         try {
-            listaActividades = actividadesDao.consultarActividades(idActividad, proyecto, version, contiene, filtroFecha, idEstado, responsable);
+            listaActividades = actividadesDao.consultarActividades(idActividad, proyecto, version, contiene, filtroFecha, idEstado, responsable, limite);
         } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
             Logger.getLogger(ActividadesNegocio.class.getName()).log(Level.SEVERE, null, ex);
         }
         return listaActividades;
+    }
+
+    /**
+     * Método encargado de retornar la cantidad de actividades relacionadas con
+     * los filtros ingresados en la consulta
+     *
+     * @param proyecto
+     * @param version
+     * @param contiene
+     * @param fecha
+     * @param idEstado
+     * @param responsable
+     * @return
+     */
+    public int contarActividades(Integer proyecto, Integer version, String contiene, String fecha, Integer idEstado, Integer responsable) {
+        int actividades = 0;
+        Date filtroFecha = null;
+        if (fecha != null && !fecha.isEmpty()) {
+            try {
+                filtroFecha = sdf.parse(fecha);
+            } catch (ParseException e) {
+            }
+        }
+        try {
+            actividades = actividadesDao.contarActividades(proyecto, version, contiene, filtroFecha, idEstado, responsable);
+        } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
+            Logger.getLogger(ActividadesNegocio.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return actividades;
     }
 
     /**
@@ -330,7 +360,7 @@ public class ActividadesNegocio {
      * @return
      */
     public ActividadesBean consultarActividadPorId(Integer idActividad) {
-        List<ActividadesBean> listaActividades = consultarActividades(idActividad, null, null, null, null, null, null);
+        List<ActividadesBean> listaActividades = consultarActividades(idActividad, null, null, null, null, null, null, null);
         if (listaActividades != null && !listaActividades.isEmpty()) {
             return listaActividades.get(0);
         }
@@ -434,6 +464,18 @@ public class ActividadesNegocio {
         return historial;
     }
 
+    /**
+     * Método encargado de almacenar el tiempo que ha invertido un responsable
+     * en la ejecución de una actividad
+     *
+     * @param idEsfuerzo
+     * @param idActividad
+     * @param idEmpleado
+     * @param fecha
+     * @param tiempo
+     * @param descripcion
+     * @return
+     */
     public String guardarActividadEsfuerzo(Integer idEsfuerzo, Integer idActividad, Integer idEmpleado, String fecha, String tiempo, String descripcion) {
         String error = "";
         ActividadesEsfuerzosBean actividadesEsfuerzos = new ActividadesEsfuerzosBean();
@@ -462,6 +504,89 @@ public class ActividadesNegocio {
             error = "Ocurrió un error guardando el tiempo invertido en la actividad";
         }
         return error;
+    }
+
+    /**
+     * Método encargado de validar los datos ingresados en los registros de
+     * trabajo de los empleados en una actividad antes de su almacenamiento en
+     * base de datos
+     *
+     * @param fecha
+     * @param tiempo
+     * @param descripcion
+     * @return
+     */
+    public String validarActividadEsfuerzo(String fecha, String tiempo, String descripcion) {
+        String advertencia = "";
+        if (fecha == null || fecha.isEmpty()) {
+            advertencia += "El campo 'Fecha' es obligatorio <br>";
+        } else {
+            try {
+                sdf.parse(fecha);
+            } catch (ParseException e) {
+                advertencia += "El valor ingresado en el campo 'Fecha' no se encuentra en el formato 'día/mes/año' <br>";
+            }
+        }
+        if (tiempo == null || tiempo.isEmpty()) {
+            advertencia += "El campo 'Tiempo invertido' es obligatorio <br>";
+        } else {
+            try {
+                if (Double.parseDouble(tiempo) <= 0) {
+                    advertencia += "El valor ingresado en el campo 'Tiempo invertido' debe ser un número positivo <br>";
+                }
+            } catch (NumberFormatException e) {
+                advertencia += "El valor ingresado en el campo 'Tiempo invertido' no es un número decimal <br>";
+            }
+        }
+        if (descripcion == null || descripcion.isEmpty()) {
+            advertencia += "El campo 'Descripción' es obligatorio <br>";
+        } else if (descripcion.length() > 500) {
+            advertencia += "El campo 'Descripción' no debe contener más de 500 caracteres. Has dígitado " + descripcion.length() + " caracteres <br/>";
+        }
+        return advertencia;
+    }
+
+    /**
+     * Método encargado de validar los datos ingresados en la estimación de
+     * trabajo para un empleado en una actividad
+     *
+     * @param fechaInicio
+     * @param fechaFin
+     * @param tiempo
+     * @return
+     */
+    public String validarActividadEmpleado(String fechaInicio, String fechaFin, String tiempo) {
+        String advertencia = "";
+        if (fechaInicio == null || fechaInicio.isEmpty()) {
+            advertencia += "El campo 'Fecha de inicio' es obligatorio <br>";
+        } else {
+            try {
+                sdf.parse(fechaInicio);
+            } catch (ParseException e) {
+                advertencia += "El valor ingresado en el campo 'Fecha de inicio' no se encuentra en el formato 'día/mes/año' <br>";
+            }
+        }
+        if (fechaFin == null || fechaFin.isEmpty()) {
+            advertencia += "El campo 'Fecha de fin' es obligatorio <br>";
+        } else {
+            try {
+                sdf.parse(fechaFin);
+            } catch (ParseException e) {
+                advertencia += "El valor ingresado en el campo 'Fecha de fin' no se encuentra en el formato 'día/mes/año' <br>";
+            }
+        }
+        if (tiempo == null || tiempo.isEmpty()) {
+            advertencia += "El campo 'Tiempo estimado' es obligatorio <br>";
+        } else {
+            try {
+                if (Double.parseDouble(tiempo) <= 0) {
+                    advertencia += "El valor ingresado en el campo 'Tiempo estimado' debe ser un número positivo <br>";
+                }
+            } catch (NumberFormatException e) {
+                advertencia += "El valor ingresado en el campo 'Tiempo estimado' no es un número decimal <br>";
+            }
+        }
+        return advertencia;
     }
 
     /**

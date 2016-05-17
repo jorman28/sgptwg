@@ -70,6 +70,8 @@ public class ActividadesController extends HttpServlet {
                 accion = "";
             }
 
+            String nombreProyecto = "";
+            String nombreVersion = "";
             String actividad = request.getParameter("id");
             String proyecto = request.getParameter("proyecto");
             String version = request.getParameter("version");
@@ -84,6 +86,7 @@ public class ActividadesController extends HttpServlet {
             String tiempo = request.getParameter("tiempo");
             String estimacion = request.getParameter("estimacion");
             String esfuerzo = request.getParameter("esfuerzo");
+            String paginaStr = request.getParameter("pagina");
 
             Integer idActividad = null;
             try {
@@ -118,11 +121,18 @@ public class ActividadesController extends HttpServlet {
             } catch (NumberFormatException e) {
                 idEsfuerzo = null;
             }
+            Integer pagina;
+            try {
+                pagina = Integer.valueOf(paginaStr);
+            } catch (NumberFormatException e) {
+                pagina = 1;
+            }
+
             List<String> permisosPagina = PerfilesNegocio.permisosPorPagina(request, Paginas.ACTIVIDADES);
 
             switch (accion) {
                 case "consultar":
-                    cargarTabla(response, permisosPagina, idProyecto, idVersion, descripcion, idEstado, fecha, idResponsable);
+                    cargarTabla(response, permisosPagina, idProyecto, idVersion, descripcion, idEstado, fecha, idResponsable, pagina);
                     break;
                 case "crearActividad":
                 case "limpiarCreacion":
@@ -154,6 +164,8 @@ public class ActividadesController extends HttpServlet {
                             idProyecto = actividadExistente.getProyecto();
                             idVersion = actividadExistente.getVersion();
                             idEstado = actividadExistente.getEstado();
+                            nombreProyecto = actividadExistente.getNombreProyecto();
+                            nombreVersion = actividadExistente.getNombreVersion();
                             if (!accion.equals("duplicarActividad")) {
                                 request.setAttribute("id", idActividad);
                                 request.setAttribute("listaComentarios", comentariosNegocio.listaComentarios(comentariosNegocio.TIPO_ACTIVIDAD, actividadExistente.getId()));
@@ -193,25 +205,39 @@ public class ActividadesController extends HttpServlet {
                     redireccion = gestionActividades;
                     break;
                 case "guardarPersonaActividad":
-                    mensajeError = actividadesNegocio.guardarActividadPersona(idActividad, idResponsable, fechaInicio, fechaFin, tiempo, estimacion != null && estimacion.equals("true"));
                     JSONObject resultado = new JSONObject();
-                    if (mensajeError.isEmpty()) {
-                        resultado.put("resultado", "ok");
-                        consultarEmpleadosActividad(resultado, idActividad);
+                    if (estimacion != null && estimacion.equals("true")) {
+                        mensajeAlerta = actividadesNegocio.validarActividadEmpleado(fechaInicio, fechaFin, tiempo);
+                    }
+                    if (mensajeAlerta.isEmpty()) {
+                        mensajeError = actividadesNegocio.guardarActividadPersona(idActividad, idResponsable, fechaInicio, fechaFin, tiempo, estimacion != null && estimacion.equals("true"));
+                        if (mensajeError.isEmpty()) {
+                            resultado.put("resultado", "ok");
+                            consultarEmpleadosActividad(resultado, idActividad);
+                        } else {
+                            resultado.put("mensaje", mensajeError);
+                        }
                     } else {
-                        resultado.put("mensaje", mensajeError);
+                        resultado.put("resultado", "advertencia");
+                        resultado.put("mensaje", mensajeAlerta);
                     }
                     response.getWriter().write(resultado.toJSONString());
                     break;
                 case "guardarEsfuerzo":
                     resultado = new JSONObject();
-                    mensajeError = actividadesNegocio.guardarActividadEsfuerzo(idEsfuerzo, idActividad, idResponsable, fecha, tiempo, descripcion);
-                    if (mensajeError.isEmpty()) {
-                        resultado.put("resultado", "ok");
-                        consultarEmpleadosActividad(resultado, idActividad);
-                        resultado.put("historialTrabajo", actividadesNegocio.consultarHistorialTrabajo(idActividad, idResponsable));
+                    mensajeAlerta = actividadesNegocio.validarActividadEsfuerzo(fecha, tiempo, descripcion);
+                    if (mensajeAlerta.isEmpty()) {
+                        mensajeError = actividadesNegocio.guardarActividadEsfuerzo(idEsfuerzo, idActividad, idResponsable, fecha, tiempo, descripcion);
+                        if (mensajeError.isEmpty()) {
+                            resultado.put("resultado", "ok");
+                            consultarEmpleadosActividad(resultado, idActividad);
+                            resultado.put("historialTrabajo", actividadesNegocio.consultarHistorialTrabajo(idActividad, idResponsable));
+                        } else {
+                            resultado.put("mensaje", mensajeError);
+                        }
                     } else {
-                        resultado.put("mensaje", mensajeError);
+                        resultado.put("resultado", "advertencia");
+                        resultado.put("mensaje", mensajeAlerta);
                     }
                     response.getWriter().write(resultado.toJSONString());
                     break;
@@ -264,9 +290,12 @@ public class ActividadesController extends HttpServlet {
                     response.getWriter().write(array.toJSONString());
                     break;
                 case "consultarFechasActividades":
-                    Date dateFechaEstimadaInicial = sdf.parse(fechaInicio);
-                    Date dateFechaEstimadaFin = sdf.parse(fechaFin);
-                    array = actividadesNegocio.consultarActividadesAsociadas(idActividad, idResponsable, dateFechaEstimadaInicial, dateFechaEstimadaFin);
+                    array = new JSONArray();
+                    if (fechaInicio != null && !fechaInicio.isEmpty() && fechaFin != null && !fechaFin.isEmpty()) {
+                        Date dateFechaEstimadaInicial = sdf.parse(fechaInicio);
+                        Date dateFechaEstimadaFin = sdf.parse(fechaFin);
+                        array = actividadesNegocio.consultarActividadesAsociadas(idActividad, idResponsable, dateFechaEstimadaInicial, dateFechaEstimadaFin);
+                    }
                     response.getWriter().write(array.toJSONString());
                     break;
                 case "consultarHistorialTrabajo":
@@ -340,6 +369,16 @@ public class ActividadesController extends HttpServlet {
                 if (!accion.equals("crearActividad") && !accion.equals("limpiar") && !accion.equals("limpiarCreacion")) {
                     request.setAttribute("proyecto", idProyecto);
                     request.setAttribute("version", idVersion);
+                    if (accion.equals("guardar")) {
+                        ActividadesBean actividadExistente = actividadesNegocio.consultarActividadPorId(idActividad);
+                        if (actividadExistente != null) {
+                            request.setAttribute("nombreProyecto", actividadExistente.getNombreProyecto());
+                            request.setAttribute("nombreVersion", actividadExistente.getNombreVersion());
+                        }
+                    } else {
+                        request.setAttribute("nombreProyecto", nombreProyecto);
+                        request.setAttribute("nombreVersion", nombreVersion);
+                    }
                     request.setAttribute("estado", idEstado);
                 }
                 request.setAttribute("responsable", idResponsable);
@@ -382,11 +421,12 @@ public class ActividadesController extends HttpServlet {
      * @throws ServletException
      * @throws IOException
      */
-    private void cargarTabla(HttpServletResponse response, List<String> permisos, Integer idProyecto, Integer idVersion, String contiene, Integer idEstado, String fecha, Integer idResponsable) throws ServletException, IOException {
+    private void cargarTabla(HttpServletResponse response, List<String> permisos, Integer idProyecto, Integer idVersion, String contiene, Integer idEstado, String fecha, Integer idResponsable, int pagina) throws ServletException, IOException {
         response.setContentType("text/html; charset=iso-8859-1");
-
-        List<ActividadesBean> listaActividades = actividadesNegocio.consultarActividades(null, idProyecto, idVersion, contiene, fecha, idEstado, idResponsable);
-
+        int registros = 10;
+        int paginasAdicionales = 2;
+        String limite = ((pagina - 1) * registros) + "," + registros;
+        List<ActividadesBean> listaActividades = actividadesNegocio.consultarActividades(null, idProyecto, idVersion, contiene, fecha, idEstado, idResponsable, limite);
         PrintWriter out = response.getWriter();
         out.println("<table class=\"table table-striped table-hover table-condensed bordo-tablas\">");
         out.println("<thead>");
@@ -441,6 +481,50 @@ public class ActividadesController extends HttpServlet {
         }
         out.println("</tbody>");
         out.println("</table>");
+
+        /* Manejo de paginación */
+        int cantidadActividades = actividadesNegocio.contarActividades(idProyecto, idVersion, contiene, fecha, idEstado, idResponsable);
+        int cantidadPaginas = 1;
+        if (cantidadActividades > 0) {
+            if (cantidadActividades % registros == 0) {
+                cantidadPaginas = cantidadActividades / registros;
+            } else {
+                cantidadPaginas = (cantidadActividades / registros) + 1;
+            }
+        }
+        int paginasPrevias = paginasAdicionales;
+        if (pagina <= paginasAdicionales) {
+            paginasPrevias = (1 - pagina) * -1;
+        }
+        int paginasPosteriores = paginasAdicionales;
+        if (paginasPrevias < paginasAdicionales) {
+            paginasPosteriores += paginasAdicionales - paginasPrevias;
+        }
+        if (pagina + paginasPosteriores > cantidadPaginas) {
+            paginasPosteriores = cantidadPaginas - pagina;
+        }
+        if (paginasPosteriores < paginasAdicionales && pagina - (paginasPrevias + paginasAdicionales - paginasPosteriores) > 0) {
+            paginasPrevias += paginasAdicionales - paginasPosteriores;
+        }
+        out.println("<nav>");
+        out.println("   <ul class=\"pagination\">");
+        if (pagina != 1) {
+            out.println("       <li><a href=\"javascript:void(llenarTablaActividades(1))\"><span>&laquo;</span></a></li>");
+            out.println("       <li><a href=\"javascript:void(llenarTablaActividades(" + (pagina - 1) + "))\"><span>&lsaquo;</span></a></li>");
+        }
+        for (int pag = pagina - paginasPrevias; pag <= pagina + paginasPosteriores; pag++) {
+            if (pagina == pag) {
+                out.println("   <li class=\"active\"><a href=\"javascript:void(0)\"><span>" + pag + "</span></a></li>");
+            } else {
+                out.println("   <li><a href=\"javascript:void(llenarTablaActividades(" + pag + "))\"><span>" + pag + "</span></a></li>");
+            }
+        }
+        if (pagina != cantidadPaginas) {
+            out.println("       <li><a href=\"javascript:void(llenarTablaActividades(" + (pagina + 1) + "))\"><span>&rsaquo;</span></a></li>");
+            out.println("       <li><a href=\"javascript:void(llenarTablaActividades(" + cantidadPaginas + "))\"><span>&raquo;</span></a></li>");
+        }
+        out.println("   </ul>");
+        out.println("</nav>");
     }
 
     /**

@@ -33,21 +33,33 @@
                                 <div class="row">
                                     <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
                                         <label for="proyecto">*Proyecto</label>
-                                        <select class="form-control" id="proyecto" name="proyecto" onchange="consultarVersiones(this.value);">
-                                            <option value="0">SELECCIONE</option>
-                                            <c:forEach items="${proyectos}" var="proy">
-                                                <option value="${proy.id}" <c:if test="${proyecto == proy.id}">selected</c:if> >${proy.nombre}</option>
-                                            </c:forEach>
-                                        </select>
+                                        <c:if test="${empty id}">
+                                            <select class="form-control" id="proyecto" name="proyecto" onchange="consultarVersiones(this.value);">
+                                                <option value="0">SELECCIONE</option>
+                                                <c:forEach items="${proyectos}" var="proy">
+                                                    <option value="${proy.id}" <c:if test="${proyecto == proy.id}">selected</c:if> >${proy.nombre}</option>
+                                                </c:forEach>
+                                            </select>
+                                        </c:if>
+                                        <c:if test="${not empty id}">
+                                            <input type="text" class="form-control" value="${nombreProyecto}" readonly="true" />
+                                            <input type="hidden" id="proyecto" name="proyecto" value="${proyecto}" />
+                                        </c:if>
                                     </div>
                                     <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
                                         <label for="version">*Version</label>
-                                        <select id="version" name="version" class="form-control" onchange="actualizarFechas(this.value);">
-                                            <option value="0">SELECCIONE</option>
-                                            <c:forEach items="${versiones}" var="ver">
-                                                <option value="${ver.id}" <c:if test="${ver.id == version}">selected</c:if>>${ver.nombre}</option>
-                                            </c:forEach>
-                                        </select>
+                                        <c:if test="${empty id}">
+                                            <select id="version" name="version" class="form-control" onchange="actualizarFechas(this.value);">
+                                                <option value="0">SELECCIONE</option>
+                                                <c:forEach items="${versiones}" var="ver">
+                                                    <option value="${ver.id}" <c:if test="${ver.id == version}">selected</c:if>>${ver.nombre}</option>
+                                                </c:forEach>
+                                            </select>
+                                        </c:if>
+                                        <c:if test="${not empty id}">
+                                            <input type="text" class="form-control" value="${nombreVersion}" readonly="true" />
+                                            <input type="hidden" id="version" name="version" value="${version}" />
+                                        </c:if>
                                     </div>
                                     <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
                                         <label for="estado">*Estado</label>
@@ -112,7 +124,7 @@
                                                                 <div class="col-xs-2 col-sm-1 col-md-1 col-lg-1">
                                                                     <span class="glyphicon glyphicon-time" style="cursor:pointer;" onclick="registrarTiempo(${item.idPersona});"></span>
                                                                     <span class="glyphicon glyphicon-calendar" style="cursor:pointer;" onclick="estimar(${item.idPersona}, '${item.fechaInicio}', '${item.fechaFin}', ${item.tiempoEstimado});"></span>
-                                                                    <span class="glyphicon glyphicon-remove" style="cursor:pointer;" onclick="eliminarPersona(${item.idPersona});"></span>
+                                                                    <span class="glyphicon glyphicon-remove" style="cursor:pointer;" onclick="botonEliminarPersona(${item.idPersona});"></span>
                                                                 </div>
                                                             </div>
                                                         </li>
@@ -148,7 +160,7 @@
                                                                 <div class="col-xs-2 col-sm-1 col-md-1 col-lg-1">
                                                                     <span class="glyphicon glyphicon-time" style="cursor:pointer;" onclick="registrarTiempo(${item.idPersona});"></span>
                                                                     <span class="glyphicon glyphicon-calendar" style="cursor:pointer;" onclick="estimar(${item.idPersona}, '${item.fechaInicio}', '${item.fechaFin}', ${item.tiempoEstimado});"></span>
-                                                                    <span class="glyphicon glyphicon-remove" style="cursor:pointer;" onclick="eliminarPersona(${item.idPersona});"></span>
+                                                                    <span class="glyphicon glyphicon-remove" style="cursor:pointer;" onclick="botonEliminarPersona(${item.idPersona});"></span>
                                                                 </div>
                                                             </div>
                                                         </li>
@@ -219,12 +231,12 @@
                                             <input type="text" class="form-control" id="fechaInicio" name="fechaInicio" readonly="true"/>
                                         </div>
                                         <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
-                                            <label for="tiempo">*Tiempo estimado:</label>
-                                            <input type="text" class="form-control" id="tiempo" name="tiempo"/>
-                                        </div>
-                                        <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
                                             <label for="fechaFin">*Fecha de fin:</label>
                                             <input type="text" class="form-control" id="fechaFin" name="fechaFin" readonly="true"/>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
+                                            <label for="tiempo">*Tiempo estimado:</label>
+                                            <input type="text" class="form-control" id="tiempo" name="tiempo"/>
                                         </div>
                                     </div>
                                 </div>
@@ -246,16 +258,16 @@
                                 <div class="modal-body">
                                     <div class="row">
                                         <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                                            <label for="fechaTrabajo">*Fecha trabajada:</label>
+                                            <label for="fechaTrabajo">*Fecha:</label>
                                             <input type="text" class="form-control" id="fechaTrabajo" name="fechaTrabajo" readonly="true"/>
                                         </div>
                                         <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                                            <label for="tiempoTrabajado">*Tiempo trabajado:</label>
+                                            <label for="tiempoTrabajado">*Tiempo invertido:</label>
                                             <input type="text" class="form-control" id="tiempoTrabajado" name="tiempoTrabajado" />
                                         </div>
                                         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                            <label for="detalleTrabajo">*Detalle de trabajo:</label>
-                                            <textarea class="form-control" id="detalleTrabajo" name="detalleTrabajo" maxlength="1000" rows="5"></textarea>
+                                            <label for="detalleTrabajo">*Descripción:</label>
+                                            <textarea class="form-control" id="detalleTrabajo" name="detalleTrabajo" maxlength="500" rows="5"></textarea>
                                         </div>
                                         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                             <label for="detalleTrabajo">Historial de trabajo</label>
@@ -267,6 +279,19 @@
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-primary" id="guardarTiempo" onclick="guardarReporteTiempo();">Guardar</button>
                                     <button type="button" class="btn btn-primary" data-dismiss="modal">Cancelar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="eliminacionDatos" class="modal fade">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-body">
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                    Realmente desea eliminar el registro?
+                                </div>
+                                <div class="modal-footer">
+                                    <div id="botonEliminacion"></div>
                                 </div>
                             </div>
                         </div>

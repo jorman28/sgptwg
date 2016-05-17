@@ -27,9 +27,10 @@ public class ActividadesSql {
      * @param fecha
      * @param responsable
      * @param estado
+     * @param limite
      * @return
      */
-    public String consultarActividades(Integer idActividad, Integer proyecto, Integer version, String contiene, Date fecha, Integer estado, Integer responsable) {
+    public String consultarActividades(Integer idActividad, Integer proyecto, Integer version, String contiene, Date fecha, Integer estado, Integer responsable, String limite) {
         String sql = "SELECT DISTINCT\n"
                 + "    a.id,\n"
                 + "    a.version,\n"
@@ -89,6 +90,56 @@ public class ActividadesSql {
         if (idActividad != null && idActividad.intValue() != 0) {
             sql += "AND a.id = " + idActividad + " ";
         }
+        if (proyecto != null && proyecto.intValue() != 0) {
+            sql += "AND v.proyecto = " + proyecto + " ";
+        }
+        if (version != null && version.intValue() != 0) {
+            sql += "AND a.version = " + version + " ";
+        }
+        if (contiene != null && !contiene.isEmpty()) {
+            sql += "AND (a.nombre LIKE '%" + contiene + "%' OR a.descripcion LIKE '%" + contiene + "%') ";
+        }
+        if (fecha != null) {
+            sql += "AND ? BETWEEN ae.fecha_estimada_inicio AND ae.fecha_estimada_terminacion ";
+        }
+        if (estado != null && estado.intValue() != 0) {
+            sql += "AND a.estado = " + estado + " ";
+        }
+        if (responsable != null && responsable.intValue() != 0) {
+            sql += "AND ae.empleado = " + responsable + " ";
+        }
+        if (limite != null && !limite.isEmpty()) {
+            sql += "LIMIT " + limite + " ";
+        }
+        return sql;
+    }
+
+    /**
+     * Método encargado de retornar el SQL para el conteo de las actividades
+     * relacionadas con los filtros ingresados
+     *
+     * @param proyecto
+     * @param version
+     * @param contiene
+     * @param fecha
+     * @param estado
+     * @param responsable
+     * @return
+     */
+    public String contarActividades(Integer proyecto, Integer version, String contiene, Date fecha, Integer estado, Integer responsable) {
+        String sql = "SELECT COUNT(*) AS cantidad_actividades\n"
+                + "FROM\n"
+                + "    actividades a\n"
+                + "        INNER JOIN\n"
+                + "    estados e ON e.id = a.estado\n"
+                + "        INNER JOIN\n"
+                + "    versiones v ON v.id = a.version\n"
+                + "        INNER JOIN\n"
+                + "    proyectos p ON p.id = v.proyecto\n"
+                + "        LEFT JOIN\n"
+                + "    actividades_empleados ae ON ae.actividad = a.id\n"
+                + "WHERE\n"
+                + "    a.fecha_eliminacion IS NULL ";
         if (proyecto != null && proyecto.intValue() != 0) {
             sql += "AND v.proyecto = " + proyecto + " ";
         }

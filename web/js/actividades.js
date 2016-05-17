@@ -49,7 +49,10 @@ function consultarActividad(id) {
     });
 }
 
-function llenarTablaActividades() {
+function llenarTablaActividades(pagina) {
+    if (pagina === undefined) {
+        pagina = 1;
+    }
     var id = $('#id').val() !== undefined && $('#id').val() !== "" ? $('#id').val() : null;
     var proyecto = $('#proyecto').val() !== undefined && $('#proyecto').val() !== "0" ? $('#proyecto').val() : null;
     var version = $('#version').val() !== undefined && $('#version').val() !== "0" ? $('#version').val() : null;
@@ -65,7 +68,8 @@ function llenarTablaActividades() {
         type: "POST",
         url: "ActividadesController",
         dataType: "html",
-        data: {accion: "consultar", id: id, proyecto: proyecto, version: version, descripcion: descripcion, estado: estado, fecha: fecha, responsable: responsable},
+        data: {accion: "consultar", id: id, proyecto: proyecto, version: version, descripcion: descripcion, 
+            estado: estado, fecha: fecha, responsable: responsable, pagina: pagina},
         success: function(data) {
             if (data !== undefined) {
                 $('#tablaActividades').html(data);

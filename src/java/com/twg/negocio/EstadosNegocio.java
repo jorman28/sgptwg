@@ -184,7 +184,7 @@ public class EstadosNegocio {
         if (id != null) {
             try {
                 ActividadesDao act = new ActividadesDao();
-                List<ActividadesBean> listaActividades = act.consultarActividades(null, null, null, null, null, id, null);
+                List<ActividadesBean> listaActividades = act.consultarActividades(null, null, null, null, null, id, null, null);
                 List<EstadosBean> estList = estadosDao.consultarEstadosPS(id);
                 if ((listaActividades != null && listaActividades.size() > 0) || (estList != null && estList.size() > 0)) {
                     mensajeError = "El estado no puede ser eliminado porque ya tiene actividades asociadas o está ligado a "
