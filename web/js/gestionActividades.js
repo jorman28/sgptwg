@@ -218,6 +218,7 @@ function eliminarPersona(idPersona) {
             } else {
                 mostrarError('El responsable de la actividad no pudo ser eliminado');
             }
+            $("#eliminacionDatos").modal('hide');
         },
         error: function() {
             mostrarError('Error eliminando responsable de la actividad');
@@ -371,6 +372,7 @@ function eliminarHistorial(idHistorial) {
                 } else {
                     $("#historialTrabajo").html("No se ha registrado trabajo para la actividad");
                 }
+                $("#eliminacionDatos").modal('hide');
             } else if (resultado.mensaje !== undefined && resultado.mensaje !== '') {
                 mostrarError(resultado.mensaje);
                 $("#inversionTiempo").modal("hide");
