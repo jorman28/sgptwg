@@ -87,6 +87,7 @@
                                 <button class="btn btn-default" type="submit" name="accion" id="crearActividad" value="crearActividad">Crear</button>
                             </c:if>
                             <button class="btn btn-default" type="submit" name="accion" id="limpiar" value="limpiar">Limpiar</button>
+                            <button class="btn btn-default" type="button" name="accion" id="reportePdf" value="pdf" onclick="generarReporte()">Generar reporte</button>
                         </div>
                         <br>
                         <br>

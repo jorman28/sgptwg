@@ -12,6 +12,8 @@ import com.twg.persistencia.beans.Paginas;
 import com.twg.persistencia.beans.Permisos;
 import com.twg.persistencia.beans.PersonasBean;
 import com.twg.persistencia.beans.VersionesBean;
+import com.twg.utilidades.GeneradorReportes;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.ParseException;
@@ -22,6 +24,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -43,6 +46,7 @@ public class ActividadesController extends HttpServlet {
     private final EstadosNegocio estadosNegocio = new EstadosNegocio();
     private final PersonasNegocio personasNegocio = new PersonasNegocio();
     private final ComentariosNegocio comentariosNegocio = new ComentariosNegocio();
+    private final GeneradorReportes generadorReportes = new GeneradorReportes();
     private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
     private final String gestionActividades = "jsp/gestionActividades.jsp";
     private final String consultaActividades = "jsp/actividades.jsp";
@@ -87,6 +91,7 @@ public class ActividadesController extends HttpServlet {
             String estimacion = request.getParameter("estimacion");
             String esfuerzo = request.getParameter("esfuerzo");
             String paginaStr = request.getParameter("pagina");
+            String archivo = request.getParameter("archivo");
 
             Integer idActividad = null;
             try {
@@ -339,6 +344,17 @@ public class ActividadesController extends HttpServlet {
                     array = personasNegocio.completarPersonas(busqueda);
                     response.getWriter().write(array.toJSONString());
                     break;
+                case "generarReporte":
+                    resultado = new JSONObject();
+                    String nombreArchivo = generadorReportes.listadoActividades(actividadesNegocio.consultarActividades(null, idProyecto, idVersion, descripcion, fecha, idEstado, idResponsable, null));
+                    if (nombreArchivo != null && !nombreArchivo.isEmpty()) {
+                        resultado.put("archivo", nombreArchivo);
+                    }
+                    response.getWriter().write(resultado.toJSONString());
+                    break;
+                case "obtenerArchivo":
+                    obtenerArchivo(response, archivo);
+                    break;
                 default:
                     break;
             }
@@ -525,6 +541,31 @@ public class ActividadesController extends HttpServlet {
         }
         out.println("   </ul>");
         out.println("</nav>");
+    }
+    
+    /**
+     * Método encargado de descargar el archivo generado para el reporte de
+     * actividades por estado
+     *
+     * @param response
+     * @param nombreArchivo
+     * @throws IOException
+     */
+    private void obtenerArchivo(HttpServletResponse response, String nombreArchivo) throws IOException {
+        ServletOutputStream respuesta = response.getOutputStream();
+        String mimetype = "application/x-download";
+        FileInputStream archivo;
+        archivo = new FileInputStream(generadorReportes.rutaReportes + nombreArchivo);
+        byte[] buffer = new byte[4096];
+        int length;
+        while ((length = archivo.read(buffer)) > 0) {
+            respuesta.write(buffer, 0, length);
+        }
+        response.addHeader("Content-Disposition", "attachment; filename=" + nombreArchivo);
+        response.setHeader("Content-Length", Integer.toString(length));
+        response.setContentType(mimetype);
+        archivo.close();
+        respuesta.flush();
     }
 
     /**

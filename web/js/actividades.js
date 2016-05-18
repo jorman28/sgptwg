@@ -81,6 +81,39 @@ function llenarTablaActividades(pagina) {
     });
 }
 
+function generarReporte() {
+    var proyecto = $('#proyecto').val() !== undefined && $('#proyecto').val() !== "0" ? $('#proyecto').val() : null;
+    var version = $('#version').val() !== undefined && $('#version').val() !== "0" ? $('#version').val() : null;
+    var descripcion = $('#descripcion').val() !== undefined && $('#descripcion').val() !== "" ? $('#descripcion').val() : null;
+    var estado = $('#estado').val() !== undefined && $('#estado').val() !== "0" ? $('#estado').val() : null;
+    var fecha = $('#fecha').val() !== undefined && $('#fecha').val() !== "" ? $('#fecha').val() : null;
+    var responsable = $('#responsable').val() !== undefined && $('#responsable').val() !== "" ? $('#responsable').val() : null;
+    if ($("#nombreResponsable").val() === undefined || $("#nombreResponsable").val() === '') {
+        responsable = '';
+        $("#responsable").val('');
+    }
+    $.ajax({
+        type: "POST",
+        url: "ActividadesController",
+        dataType: "json",
+        data: {accion: "generarReporte", proyecto: proyecto, version: version, descripcion: descripcion, 
+            estado: estado, fecha: fecha, responsable: responsable},
+        success: function(data) {
+            if (data !== undefined && data.archivo !== undefined) {
+                var link = document.createElement('a');
+                link.href = 'ActividadesController?accion=obtenerArchivo&archivo=' + data.archivo;
+                link.target = '_blank';
+                link.click();
+            } else {
+                mostrarError('Error al generar el reporte');
+            }
+        },
+        error: function() {
+            mostrarError('Error al generar el reporte');
+        }
+    });
+}
+
 function consultarVersiones(idProyecto) {
     $.ajax({
         type: "POST",
