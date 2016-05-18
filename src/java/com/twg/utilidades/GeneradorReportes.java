@@ -1,12 +1,14 @@
 package com.twg.utilidades;
 
 import com.twg.negocio.ActividadesNegocio;
+import com.twg.persistencia.beans.ActividadesBean;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
@@ -64,6 +66,39 @@ public class GeneradorReportes {
                 .add(cht.pie3DChart().setTitleFont(boldFont).setKey(estado).series(cht.serie(cantidad))));
         reporte.setTemplate(Templates.reportTemplate);
         return guardarReporte(reporte, "Actividades_por_estado");
+    }
+
+    /**
+     * Método encargado de generar un reporte con las actividades filtradas en
+     * la pantalla de gestión de actividades
+     *
+     * @param listaActividades
+     * @return
+     */
+    public String listadoActividades(List<ActividadesBean> listaActividades) {
+        TextColumnBuilder<String> proyecto = Columns.column("Proyecto", "proyecto", DataTypes.stringType());
+        TextColumnBuilder<String> version = Columns.column("Version", "version", DataTypes.stringType());
+        TextColumnBuilder<String> actividad = Columns.column("Actividad", "actividad", DataTypes.stringType());
+        TextColumnBuilder<String> estado = Columns.column("Estado", "estado", DataTypes.stringType());
+        TextColumnBuilder<String> fechaInicio = Columns.column("Fecha de inicio", "fechaInicio", DataTypes.stringType());
+        TextColumnBuilder<String> fechaFin = Columns.column("Fecha de fin", "fechaFin", DataTypes.stringType());
+        TextColumnBuilder<Double> tiempoEstimado = Columns.column("Tiempo estimado", "tiempoEstimado", DataTypes.doubleType());
+        TextColumnBuilder<Double> tiempoInvertido = Columns.column("Tiempo invertido", "tiempoInvertido", DataTypes.doubleType());
+
+        JasperReportBuilder reporte = DynamicReports.report();
+        reporte.addColumn(proyecto);
+        reporte.addColumn(version);
+        reporte.addColumn(actividad);
+        reporte.addColumn(estado);
+        reporte.addColumn(fechaInicio);
+        reporte.addColumn(fechaFin);
+        reporte.addColumn(tiempoEstimado);
+        reporte.addColumn(tiempoInvertido);
+        reporte.title(Templates.createTitleComponent("Listado de actividades"));
+        reporte.pageFooter(Templates.footerComponent);
+        reporte.setDataSource(actividadesNegocio.listaActividades(listaActividades));
+        reporte.setTemplate(Templates.reportTemplate);
+        return guardarReporte(reporte, "Listado_de_actividades");
     }
 
     /**

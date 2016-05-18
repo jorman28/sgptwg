@@ -623,6 +623,34 @@ public class ActividadesNegocio {
     }
 
     /**
+     * Método encargado de retornar el dataset del reporte de actividades
+     *
+     * @param listaActividades
+     * @return
+     */
+    public JRDataSource listaActividades(List<ActividadesBean> listaActividades) {
+        DRDataSource datos = new DRDataSource("proyecto",
+                "version",
+                "actividad",
+                "estado",
+                "fechaInicio",
+                "fechaFin",
+                "tiempoEstimado",
+                "tiempoInvertido");
+        for (ActividadesBean actividad : listaActividades) {
+            datos.add(actividad.getNombreProyecto(),
+                    actividad.getNombreVersion(),
+                    actividad.getNombre(),
+                    actividad.getNombreEstado(),
+                    actividad.getFechaInicio() != null ? sdf.format(actividad.getFechaInicio()) : "",
+                    actividad.getFechaFin() != null ? sdf.format(actividad.getFechaFin()) : "",
+                    actividad.getTiempoEstimado() != null ? actividad.getTiempoEstimado() : 0,
+                    actividad.getTiempoInvertido() != null ? actividad.getTiempoInvertido() : 0);
+        }
+        return datos;
+    }
+
+    /**
      * Método encargado de consultar los distintos estados de actividades
      * distintos de finalizado y para cada uno de estos definir la cantidad de
      * actividades asociadas
