@@ -137,6 +137,54 @@ public class ActividadesDao {
     }
 
     /**
+     * Metodo encargado de consultar en base de datos, la información
+     * correspondiente a los filtros ingresados en pantalla para el reporte
+     * detallado de actividades
+     *
+     * @param proyecto
+     * @param version
+     * @param contiene
+     * @param fecha
+     * @param estado
+     * @param responsable
+     * @return
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws SQLException
+     * @throws IllegalAccessException
+     */
+    public List<Map<String, Object>> detalleActividades(Integer proyecto, Integer version, String contiene, java.util.Date fecha, Integer estado, Integer responsable) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
+        List<Map<String, Object>> listaActividades = new ArrayList();
+        Connection con;
+        con = new ConexionBaseDatos().obtenerConexion();
+        PreparedStatement ps;
+        ps = con.prepareStatement(sql.detalleActividades(proyecto, version, contiene, fecha, estado, responsable));
+        if (fecha != null) {
+            ps.setObject(1, fecha);
+        }
+        ResultSet rs;
+        rs = ps.executeQuery();
+        while (rs.next()) {
+            Map<String, Object> actividad = new HashMap<>();
+            actividad.put("proyecto", rs.getString("nombre_proyecto"));
+            actividad.put("version", rs.getString("nombre_version"));
+            actividad.put("actividad", rs.getString("nombre_actividad"));
+            actividad.put("estado", rs.getString("nombre_estado"));
+            actividad.put("responsable", rs.getString("nombre_persona"));
+            actividad.put("documento", rs.getString("documento"));
+            actividad.put("fechaInicio", rs.getObject("fecha_estimada_inicio"));
+            actividad.put("fechaFin", rs.getObject("fecha_estimada_terminacion"));
+            actividad.put("tiempoEstimado", rs.getDouble("tiempo_estimado"));
+            actividad.put("tiempoInvertido", rs.getDouble("tiempo_invertido"));
+            listaActividades.add(actividad);
+        }
+        rs.close();
+        ps.close();
+        con.close();
+        return listaActividades;
+    }
+
+    /**
      * Método encargado de insertar un nuevo registro de actividad en base de
      * datos
      *

@@ -9,6 +9,7 @@ import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
@@ -20,6 +21,8 @@ import net.sf.dynamicreports.report.builder.column.Columns;
 import net.sf.dynamicreports.report.builder.column.TextColumnBuilder;
 import net.sf.dynamicreports.report.builder.datatype.DataTypes;
 import net.sf.dynamicreports.report.builder.style.FontBuilder;
+import net.sf.dynamicreports.report.constant.PageOrientation;
+import net.sf.dynamicreports.report.constant.PageType;
 import net.sf.dynamicreports.report.exception.DRException;
 
 /**
@@ -99,6 +102,37 @@ public class GeneradorReportes {
         reporte.setDataSource(actividadesNegocio.listaActividades(listaActividades));
         reporte.setTemplate(Templates.reportTemplate);
         return guardarReporte(reporte, "Listado_de_actividades");
+    }
+
+    public String listadoDetalladaActividades(List<Map<String, Object>> listaActividades) {
+        TextColumnBuilder<String> proyecto = Columns.column("Proyecto", "proyecto", DataTypes.stringType());
+        TextColumnBuilder<String> version = Columns.column("Version", "version", DataTypes.stringType());
+        TextColumnBuilder<String> actividad = Columns.column("Actividad", "actividad", DataTypes.stringType());
+        TextColumnBuilder<String> estado = Columns.column("Estado", "estado", DataTypes.stringType());
+        TextColumnBuilder<String> responsable = Columns.column("Responsable", "responsable", DataTypes.stringType());
+        TextColumnBuilder<String> documento = Columns.column("Documento", "documento", DataTypes.stringType());
+        TextColumnBuilder<String> fechaInicio = Columns.column("Fecha de inicio", "fechaInicio", DataTypes.stringType());
+        TextColumnBuilder<String> fechaFin = Columns.column("Fecha de fin", "fechaFin", DataTypes.stringType());
+        TextColumnBuilder<Double> tiempoEstimado = Columns.column("Tiempo estimado", "tiempoEstimado", DataTypes.doubleType());
+        TextColumnBuilder<Double> tiempoInvertido = Columns.column("Tiempo invertido", "tiempoInvertido", DataTypes.doubleType());
+
+        JasperReportBuilder reporte = DynamicReports.report();
+        reporte.addColumn(proyecto);
+        reporte.addColumn(version);
+        reporte.addColumn(actividad);
+        reporte.addColumn(estado);
+        reporte.addColumn(responsable);
+        reporte.addColumn(documento);
+        reporte.addColumn(fechaInicio);
+        reporte.addColumn(fechaFin);
+        reporte.addColumn(tiempoEstimado);
+        reporte.addColumn(tiempoInvertido);
+        reporte.title(Templates.createTitleComponent("Listado detallado de actividades"));
+        reporte.pageFooter(Templates.footerComponent);
+        reporte.setDataSource(actividadesNegocio.listaDetalladaActividades(listaActividades));
+        reporte.setTemplate(Templates.reportTemplate);
+        reporte.setPageFormat(PageType.A3, PageOrientation.LANDSCAPE);
+        return guardarReporte(reporte, "Detalle_de_actividades");
     }
 
     /**

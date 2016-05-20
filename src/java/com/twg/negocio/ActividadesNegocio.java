@@ -122,43 +122,40 @@ public class ActividadesNegocio {
         }
         if (idEstado == null || idEstado.intValue() == 0) {
             validacion += "El campo 'Estado' es obligatorio <br/>";
-        } else {
-            /* Actividad existente: se valida contra estados previo y siguiente */
-            if (idActividad != null) {
-                ActividadesBean actividadAntigua = consultarActividadPorId(idActividad);
-                if (actividadAntigua != null) {
-                    //Si el estado seleccionado es distinto al que ya tenía, se valida que sea el previo o el siguiente
-                    if (actividadAntigua.getEstado() != idEstado) {
-                        List<EstadosBean> listaEstados;
-                        try {
-                            listaEstados = estadosDao.consultarEstados(actividadAntigua.getEstado(), null, null, null, null, null, null);
-                        } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
-                            Logger.getLogger(ActividadesNegocio.class.getName()).log(Level.SEVERE, null, ex);
-                            listaEstados = null;
-                        }
-                        if (listaEstados != null && !listaEstados.isEmpty()) {
-                            if (listaEstados.get(0).getEstadoPrevio() != null && listaEstados.get(0).getEstadoPrevio() > 0
-                                    || listaEstados.get(0).getEstadoSiguiente() != null && listaEstados.get(0).getEstadoSiguiente() > 0) {
-                                if (listaEstados.get(0).getEstadoPrevio() != idEstado && listaEstados.get(0).getEstadoSiguiente() != idEstado) {
-                                    validacion += "El estado seleccionado no es válido. <br/>";
-                                }
+        } else /* Actividad existente: se valida contra estados previo y siguiente */ if (idActividad != null) {
+            ActividadesBean actividadAntigua = consultarActividadPorId(idActividad);
+            if (actividadAntigua != null) {
+                //Si el estado seleccionado es distinto al que ya tenía, se valida que sea el previo o el siguiente
+                if (actividadAntigua.getEstado() != idEstado) {
+                    List<EstadosBean> listaEstados;
+                    try {
+                        listaEstados = estadosDao.consultarEstados(actividadAntigua.getEstado(), null, null, null, null, null, null);
+                    } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
+                        Logger.getLogger(ActividadesNegocio.class.getName()).log(Level.SEVERE, null, ex);
+                        listaEstados = null;
+                    }
+                    if (listaEstados != null && !listaEstados.isEmpty()) {
+                        if (listaEstados.get(0).getEstadoPrevio() != null && listaEstados.get(0).getEstadoPrevio() > 0
+                                || listaEstados.get(0).getEstadoSiguiente() != null && listaEstados.get(0).getEstadoSiguiente() > 0) {
+                            if (listaEstados.get(0).getEstadoPrevio() != idEstado && listaEstados.get(0).getEstadoSiguiente() != idEstado) {
+                                validacion += "El estado seleccionado no es válido. <br/>";
                             }
                         }
                     }
                 }
-            } else {
-                /* Actividad nueva: se valida contra estado final unicamente */
-                List<EstadosBean> listaEstados;
-                try {
-                    listaEstados = estadosDao.consultarEstados(null, "ACTIVIDADES", null, null, null, "T", null);
-                } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
-                    Logger.getLogger(ActividadesNegocio.class.getName()).log(Level.SEVERE, null, ex);
-                    listaEstados = null;
-                }
-                if (listaEstados != null && !listaEstados.isEmpty()) {
-                    if (listaEstados.get(0).getId().intValue() == idEstado.intValue()) {
-                        validacion += "El estado seleccionado no es válido para una nueva actividad <br/>";
-                    }
+            }
+        } else {
+            /* Actividad nueva: se valida contra estado final unicamente */
+            List<EstadosBean> listaEstados;
+            try {
+                listaEstados = estadosDao.consultarEstados(null, "ACTIVIDADES", null, null, null, "T", null);
+            } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
+                Logger.getLogger(ActividadesNegocio.class.getName()).log(Level.SEVERE, null, ex);
+                listaEstados = null;
+            }
+            if (listaEstados != null && !listaEstados.isEmpty()) {
+                if (listaEstados.get(0).getId().intValue() == idEstado.intValue()) {
+                    validacion += "El estado seleccionado no es válido para una nueva actividad <br/>";
                 }
             }
         }
@@ -646,6 +643,73 @@ public class ActividadesNegocio {
                     actividad.getFechaFin() != null ? sdf.format(actividad.getFechaFin()) : "",
                     actividad.getTiempoEstimado() != null ? actividad.getTiempoEstimado() : 0,
                     actividad.getTiempoInvertido() != null ? actividad.getTiempoInvertido() : 0);
+        }
+        return datos;
+    }
+
+    /**
+     * Método encargado de retornar la información relacionada con los filtros
+     * ingresados en la pantalla de gestión de actividades para generar el
+     * reporte detallado de actividades.
+     *
+     * @param proyecto
+     * @param version
+     * @param contiene
+     * @param fecha
+     * @param estado
+     * @param responsable
+     * @return
+     */
+    public List<Map<String, Object>> actividadesDetalladas(Integer proyecto, Integer version, String contiene, String fecha, Integer estado, Integer responsable) {
+        List<Map<String, Object>> listaActividades;
+        Date filtroFecha = null;
+        if (fecha != null && !fecha.isEmpty()) {
+            try {
+                filtroFecha = sdf.parse(fecha);
+            } catch (ParseException e) {
+            }
+        }
+        try {
+            return actividadesDao.detalleActividades(proyecto, version, contiene, filtroFecha, estado, responsable);
+        } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
+            Logger.getLogger(ActividadesNegocio.class.getName()).log(Level.SEVERE, null, ex);
+            listaActividades = new ArrayList<>();
+        }
+        return listaActividades;
+    }
+
+    /**
+     * Método encargado de formatear la información del reporte de actividades
+     * detallado para enviarlo al generador del reporte.
+     *
+     * @param listaActividades
+     * @return
+     */
+    public JRDataSource listaDetalladaActividades(List<Map<String, Object>> listaActividades) {
+
+        DRDataSource datos = new DRDataSource("proyecto",
+                "version",
+                "actividad",
+                "estado",
+                "responsable",
+                "documento",
+                "fechaInicio",
+                "fechaFin",
+                "tiempoEstimado",
+                "tiempoInvertido");
+        if (listaActividades != null && !listaActividades.isEmpty()) {
+            for (Map<String, Object> actividad : listaActividades) {
+                datos.add(actividad.get("proyecto"),
+                        actividad.get("version"),
+                        actividad.get("actividad"),
+                        actividad.get("estado"),
+                        actividad.get("responsable") != null ? actividad.get("responsable") : "",
+                        actividad.get("documento") != null ? actividad.get("documento") : "",
+                        actividad.get("fechaInicio") != null ? sdf.format(actividad.get("fechaInicio")) : "",
+                        actividad.get("fechaFin") != null ? sdf.format(actividad.get("fechaFin")) : "",
+                        actividad.get("tiempoEstimado"),
+                        actividad.get("tiempoInvertido"));
+            }
         }
         return datos;
     }

@@ -346,7 +346,8 @@ public class ActividadesController extends HttpServlet {
                     break;
                 case "generarReporte":
                     resultado = new JSONObject();
-                    String nombreArchivo = generadorReportes.listadoActividades(actividadesNegocio.consultarActividades(null, idProyecto, idVersion, descripcion, fecha, idEstado, idResponsable, null));
+//                    String nombreArchivo = generadorReportes.listadoActividades(actividadesNegocio.consultarActividades(null, idProyecto, idVersion, descripcion, fecha, idEstado, idResponsable, null));
+                    String nombreArchivo = generadorReportes.listadoDetalladaActividades(actividadesNegocio.actividadesDetalladas(idProyecto, idVersion, descripcion, fecha, idEstado, idResponsable));
                     if (nombreArchivo != null && !nombreArchivo.isEmpty()) {
                         resultado.put("archivo", nombreArchivo);
                     }
