@@ -87,7 +87,7 @@
                                 <button class="btn btn-default" type="submit" name="accion" id="crearActividad" value="crearActividad">Crear</button>
                             </c:if>
                             <button class="btn btn-default" type="submit" name="accion" id="limpiar" value="limpiar">Limpiar</button>
-                            <button class="btn btn-default" type="button" name="accion" id="reportePdf" value="pdf" onclick="generarReporte()">Generar reporte</button>
+                            <button class="btn btn-default" type="button" data-toggle="modal" data-target="#generacionReporte">Generar reporte</button>
                         </div>
                         <br>
                         <br>
@@ -97,6 +97,39 @@
                         <button hidden type="submit" name="accion" id="gestionarActividad" value="gestionarActividad"></button>
                         <button hidden type="submit" name="accion" id="duplicarActividad" value="duplicarActividad"></button>
                     </form>
+                    <div id="generacionReporte" class="modal fade">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                    Selección de reporte
+                                </div>
+                                <div class="modal-body">
+                                    Elija el tipo de reporte que desea generar
+                                    <div class="row">
+                                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                            <div class="radio">
+                                                <label>
+                                                    <input type="radio" id="tipoSimple" name="tipoReporte" value="simple"/>
+                                                    Listado general de actividades
+                                                </label>
+                                            </div>
+                                            <div class="radio">
+                                                <label>
+                                                    <input type="radio" id="tipoDetallado" name="tipoReporte" value="detallado"/>
+                                                    Listado detallado de actividades
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-primary" onclick="generarReporte();">Generar</button>
+                                    <button type="button" class="btn btn-primary" data-dismiss="modal">Cancelar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

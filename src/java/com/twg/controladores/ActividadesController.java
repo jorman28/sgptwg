@@ -92,6 +92,7 @@ public class ActividadesController extends HttpServlet {
             String esfuerzo = request.getParameter("esfuerzo");
             String paginaStr = request.getParameter("pagina");
             String archivo = request.getParameter("archivo");
+            String tipoReporte = request.getParameter("tipoReporte");
 
             Integer idActividad = null;
             try {
@@ -346,7 +347,12 @@ public class ActividadesController extends HttpServlet {
                     break;
                 case "generarReporte":
                     resultado = new JSONObject();
-                    String nombreArchivo = generadorReportes.listadoActividades(actividadesNegocio.consultarActividades(null, idProyecto, idVersion, descripcion, fecha, idEstado, idResponsable, null));
+                    String nombreArchivo;
+                    if (tipoReporte != null && tipoReporte.equals("detallado")) {
+                        nombreArchivo = generadorReportes.listadoDetalladaActividades(actividadesNegocio.actividadesDetalladas(idProyecto, idVersion, descripcion, fecha, idEstado, idResponsable));
+                    } else {
+                        nombreArchivo = generadorReportes.listadoActividades(actividadesNegocio.consultarActividades(null, idProyecto, idVersion, descripcion, fecha, idEstado, idResponsable, null));
+                    }
                     if (nombreArchivo != null && !nombreArchivo.isEmpty()) {
                         resultado.put("archivo", nombreArchivo);
                     }
@@ -542,7 +548,7 @@ public class ActividadesController extends HttpServlet {
         out.println("   </ul>");
         out.println("</nav>");
     }
-    
+
     /**
      * Método encargado de descargar el archivo generado para el reporte de
      * actividades por estado

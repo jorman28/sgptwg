@@ -87,13 +87,13 @@ public class ActividadesSql {
                 + "    actividades_empleados ae ON ae.actividad = a.id\n"
                 + "WHERE\n"
                 + "    a.fecha_eliminacion IS NULL ";
-        if (idActividad != null && idActividad.intValue() != 0) {
+        if (idActividad != null && idActividad != 0) {
             sql += "AND a.id = " + idActividad + " ";
         }
-        if (proyecto != null && proyecto.intValue() != 0) {
+        if (proyecto != null && proyecto != 0) {
             sql += "AND v.proyecto = " + proyecto + " ";
         }
-        if (version != null && version.intValue() != 0) {
+        if (version != null && version != 0) {
             sql += "AND a.version = " + version + " ";
         }
         if (contiene != null && !contiene.isEmpty()) {
@@ -102,10 +102,10 @@ public class ActividadesSql {
         if (fecha != null) {
             sql += "AND ? BETWEEN ae.fecha_estimada_inicio AND ae.fecha_estimada_terminacion ";
         }
-        if (estado != null && estado.intValue() != 0) {
+        if (estado != null && estado != 0) {
             sql += "AND a.estado = " + estado + " ";
         }
-        if (responsable != null && responsable.intValue() != 0) {
+        if (responsable != null && responsable != 0) {
             sql += "AND ae.empleado = " + responsable + " ";
         }
         if (limite != null && !limite.isEmpty()) {
@@ -140,10 +140,10 @@ public class ActividadesSql {
                 + "    actividades_empleados ae ON ae.actividad = a.id\n"
                 + "WHERE\n"
                 + "    a.fecha_eliminacion IS NULL ";
-        if (proyecto != null && proyecto.intValue() != 0) {
+        if (proyecto != null && proyecto != 0) {
             sql += "AND v.proyecto = " + proyecto + " ";
         }
-        if (version != null && version.intValue() != 0) {
+        if (version != null && version != 0) {
             sql += "AND a.version = " + version + " ";
         }
         if (contiene != null && !contiene.isEmpty()) {
@@ -152,12 +152,83 @@ public class ActividadesSql {
         if (fecha != null) {
             sql += "AND ? BETWEEN ae.fecha_estimada_inicio AND ae.fecha_estimada_terminacion ";
         }
-        if (estado != null && estado.intValue() != 0) {
+        if (estado != null && estado != 0) {
             sql += "AND a.estado = " + estado + " ";
         }
-        if (responsable != null && responsable.intValue() != 0) {
+        if (responsable != null && responsable != 0) {
             sql += "AND ae.empleado = " + responsable + " ";
         }
+        return sql;
+    }
+
+    /**
+     * Método encargado de retornar el SQL con el cual se hará la consulta para
+     * el reporte de actividades detallado
+     *
+     * @param proyecto
+     * @param version
+     * @param contiene
+     * @param fecha
+     * @param estado
+     * @param responsable
+     * @return
+     */
+    public String detalleActividades(Integer proyecto, Integer version, String contiene, Date fecha, Integer estado, Integer responsable) {
+        String sql = "SELECT DISTINCT\n"
+                + "    pro.id AS proyecto,\n"
+                + "    pro.nombre AS nombre_proyecto,\n"
+                + "    ver.id AS version,\n"
+                + "    ver.nombre AS nombre_version,\n"
+                + "    act.id AS actividad,\n"
+                + "    act.nombre AS nombre_actividad,\n"
+                + "    est.nombre AS nombre_estado,\n"
+                + "    CONCAT(per.nombres, ' ', per.apellidos) AS nombre_persona,\n"
+                + "    CONCAT(per.tipo_documento, ' ', per.documento) AS documento,\n"
+                + "    ae.fecha_estimada_inicio,\n"
+                + "    ae.fecha_estimada_terminacion,\n"
+                + "    IFNULL(ae.tiempo_estimado, 0.00) AS tiempo_estimado,\n"
+                + "    (SELECT \n"
+                + "            CAST(IFNULL(SUM(tiempo), 0) AS DECIMAL (10 , 2 ))\n"
+                + "        FROM\n"
+                + "            actividades_esfuerzos\n"
+                + "        WHERE\n"
+                + "            fecha_eliminacion IS NULL\n"
+                + "                AND actividad = act.id\n"
+                + "                AND empleado = ae.empleado) AS tiempo_invertido\n"
+                + "FROM\n"
+                + "    actividades act\n"
+                + "        INNER JOIN\n"
+                + "    estados est ON est.id = act.estado\n"
+                + "        INNER JOIN\n"
+                + "    versiones ver ON ver.id = act.version\n"
+                + "        INNER JOIN\n"
+                + "    proyectos pro ON pro.id = ver.proyecto\n"
+                + "        LEFT JOIN\n"
+                + "    actividades_empleados ae ON ae.actividad = act.id\n"
+                + "        LEFT JOIN\n"
+                + "    personas per ON per.id = ae.empleado\n"
+                + "WHERE\n"
+                + "    act.fecha_eliminacion IS NULL\n"
+                + "        AND ae.fecha_eliminacion IS NULL\n";
+        if (proyecto != null && proyecto != 0) {
+            sql += "AND ver.proyecto = " + proyecto + " ";
+        }
+        if (version != null && version != 0) {
+            sql += "AND act.version = " + version + " ";
+        }
+        if (contiene != null && !contiene.isEmpty()) {
+            sql += "AND (act.nombre LIKE '%" + contiene + "%' OR act.descripcion LIKE '%" + contiene + "%') ";
+        }
+        if (fecha != null) {
+            sql += "AND ? BETWEEN ae.fecha_estimada_inicio AND ae.fecha_estimada_terminacion ";
+        }
+        if (estado != null && estado != 0) {
+            sql += "AND act.estado = " + estado + " ";
+        }
+        if (responsable != null && responsable != 0) {
+            sql += "AND ae.empleado = " + responsable + " ";
+        }
+        sql += "ORDER BY nombre_proyecto, proyecto, nombre_version, version, nombre_actividad, actividad, nombre_persona\n";
         return sql;
     }
 
@@ -225,13 +296,13 @@ public class ActividadesSql {
                 + "            actividades_empleados actEmp ON actEmp.actividad = act.id\n"
                 + "        WHERE\n"
                 + "            act.estado = est.id ";
-        if (proyecto != null && proyecto.intValue() != 0) {
+        if (proyecto != null && proyecto != 0) {
             sql += "                AND pro.id = '" + proyecto + "'\n";
         }
-        if (version != null && version.intValue() != 0) {
+        if (version != null && version != 0) {
             sql += "                AND ver.id = '" + version + "'\n";
         }
-        if (persona != null && persona.intValue() != 0) {
+        if (persona != null && persona != 0) {
             sql += "                AND actEmp.empleado = '" + persona + "' ";
         }
         sql += "     ) AS actividades\n"
