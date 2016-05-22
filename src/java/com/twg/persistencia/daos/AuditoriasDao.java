@@ -32,18 +32,19 @@ public class AuditoriasDao {
      * @param contiene
      * @param fecha
      * @param idPersona
+     * @param limite
      * @return La lista de los auditorias existentes en base de datos
      * @throws ClassNotFoundException
      * @throws InstantiationException
      * @throws SQLException
      * @throws IllegalAccessException
      */
-    public List<AuditoriasBean> consultarAuditorias(Integer idAuditoria, String clasificacion, String accion, String contiene, Date fecha, Integer idPersona) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
+    public List<AuditoriasBean> consultarAuditorias(Integer idAuditoria, String clasificacion, String accion, String contiene, Date fecha, Integer idPersona, String limite) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         List<AuditoriasBean> listaAuditorias = new ArrayList<>();
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;
-        ps = con.prepareStatement(sql.consultarAuditorias(idAuditoria, clasificacion, accion, contiene, fecha, idPersona));
+        ps = con.prepareStatement(sql.consultarAuditorias(idAuditoria, clasificacion, accion, contiene, fecha, idPersona, limite));
         if (fecha != null) {
             ps.setObject(1, fecha);
         }
@@ -66,6 +67,39 @@ public class AuditoriasDao {
         return listaAuditorias;
     }
 
+    /**
+     * Método encargado de consultar la cantidad de auditorias existentes en base
+     * de datos relacionados con los filtros ingresados
+     *
+     * @param idAuditoria
+     * @param clasificacion
+     * @param accion
+     * @param contiene
+     * @param fecha
+     * @param idPersona
+     * @return
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws SQLException
+     * @throws IllegalAccessException
+     */
+    public int cantidadAuditorias(Integer idAuditoria, String clasificacion, String accion, String contiene, Date fecha, Integer idPersona) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
+        int cantidadAuditorias = 0;
+        Connection con;
+        con = new ConexionBaseDatos().obtenerConexion();
+        PreparedStatement ps;
+        ps = con.prepareStatement(sql.cantidadAuditorias(idAuditoria, clasificacion, accion, contiene, fecha, idPersona));
+        ResultSet rs;
+        rs = ps.executeQuery();
+        if (rs.next()) {
+            cantidadAuditorias = rs.getInt("cantidadAuditorias");
+        }
+        rs.close();
+        ps.close();
+        con.close();
+        return cantidadAuditorias;
+    }
+    
     /**
      * Método encargado de insertar una nueva auditoria en la tabla de
      * auditorias de la base de datos

@@ -29,18 +29,19 @@ public class ArchivosDao {
      * @param contiene
      * @param fecha
      * @param idPersona
+     * @param limite
      * @return La lista de los archivos existentes en base de datos
      * @throws ClassNotFoundException
      * @throws InstantiationException
      * @throws SQLException
      * @throws IllegalAccessException
      */
-    public List<ArchivosBean> consultarArchivos(Integer idArchivo, String contiene, Date fecha, Integer idPersona) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
+    public List<ArchivosBean> consultarArchivos(Integer idArchivo, String contiene, Date fecha, Integer idPersona, String limite) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         List<ArchivosBean> listaArchivos = new ArrayList<>();
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;
-        ps = con.prepareStatement(sql.consultarArchivos(idArchivo, contiene, fecha, idPersona));
+        ps = con.prepareStatement(sql.consultarArchivos(idArchivo, contiene, fecha, idPersona, limite));
         if (fecha != null) {
             ps.setObject(1, fecha);
         }
@@ -64,6 +65,37 @@ public class ArchivosDao {
         return listaArchivos;
     }
 
+        /**
+     * Método encargado de consultar la cantidad de archivos existentes en base
+     * de datos relacionados con los filtros ingresados
+     *
+     * @param idArchivo
+     * @param contiene
+     * @param fecha
+     * @param idPersona
+     * @return
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws SQLException
+     * @throws IllegalAccessException
+     */
+    public int cantidadArchivos(Integer idArchivo, String contiene, Date fecha, Integer idPersona) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
+        int cantidadArchivos = 0;
+        Connection con;
+        con = new ConexionBaseDatos().obtenerConexion();
+        PreparedStatement ps;
+        ps = con.prepareStatement(sql.cantidadArchivos(idArchivo, contiene, fecha, idPersona));
+        ResultSet rs;
+        rs = ps.executeQuery();
+        if (rs.next()) {
+            cantidadArchivos = rs.getInt("cantidadArchivos");
+        }
+        rs.close();
+        ps.close();
+        con.close();
+        return cantidadArchivos;
+    }
+    
     /**
      * Método encargado de insertar un nuevo archivo en la tabla de archivos de
      * la base de datos

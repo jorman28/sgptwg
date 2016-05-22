@@ -1,4 +1,4 @@
-$(document).ready(function() {
+$(document).ready(function () {
     llenarTabla();
 });
 
@@ -14,30 +14,33 @@ function consultarPerfil(idPerfil) {
         url: "PermisosController",
         dataType: "json",
         data: {idPerfil: idPerfil, accion: "editar"},
-        success: function(data) {
+        success: function (data) {
             if (data !== undefined) {
                 $("#idPerfil").val(data.idPerfil !== undefined ? data.idPerfil : "");
                 $("#nombrePerfil").val(data.nombrePerfil !== undefined ? data.nombrePerfil : "");
             }
         },
-        error: function() {
+        error: function () {
         }
     });
 }
 
-function llenarTabla() {
+function llenarTabla(pagina) {
+    if (pagina === undefined) {
+        pagina = 1;
+    }
     var nombrePerfil = $('#nombrePerfil').val() !== undefined && $('#nombrePerfil').val() !== "" ? $('#nombrePerfil').val() : null;
     $.ajax({
         type: "POST",
         url: "PermisosController",
         dataType: "html",
-        data: {accion: "consultar", nombrePerfil: nombrePerfil},
-        success: function(data) {
+        data: {accion: "consultar", nombrePerfil: nombrePerfil, pagina: pagina},
+        success: function (data) {
             if (data !== undefined) {
                 $('#tablaPerfiles').html(data);
             }
         },
-        error: function() {
+        error: function () {
         }
     });
 }
@@ -48,7 +51,7 @@ function obtenerPermisos(idPerfil) {
         url: "PermisosController",
         dataType: "json",
         data: {accion: "consultarPermisos", idPerfil: idPerfil},
-        success: function(data) {
+        success: function (data) {
             if (data !== undefined) {
                 $("#permiso_1").prop("checked", data.permiso_1 !== undefined ? data.permiso_1 : false);
                 $("#permiso_1_1").prop("checked", data.permiso_40 !== undefined ? data.permiso_40 : false);
@@ -77,7 +80,6 @@ function obtenerPermisos(idPerfil) {
                 $("#permiso_11_3").prop("checked", data.permiso_26 !== undefined ? data.permiso_26 : false);
                 $("#permiso_11_4").prop("checked", data.permiso_27 !== undefined ? data.permiso_27 : false);
                 $("#permiso_12").prop("checked", data.permiso_12 !== undefined ? data.permiso_12 : false);
-                $("#permiso_13").prop("checked", data.permiso_13 !== undefined ? data.permiso_13 : false);
                 $("#permiso_14").prop("checked", data.permiso_14 !== undefined ? data.permiso_14 : false);
                 $("#permiso_15").prop("checked", data.permiso_15 !== undefined ? data.permiso_15 : false);
                 $("#permiso_15_1").prop("checked", data.permiso_17 !== undefined ? data.permiso_17 : false);
@@ -92,13 +94,12 @@ function obtenerPermisos(idPerfil) {
                 $("#permiso_16_6").prop("checked", data.permiso_37 !== undefined ? data.permiso_37 : false);
                 $("#permiso_16_7").prop("checked", data.permiso_38 !== undefined ? data.permiso_38 : false);
                 $("#permiso_16_8").prop("checked", data.permiso_39 !== undefined ? data.permiso_39 : false);
-                $("#permiso_45").prop("checked", data.permiso_45 !== undefined ? data.permiso_45 : false);
 
                 $("#perfilPermiso").val(idPerfil);
                 $("#modalPermisos").modal('show');
             }
         },
-        error: function() {
+        error: function () {
         }
     });
 }

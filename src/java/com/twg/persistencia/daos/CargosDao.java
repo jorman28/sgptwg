@@ -26,12 +26,12 @@ public class CargosDao {
     public CargosDao(){
     }
 
-    public List<CargosBean> consultarCargos(String nombre, boolean nombreExacto) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
+    public List<CargosBean> consultarCargos(String nombre, boolean nombreExacto, String limite) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
         List<CargosBean> listaCargos = new ArrayList<>();
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;
-        ps = con.prepareStatement(sql.consultarCargos(nombre, nombreExacto));
+        ps = con.prepareStatement(sql.consultarCargos(nombre, nombreExacto, limite));
         ResultSet rs;
         rs = ps.executeQuery();
         while(rs.next()){
@@ -44,6 +44,35 @@ public class CargosDao {
         ps.close();
         con.close();
         return listaCargos;
+    }
+    
+    /**
+     * Método encargado de consultar la cantidad de cargos existentes en base
+     * de datos relacionados con los filtros ingresados
+     *
+     * @param nombre
+     * @param nombreExacto
+     * @return
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws SQLException
+     * @throws IllegalAccessException
+     */
+    public int cantidadCargos(String nombre, boolean nombreExacto) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
+        int cantidadCargos = 0;
+        Connection con;
+        con = new ConexionBaseDatos().obtenerConexion();
+        PreparedStatement ps;
+        ps = con.prepareStatement(sql.cantidadCargos(nombre, nombreExacto));
+        ResultSet rs;
+        rs = ps.executeQuery();
+        if (rs.next()) {
+            cantidadCargos = rs.getInt("cantidadCargos");
+        }
+        rs.close();
+        ps.close();
+        con.close();
+        return cantidadCargos;
     }
     
     public CargosBean consultarCargo(Integer id) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{

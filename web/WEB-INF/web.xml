@@ -17,8 +17,8 @@
         <servlet-class>com.twg.controladores.InicioSesionController</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>PaginaInicioController</servlet-name>
-        <servlet-class>com.twg.controladores.PaginaInicioController</servlet-class>
+        <servlet-name>InicioController</servlet-name>
+        <servlet-class>com.twg.controladores.InicioController</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>PersonasController</servlet-name>
@@ -49,10 +49,6 @@
         <servlet-class>com.twg.controladores.CerrarSesionController</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>ActividadesPorEstadoController</servlet-name>
-        <servlet-class>com.twg.controladores.ActividadesPorEstadoController</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>ArchivosController</servlet-name>
         <servlet-class>com.twg.controladores.ArchivosController</servlet-class>
     </servlet>
@@ -69,8 +65,8 @@
         <url-pattern>/InicioSesionController</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>PaginaInicioController</servlet-name>
-        <url-pattern>/PaginaInicioController</url-pattern>
+        <servlet-name>InicioController</servlet-name>
+        <url-pattern>/InicioController</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>PersonasController</servlet-name>
@@ -99,10 +95,6 @@
     <servlet-mapping>
         <servlet-name>CerrarSesionController</servlet-name>
         <url-pattern>/CerrarSesionController</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ActividadesPorEstadoController</servlet-name>
-        <url-pattern>/ActividadesPorEstadoController</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>ArchivosController</servlet-name>

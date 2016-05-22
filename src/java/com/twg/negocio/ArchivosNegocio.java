@@ -34,7 +34,7 @@ public class ArchivosNegocio {
      */
     public JSONObject consultarArchivo(Integer idArchivo) {
         JSONObject archivoObject = new JSONObject();
-        List<ArchivosBean> listaArchivos = consultarArchivos(idArchivo, null, null, null);
+        List<ArchivosBean> listaArchivos = consultarArchivos(idArchivo, null, null, null, null);
         if (listaArchivos != null && !listaArchivos.isEmpty()) {
             ArchivosBean archivo = listaArchivos.get(0);
             if (archivo != null) {
@@ -49,6 +49,26 @@ public class ArchivosNegocio {
         return archivoObject;
     }
 
+        /**
+     * Método encargado de contar la cantidad total de registros que se
+     * encuentran en base de datos con base en los filtros ingresados
+     *
+     * @param idArchivo
+     * @param contiene
+     * @param fecha
+     * @param idPersona
+     * @return
+     */
+    public int cantidadArchivos(Integer idArchivo, String contiene, Date fecha, Integer idPersona) {
+        int cantidadArchivos = 0;
+        try {
+            cantidadArchivos = archivosDao.cantidadArchivos(idArchivo, contiene, fecha, idPersona);
+        } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
+            Logger.getLogger(TiposDocumentoNegocio.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return cantidadArchivos;
+    }
+    
     /**
      * Método encargado de consultar la lista de archivos que coinciden con los
      * filtros de búsqueda ingresados
@@ -57,13 +77,14 @@ public class ArchivosNegocio {
      * @param contiene
      * @param fecha
      * @param idPersona
+     * @param limite
      * @return La lista de archivos que coinciden con los parámetros de búsqueda
      * ingresados
      */
-    public List<ArchivosBean> consultarArchivos(Integer idArchivo, String contiene, Date fecha, Integer idPersona) {
+    public List<ArchivosBean> consultarArchivos(Integer idArchivo, String contiene, Date fecha, Integer idPersona, String limite) {
         List<ArchivosBean> listaArchivos = new ArrayList<>();
         try {
-            listaArchivos = archivosDao.consultarArchivos(idArchivo, contiene, fecha, idPersona);
+            listaArchivos = archivosDao.consultarArchivos(idArchivo, contiene, fecha, idPersona, limite);
         } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
             Logger.getLogger(ArchivosNegocio.class.getName()).log(Level.SEVERE, null, ex);
         }

@@ -37,7 +37,7 @@ public class EstadosNegocio {
                     JSONArray arrayEstadoPrevio = new JSONArray();
                     JSONArray arrayEstadoSiguiente = new JSONArray();
 
-                    List<EstadosBean> jsonlistaEstados = consultarEstados(null, estado.getTipoEstado(), null, null, null, null);
+                    List<EstadosBean> jsonlistaEstados = consultarEstados(null, estado.getTipoEstado(), null, null, null, null, null);
                     if (jsonlistaEstados != null && !jsonlistaEstados.isEmpty()) {
                         for (EstadosBean estadoBean : jsonlistaEstados) {
                             JSONObject object = new JSONObject();
@@ -89,10 +89,32 @@ public class EstadosNegocio {
         return jsonEstado;
     }
 
-    public List<EstadosBean> consultarEstados(Integer id, String tipoEstado, String nombre, Integer estadoPrev, Integer estadoSig, String eFinal) {
+        /**
+     * Método encargado de contar la cantidad total de registros que se
+     * encuentran en base de datos con base en los filtros ingresados
+     *
+     * @param id
+     * @param tipoEstado
+     * @param nombre
+     * @param estadoPrev
+     * @param estadoSig
+     * @param eFinal
+     * @return
+     */
+    public int cantidadEstados(Integer id, String tipoEstado, String nombre, Integer estadoPrev, Integer estadoSig, String eFinal) {
+        int cantidadEstados = 0;
+        try {
+            cantidadEstados = estadosDao.cantidadEstados(id, tipoEstado, nombre, estadoPrev, estadoSig, eFinal);
+        } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
+            Logger.getLogger(TiposDocumentoNegocio.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return cantidadEstados;
+    }
+    
+    public List<EstadosBean> consultarEstados(Integer id, String tipoEstado, String nombre, Integer estadoPrev, Integer estadoSig, String eFinal, String limite) {
         List<EstadosBean> listaEstados = new ArrayList<>();
         try {
-            listaEstados = estadosDao.consultarEstados(id, tipoEstado, nombre, estadoPrev, estadoSig, eFinal);
+            listaEstados = estadosDao.consultarEstados(id, tipoEstado, nombre, estadoPrev, estadoSig, eFinal, limite);
         } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
             Logger.getLogger(TiposDocumentoNegocio.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -244,9 +266,9 @@ public class EstadosNegocio {
         if (id != null) {
             try {
                 ActividadesDao act = new ActividadesDao();
-                List<ActividadesBean> actList = act.consultarActividades(null, null, null, null, id, null);
+                List<ActividadesBean> listaActividades = act.consultarActividades(null, null, null, null, null, id, null, null);
                 List<EstadosBean> estList = estadosDao.consultarEstadosPS(id);
-                if ((actList != null && actList.size() > 0) || (estList != null && estList.size() > 0)) {
+                if ((listaActividades != null && listaActividades.size() > 0) || (estList != null && estList.size() > 0)) {
                     mensajeError = "El estado no puede ser eliminado porque ya tiene actividades asociadas o está ligado a "
                             + "otro estado.";
                 } else {
@@ -304,16 +326,16 @@ public class EstadosNegocio {
             List<EstadosBean> ef = new ArrayList<>();
             try {
                 //Se consulta el estado anterior en caso de que estén haceindo un update para calidar si cambió el campo Estado Final.
-                ef = estadosDao.consultarEstados(estado.getId(), null, null, null, null, null);
+                ef = estadosDao.consultarEstados(estado.getId(), null, null, null, null, null, null);
                 /*
                  Si el estado final es el mismo, no hay que hacer la validación para que no exista más de un estado marcado como final.
                  Per si es diferente, sí hay que validar
                  */
                 if (ef != null && ef.size() > 0 && !ef.get(0).getEstadoFinal().equals(estado.getEstadoFinal())) {
                     if (estado.getTipoEstado() != null && estado.getTipoEstado().equals("ACTIVIDADES")) {
-                        ef = estadosDao.consultarEstados(null, "ACTIVIDADES", null, null, null, "T");
+                        ef = estadosDao.consultarEstados(null, "ACTIVIDADES", null, null, null, "T", null);
                     } else {
-                        ef = estadosDao.consultarEstados(null, "VERSIONES", null, null, null, "T");
+                        ef = estadosDao.consultarEstados(null, "VERSIONES", null, null, null, "T", null);
                     }
 
                     if (ef != null && ef.size() > 0) {

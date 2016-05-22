@@ -17,6 +17,7 @@
         <div class="container-fluid">
             <div>${menu}</div>
             <c:import url="/jsp/general/alertas.jsp"/>
+            <a id="help" href="#" title="Ayuda" class="linkAyuda"><i class="glyphicon glyphicon-question-sign"></i></a>
             <div class="row">
                 <c:import url="/jsp/general/about.jsp"/>
                 <div class="col-xs-12 col-sm-9 col-md-10 col-lg-10" id="contenido">
@@ -409,50 +410,6 @@
                                                         <div class="checkbox">
                                                             <label>
                                                             </label>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="panel-group" id="pagina_reportes" role="tablist" aria-multiselectable="true">
-                                            <div class="panel panel-default">
-                                                <div class="panel-heading" role="tab" id="heading_reportes">
-                                                    <h4 class="panel-title">
-                                                        <div class="row">
-                                                            <a role="button" data-toggle="collapse" data-parent="#pagina_reportes" href="#collapse_reportes" aria-expanded="true" aria-controls="collapse_reportes">
-                                                                <div class="col-xs-10 col-sm-11 col-md-11 col-lg-11">
-                                                                    Reportes
-                                                                </div>
-                                                            </a>
-                                                            <div align="right" class="col-xs-2 col-sm-1 col-md-1 col-lg-1">
-                                                                <input type="checkbox" name="permisos" id="permiso_13" value="13" /> 
-                                                            </div>
-                                                        </div>
-                                                    </h4>
-                                                </div>
-                                                <div id="collapse_reportes" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading_reportes">
-                                                    <div class="panel-body">
-                                                        <div class="panel-group" id="pagina_actividades_estado" role="tablist" aria-multiselectable="true">
-                                                            <div class="panel panel-default">
-                                                                <div class="panel-heading" role="tab" id="heading_actividades_estado">
-                                                                    <h4 class="panel-title">
-                                                                        <div class="row">
-                                                                            <a role="button" data-toggle="collapse" data-parent="#pagina_actividades_estado" href="#collapse_actividades_estado" aria-expanded="true" aria-controls="collapse_actividades_estado">
-                                                                                <div class="col-xs-10 col-sm-11 col-md-11 col-lg-11">
-                                                                                    Actividades por estado
-                                                                                </div>
-                                                                            </a>
-                                                                            <div align="right" class="col-xs-2 col-sm-1 col-md-1 col-lg-1">
-                                                                                <input type="checkbox" name="permisos" id="permiso_45" value="45" onclick="encenderPermisosHijos(this.id);" /> 
-                                                                            </div>
-                                                                        </div>
-                                                                    </h4>
-                                                                </div>
-                                                                <div id="collapse_actividades_estado" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading_actividades_estado">
-                                                                    <div class="panel-body">
-                                                                    </div>
-                                                                </div>
-                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>

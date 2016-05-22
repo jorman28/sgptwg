@@ -34,7 +34,7 @@ public class AuditoriasNegocio {
      */
     public JSONObject consultarAuditoria(Integer idAuditoria) {
         JSONObject auditoriaObject = new JSONObject();
-        List<AuditoriasBean> listaAuditorias = consultarAuditorias(idAuditoria, null, null, null, null, null);
+        List<AuditoriasBean> listaAuditorias = consultarAuditorias(idAuditoria, null, null, null, null, null, null);
         if (listaAuditorias != null && !listaAuditorias.isEmpty()) {
             AuditoriasBean auditoria = listaAuditorias.get(0);
             if (auditoria != null) {
@@ -51,6 +51,28 @@ public class AuditoriasNegocio {
     }
 
     /**
+     * Método encargado de contar la cantidad total de registros que se
+     * encuentran en base de datos con base en los filtros ingresados
+     *
+     * @param idAuditoria
+     * @param clasificacion
+     * @param accion
+     * @param contiene
+     * @param fecha
+     * @param idPersona
+     * @return
+     */
+    public int cantidadAuditorias(Integer idAuditoria, String clasificacion, String accion, String contiene, Date fecha, Integer idPersona) {
+        int cantidadAuditorias = 0;
+        try {
+            cantidadAuditorias = auditoriasDao.cantidadAuditorias(idAuditoria, clasificacion, accion, contiene, fecha, idPersona);
+        } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
+            Logger.getLogger(TiposDocumentoNegocio.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return cantidadAuditorias;
+    }
+    
+    /**
      * Método encargado de consultar la lista de auditorias que coinciden con
      * los filtros de búsqueda ingresados
      *
@@ -60,13 +82,14 @@ public class AuditoriasNegocio {
      * @param contiene
      * @param fecha
      * @param idPersona
+     * @param limite
      * @return La lista de auditorias que coinciden con los parámetros de
      * búsqueda ingresados
      */
-    public List<AuditoriasBean> consultarAuditorias(Integer idAuditoria, String clasificacion, String accion, String contiene, Date fecha, Integer idPersona) {
+    public List<AuditoriasBean> consultarAuditorias(Integer idAuditoria, String clasificacion, String accion, String contiene, Date fecha, Integer idPersona, String limite) {
         List<AuditoriasBean> listaAuditorias = new ArrayList<>();
         try {
-            listaAuditorias = auditoriasDao.consultarAuditorias(idAuditoria, clasificacion, accion, contiene, fecha, idPersona);
+            listaAuditorias = auditoriasDao.consultarAuditorias(idAuditoria, clasificacion, accion, contiene, fecha, idPersona, limite);
         } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
             Logger.getLogger(AuditoriasNegocio.class.getName()).log(Level.SEVERE, null, ex);
         }

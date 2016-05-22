@@ -17,15 +17,14 @@
         <div class="container-fluid">
             <div>${menu}</div>
             <c:import url="/jsp/general/alertas.jsp"/>
+            <a id="help" href="#" title="Ayuda" class="linkAyuda"><i class="glyphicon glyphicon-question-sign"></i></a>
             <div class="row">
                 <c:import url="/jsp/general/about.jsp"/>
                 <div class="col-xs-12 col-sm-9 col-md-10 col-lg-10" id="contenido">
                     <form autocomplete="off" action="./EstadosController" method="POST" id="formularioEstados">
                         <c:import url="/jsp/general/eliminacion.jsp"/>
-                        <center>
-                            <h2>REGISTRO DE ESTADOS</h2>
-                            Los campos marcados con (*) son obligatorios
-                        </center>
+                        <h2>REGISTRO DE ESTADOS</h2>
+                        Los campos marcados con (*) son obligatorios<br><br>
                         <input type="hidden" id="id" name="id" value="${id}" />
                         <div class="panel panel-info">
                             <div class="panel-heading">INFORACIÓN DEL ESTADO</div>
@@ -37,12 +36,12 @@
                                             <option value ="0">SELECCIONE</option>
                                             <option value="ACTIVIDADES" <c:if test="${tipoEstado == 'ACTIVIDADES'}">selected</c:if>>ACTIVIDADES</option>
                                             <option value="VERSIONES" <c:if test="${tipoEstado == 'VERSIONES'}">selected</c:if>>VERSIONES</option>
-                                        </select>                                        
-                                    </div>
+                                            </select>                                        
+                                        </div>
 
-                                    <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                                        <label for="nombre">*Nombre:</label>
-                                        <input class="form-control" type="text" id="nombre" name="nombre" value="${nombre}" maxlength="30"/>
+                                        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                            <label for="nombre">*Nombre:</label>
+                                            <input class="form-control" type="text" id="nombre" name="nombre" value="${nombre}" maxlength="30"/>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -65,7 +64,7 @@
                                         </select>                                        
                                     </div>
                                 </div>
-                                    <div class="row">
+                                <div class="row">
                                     <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                         <label for="eFinal">Estado final:</label>
                                         <select id="eFinal" name="eFinal" class="form-control">

@@ -4,7 +4,6 @@ import com.twg.persistencia.beans.PersonasBean;
 import com.twg.persistencia.sqls.PersonasSql;
 import com.twg.utilidades.ConexionBaseDatos;
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -22,12 +21,12 @@ public class PersonasDao {
     public PersonasDao() {
     }
 
-    public List<PersonasBean> consultarPersonas(String idPersona, String documento, String tipoDocumento, String nombres, String apellidos, String correo, String usuario, String perfil, String cargo, String nombreCompleto, Boolean busquedaExacta) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
+    public List<PersonasBean> consultarPersonas(Integer idPersona, String documento, String tipoDocumento, String nombres, String apellidos, String correo, String usuario, String perfil, String cargo, String nombreCompleto, Boolean busquedaExacta, Integer idProyecto, String limite) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         List<PersonasBean> listaPersonas = new ArrayList<>();
         PreparedStatement ps;
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
-        ps = con.prepareStatement(sql.consultarPersonas(idPersona, documento, tipoDocumento, nombres, apellidos, correo, usuario, perfil, cargo, nombreCompleto, busquedaExacta));
+        ps = con.prepareStatement(sql.consultarPersonas(idPersona, documento, tipoDocumento, nombres, apellidos, correo, usuario, perfil, cargo, nombreCompleto, busquedaExacta, idProyecto, limite));
         ResultSet rs;
         rs = ps.executeQuery();
         while (rs.next()) {
@@ -55,110 +54,42 @@ public class PersonasDao {
         con.close();
         return listaPersonas;
     }
-    
-    public List<PersonasBean> consultarPersonasProyecto(String idProyecto, String Busqueda) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
-        List<PersonasBean> listaPersonas = new ArrayList<>();
-        PreparedStatement ps;
+
+    /**
+     * Método encargado de consultar la cantidad de usuarios existentes en base
+     * de datos relacionados con los filtros ingresados
+     *
+     * @param idPersona
+     * @param documento
+     * @param tipoDocumento
+     * @param perfil
+     * @param nombres
+     * @param apellidos
+     * @param usuario
+     * @param correo
+     * @param cargo
+     * @param nombreCompleto
+     * @return
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws SQLException
+     * @throws IllegalAccessException
+     */
+    public int cantidadPersonas(Integer idPersona, String documento, String tipoDocumento, String nombres, String apellidos, String correo, String usuario, String perfil, String cargo, String nombreCompleto) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
+        int cantidadPersonas = 0;
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
-        ps = con.prepareStatement(sql.consultarPersonasProyecto(idProyecto, Busqueda));
+        PreparedStatement ps;
+        ps = con.prepareStatement(sql.cantidadPersonas(idPersona, documento, tipoDocumento, nombres, apellidos, correo, usuario, perfil, cargo, nombreCompleto));
         ResultSet rs;
         rs = ps.executeQuery();
-        while (rs.next()) {
-            PersonasBean persona = new PersonasBean();
-            persona.setId(rs.getInt("id"));
-            persona.setDocumento(rs.getString("documento"));
-            persona.setTipoDocumento(rs.getString("tipo_documento"));
-            persona.setNombreTipoDocumento(rs.getString("nombre_tipo_documento"));
-            persona.setNombres(rs.getString("nombres"));
-            persona.setApellidos(rs.getString("apellidos"));
-            persona.setDireccion(rs.getString("direccion"));
-            persona.setTelefono(rs.getString("telefono"));
-            persona.setCelular(rs.getString("celular"));
-            persona.setCorreo(rs.getString("correo"));
-            persona.setUsuario(rs.getString("usuario"));
-            persona.setPerfil(rs.getInt("id_perfil"));
-            persona.setNombrePerfil(rs.getString("nombre_perfil"));
-            persona.setCargo(rs.getInt("cargo"));
-            persona.setNombreCargo(rs.getString("nombre_cargo"));
-            listaPersonas.add(persona);
+        if (rs.next()) {
+            cantidadPersonas = rs.getInt("cantidadPersonas");
         }
         rs.close();
         ps.close();
         con.close();
-        return listaPersonas;
-    }
-    
-    //Consultar las personas que estan en una actividad especifica
-    public List<PersonasBean> consultarPersonasActividad(String idActividad) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
-        List<PersonasBean> listaPersonas = new ArrayList<>();
-        PreparedStatement ps;
-        Connection con;
-        con = new ConexionBaseDatos().obtenerConexion();
-        ps = con.prepareStatement(sql.consultarPersonasActividad(idActividad));
-        ResultSet rs;
-        rs = ps.executeQuery();
-        while (rs.next()) {
-            PersonasBean persona = new PersonasBean();
-            persona.setId(rs.getInt("id"));
-            persona.setDocumento(rs.getString("documento"));
-            persona.setTipoDocumento(rs.getString("tipo_documento"));
-            persona.setNombreTipoDocumento(rs.getString("nombre_tipo_documento"));
-            persona.setNombres(rs.getString("nombres"));
-            persona.setApellidos(rs.getString("apellidos"));
-            persona.setDireccion(rs.getString("direccion"));
-            persona.setTelefono(rs.getString("telefono"));
-            persona.setCelular(rs.getString("celular"));
-            persona.setCorreo(rs.getString("correo"));
-            persona.setUsuario(rs.getString("usuario"));
-            persona.setPerfil(rs.getInt("id_perfil"));
-            persona.setNombrePerfil(rs.getString("nombre_perfil"));
-            persona.setCargo(rs.getInt("cargo"));
-            persona.setNombreCargo(rs.getString("nombre_cargo"));
-            persona.setNombre(persona.getTipoDocumento() + persona.getDocumento() + " " + persona.getNombres() + " " + persona.getApellidos());
-            listaPersonas.add(persona);
-        }
-        rs.close();
-        ps.close();
-        con.close();
-        return listaPersonas;
-    }
-    
-    //Personas que ya estan asignadas en una actividad para mostrar warning
-    public List<PersonasBean> consultarPersonasAsignadasActividad(String idPersonas, java.util.Date fechaEstimadaInicio, java.util.Date fechaEstimadaFin, String idActividad) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
-        List<PersonasBean> listaPersonas = new ArrayList<>();
-        PreparedStatement ps;
-        Connection con;
-        con = new ConexionBaseDatos().obtenerConexion();
-        ps = con.prepareStatement(sql.consultarPersonasAsignadasActividad(idPersonas, idActividad));
-        ps.setDate(1, new Date(fechaEstimadaInicio.getTime()));
-        ps.setDate(2, new Date(fechaEstimadaFin.getTime()));
-        ResultSet rs;
-        rs = ps.executeQuery();
-        System.out.println(ps);
-        while (rs.next()) {
-            PersonasBean persona = new PersonasBean();
-            persona.setId(rs.getInt("id"));
-            persona.setDocumento(rs.getString("documento"));
-            persona.setTipoDocumento(rs.getString("tipo_documento"));
-            persona.setNombreTipoDocumento(rs.getString("nombre_tipo_documento"));
-            persona.setNombres(rs.getString("nombres"));
-            persona.setApellidos(rs.getString("apellidos"));
-            persona.setDireccion(rs.getString("direccion"));
-            persona.setTelefono(rs.getString("telefono"));
-            persona.setCelular(rs.getString("celular"));
-            persona.setCorreo(rs.getString("correo"));
-            persona.setUsuario(rs.getString("usuario"));
-            persona.setPerfil(rs.getInt("id_perfil"));
-            persona.setNombrePerfil(rs.getString("nombre_perfil"));
-            persona.setCargo(rs.getInt("cargo"));
-            persona.setNombreCargo(rs.getString("nombre_cargo"));
-            listaPersonas.add(persona);
-        }
-        rs.close();
-        ps.close();
-        con.close();
-        return listaPersonas;
+        return cantidadPersonas;
     }
 
     public Integer consultarIdPersona(String documento, String tipoDocumento) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {

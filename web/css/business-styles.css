@@ -54,3 +54,25 @@ h2, .h2 {
     cursor: pointer;
     color: #ccc;
 }
+
+.warningModal {
+    color:#fff;
+    padding:9px 15px;
+    border-bottom:1px solid #eee;
+    background-color: #FFCC00;
+    -webkit-border-top-left-radius: 5px;
+    -webkit-border-top-right-radius: 5px;
+    -moz-border-radius-topleft: 5px;
+    -moz-border-radius-topright: 5px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+textarea {
+   resize: none;
+} 
+
+.linkAyuda{
+    font-size: 180%;
+    float: right
+}

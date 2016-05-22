@@ -9,16 +9,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Esta clase define métodos para controlar las peticiones y respuestas 
- * que se hacen sobre el sistema, al tratar de iniciar sesión. Cuando esto 
- * ocurre, se cargan todos los aatributos de sesión.
- * 
+ * Esta clase define métodos para controlar las peticiones y respuestas que se
+ * hacen sobre el sistema, al tratar de iniciar sesión. Cuando esto ocurre, se
+ * cargan todos los aatributos de sesión.
+ *
  * @author Andrés Felipe Giraldo, Jorman Rincón, Erika Jhoana Castaneda
  */
 public class InicioSesionController extends HttpServlet {
 
     private final UsuariosNegocio usuariosNegocio = new UsuariosNegocio();
-    
+
     /**
      * Método encargado de procesar las peticiones que ingresan por métodos get
      * y post al controlador de Inicio de Sesion
@@ -34,14 +34,15 @@ public class InicioSesionController extends HttpServlet {
         String redireccion = "jsp/inicioSesion.jsp";
         String accion = request.getParameter("accion");
 
-        if(accion != null && accion.equals("ingresar")){
+        boolean login = false;
+        if (accion != null && accion.equals("ingresar")) {
             String usuario = request.getParameter("usuario");
             String clave = request.getParameter("clave");
             Map<String, Object> inicio = usuariosNegocio.validarInicioSession(request.getContextPath(), usuario, clave);
-            if(inicio.get("mensajeAlerta") != null){
+            if (inicio.get("mensajeAlerta") != null) {
                 request.setAttribute("mensajeAlerta", inicio.get("mensajeAlerta"));
                 request.setAttribute("usuario", usuario);
-            } else if(inicio.get("mensajeError") != null) {
+            } else if (inicio.get("mensajeError") != null) {
                 request.setAttribute("mensajeError", inicio.get("mensajeError"));
                 request.setAttribute("usuario", usuario);
             } else {
@@ -49,10 +50,13 @@ public class InicioSesionController extends HttpServlet {
                 request.getSession().setAttribute("permisos", inicio.get("permisos"));
                 request.getSession().setAttribute("personaSesion", inicio.get("personaSesion"));
                 request.getSession().setAttribute("usuarioSesion", inicio.get("usuarioSesion"));
-                redireccion = "jsp/paginaInicio.jsp";
+                response.sendRedirect(request.getContextPath() + "/InicioController");
+                login = true;
             }
         }
-        request.getRequestDispatcher(redireccion).forward(request, response);
+        if (!login) {
+            request.getRequestDispatcher(redireccion).forward(request, response);
+        }
     }
 
     /**

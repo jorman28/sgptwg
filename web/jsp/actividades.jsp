@@ -17,14 +17,13 @@
         <div class="container-fluid">
             <div>${menu}</div>
             <c:import url="/jsp/general/alertas.jsp"/>
+            <a id="help" href="#" title="Ayuda" class="linkAyuda"><i class="glyphicon glyphicon-question-sign"></i></a>
             <div class="row">
                 <c:import url="/jsp/general/about.jsp"/>
                 <div class="col-xs-12 col-sm-9 col-md-10 col-lg-10" id="contenido">
                     <form autocomplete="off" action="./ActividadesController" method="POST" id="formularioActividades">
                         <c:import url="/jsp/general/eliminacion.jsp"/>
-                        <center>
-                            <h2>ACTIVIDADES</h2>
-                        </center>
+                        <h2>ACTIVIDADES</h2>
                         <input type="hidden" id="id" name="id" value="${id}" />
                         <div class="panel panel-info">
                             <div class="panel-heading">FILTROS</div>
@@ -51,7 +50,7 @@
                                     </div>
 
                                     <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
-                                        <label for="descripcion">Descripción</label>
+                                        <label for="descripcion">Contiene</label>
                                         <input class="form-control" type="text" id="descripcion" name="descripcion" value="${descripcion}" maxlength="1000"/>
                                     </div>
                                 </div>
@@ -68,7 +67,7 @@
 
                                     <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
                                         <label for="fecha">Fecha</label>
-                                        <input type="text" id="fecha" name="fecha" class="form form-control" readonly="true"/>
+                                        <input type="text" id="fecha" name="fecha" class="form form-control"/>
                                     </div>
 
                                     <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
@@ -88,13 +87,49 @@
                                 <button class="btn btn-default" type="submit" name="accion" id="crearActividad" value="crearActividad">Crear</button>
                             </c:if>
                             <button class="btn btn-default" type="submit" name="accion" id="limpiar" value="limpiar">Limpiar</button>
+                            <button class="btn btn-default" type="button" data-toggle="modal" data-target="#generacionReporte">Generar reporte</button>
                         </div>
                         <br>
                         <br>
                         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                             <div id="tablaActividades"></div>
                         </div>
+                        <button hidden type="submit" name="accion" id="gestionarActividad" value="gestionarActividad"></button>
+                        <button hidden type="submit" name="accion" id="duplicarActividad" value="duplicarActividad"></button>
                     </form>
+                    <div id="generacionReporte" class="modal fade">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                    Selección de reporte
+                                </div>
+                                <div class="modal-body">
+                                    Elija el tipo de reporte que desea generar
+                                    <div class="row">
+                                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                            <div class="radio">
+                                                <label>
+                                                    <input type="radio" id="tipoSimple" name="tipoReporte" value="simple"/>
+                                                    Listado general de actividades
+                                                </label>
+                                            </div>
+                                            <div class="radio">
+                                                <label>
+                                                    <input type="radio" id="tipoDetallado" name="tipoReporte" value="detallado"/>
+                                                    Listado detallado de actividades
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-primary" onclick="generarReporte();">Generar</button>
+                                    <button type="button" class="btn btn-primary" data-dismiss="modal">Cancelar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

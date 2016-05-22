@@ -12,9 +12,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 /**
- * Esta clase define métodos para controlar la navegación dentro del sistema
- * y filtrar todas las URLs a las que se intenta ingresar.
- * 
+ * Esta clase define métodos para controlar la navegación dentro del sistema y
+ * filtrar todas las URLs a las que se intenta ingresar.
+ *
  * @author Andrés Felipe Giraldo, Jorman Rincón, Erika Jhoana Castaneda
  * @see Filter
  */
@@ -22,14 +22,14 @@ public class FiltroSesion implements Filter {
 
     /**
      * Método encargado de filtrar las URLs a las que se acceden en el sistema,
-     * controlando la existencia de unos permisos y una sesión activa para 
+     * controlando la existencia de unos permisos y una sesión activa para
      * continuar con la navegación.
-     * 
+     *
      * @param request
      * @param response
      * @param chain
      * @throws IOException
-     * @throws ServletException 
+     * @throws ServletException
      */
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
@@ -37,40 +37,31 @@ public class FiltroSesion implements Filter {
         HttpSession sesion = req.getSession(false);
         String context = req.getContextPath();
         String uri = req.getRequestURI();
-        if ((uri.endsWith("Controller") && !uri.equals(context + "/CerrarSesionController")) || uri.equals(context + "/")) {
-            System.out.println("Se ingresa al filtro con URI: " + uri + ". Contexto: " + context);
-            if (uri.equals(context + "/") || uri.equals(context + "/InicioSesionController")) {
+        if ((uri.endsWith("Controller") && !uri.equals(context + "/CerrarSesionController")) || uri.equals(context) || uri.equals(context + "/")) {
+            if (uri.equals(context) || uri.equals(context + "/")
+                    || uri.equals(context + "/InicioSesionController") || uri.equals(context + "/InicioSesionController/")) {
                 if (sesion != null && sesion.getAttribute("permisos") != null) {
-                    /* "Se redirige a la primera página que tenga asociada el perfil"); */
-                    Map<Integer, Map<String, Object>> permisos = (Map<Integer, Map<String, Object>>) sesion.getAttribute("permisos");
-                    String url = "/";
-                    for (Map<String, Object> pagina : permisos.values()) {
-                        if (pagina.get("url") != null && !pagina.get("url").toString().isEmpty()) {
-                            url = pagina.get("url").toString();
-                        }
-                    }
-                    request.getRequestDispatcher(url).forward(request, response);
+                    /* Se redirige a la página de inicio porque existe una sesión */
+                    request.getRequestDispatcher("/InicioController").forward(request, response);
                     return;
                 }
+            } else if (sesion == null || sesion.getAttribute("permisos") == null) {
+                /* No hay sesión y se debe mostrar formulario de autenticación */
+                request.getRequestDispatcher("/jsp/inicioSesion.jsp").forward(request, response);
+                return;
             } else {
-                if (sesion == null || sesion.getAttribute("permisos") == null) {
-                    /* "No hay sesión y se debe mostrar formulario de autenticación" */
-                    request.getRequestDispatcher("/jsp/inicioSesion.jsp").forward(request, response);
+                Map<Integer, Map<String, Object>> permisos = (Map<Integer, Map<String, Object>>) sesion.getAttribute("permisos");
+                boolean accesoDenegado = true;
+                for (Map<String, Object> pagina : permisos.values()) {
+                    if (pagina.get("url") != null && (context + pagina.get("url").toString()).equals(uri)) {
+                        accesoDenegado = false;
+                        break;
+                    }
+                }
+                if (accesoDenegado) {
+                    /* Se está intentando acceder a una página a la cual no se tiene permisos */
+                    request.getRequestDispatcher("/jsp/general/autenticacion.jsp").forward(request, response);
                     return;
-                } else {
-                    Map<Integer, Map<String, Object>> permisos = (Map<Integer, Map<String, Object>>) sesion.getAttribute("permisos");
-                    boolean accesoDenegado = true;
-                    for (Map<String, Object> pagina : permisos.values()) {
-                        if (pagina.get("url") != null && (context + pagina.get("url").toString()).equals(uri)) {
-                            accesoDenegado = false;
-                            break;
-                        }
-                    }
-                    if (accesoDenegado) {
-                        /* "Se está intentando acceder a una página a la cual no se tiene permisos"); */
-                        request.getRequestDispatcher("/jsp/general/autenticacion.jsp").forward(request, response);
-                        return;
-                    }
                 }
             }
         }
@@ -87,8 +78,8 @@ public class FiltroSesion implements Filter {
 
     /**
      * Método encargado de inicializar el filtro de sesión.
-     * 
-     * @param filterConfig 
+     *
+     * @param filterConfig
      */
     @Override
     public void init(FilterConfig filterConfig) {
