@@ -41,6 +41,7 @@ function graficaEstados() {
 }
 
 var datosAvance = [];
+var idAvances = [];
 function graficaAvance() {
     if (google.visualization !== undefined) {
         var data = google.visualization.arrayToDataTable(datosAvance);
@@ -52,7 +53,27 @@ function graficaAvance() {
             colors: ['#5e97f6', '#2a56c6']
         };
 
+        function seleccionAvance() {
+            var selectedItem = chart.getSelection()[0];
+            if (selectedItem) {
+                var redireccion = "ActividadesController?";
+                if ($('#proyecto').val() !== undefined && $('#proyecto').val() !== ''
+                        && $('#proyecto').val() !== '0') {
+                    redireccion += "proyecto=" + $('#proyecto').val();
+                    redireccion += "&version=" + idAvances[selectedItem.row];
+                } else {
+                    redireccion += "proyecto=" + idAvances[selectedItem.row];
+                }
+                var persona = $('#idPersona').val() !== undefined && $('#idPersona').val() !== "" ? $('#idPersona').val() : null;
+                if ($('#responsable').val() !== undefined && $('#responsable').val() !== '') {
+                    redireccion += "&responsable=" + persona;
+                }
+                location.href = redireccion;
+            }
+        }
+
         var chart = new google.charts.Bar(document.getElementById('avanceProyectos'));
+        google.visualization.events.addListener(chart, 'select', seleccionAvance);
         chart.draw(data, options);
     }
 }
@@ -77,6 +98,7 @@ function cargarDatos() {
                 if (data.estados !== undefined) {
                     datosEstados = data.estados;
                     datosAvance = data.avance;
+                    idAvances = data.idElementos;
                     graficaEstados();
                     graficaAvance();
                 }

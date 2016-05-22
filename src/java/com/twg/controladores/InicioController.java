@@ -73,7 +73,7 @@ public class InicioController extends HttpServlet {
         switch (accion) {
             case "generarReporte":
                 JSONObject reporteObject = new JSONObject();
-                String nombreArchivo = "";
+                String nombreArchivo;
                 if (tipoReporte != null && tipoReporte.equals("estados")) {
                     nombreArchivo = generadorReportes.actividadesPorEstado(proyecto, version, persona);
                 } else {
@@ -181,6 +181,7 @@ public class InicioController extends HttpServlet {
         resultado.put("estados", arrayEstados);
         List<ActividadesBean> listaActividades = actividadesNegocio.consolidadoActividades(proyecto, version, persona);
         JSONArray avanceActividades = new JSONArray();
+        JSONArray idElementos = new JSONArray();
         if (listaActividades != null && !listaActividades.isEmpty()) {
             JSONArray avance = new JSONArray();
             if (proyecto != null && proyecto != 0) {
@@ -200,10 +201,16 @@ public class InicioController extends HttpServlet {
                 }
                 avance.add(actividad.getTiempoEstimado());
                 avance.add(actividad.getTiempoInvertido());
+                if (proyecto != null && proyecto != 0) {
+                    idElementos.add(actividad.getVersion());
+                } else {
+                    idElementos.add(actividad.getProyecto());
+                }
                 avanceActividades.add(avance);
             }
         }
         resultado.put("avance", avanceActividades);
+        resultado.put("idElementos", idElementos);
         return resultado;
     }
 

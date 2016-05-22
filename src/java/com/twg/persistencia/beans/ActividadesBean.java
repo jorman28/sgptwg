@@ -20,6 +20,8 @@ public class ActividadesBean {
     private String nombreEstado;
     private Date fechaInicio;
     private Date fechaFin;
+    private Date fechaRealInicio;
+    private Date ultimaModificacion;
     private Double tiempoEstimado;
     private Double tiempoInvertido;
     private Integer proyecto;
@@ -130,6 +132,22 @@ public class ActividadesBean {
 
     public void setTiempoInvertido(Double tiempoInvertido) {
         this.tiempoInvertido = tiempoInvertido;
+    }
+
+    public Date getFechaRealInicio() {
+        return fechaRealInicio;
+    }
+
+    public void setFechaRealInicio(Date fechaRealInicio) {
+        this.fechaRealInicio = fechaRealInicio;
+    }
+
+    public Date getUltimaModificacion() {
+        return ultimaModificacion;
+    }
+
+    public void setUltimaModificacion(Date ultimaModificacion) {
+        this.ultimaModificacion = ultimaModificacion;
     }
 
 }
