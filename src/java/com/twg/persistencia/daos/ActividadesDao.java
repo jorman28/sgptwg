@@ -25,7 +25,7 @@ public class ActividadesDao {
     /**
      * Método encargado de consultar el id de la última actividad
      *
-     * @return
+     * @return Id de la última actividad insertada en base de datos
      * @throws ClassNotFoundException
      * @throws InstantiationException
      * @throws SQLException
@@ -60,7 +60,7 @@ public class ActividadesDao {
      * @param estado
      * @param responsable
      * @param limite
-     * @return
+     * @return Lista de actividades relacionadas con los parámetros enviados
      * @throws ClassNotFoundException
      * @throws InstantiationException
      * @throws SQLException
@@ -112,7 +112,8 @@ public class ActividadesDao {
      * @param fecha
      * @param estado
      * @param responsable
-     * @return
+     * @return Cantidad de actividades relacionadas con los parámetros de
+     * búsqueda
      * @throws ClassNotFoundException
      * @throws InstantiationException
      * @throws SQLException
@@ -149,7 +150,8 @@ public class ActividadesDao {
      * @param fecha
      * @param estado
      * @param responsable
-     * @return
+     * @return Lista de mapas con la información de las actividades por persona
+     * asociada
      * @throws ClassNotFoundException
      * @throws InstantiationException
      * @throws SQLException
@@ -191,7 +193,7 @@ public class ActividadesDao {
      * datos
      *
      * @param actividad
-     * @return
+     * @return Cantidad de registros insertados en base de datos
      * @throws ClassNotFoundException
      * @throws InstantiationException
      * @throws SQLException
@@ -217,7 +219,7 @@ public class ActividadesDao {
      * existente en base de datos
      *
      * @param actividad
-     * @return
+     * @return Cantidad de registros actualizados en base de datos
      * @throws ClassNotFoundException
      * @throws InstantiationException
      * @throws SQLException
@@ -245,7 +247,7 @@ public class ActividadesDao {
      * de la eliminación
      *
      * @param idActividad
-     * @return
+     * @return Cantidad de registros actualizados en base de datos
      * @throws ClassNotFoundException
      * @throws InstantiationException
      * @throws SQLException
@@ -270,7 +272,8 @@ public class ActividadesDao {
      * @param proyecto
      * @param version
      * @param persona
-     * @return
+     * @return Lista de mapas con la información de cada estado y la cantidad de
+     * actividades relacionadas a cada uno
      * @throws ClassNotFoundException
      * @throws InstantiationException
      * @throws IllegalAccessException
@@ -303,7 +306,8 @@ public class ActividadesDao {
      * @param proyecto
      * @param version
      * @param responsable
-     * @return
+     * @return Lista de las actividades agrupadas en proyectos o versiones para
+     * evaluar el tiempo estimado vs el tiempo invertido
      * @throws ClassNotFoundException
      * @throws InstantiationException
      * @throws IllegalAccessException

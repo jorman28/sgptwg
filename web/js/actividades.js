@@ -89,8 +89,8 @@ function generarReporte() {
         tipoReporte = $("#tipoDetallado").val();
     }
     if (tipoReporte === '') {
-        $("#generacionReporte").modal('hide');
         mostrarAdvertencia('Para generar el reporte de actividades debe seleccionar uno de los tipos');
+        $("#generacionReporte").modal('hide');
         return;
     }
     var proyecto = $('#proyecto').val() !== undefined && $('#proyecto').val() !== "0" ? $('#proyecto').val() : null;
@@ -117,10 +117,12 @@ function generarReporte() {
                 link.click();
             } else {
                 mostrarError('Error al generar el reporte');
+                $("#generacionReporte").modal('hide');
             }
         },
         error: function () {
             mostrarError('Error al generar el reporte');
+            $("#generacionReporte").modal('hide');
         }
     });
 }

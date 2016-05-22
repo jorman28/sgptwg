@@ -23,10 +23,15 @@ public class ActividadesEmpleadosSql {
      * @param idEmpleado
      * @param fechaEstimadaInicio
      * @param fechaEstimadaFin
-     * @param evaluarEstado
-     * @return
+     * @param evaluarEstado Indica si se evalúa el estado cerrado de la
+     * actividad
+     * @param actividadIgual Indica si el id de la actividad mandado como
+     * parámetro debe ser igual o diferente
+     * @param eliminados Indica si se tiene en cuenta los registros que ya
+     * fueron eliminados logicamente
+     * @return El SQL de la sentencia de base de datos
      */
-    public String consultarActividadEmpleado(Integer idActividad, Integer idEmpleado, Date fechaEstimadaInicio, Date fechaEstimadaFin, boolean evaluarEstado, boolean actividadIgual) {
+    public String consultarActividadEmpleado(Integer idActividad, Integer idEmpleado, Date fechaEstimadaInicio, Date fechaEstimadaFin, boolean evaluarEstado, boolean actividadIgual, boolean eliminados) {
         String sql = "SELECT DISTINCT\n"
                 + "    ae.actividad,\n"
                 + "    a.nombre AS nombre_actividad,\n"
@@ -46,7 +51,8 @@ public class ActividadesEmpleadosSql {
                 + "        WHERE\n"
                 + "            fecha_eliminacion IS NULL\n"
                 + "            AND actividad = ae.actividad\n"
-                + "                AND empleado = ae.empleado) AS tiempo_invertido\n"
+                + "                AND empleado = ae.empleado) AS tiempo_invertido,\n"
+                + "    ae.fecha_eliminacion\n"
                 + "FROM\n"
                 + "    actividades_empleados ae\n"
                 + "        INNER JOIN\n"
@@ -58,15 +64,18 @@ public class ActividadesEmpleadosSql {
                 + "        INNER JOIN\n"
                 + "    estados e ON e.id = a.estado\n"
                 + "WHERE\n"
-                + "    ae.fecha_eliminacion IS NULL\n";
-        if (idActividad != null && idActividad.intValue() != 0) {
+                + "    1 = 1\n";
+        if (!eliminados) {
+            sql += "    AND ae.fecha_eliminacion IS NULL\n";
+        }
+        if (idActividad != null && idActividad != 0) {
             if (actividadIgual) {
                 sql += "        AND ae.actividad = " + idActividad + "\n";
             } else {
                 sql += "        AND ae.actividad != " + idActividad + "\n";
             }
         }
-        if (idEmpleado != null && idEmpleado.intValue() != 0) {
+        if (idEmpleado != null && idEmpleado != 0) {
             sql += "        AND ae.empleado = " + idEmpleado + "\n";
         }
         if (fechaEstimadaInicio != null && fechaEstimadaFin != null) {
@@ -79,6 +88,12 @@ public class ActividadesEmpleadosSql {
         return sql;
     }
 
+    /**
+     * Método encargado de retornar el SQL de actualización de datos de una
+     * persona asociada a una actividad
+     *
+     * @return El SQL de la sentencia de base de datos
+     */
     public String actualizarActividadEmpleado() {
         return "UPDATE actividades_empleados SET fecha_estimada_inicio = ?, fecha_estimada_terminacion = ?, tiempo_estimado = ?, fecha_eliminacion = null WHERE actividad = ? AND empleado = ?";
     }
@@ -87,7 +102,7 @@ public class ActividadesEmpleadosSql {
      * Método encargado de retornar el SQL para insertar una actividad a un
      * empleado específico
      *
-     * @return
+     * @return El SQL de la sentencia de base de datos
      */
     public String insertarActividadEmpleado() {
         return "INSERT INTO actividades_empleados (actividad, empleado) VALUES (?,?)";
@@ -100,7 +115,7 @@ public class ActividadesEmpleadosSql {
      *
      * @param idActividad
      * @param idEmpleado
-     * @return
+     * @return El SQL de la sentencia de base de datos
      */
     public String eliminarActividadEmpleado(Integer idActividad, Integer idEmpleado) {
         String sql = "UPDATE actividades_empleados SET fecha_eliminacion = now() WHERE 1 = 1 ";

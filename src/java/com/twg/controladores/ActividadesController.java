@@ -213,7 +213,7 @@ public class ActividadesController extends HttpServlet {
                 case "guardarPersonaActividad":
                     JSONObject resultado = new JSONObject();
                     if (estimacion != null && estimacion.equals("true")) {
-                        mensajeAlerta = actividadesNegocio.validarActividadEmpleado(fechaInicio, fechaFin, tiempo);
+                        mensajeAlerta = actividadesNegocio.validarActividadEmpleado(fechaInicio, fechaFin, tiempo, idVersion);
                     }
                     if (mensajeAlerta.isEmpty()) {
                         mensajeError = actividadesNegocio.guardarActividadPersona(idActividad, idResponsable, fechaInicio, fechaFin, tiempo, estimacion != null && estimacion.equals("true"));
