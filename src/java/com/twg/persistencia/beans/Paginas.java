@@ -19,8 +19,7 @@ public enum Paginas {
     VERSIONES("Versiones", 10),
     ACTIVIDADES("Actividades", 11),
     DOCUMENTACION("Documentacion", 12),
-    REPORTES("Reportes", 13),
-    AUDITORIAS("Auditorias",15);
+    AUDITORIAS("Auditorias", 15);
 
     //Declaración de los atributos de una página.
     private final String nombrePagina;

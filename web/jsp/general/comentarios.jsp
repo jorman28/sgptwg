@@ -1,12 +1,15 @@
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <div class="form-group">
     <div id="listaComentarios">${listaComentarios}</div>
 </div>
-<div class="form-group">
-    <textarea class="form-control" id="comentario" name="comentario" placeholder="Ingrese un comentario"></textarea>
-    <div align="right">
-        <button class="btn btn-default" type="button" name="accion" id="comentar" onclick="guardarComentario();">Comentar</button>
+<c:if test="${opcionComentar}">
+    <div class="form-group">
+        <textarea class="form-control" id="comentario" name="comentario" placeholder="Ingrese un comentario"></textarea>
+        <div align="right">
+            <button class="btn btn-default" type="button" name="accion" id="comentar" onclick="guardarComentario();">Comentar</button>
+        </div>
     </div>
-</div>
+</c:if>
 <input type="hidden" id="idComentario"/>
 <div id="eliminacionComentarios" class="modal fade">
     <div class="modal-dialog">

@@ -66,7 +66,9 @@
                                         </div>
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="submit" class="btn btn-primary" name="accion" id="guardar" value="guardar">Guardar</button>
+                                        <c:if test="${opcionGuardar}">
+                                            <button type="submit" class="btn btn-primary" name="accion" id="guardar" value="guardar">Guardar</button>
+                                        </c:if>
                                         <button type="button" class="btn btn-primary" data-dismiss="modal">Cancelar</button>
                                     </div>
                                 </div>
@@ -88,14 +90,16 @@
 
                                     <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
                                         <label for="filtroCreador">Creador</label>
-                                        <input class="form-control" type="text" id="filtroCreador" name="filtroCreador"/>
-                                        <input type="hidden" id="idPersona" name="idPersona"/>
+                                        <input class="form-control" type="text" id="filtroCreador" name="filtroCreador" <c:if test="${!opcionConsultar}">readonly="true"</c:if> />
+                                            <input type="hidden" id="idPersona" name="idPersona"/>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="row" align="center">
-                                    <button class="btn btn-default" type="button" name="accion" id="crear" value="crear" onclick="nuevoArchivo();">Nuevo</button>
+                                    <div class="row" align="center">
+                                    <c:if test="${opcionCrear}">
+                                        <button class="btn btn-default" type="button" name="accion" id="crear" value="crear" onclick="nuevoArchivo();">Nuevo</button>
+                                    </c:if>
                                     <button class="btn btn-default" type="button" name="accion" id="consultar" value="consultar" onclick="llenarTabla();">Consultar</button>
-                                    <button class="btn btn-default" type="button" name="accion" id="consultar" value="consultar" onclick="limpiar();">Limpiar</button>
+                                    <button class="btn btn-default" type="button" onclick="limpiar();">Limpiar</button>
                                 </div>
                             </div>                            
                         </div>

@@ -3,6 +3,7 @@ package com.twg.negocio;
 import com.twg.persistencia.beans.AccionesAuditadas;
 import com.twg.persistencia.beans.ClasificacionAuditorias;
 import com.twg.persistencia.beans.ComentariosBean;
+import com.twg.persistencia.beans.Permisos;
 import com.twg.persistencia.daos.ComentariosDao;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -111,15 +112,21 @@ public class ComentariosNegocio {
         return error;
     }
 
-    public String listaComentarios(String tipoDestino, Integer idDestino) {
+    public String listaComentarios(List<String> permisos, Integer idPersona, String tipoDestino, Integer idDestino) {
         String resultado = "";
         List<ComentariosBean> listaComentarios = consultarComentarios(tipoDestino, idDestino);
         if (listaComentarios != null && !listaComentarios.isEmpty()) {
             for (ComentariosBean comentario : listaComentarios) {
                 resultado += "  <div id=\"comentario" + comentario.getId() + "\" class=\"list-group\">\n"
-                        + "         <div class=\"list-group-item\">\n"
-                        + "             <button type=\"button\" class=\"close\" data-toggle=\"modal\" data-target=\"#eliminacionComentarios\" onclick=\"$('#idComentario').val(" + comentario.getId() + ");\"><span aria-hidden=\"true\">&times;</span></button>\n"
-                        + "             <p class=\"list-group-item-heading\"><strong>" + comentario.getNombres() + " " + comentario.getApellidos() + " (" + sdf.format(comentario.getFechaCreacion()) + ")" + "</strong></p>\n"
+                        + "         <div class=\"list-group-item\">\n";
+                try {
+                    if (permisos.contains(Permisos.ELIMINAR_COMENTARIOS.getNombre())
+                            || (permisos.contains(Permisos.ELIMINAR_COMENTARIO_PROPIO.getNombre()) && idPersona.intValue() == comentario.getIdPersona().intValue())) {
+                        resultado += "  <button type=\"button\" class=\"close\" data-toggle=\"modal\" data-target=\"#eliminacionComentarios\" onclick=\"$('#idComentario').val(" + comentario.getId() + ");\"><span aria-hidden=\"true\">&times;</span></button>\n";
+                    }
+                } catch (Exception e) {
+                }
+                resultado += "          <p class=\"list-group-item-heading\"><strong>" + comentario.getNombres() + " " + comentario.getApellidos() + " (" + sdf.format(comentario.getFechaCreacion()) + ")" + "</strong></p>\n"
                         + "             <p class=\"list-group-item-text\">" + comentario.getComentario() + "</p>\n"
                         + "         </div>\n"
                         + "     </div>";
