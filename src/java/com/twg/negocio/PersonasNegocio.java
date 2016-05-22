@@ -104,9 +104,9 @@ public class PersonasNegocio {
             persona.setCargo(Integer.valueOf(cargo));
             int guardado = 0;
             if (idPersona != null) {
-                List<PersonasBean> personaAnterior = personasDao.consultarPersonas(idPersona.toString(), null, null, null, null, null, null, null, null, null, true);
+                List<PersonasBean> personaAnterior = personasDao.consultarPersonas(idPersona, null, null, null, null, null, null, null, null, null, true, null, null);
                 guardado = personasDao.actualizarPersona(persona);
-                List<PersonasBean> personaNueva = personasDao.consultarPersonas(null, persona.getDocumento(), persona.getTipoDocumento(), null, null, null, null, null, null, null, true);
+                List<PersonasBean> personaNueva = personasDao.consultarPersonas(null, persona.getDocumento(), persona.getTipoDocumento(), null, null, null, null, null, null, null, true, null, null);
                 //AUDITORIA
                 try {
                     String descripcioAudit = "Se actualizó la informaión de una persona. ANTES ("+
@@ -145,7 +145,7 @@ public class PersonasNegocio {
                 } catch (Exception e) {
                 }
                 guardado = personasDao.insertarPersona(persona);
-                List<PersonasBean> personaCreada = personasDao.consultarPersonas(null, persona.getDocumento(), persona.getTipoDocumento(), null, null, null, null, null, null, null, true);
+                List<PersonasBean> personaCreada = personasDao.consultarPersonas(null, persona.getDocumento(), persona.getTipoDocumento(), null, null, null, null, null, null, null, true, null, null);
                 //AUDITORIA
                 try {
                     String descripcioAudit = "Se creó una persona con la siguiente información ("+
@@ -334,7 +334,7 @@ public class PersonasNegocio {
         }
         
         try {
-            List<PersonasBean> personaEliminar = personasDao.consultarPersonas(idPersona.toString(), null, null, null, null, null, null, null, null, null, true);
+            List<PersonasBean> personaEliminar = personasDao.consultarPersonas(idPersona, null, null, null, null, null, null, null, null, null, true, null, null);
             usuariosDao.eliminarUsuario(idPersona);
             int eliminacion = personasDao.eliminarPersona(idPersona);
             if (eliminacion == 0) {
