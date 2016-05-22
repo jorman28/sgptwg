@@ -36,7 +36,8 @@ public class UsuariosSql {
                 + "	perf.nombre AS descripcion_perfil, "
                 + "	usu.usuario, "
                 + "	usu.activo, "
-                + "	usu.clave "
+                + "	usu.clave, "
+                + "	usu.fecha_eliminacion "
                 + "FROM "
                 + "    usuarios usu "
                 + "        INNER JOIN "
@@ -49,6 +50,8 @@ public class UsuariosSql {
                 + "	1 = 1 ";
         if (idPersona != null) {
             sql += "	AND usu.id_persona = " + idPersona + " ";
+        }else{
+            sql += "    AND usu.fecha_eliminacion is null ";
         }
         if (usuario != null && !usuario.isEmpty()) {
             sql += "	AND BINARY usu.usuario = '" + usuario + "' ";
@@ -85,6 +88,8 @@ public class UsuariosSql {
                 + "	1 = 1 ";
         if (idPersona != null) {
             sql += "	AND usu.id_persona = " + idPersona + " ";
+        }else{
+            sql += "    AND usu.fecha_eliminacion is null ";
         }
         if (usuario != null && !usuario.isEmpty()) {
             sql += "	AND BINARY usu.usuario = '" + usuario + "' ";
@@ -119,7 +124,7 @@ public class UsuariosSql {
      * @return
      */
     public String actualizarUsuario() {
-        return "UPDATE usuarios SET usuario = ?, clave = ?, perfil = ?, activo = ? WHERE id_persona = ?";
+        return "UPDATE usuarios SET usuario = ?, clave = ?, perfil = ?, activo = ?, fecha_eliminacion = ? WHERE id_persona = ?";
     }
 
     /**

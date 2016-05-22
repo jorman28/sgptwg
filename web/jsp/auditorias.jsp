@@ -26,9 +26,9 @@
                             <div class="panel-body">
                                 <div class="row">
                                     <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                                        <label for="filtroPersona">Persona:</label>
-                                        <input class="form-control" type="text" id="filtroPersona" name="filtroPersona" maxlength="50"/>
-                                        <input type="hidden" id="idPersona" name="idPersona"/>
+                                        <input type="hidden" id="id_personaH" name="id_personaH" value="${id_personaH}" />
+                                        <label for="id_persona">Persona:</label>
+                                        <input class="form-control" type="search" id="id_persona" name="id_persona" value="${id_persona}" maxlength="50"/>                                       
                                     </div>
 
                                     <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
@@ -66,7 +66,7 @@
                                 <div class="row">
                                     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                         <label for="descripcion">Descripción:</label>
-                                        <input class="form-control" type="text" id="descripcion" name="descripcion" value="${descripcion}" maxlength="1000"/>
+                                        <textarea class="form-control" id="descripcion" name="descripcion" maxlength="1000">${descripcion}</textarea>
                                     </div>
                                 </div>
                             </div>                            

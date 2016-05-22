@@ -32,6 +32,59 @@ $(document).ready(function () {
     });
 });
 
+function consultarAuditoria(id){
+    $.ajax({
+        type    :"POST",
+        url     :"AuditoriasController",
+        dataType:"json",
+        data    :{id:id, accion:"detalle"},
+        success: function(data) {
+            console.log(data);
+            if(data !== undefined){
+                $("#id").val(data.id !== undefined ? data.id : "");
+                $("#id_persona").val(data.nombrePersona !== undefined ? data.nombrePersona : "");
+                $("#fecha_creacion").val(data.fecha_creacion !== undefined ? data.fecha_creacion : "");
+                $("#clasificacion").val(data.clasificacion !== undefined ? data.clasificacion : "");
+                $("#accionAud").val(data.accionAud !== undefined ? data.accionAud : "");
+                $("#descripcion").val(data.descripcion !== undefined ? data.descripcion : "");
+            }
+        },
+        error: function(data){
+            console.log(data);
+        }
+    });
+}
+
+var personas = {};
+jQuery(function () {
+    $("#id_persona")
+            .typeahead({
+                onSelect: function (item) {
+                    var persona = personas[item.value];
+                    $('#id_persona').val(persona.id);
+                },
+                ajax: {
+                    url: "AuditoriasController",
+                    timeout: 500,
+                    displayField: "nombre",
+                    valueField: 'id',
+                    triggerLength: 1,
+                    items: 10,
+                    method: "POST",
+                    preDispatch: function (nombrePerson) {
+                        return {nombrePerson: nombrePerson, accion: "consultarPersonas"};
+                    },
+                    preProcess: function (data) {
+                        for (var i = 0; i < data.length; i++) {
+                            var persona = data[i];
+                            personas[persona.id] = persona;
+                        }
+                        return data;
+                    }
+                }
+            });
+});
+
 function llenarTablaAuditorias(pagina) {
     if (pagina === undefined) {
         pagina = 1;

@@ -65,6 +65,13 @@ public class PermisosController extends HttpServlet {
 
         List<String> permisosPagina = PerfilesNegocio.permisosPorPagina(request, Paginas.PERMISOS);
 
+        String personaSesion = "";
+        try {
+            personaSesion = String.valueOf(request.getSession().getAttribute("personaSesion"));
+        } catch (Exception e) {
+            System.err.print("Error obteniendo la persona en sesion");
+        }
+        
         switch (accion) {
             case "consultar":
                 cargarTabla(response, permisosPagina, nombrePerfil, pagina);
@@ -74,7 +81,7 @@ public class PermisosController extends HttpServlet {
                 response.getWriter().write(perfil.toString());
                 break;
             case "guardar":
-                Map<String, Object> resultado = perfilesNegocio.guardarPerfil(idPerfil, nombrePerfil);
+                Map<String, Object> resultado = perfilesNegocio.guardarPerfil(idPerfil, nombrePerfil, personaSesion);
                 if (resultado.get("mensajeError") != null) {
                     mensajeError = (String) resultado.get("mensajeError");
                     request.setAttribute("idPerfil", idPerfil);
@@ -90,7 +97,7 @@ public class PermisosController extends HttpServlet {
                     idPerfilPermiso = Integer.valueOf(request.getParameter("perfilPermiso"));
                 } catch (NumberFormatException e) {
                 }
-                resultado = perfilesNegocio.guardarPermisos(idPerfilPermiso, permisosSeleccionados);
+                resultado = perfilesNegocio.guardarPermisos(idPerfilPermiso, permisosSeleccionados, personaSesion);
                 if (resultado.get("mensajeError") != null) {
                     mensajeError = (String) resultado.get("mensajeError");
                 }
@@ -99,7 +106,7 @@ public class PermisosController extends HttpServlet {
                 }
                 break;
             case "eliminar":
-                resultado = perfilesNegocio.eliminarPerfil(idPerfil);
+                resultado = perfilesNegocio.eliminarPerfil(idPerfil, personaSesion);
                 if (resultado.get("mensajeError") != null) {
                     mensajeError = (String) resultado.get("mensajeError");
                 }

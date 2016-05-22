@@ -1,5 +1,7 @@
 package com.twg.negocio;
 
+import com.twg.persistencia.beans.AccionesAuditadas;
+import com.twg.persistencia.beans.ClasificacionAuditorias;
 import com.twg.persistencia.beans.PersonasBean;
 import com.twg.persistencia.beans.ProyectosBean;
 import com.twg.persistencia.daos.ProyectosDao;
@@ -23,9 +25,10 @@ public class ProyectosNegocio {
 
     private final ProyectosDao proyectosDao = new ProyectosDao();
     private final VersionesDao versionesDao = new VersionesDao();
+    private final AuditoriasNegocio auditoria = new AuditoriasNegocio();
     private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
-    public String guardarProyecto(String id, String nombre, String fechaInicio, String[] idPersonas) {
+    public String guardarProyecto(String id, String nombre, String fechaInicio, String[] idPersonas, Integer personaSesion) {
         String error = "";
         ProyectosBean proyecto = new ProyectosBean();
         proyecto.setNombre(nombre);
@@ -43,9 +46,30 @@ public class ProyectosNegocio {
             int guardado = 0;
             if (idProyecto != null) {
                 proyecto.setId(idProyecto);
+                List<ProyectosBean> proyectoAntes = proyectosDao.consultarProyectos(idProyecto, null, false);
                 guardado = proyectosDao.actualizarProyecto(proyecto);
+                //AUDITORIA
+                try {
+                    String descripcioAudit = "Se actualizó la información de un proyecto. ANTES ("+
+                            " Nombre: "+proyectoAntes.get(0).getNombre()+
+                            " Fecha inicio: "+proyectoAntes.get(0).getFechaInicio()+
+                            ") DESPUÉS ( Nombre: "+proyecto.getNombre()+
+                            " Fecha inicio: "+proyecto.getFechaInicio()+")";
+                    String guardarAuditoria = auditoria.guardarAuditoria(personaSesion, ClasificacionAuditorias.PROYECTO.getNombre(), AccionesAuditadas.EDICION.getNombre(), descripcioAudit);
+                } catch (Exception e) {
+                    Logger.getLogger(ProyectosNegocio.class.getName()).log(Level.SEVERE, null, e);
+                }
             } else {
                 guardado = proyectosDao.crearProyecto(proyecto);
+                //AUDITORIA
+                try {
+                    String descripcioAudit = "Se creó un proyecto con la siguiente información ("+
+                            " Nombre: "+proyecto.getNombre()+
+                            " Fecha inicio: "+proyecto.getFechaInicio()+")";
+                    String guardarAuditoria = auditoria.guardarAuditoria(personaSesion, ClasificacionAuditorias.PROYECTO.getNombre(), AccionesAuditadas.CREACION.getNombre(), descripcioAudit);
+                } catch (Exception e) {
+                    Logger.getLogger(ProyectosNegocio.class.getName()).log(Level.SEVERE, null, e);
+                }
             }
             if (guardado == 0) {
                 error += "El proyecto no pudo ser guardado";
@@ -158,12 +182,38 @@ public class ProyectosNegocio {
         return object;
     }
 
-    public String eliminarProyecto(Integer idProyecto) {
+    //JARA 17/02/2016 Método para encontrar los proyectos de una versión determinada
+    public ProyectosBean consultarProyectoPorVersion(Integer idVersion) {
+        ProyectosBean proyBean = new ProyectosBean();
+        if (idVersion != null) {
+            try {
+                List<ProyectosBean> listaProyectos = proyectosDao.consultarProyectosPorVersion(idVersion);
+                if (listaProyectos != null && !listaProyectos.isEmpty()) {
+                    ProyectosBean proyectoBean = listaProyectos.get(0);
+                    proyBean = proyectoBean;
+                }
+            } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
+                Logger.getLogger(EstadosNegocio.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return proyBean;
+    }
+
+    public String eliminarProyecto(Integer idProyecto, Integer personaSesion) {
         String error = "";
         try {
+            List<ProyectosBean> proyectoEliminar = proyectosDao.consultarProyectos(idProyecto, null, false);
             int eliminacion = proyectosDao.eliminarProyecto(idProyecto);
             if (eliminacion == 0) {
                 error = "El proyecto no pudo ser eliminado";
+            }else{
+                //AUDITORIA
+                try {
+                    String descripcioAudit = "Se eliminó el proyecto llamado "+proyectoEliminar.get(0).getNombre();
+                    String guardarAuditoria = auditoria.guardarAuditoria(personaSesion, ClasificacionAuditorias.PROYECTO.getNombre(), AccionesAuditadas.ELIMINACION.getNombre(), descripcioAudit);
+                } catch (Exception e) {
+                    Logger.getLogger(ProyectosNegocio.class.getName()).log(Level.SEVERE, null, e);
+                }
             }
             versionesDao.eliminarVersion(null, idProyecto);
         } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {

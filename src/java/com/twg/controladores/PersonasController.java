@@ -83,6 +83,13 @@ public class PersonasController extends HttpServlet {
 
         List<String> permisosPagina = PerfilesNegocio.permisosPorPagina(request, Paginas.PERSONAS);
 
+        String personaSesion = "";
+        try {
+            personaSesion = String.valueOf(request.getSession().getAttribute("personaSesion"));
+        } catch (Exception e) {
+            System.err.print("Error obteniendo la persona en sesion");
+        }
+
         switch (accion) {
             case "consultar":
                 cargarTabla(response, permisosPagina, idPersona, documento, tipoDocumento, nombres, apellidos, correo, usuario, perfil, cargo, pagina);
@@ -109,7 +116,7 @@ public class PersonasController extends HttpServlet {
             case "guardar":
                 mensajeError = personasNegocio.validarDatos(documento, tipoDocumento, nombres, apellidos, telefono, celular, correo, direccion, cargo, usuario, perfil, clave, clave2);
                 if (mensajeError.isEmpty()) {
-                    mensajeAlerta = personasNegocio.guardarPersona(idPersona, documento, tipoDocumento, nombres, apellidos, telefono, celular, correo, direccion, cargo, usuario, perfil, clave, clave2);
+                    mensajeAlerta = personasNegocio.guardarPersona(idPersona, documento, tipoDocumento, nombres, apellidos, telefono, celular, correo, direccion, cargo, usuario, perfil, clave, clave2, personaSesion);
                     if (mensajeAlerta.isEmpty()) {
                         mensajeExito = "La persona ha sido guardada con éxito";
                         break;
@@ -130,7 +137,7 @@ public class PersonasController extends HttpServlet {
                 redireccion = "jsp/personas.jsp";
                 break;
             case "eliminar":
-                mensajeError = personasNegocio.eliminarPersona(idPersona);
+                mensajeError = personasNegocio.eliminarPersona(idPersona, personaSesion);
                 if (mensajeError.isEmpty()) {
                     mensajeExito = "La persona ha sido eliminada con éxito";
                 }

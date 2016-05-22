@@ -2,6 +2,7 @@ package com.twg.controladores;
 
 import com.twg.negocio.AuditoriasNegocio;
 import com.twg.negocio.PerfilesNegocio;
+import com.twg.negocio.PersonasNegocio;
 import com.twg.persistencia.beans.AuditoriasBean;
 import com.twg.persistencia.beans.Paginas;
 import com.twg.persistencia.beans.Permisos;
@@ -15,6 +16,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 /**
  * Esta clase define métodos para controlar las peticiones y respuestas que se
@@ -79,13 +82,24 @@ public class AuditoriasController extends HttpServlet {
         }
 
         List<String> permisosPagina = PerfilesNegocio.permisosPorPagina(request, Paginas.AUDITORIAS);
-
+        
+        String personaSesion = "";
+        try {
+            personaSesion = String.valueOf(request.getSession().getAttribute("personaSesion"));
+        } catch (Exception e) {
+            System.err.print("Error obteniendo la persona en sesion");
+        }
+        
         switch (accion) {
+            case "detalle":
+                JSONObject audit = auditoriasNegocio.consultarAuditoria(id);
+                response.getWriter().write(audit.toString());
+                break;
             case "consultar":
                 cargarTabla(response, permisosPagina, id, idPersona, fecha_creacion, clasificacion, accionAud, descripcion, pagina);
                 break;
             case "eliminar":
-                String result = auditoriasNegocio.eliminarAuditoria(id);
+                String result = auditoriasNegocio.eliminarAuditoria(id, personaSesion);
                 if (result != null && !result.isEmpty()) {
                     mensajeError = result;
                     enviarDatos(request, null, null, null, null, null, null);
@@ -94,6 +108,12 @@ public class AuditoriasController extends HttpServlet {
                     enviarDatos(request, null, null, null, null, null, null);
                 }
                 break;
+            case "consultarPersonas":
+                String strNombrePerson = request.getParameter("nombrePerson");
+                PersonasNegocio personasNegocio = new PersonasNegocio();
+                JSONArray arrayPersonas = personasNegocio.completarPersonas(strNombrePerson);
+                response.getWriter().write(arrayPersonas.toString());
+                break;
             default:
                 enviarDatos(request, null, null, null, null, null, null);
                 break;
@@ -101,8 +121,7 @@ public class AuditoriasController extends HttpServlet {
         request.setAttribute("mensajeAlerta", mensajeAlerta);
         request.setAttribute("mensajeExito", mensajeExito);
         request.setAttribute("mensajeError", mensajeError);
-
-        if (!accion.equals("consultar")) {
+        if (!accion.equals("consultar") && !accion.equals("detalle")){
             if (permisosPagina != null && !permisosPagina.isEmpty()) {
                 if (permisosPagina.contains(Permisos.CONSULTAR.getNombre())) {
                     request.setAttribute("opcionConsultar", "T");
@@ -165,6 +184,7 @@ public class AuditoriasController extends HttpServlet {
             } catch (ParseException e) {
             }
         }
+        SimpleDateFormat sdf2 = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
         List<AuditoriasBean> listaAuditorias = auditoriasNegocio.consultarAuditorias(id, clasificacion, accionAud, descripcion, fecha_creacion, id_persona, limite);
         PrintWriter out = response.getWriter();
         out.println("<table class=\"table table-striped table-hover table-condensed bordo-tablas\">");
@@ -173,7 +193,6 @@ public class AuditoriasController extends HttpServlet {
         out.println("<th>Persona</th>");
         out.println("<th>Clasificación</th>");
         out.println("<th>Acción</th>");
-        out.println("<th>Descripción</th>");
         out.println("<th>Fecha creación</th>");
         out.println("<th>Acciones</th>");
         out.println("</tr>");
@@ -185,9 +204,9 @@ public class AuditoriasController extends HttpServlet {
                 out.println("<td>" + auditoria.getNombrePersona() + "</td>");
                 out.println("<td>" + auditoria.getClasificacion() + "</td>");
                 out.println("<td>" + auditoria.getAccion() + "</td>");
-                out.println("<td>" + auditoria.getDescripcion() + "</td>");
-                out.println("<td>" + auditoria.getFechaCreacion() + "</td>");
+                out.println("<td>" + sdf2.format(auditoria.getFechaCreacion()) + "</td>");
                 out.println("<td>");
+                out.println("<button class=\"btn btn-default\" type=\"button\" onclick=\"consultarAuditoria(" + auditoria.getId() + ")\">Detalle</button>");
                 if (permisos != null && !permisos.isEmpty() && permisos.contains(Permisos.ELIMINAR.getNombre())) {
                     out.println("<button class=\"btn btn-default\" type=\"button\" data-toggle=\"modal\" data-target=\"#confirmationMessage\" onclick=\"jQuery('#id').val('" + auditoria.getId() + "');\">Eliminar</button>");
                 }

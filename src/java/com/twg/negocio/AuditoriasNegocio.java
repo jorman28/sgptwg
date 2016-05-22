@@ -1,6 +1,8 @@
 package com.twg.negocio;
 
+import com.twg.persistencia.beans.AccionesAuditadas;
 import com.twg.persistencia.beans.AuditoriasBean;
+import com.twg.persistencia.beans.ClasificacionAuditorias;
 import com.twg.persistencia.daos.AuditoriasDao;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -37,11 +39,11 @@ public class AuditoriasNegocio {
             AuditoriasBean auditoria = listaAuditorias.get(0);
             if (auditoria != null) {
                 auditoriaObject.put("id", auditoria.getId());
-                auditoriaObject.put("idPersona", auditoria.getIdPersona());
+                auditoriaObject.put("id_persona", auditoria.getIdPersona());
                 auditoriaObject.put("nombrePersona", auditoria.getNombrePersona());
-                auditoriaObject.put("fecha", sdf.format(auditoria.getFechaCreacion()));
+                auditoriaObject.put("fecha_creacion", sdf.format(auditoria.getFechaCreacion()));
                 auditoriaObject.put("clasificacion", auditoria.getClasificacion());
-                auditoriaObject.put("accion", auditoria.getAccion());
+                auditoriaObject.put("accionAud", auditoria.getAccion());
                 auditoriaObject.put("descripcion", auditoria.getDescripcion());
             }
         }
@@ -102,8 +104,13 @@ public class AuditoriasNegocio {
      * @return Una cadena de texto con el error. En caso de ser vacío indica que
      * no se presentaron errores en el proceso
      */
-    public String eliminarAuditoria(Integer idAuditoria) {
+    public String eliminarAuditoria(Integer idAuditoria, String personaSesionStr) {
         String errorEliminacion = "";
+        Integer personaSesion = null;
+        try {
+            personaSesion = Integer.parseInt(personaSesionStr);
+        } catch (Exception e) {
+        }
         try {
             if (auditoriasDao.eliminarAuditoria(idAuditoria) <= 0) {
                 errorEliminacion = "La auditoría no pudo ser eliminada";

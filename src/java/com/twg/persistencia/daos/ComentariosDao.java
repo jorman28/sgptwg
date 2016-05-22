@@ -19,14 +19,16 @@ public class ComentariosDao {
 
     private final ComentariosSql sql = new ComentariosSql();
 
-    public List<ComentariosBean> consultarComentarios(String tipoDestino, Integer idDestino) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
+    public List<ComentariosBean> consultarComentarios(Integer id, String tipoDestino, Integer idDestino) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         List<ComentariosBean> listaComentarios = new ArrayList();
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;
-        ps = con.prepareStatement(sql.consultarComentarios());
-        ps.setString(1, tipoDestino);
-        ps.setInt(2, idDestino);
+        ps = con.prepareStatement(sql.consultarComentarios(id));
+        if(id==null){
+            ps.setString(1, tipoDestino);
+            ps.setInt(2, idDestino);
+        }
         ResultSet rs;
         rs = ps.executeQuery();
         while (rs.next()) {

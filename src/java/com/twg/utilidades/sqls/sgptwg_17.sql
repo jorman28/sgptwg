@@ -1,3 +1,5 @@
+ALTER TABLE `auditorias` CHANGE `fecha_creacion` `fecha_creacion` DATETIME NOT NULL;
+
 UPDATE paginas SET url = '/InicioController' WHERE nombre = 'Inicio';
 
 DELETE pxp FROM

@@ -1,5 +1,7 @@
 package com.twg.negocio;
 
+import com.twg.persistencia.beans.AccionesAuditadas;
+import com.twg.persistencia.beans.ClasificacionAuditorias;
 import com.twg.persistencia.beans.Paginas;
 import com.twg.persistencia.beans.PerfilesBean;
 import com.twg.persistencia.beans.UsuariosBean;
@@ -20,6 +22,7 @@ public class PerfilesNegocio {
 
     private final PerfilesDao perfilesDao = new PerfilesDao();
     private final UsuariosDao usuariosDao = new UsuariosDao();
+    private final AuditoriasNegocio auditoria = new AuditoriasNegocio();
 
     public List<PerfilesBean> consultarPerfiles() {
         return consultarPerfiles(null, null, null);
@@ -77,7 +80,7 @@ public class PerfilesNegocio {
         return permisos;
     }
 
-    public Map<String, Object> guardarPerfil(Integer idPerfil, String nombrePerfil) {
+    public Map<String, Object> guardarPerfil(Integer idPerfil, String nombrePerfil, String personaSesionStr) {
         String mensajeExito = "";
         String mensajeError = "";
         if (nombrePerfil == null || nombrePerfil.isEmpty()) {
@@ -86,6 +89,12 @@ public class PerfilesNegocio {
             if (nombrePerfil.length() > 50) {
                 mensajeError += "El campo 'Perfil' no debe contener más de 50 caracteres, has dígitado " + nombrePerfil.length() + " caracteres <br />";
             }
+        }
+        
+        Integer personaSesion = null;
+        try {
+            personaSesion = Integer.parseInt(personaSesionStr);
+        } catch (Exception e) {
         }
 
         if (mensajeError.isEmpty()) {
@@ -98,9 +107,17 @@ public class PerfilesNegocio {
                     if (existente != null && !existente.isEmpty() && existente.get(0).getId().intValue() != idPerfil) {
                         mensajeError = "El nombre de perfil seleccionado ya está registrado en el sistema";
                     } else {
+                        PerfilesBean perfilAntes = perfilesDao.consultarPerfil(idPerfil);
                         int actualizacion = perfilesDao.actualizarPerfil(perfil);
                         if (actualizacion > 0) {
                             mensajeExito = "El perfil ha sido guardado con éxito";
+                            //AUDITORIA
+                            try {
+                                String descripcioAudit = "Se modificó un perfil. Antes ("+perfilAntes.getNombre()+") Después ("+perfil.getNombre()+")";
+                                String guardarAuditoria = auditoria.guardarAuditoria(personaSesion, ClasificacionAuditorias.PERMISO.getNombre(), AccionesAuditadas.EDICION.getNombre(), descripcioAudit);
+                            } catch (Exception e) {
+                                Logger.getLogger(PerfilesNegocio.class.getName()).log(Level.SEVERE, null, e);
+                            }
                         } else {
                             mensajeError = "El perfil no pudo ser guardado";
                         }
@@ -113,6 +130,13 @@ public class PerfilesNegocio {
                         int insercion = perfilesDao.insertarPerfil(perfil);
                         if (insercion > 0) {
                             mensajeExito = "El perfil ha sido guardado con éxito";
+                            //AUDITORIA
+                            try {
+                                String descripcioAudit = "Se guardó un perfil nuevo llamado: "+perfil.getNombre();
+                                String guardarAuditoria = auditoria.guardarAuditoria(personaSesion, ClasificacionAuditorias.PERMISO.getNombre(), AccionesAuditadas.CREACION.getNombre(), descripcioAudit);
+                            } catch (Exception e) {
+                                Logger.getLogger(PerfilesNegocio.class.getName()).log(Level.SEVERE, null, e);
+                            }
                         } else {
                             mensajeError = "El perfil no pudo ser guardado";
                         }
@@ -133,7 +157,7 @@ public class PerfilesNegocio {
         return result;
     }
 
-    public Map<String, Object> guardarPermisos(Integer idPerfil, String[] permisos) {
+    public Map<String, Object> guardarPermisos(Integer idPerfil, String[] permisos, String personaSesionStr) {
         String mensajeExito = "";
         String mensajeError = "";
 
@@ -146,12 +170,26 @@ public class PerfilesNegocio {
                 }
             }
         }
+        
+        Integer personaSesion = null;
+        try {
+            personaSesion = Integer.parseInt(personaSesionStr);
+        } catch (Exception e) {
+        }
 
         if (!listaPermisos.isEmpty()) {
             try {
                 int insercion = perfilesDao.insertarPermisos(idPerfil, listaPermisos);
                 if (insercion > 0) {
                     mensajeExito = "Los permisos del perfil han sido guardados con éxito";
+                    //AUDITORIA
+                    try {
+                        PerfilesBean perfil = perfilesDao.consultarPerfil(idPerfil);
+                        String descripcioAudit = "Se guardaron los permisos para el pefil "+perfil.getNombre();
+                        String guardarAuditoria = auditoria.guardarAuditoria(personaSesion, ClasificacionAuditorias.PERMISO.getNombre(), AccionesAuditadas.CREACION.getNombre(), descripcioAudit);
+                    } catch (Exception e) {
+                        Logger.getLogger(PerfilesNegocio.class.getName()).log(Level.SEVERE, null, e);
+                    }
                 } else {
                     mensajeError = "Los permisos del perfil no pudieron ser guardados";
                 }
@@ -173,18 +211,33 @@ public class PerfilesNegocio {
         return result;
     }
 
-    public Map<String, Object> eliminarPerfil(Integer idPerfil) {
+    public Map<String, Object> eliminarPerfil(Integer idPerfil, String personaSesionStr) {
         String mensajeExito = "";
         String mensajeError = "";
+        
+        Integer personaSesion = null;
+        try {
+            personaSesion = Integer.parseInt(personaSesionStr);
+        } catch (Exception e) {
+        }
+        
         if (idPerfil != null) {
             try {
                 List<UsuariosBean> listaUsuarios = usuariosDao.consultarUsuarios(null, null, idPerfil, null, null, null, null);
                 if (listaUsuarios != null && !listaUsuarios.isEmpty()) {
                     mensajeError = "No se puede eliminar el perfil porque está asociado a usuarios del sistema";
                 } else {
+                    PerfilesBean perfilEliminar = perfilesDao.consultarPerfil(idPerfil);
                     int eliminacion = perfilesDao.eliminarPerfil(idPerfil);
                     if (eliminacion > 0) {
                         mensajeExito = "El perfil fue eliminado con éxito";
+                        //AUDITORIA
+                        try {
+                            String descripcioAudit = "Se elimino el perfil "+perfilEliminar.getNombre();
+                            String guardarAuditoria = auditoria.guardarAuditoria(personaSesion, ClasificacionAuditorias.PERMISO.getNombre(), AccionesAuditadas.ELIMINACION.getNombre(), descripcioAudit);
+                        } catch (Exception e) {
+                            Logger.getLogger(PerfilesNegocio.class.getName()).log(Level.SEVERE, null, e);
+                        }
                     } else {
                         mensajeError = "El perfil no pudo ser eliminado";
                     }

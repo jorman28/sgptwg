@@ -18,6 +18,7 @@ public class UsuariosBean {
     private String documento;
     private String descripcionTipoDocumento;
     private String activo;
+    private String fechaEliminacion;
     
     /**
      * Constructor de la clase
@@ -100,4 +101,13 @@ public class UsuariosBean {
     public void setActivo(String activo) {
         this.activo = activo;
     }
+
+    public String getFechaEliminacion() {
+        return fechaEliminacion;
+    }
+
+    public void setFechaEliminacion(String fechaEliminacion) {
+        this.fechaEliminacion = fechaEliminacion;
+    }
+    
 }

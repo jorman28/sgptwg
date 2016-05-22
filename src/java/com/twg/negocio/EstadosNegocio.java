@@ -1,6 +1,8 @@
 package com.twg.negocio;
 
+import com.twg.persistencia.beans.AccionesAuditadas;
 import com.twg.persistencia.beans.ActividadesBean;
+import com.twg.persistencia.beans.ClasificacionAuditorias;
 import com.twg.persistencia.beans.EstadosBean;
 import com.twg.persistencia.daos.ActividadesDao;
 import com.twg.persistencia.daos.EstadosDao;
@@ -18,6 +20,7 @@ import org.json.simple.JSONObject;
 public class EstadosNegocio {
 
     private final EstadosDao estadosDao = new EstadosDao();
+    private final AuditoriasNegocio auditoria = new AuditoriasNegocio();
 
     public JSONObject consultarEstado(Integer id) {
         JSONObject jsonEstado = new JSONObject();
@@ -119,31 +122,95 @@ public class EstadosNegocio {
     }
 
     public Map<String, Object> crearEstado(Integer id, String tipoEstado, String nombre, Integer estadoPrev,
-            Integer estadoSig, String eFinal) {
-        EstadosBean estadoBean = new EstadosBean();
-        estadoBean.setTipoEstado(tipoEstado);
-        estadoBean.setNombre(nombre);
-        estadoBean.setId(id);
-        estadoBean.setEstadoPrevio(estadoPrev);
-        estadoBean.setEstadoSiguiente(estadoSig);
-        estadoBean.setEstadoFinal(eFinal);
-
+            Integer estadoSig, String eFinal, String personaSesionStr) {
+        EstadosBean estadoBeanNuevo = new EstadosBean();
+        estadoBeanNuevo.setTipoEstado(tipoEstado);
+        estadoBeanNuevo.setNombre(nombre);
+        estadoBeanNuevo.setId(id);
+        estadoBeanNuevo.setEstadoPrevio(estadoPrev);
+        estadoBeanNuevo.setEstadoSiguiente(estadoSig);
+        estadoBeanNuevo.setEstadoFinal(eFinal);
+        
+        String estadoPrevioNuevo = "Ninguno";
+        String estadoSiguienteNuevo = "Ninguno";
+        try {
+            if(estadoPrev!=null && estadoPrev!=0){
+                List<EstadosBean> estadoPrevio = estadosDao.consultarEstados(estadoPrev);
+                estadoPrevioNuevo = estadoPrevio.get(0).getNombre();
+            }
+            if(estadoSig!=null && estadoSig!=0){
+                List<EstadosBean> estadoSiguiente = estadosDao.consultarEstados(estadoSig);
+                estadoSiguienteNuevo = estadoSiguiente.get(0).getNombre();
+            }
+        } catch (Exception e) {
+        }
+        
+        Integer personaSesion = null;
+        try {
+            personaSesion = Integer.parseInt(personaSesionStr);
+        } catch (Exception e) {
+        }
+        
         String mensajeExito = "";
-        String mensajeError = validarDatos(estadoBean);
+        String mensajeError = validarDatos(estadoBeanNuevo);
         if (mensajeError.isEmpty()) {
             try {
                 if (id != null) {
-                    int actualizacion = estadosDao.actualizarEstado(estadoBean);
+                    List<EstadosBean> estadoBeanAntes = estadosDao.consultarEstados(id);
+                    String estadoPrevioAntes = "Ninguno";
+                    String estadoSiguienteAntes = "Ninguno";
+                    try {
+                        if(estadoPrev!=null && estadoPrev!=0){
+                            List<EstadosBean> estadoPrevio = estadosDao.consultarEstados(estadoBeanAntes.get(0).getEstadoPrevio());
+                            estadoPrevioAntes = estadoPrevio.get(0).getNombre();
+                        }
+                        if(estadoSig!=null && estadoSig!=0){
+                            List<EstadosBean> estadoSiguiente = estadosDao.consultarEstados(estadoBeanAntes.get(0).getEstadoSiguiente());
+                            estadoSiguienteAntes = estadoSiguiente.get(0).getNombre();
+                        }
+                    } catch (Exception e) {
+                    }
+                    int actualizacion = estadosDao.actualizarEstado(estadoBeanNuevo);
                     if (actualizacion > 0) {
-                        mensajeExito = "El estado ha sido modificado con éxito";
+                        mensajeExito = "El estado ha sido modificado con éxito.";
+                        //AUDITORIA
+                        try {
+                            String descripcioAudit = "Se modificó un estado. Antes ("+
+                                    " Tipo: "+estadoBeanAntes.get(0).getTipoEstado()+
+                                    " Nombre: "+estadoBeanAntes.get(0).getNombre()+
+                                    " Previo: "+estadoPrevioAntes+
+                                    " Siguiente: "+estadoSiguienteAntes+
+                                    " Final: "+(estadoBeanAntes.get(0).getEstadoFinal().equals("T")?"Sí":"No")+
+                                    ") Después (Tipo: "+estadoBeanNuevo.getTipoEstado()+
+                                    " Nombre: "+estadoBeanNuevo.getNombre()+
+                                    " Previo: "+estadoPrevioNuevo+
+                                    " Siguiente: "+estadoSiguienteNuevo+
+                                    " Final: "+(estadoBeanNuevo.getEstadoFinal().equals("T")?"Sí":"No")+")";
+                            String guardarAuditoria = auditoria.guardarAuditoria(personaSesion, ClasificacionAuditorias.ESTADO.getNombre(), AccionesAuditadas.EDICION.getNombre(), descripcioAudit);
+                        } catch (Exception e) {
+                            Logger.getLogger(EstadosNegocio.class.getName()).log(Level.SEVERE, null, e);
+                        }
                     } else {
                         mensajeError = "El estado no pudo ser modificado";
                     }
                 } else {
+                    
                     if (id == null) {
-                        int actualizacion = estadosDao.insertarEstado(estadoBean);
+                        int actualizacion = estadosDao.insertarEstado(estadoBeanNuevo);
                         if (actualizacion > 0) {
                             mensajeExito = "El estado ha sido guardado con éxito";
+                            //AUDITORIA
+                            try {
+                                String descripcioAudit = "Se insertó un registro en Estados ("+
+                                        " Tipo: "+estadoBeanNuevo.getTipoEstado()+
+                                        " Nombre: "+estadoBeanNuevo.getNombre()+
+                                        " Previo: "+estadoPrevioNuevo+
+                                        " Siguiente: "+estadoSiguienteNuevo+
+                                        " Final: "+(estadoBeanNuevo.getEstadoFinal().equals("T")?"Sí":"No")+")";
+                                String guardarAuditoria = auditoria.guardarAuditoria(personaSesion, ClasificacionAuditorias.ESTADO.getNombre(), AccionesAuditadas.CREACION.getNombre(), descripcioAudit);
+                            } catch (Exception e) {
+                                Logger.getLogger(EstadosNegocio.class.getName()).log(Level.SEVERE, null, e);
+                            }
                         } else {
                             mensajeError = "El estado no pudo ser guardado";
                         }
@@ -153,10 +220,18 @@ public class EstadosNegocio {
                         if (existente != null && !existente.isEmpty()) {
                             mensajeError = "El estado esta siendo utilizado";
                         } else {
-                            estadoBean.setId(id);
-                            int insercion = estadosDao.insertarEstado(estadoBean);
+                            estadoBeanNuevo.setId(id);
+                            int insercion = estadosDao.insertarEstado(estadoBeanNuevo);
                             if (insercion > 0) {
                                 mensajeExito = "El estado ha sido guardado con éxito";
+                                //AUDITORIA
+                                try {
+                                    String descripcioAudit = "Se insertó un registro en Estados (Tipo: "+estadoBeanNuevo.getTipoEstado()+" Nombre: "+estadoBeanNuevo.getNombre()+" Previo: "+estadoPrevioNuevo
+                                        +" Siguiente: "+estadoSiguienteNuevo+" Final: "+(estadoBeanNuevo.getEstadoFinal().equals("T")?"Sí":"No")+")";
+                                    String guardarAuditoria = auditoria.guardarAuditoria(personaSesion, ClasificacionAuditorias.ESTADO.getNombre(), AccionesAuditadas.CREACION.getNombre(), descripcioAudit);
+                                } catch (Exception e) {
+                                    Logger.getLogger(EstadosNegocio.class.getName()).log(Level.SEVERE, null, e);
+                                }
                             } else {
                                 mensajeError = "El estado no pudo ser guardado";
                             }
@@ -178,9 +253,16 @@ public class EstadosNegocio {
         return result;
     }
 
-    public Map<String, Object> eliminarEstado(Integer id) {
+    public Map<String, Object> eliminarEstado(Integer id, String personaSesionStr) {
         String mensajeExito = "";
         String mensajeError = "";
+        
+        Integer personaSesion = null;
+        try {
+            personaSesion = Integer.parseInt(personaSesionStr);
+        } catch (Exception e) {
+        }
+        
         if (id != null) {
             try {
                 ActividadesDao act = new ActividadesDao();
@@ -190,9 +272,17 @@ public class EstadosNegocio {
                     mensajeError = "El estado no puede ser eliminado porque ya tiene actividades asociadas o está ligado a "
                             + "otro estado.";
                 } else {
+                    List<EstadosBean> est = estadosDao.consultarEstados(id);
                     int eliminacion = estadosDao.eliminarEstado(id);
                     if (eliminacion > 0) {
                         mensajeExito = "El estado fue eliminado con éxito";
+                        //AUDITORIA
+                        try {
+                            String descripcioAudit = "Se eliminó el estado llamado "+est.get(0).getNombre()+" de tipo "+est.get(0).getTipoEstado();
+                            String guardarAuditoria = auditoria.guardarAuditoria(personaSesion, ClasificacionAuditorias.ESTADO.getNombre(), AccionesAuditadas.ELIMINACION.getNombre(), descripcioAudit);
+                        } catch (Exception e) {
+                            Logger.getLogger(EstadosNegocio.class.getName()).log(Level.SEVERE, null, e);
+                        }
                     } else {
                         mensajeError = "El estado no pudo ser eliminado";
                     }
