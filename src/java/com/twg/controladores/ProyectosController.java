@@ -91,6 +91,13 @@ public class ProyectosController extends HttpServlet {
 
         List<String> permisosPagina = PerfilesNegocio.permisosPorPagina(request, Paginas.VERSIONES);
 
+        Integer personaSesion;
+        try {
+            personaSesion = (Integer) request.getSession(false).getAttribute("personaSesion");
+        } catch (Exception e) {
+            personaSesion = null;
+        }
+        
         switch (accion) {
             case "editarProyecto":
                 JSONObject proyecto = proyectosNegocio.consultarProyecto(idProyecto);
@@ -104,7 +111,7 @@ public class ProyectosController extends HttpServlet {
             case "guardarProyecto":
                 mensajeAlerta = proyectosNegocio.validarDatos(idProyecto, nombreProyecto, fechaInicioProyecto);
                 if (mensajeAlerta.isEmpty()) {
-                    mensajeError = proyectosNegocio.guardarProyecto(idProyectoStr, nombreProyecto, fechaInicioProyecto, idPersonas);
+                    mensajeError = proyectosNegocio.guardarProyecto(idProyectoStr, nombreProyecto, fechaInicioProyecto, idPersonas, personaSesion);
                     if (mensajeError.isEmpty()) {
                         mensajeExito = "El proyecto ha sido guardado con éxito";
                         break;
@@ -118,7 +125,7 @@ public class ProyectosController extends HttpServlet {
             case "guardarVersion":
                 mensajeAlerta = versionesNegocio.validarDatos(idVersion, nombreVersion, fechaInicioVersion, fechaFinVersion, alcance, idProyectoVersion, estado, costo);
                 if (mensajeAlerta.isEmpty()) {
-                    mensajeError = versionesNegocio.guardarVersion(idVersionStr, nombreVersion, fechaInicioVersion, fechaFinVersion, alcance, idProyectoVersion, estado, costo);
+                    mensajeError = versionesNegocio.guardarVersion(idVersionStr, nombreVersion, fechaInicioVersion, fechaFinVersion, alcance, idProyectoVersion, estado, costo, personaSesion);
                     if (mensajeError.isEmpty()) {
                         mensajeExito = "La versión ha sido guardada con éxito";
                         break;
@@ -141,13 +148,13 @@ public class ProyectosController extends HttpServlet {
                 if (tipoEliminacion != null && !tipoEliminacion.isEmpty()) {
                     switch (tipoEliminacion) {
                         case "VERSION":
-                            mensajeError = versionesNegocio.eliminarVersion(idVersion, null);
+                            mensajeError = versionesNegocio.eliminarVersion(idVersion, null, personaSesion);
                             if (mensajeError.isEmpty()) {
                                 mensajeExito = "La versión ha sido eliminada con éxito";
                             }
                             break;
                         default:
-                            mensajeError = proyectosNegocio.eliminarProyecto(idProyecto);
+                            mensajeError = proyectosNegocio.eliminarProyecto(idProyecto, personaSesion);
                             if (mensajeError.isEmpty()) {
                                 mensajeExito = "El proyecto ha sido eliminado con éxito";
                             }
@@ -159,16 +166,10 @@ public class ProyectosController extends HttpServlet {
                 break;
             case "guardarComentario":
                 String comentario = request.getParameter("comentario");
-                Integer persona;
-                try {
-                    persona = (Integer) request.getSession(false).getAttribute("personaSesion");
-                } catch (Exception e) {
-                    persona = null;
-                }
                 JSONObject comentarioGuardado = new JSONObject();
                 mensajeAlerta = comentariosNegocio.validarDatos(comentario);
                 if (mensajeAlerta.isEmpty()) {
-                    mensajeError = comentariosNegocio.guardarComentario(null, persona, comentario, comentariosNegocio.TIPO_VERSION, idVersion);
+                    mensajeError = comentariosNegocio.guardarComentario(null, personaSesion, comentario, comentariosNegocio.TIPO_VERSION, idVersion);
                     if (mensajeError.isEmpty()) {
                         comentarioGuardado.put("comentarios", comentariosNegocio.listaComentarios(comentariosNegocio.TIPO_VERSION, idVersion));
                     } else {
@@ -182,7 +183,7 @@ public class ProyectosController extends HttpServlet {
             case "eliminarComentario":
                 Integer idComentario = Integer.valueOf(request.getParameter("idComentario"));
                 JSONObject comentarioEliminado = new JSONObject();
-                mensajeError = comentariosNegocio.eliminarComentario(idComentario);
+                mensajeError = comentariosNegocio.eliminarComentario(idComentario, personaSesion);
                 if (mensajeError.isEmpty()) {
                     comentarioEliminado.put("comentarios", comentariosNegocio.listaComentarios(comentariosNegocio.TIPO_VERSION, idVersion));
                 } else {

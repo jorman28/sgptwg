@@ -1,5 +1,7 @@
 package com.twg.negocio;
 
+import com.twg.persistencia.beans.AccionesAuditadas;
+import com.twg.persistencia.beans.ClasificacionAuditorias;
 import com.twg.persistencia.beans.PersonasBean;
 import com.twg.persistencia.beans.UsuariosBean;
 import com.twg.persistencia.daos.PersonasDao;
@@ -22,11 +24,12 @@ public class PersonasNegocio {
 
     private final PersonasDao personasDao = new PersonasDao();
     private final UsuariosDao usuariosDao = new UsuariosDao();
+    private final AuditoriasNegocio auditoria = new AuditoriasNegocio();
 
     public List<PersonasBean> consultarPersonas(String documento, String tipoDocumento, String nombre, String apellidos, String correo, String usuario, String perfil, String cargo, String nombreCompleto) {
         List<PersonasBean> listaPersonas = new ArrayList<>();
         try {
-            listaPersonas = personasDao.consultarPersonas(null, documento, tipoDocumento, nombre, apellidos, correo, usuario, perfil, cargo, nombreCompleto);
+            listaPersonas = personasDao.consultarPersonas(null, documento, tipoDocumento, nombre, apellidos, correo, usuario, perfil, cargo, nombreCompleto, false);
         } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
             Logger.getLogger(PersonasNegocio.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -38,9 +41,9 @@ public class PersonasNegocio {
         List<PersonasBean> listaPersonas = null;
         try {
             if (idPersona != null) {
-                listaPersonas = personasDao.consultarPersonas(idPersona, null, null, null, null, null, null, null, null, null);
+                listaPersonas = personasDao.consultarPersonas(idPersona, null, null, null, null, null, null, null, null, null, false);
             } else if (documento != null && !documento.isEmpty() && tipoDocumento != null && !tipoDocumento.isEmpty()) {
-                listaPersonas = personasDao.consultarPersonas(null, documento, tipoDocumento, null, null, null, null, null, null, null);
+                listaPersonas = personasDao.consultarPersonas(null, documento, tipoDocumento, null, null, null, null, null, null, null, false);
             }
         } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
             Logger.getLogger(PersonasNegocio.class.getName()).log(Level.SEVERE, null, ex);
@@ -52,8 +55,15 @@ public class PersonasNegocio {
     }
 
     public String guardarPersona(Integer idPersona, String documento, String tipoDocumento, String nombres, String apellidos,
-            String telefono, String celular, String correo, String direccion, String cargo, String nombreUsuario, String perfil, String clave, String clave2) {
+            String telefono, String celular, String correo, String direccion, String cargo, String nombreUsuario, String perfil, String clave, String clave2, String personaSesionStr) {
         String error = "";
+        
+        Integer personaSesion = null;
+        try {
+            personaSesion = Integer.parseInt(personaSesionStr);
+        } catch (Exception e) {
+        }
+        
         try {
             PersonasBean persona = new PersonasBean();
             persona.setId(idPersona);
@@ -68,14 +78,71 @@ public class PersonasNegocio {
             persona.setCargo(Integer.valueOf(cargo));
             int guardado = 0;
             if (idPersona != null) {
+                List<PersonasBean> personaAnterior = personasDao.consultarPersonas(idPersona.toString(), null, null, null, null, null, null, null, null, null, true);
                 guardado = personasDao.actualizarPersona(persona);
+                List<PersonasBean> personaNueva = personasDao.consultarPersonas(null, persona.getDocumento(), persona.getTipoDocumento(), null, null, null, null, null, null, null, true);
+                //AUDITORIA
+                try {
+                    String descripcioAudit = "Se actualizó la informaión de una persona. ANTES ("+
+                            " Documento: "+personaAnterior.get(0).getDocumento()+
+                            " Tipo documento: "+personaAnterior.get(0).getNombreTipoDocumento()+
+                            " Nombres: "+personaAnterior.get(0).getNombre()+
+                            " Apellidos: "+personaAnterior.get(0).getApellidos()+
+                            " Teléfono: "+(personaAnterior.get(0).getTelefono()!=null&&!personaAnterior.get(0).getTelefono().equals("")?personaAnterior.get(0).getTelefono():"Ninguno")+
+                            " Celular: "+(personaAnterior.get(0).getCelular()!=null&&!personaAnterior.get(0).getCelular().equals("")?personaAnterior.get(0).getCelular():"Ninguno")+
+                            " Correo: "+(personaAnterior.get(0).getCorreo()!=null&&!personaAnterior.get(0).getCorreo().equals("")?personaAnterior.get(0).getCorreo():"Ninguno")+
+                            " Dirección: "+(personaAnterior.get(0).getDireccion()!=null&&!personaAnterior.get(0).getDireccion().equals("")?personaAnterior.get(0).getDireccion():"Ninguno")+
+                            " Cargo: "+(personaAnterior.get(0).getNombreCargo()!=null&&!personaAnterior.get(0).getNombreCargo().equals("")?personaAnterior.get(0).getNombreCargo():"Ninguno")+
+                            " Usuario: "+(personaAnterior.get(0).getUsuario()!=null&&!personaAnterior.get(0).getUsuario().equals("")?personaAnterior.get(0).getUsuario():"Ninguno")+
+                            " Perfil: "+(personaAnterior.get(0).getNombrePerfil()!=null&&!personaAnterior.get(0).getNombrePerfil().equals("")?personaAnterior.get(0).getNombrePerfil():"Ninguno")+")"+
+                            " DESPUÉS ( Documento: "+personaNueva.get(0).getDocumento()+
+                            " Tipo documento: "+personaNueva.get(0).getNombreTipoDocumento()+
+                            " Nombre completo: "+personaNueva.get(0).getNombre()+
+                            " Teléfono: "+(personaNueva.get(0).getTelefono()!=null&&!personaNueva.get(0).getTelefono().equals("")?personaNueva.get(0).getTelefono():"Ninguno")+
+                            " Celular: "+(personaNueva.get(0).getCelular()!=null&&!personaNueva.get(0).getCelular().equals("")?personaNueva.get(0).getCelular():"Ninguno")+
+                            " Correo: "+(personaNueva.get(0).getCorreo()!=null&&!personaNueva.get(0).getCorreo().equals("")?personaNueva.get(0).getCorreo():"Ninguno")+
+                            " Dirección: "+(personaNueva.get(0).getDireccion()!=null&&!personaNueva.get(0).getDireccion().equals("")?personaNueva.get(0).getDireccion():"Ninguno")+
+                            " Cargo: "+(personaNueva.get(0).getNombreCargo()!=null&&!personaNueva.get(0).getNombreCargo().equals("")?personaNueva.get(0).getNombreCargo():"Ninguno")+
+                            " Usuario: "+(personaNueva.get(0).getUsuario()!=null&&!personaNueva.get(0).getUsuario().equals("")?personaNueva.get(0).getUsuario():"Ninguno")+
+                            " Perfil: "+(personaNueva.get(0).getNombrePerfil()!=null&&!personaNueva.get(0).getNombrePerfil().equals("")?personaNueva.get(0).getNombrePerfil():"Ninguno")+")";
+                    String guardarAuditoria = auditoria.guardarAuditoria(personaSesion, ClasificacionAuditorias.PERSONA.getNombre(), AccionesAuditadas.EDICION.getNombre(), descripcioAudit);
+                } catch (Exception e) {
+                    Logger.getLogger(PersonasNegocio.class.getName()).log(Level.SEVERE, null, e);
+                }
             } else {
+                try {
+                    Integer person = personasDao.consultarIdPersona(documento, tipoDocumento);
+                    if(person!=null){
+                        error = "Ya existe una persona con documento: "+documento+" y tipo de documento: "+tipoDocumento; 
+                        return error;
+                    }
+                } catch (Exception e) {
+                }
                 guardado = personasDao.insertarPersona(persona);
+                List<PersonasBean> personaCreada = personasDao.consultarPersonas(null, persona.getDocumento(), persona.getTipoDocumento(), null, null, null, null, null, null, null, true);
+                //AUDITORIA
+                try {
+                    String descripcioAudit = "Se creó una persona con la siguiente información ("+
+                            " Documento: "+personaCreada.get(0).getDocumento()+
+                            " Tipo documento: "+personaCreada.get(0).getNombreTipoDocumento()+
+                            " Nombre completo: "+personaCreada.get(0).getNombre()+
+                            " Teléfono: "+(personaCreada.get(0).getTelefono()!=null&&!personaCreada.get(0).getTelefono().equals("")?personaCreada.get(0).getTelefono():"Ninguno")+
+                            " Celular: "+(personaCreada.get(0).getCelular()!=null&&!personaCreada.get(0).getCelular().equals("")?personaCreada.get(0).getCelular():"Ninguno")+
+                            " Correo: "+(personaCreada.get(0).getCorreo()!=null&&!personaCreada.get(0).getCorreo().equals("")?personaCreada.get(0).getCorreo():"Ninguno")+
+                            " Dirección: "+(personaCreada.get(0).getDireccion()!=null&&!personaCreada.get(0).getDireccion().equals("")?personaCreada.get(0).getDireccion():"Ninguno")+
+                            " Cargo: "+(personaCreada.get(0).getNombreCargo()!=null&&!personaCreada.get(0).getNombreCargo().equals("")?personaCreada.get(0).getNombreCargo():"Ninguno")+
+                            " Usuario: "+(personaCreada.get(0).getUsuario()!=null&&!personaCreada.get(0).getUsuario().equals("")?personaCreada.get(0).getUsuario():"Ninguno")+
+                            " Perfil: "+(personaCreada.get(0).getNombrePerfil()!=null&&!personaCreada.get(0).getNombrePerfil().equals("")?personaCreada.get(0).getNombrePerfil():"Ninguno")+")";
+                    String guardarAuditoria = auditoria.guardarAuditoria(personaSesion, ClasificacionAuditorias.PERSONA.getNombre(), AccionesAuditadas.CREACION.getNombre(), descripcioAudit);
+                } catch (Exception e) {
+                    Logger.getLogger(PersonasNegocio.class.getName()).log(Level.SEVERE, null, e);
+                }
             }
             if (guardado == 0) {
                 error = "La persona no pudo ser guardada";
                 return error;
             }
+            
             if (nombreUsuario != null && !nombreUsuario.isEmpty()) {
                 PersonasBean personaConsultada = consultarPersona(null, documento, tipoDocumento);
                 if (personaConsultada != null) {
@@ -126,14 +193,6 @@ public class PersonasNegocio {
             String correo, String direccion, String cargo, String usuario, String perfil, String clave, String clave2) {
         String error = "";
 
-        try {
-            Integer persona = personasDao.consultarIdPersona(documento, tipoDocumento);
-            if(persona!=null){
-                error += "Ya existe una persona con documento: "+documento+" y tipo de documento: "+tipoDocumento; 
-            }
-        } catch (Exception e) {
-        }
-        
         //Obligatorios
         if (tipoDocumento == null || tipoDocumento.trim().isEmpty() || tipoDocumento.trim().equals("0")) {
             error += "El campo 'Tipo de documento' es obligatorio <br />";
@@ -239,13 +298,29 @@ public class PersonasNegocio {
         return error;
     }
 
-    public String eliminarPersona(Integer idPersona) {
+    public String eliminarPersona(Integer idPersona, String personaSesionStr) {
         String error = "";
+        
+        Integer personaSesion = null;
         try {
+            personaSesion = Integer.parseInt(personaSesionStr);
+        } catch (Exception e) {
+        }
+        
+        try {
+            List<PersonasBean> personaEliminar = personasDao.consultarPersonas(idPersona.toString(), null, null, null, null, null, null, null, null, null, true);
             usuariosDao.eliminarUsuario(idPersona);
             int eliminacion = personasDao.eliminarPersona(idPersona);
             if (eliminacion == 0) {
                 error = "La persona no pudo ser eliminada";
+            }else{
+                //AUDITORIA
+                try {
+                    String descripcioAudit = "Se eliminó la persona con documento "+personaEliminar.get(0).getDocumento()+" y tipo de documento "+personaEliminar.get(0).getTipoDocumento();
+                    String guardarAuditoria = auditoria.guardarAuditoria(personaSesion, ClasificacionAuditorias.PERSONA.getNombre(), AccionesAuditadas.ELIMINACION.getNombre(), descripcioAudit);
+                } catch (Exception e) {
+                    Logger.getLogger(PersonasNegocio.class.getName()).log(Level.SEVERE, null, e);
+                }
             }
         } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
             Logger.getLogger(PersonasNegocio.class.getName()).log(Level.SEVERE, null, ex);

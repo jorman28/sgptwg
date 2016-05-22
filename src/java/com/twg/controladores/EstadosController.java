@@ -77,6 +77,13 @@ public class EstadosController extends HttpServlet {
 
         List<String> permisosPagina = PerfilesNegocio.permisosPorPagina(request, Paginas.ESTADOS);
 
+        String personaSesion = "";
+        try {
+            personaSesion = String.valueOf(request.getSession().getAttribute("personaSesion"));
+        } catch (Exception e) {
+            System.err.print("Error obteniendo la persona en sesion");
+        }
+        
         switch (accion) {
             case "consultar":
                 cargarTabla(response, permisosPagina, id, tipoEstado, nombre, estadoPrev, estadoSig, eFinal);
@@ -87,7 +94,7 @@ public class EstadosController extends HttpServlet {
                 
                 break;
             case "guardar":
-                Map<String, Object> result = estadosNegocio.crearEstado(id, tipoEstado, nombre, estadoPrev, estadoSig, eFinal);
+                Map<String, Object> result = estadosNegocio.crearEstado(id, tipoEstado, nombre, estadoPrev, estadoSig, eFinal, personaSesion);
                 if (result.get("mensajeError") != null) {
                     mensajeError = (String) result.get("mensajeError");
                     enviarDatos(request, id, tipoEstado, nombre, estadoPrev, estadoSig, eFinal);
@@ -98,7 +105,7 @@ public class EstadosController extends HttpServlet {
                 }
                 break;
             case "eliminar":
-                result = estadosNegocio.eliminarEstado(id);
+                result = estadosNegocio.eliminarEstado(id, personaSesion);
                 if (result.get("mensajeError") != null) {
                     mensajeError = (String) result.get("mensajeError");
                     enviarDatos(request, null, null, null, null, null, null);

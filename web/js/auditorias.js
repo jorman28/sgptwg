@@ -11,6 +11,29 @@ $(document).ready(function () {
     llenarTablaAuditorias();
 });
 
+function consultarAuditoria(id){
+    $.ajax({
+        type    :"POST",
+        url     :"AuditoriasController",
+        dataType:"json",
+        data    :{id:id, accion:"detalle"},
+        success: function(data) {
+            console.log(data);
+            if(data !== undefined){
+                $("#id").val(data.id !== undefined ? data.id : "");
+                $("#id_persona").val(data.nombrePersona !== undefined ? data.nombrePersona : "");
+                $("#fecha_creacion").val(data.fecha_creacion !== undefined ? data.fecha_creacion : "");
+                $("#clasificacion").val(data.clasificacion !== undefined ? data.clasificacion : "");
+                $("#accionAud").val(data.accionAud !== undefined ? data.accionAud : "");
+                $("#descripcion").val(data.descripcion !== undefined ? data.descripcion : "");
+            }
+        },
+        error: function(data){
+            console.log(data);
+        }
+    });
+}
+
 var personas = {};
 jQuery(function () {
     $("#id_persona")

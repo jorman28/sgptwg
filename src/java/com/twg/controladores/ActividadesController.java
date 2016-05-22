@@ -310,7 +310,13 @@ public class ActividadesController extends HttpServlet {
                 case "eliminarComentario":
                     Integer idComentario = Integer.valueOf(request.getParameter("idComentario"));
                     JSONObject comentarioEliminado = new JSONObject();
-                    mensajeError = comentariosNegocio.eliminarComentario(idComentario);
+                    Integer personaSesion;
+                    try {
+                        personaSesion = (Integer) request.getSession(false).getAttribute("personaSesion");
+                    } catch (Exception e) {
+                        personaSesion = null;
+                    }
+                    mensajeError = comentariosNegocio.eliminarComentario(idComentario,personaSesion);
                     if (mensajeError.isEmpty()) {
                         comentarioEliminado.put("comentarios", comentariosNegocio.listaComentarios(comentariosNegocio.TIPO_ACTIVIDAD, id));
                     } else {

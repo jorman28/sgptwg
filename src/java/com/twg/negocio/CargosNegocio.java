@@ -1,6 +1,8 @@
 package com.twg.negocio;
 
+import com.twg.persistencia.beans.AccionesAuditadas;
 import com.twg.persistencia.beans.CargosBean;
+import com.twg.persistencia.beans.ClasificacionAuditorias;
 import com.twg.persistencia.daos.CargosDao;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -16,6 +18,7 @@ import org.json.simple.JSONObject;
 public class CargosNegocio {
 
     private final CargosDao cargosDao = new CargosDao();
+    private final AuditoriasNegocio auditoria = new AuditoriasNegocio();
 
     public List<CargosBean> consultarCargos(String nombre, boolean nombreExacto) {
         List<CargosBean> listaCargos = new ArrayList<>();
@@ -41,17 +44,43 @@ public class CargosNegocio {
         return object;
     }
 
-    public String guardarCargo(String id, String nombre) {
+    public String guardarCargo(String id, String nombre, String personaSesionStr) {
         String error = "";
-        CargosBean cargo = new CargosBean();
-        cargo.setNombre(nombre);
+        CargosBean cargoNuevo = new CargosBean();
+        cargoNuevo.setNombre(nombre);
+        
+        Integer personaSesion = null;
+        try {
+            personaSesion = Integer.parseInt(personaSesionStr);
+        } catch (Exception e) {
+        }
+        
         try {
             int guardar = 0;
             if (id != null && !id.isEmpty()) {
-                cargo.setId(Integer.valueOf(id));
-                guardar = cargosDao.actualizarCargo(cargo);
+                cargoNuevo.setId(Integer.valueOf(id));
+                CargosBean cargoAnterior = cargosDao.consultarCargo(Integer.valueOf(id));
+                guardar = cargosDao.actualizarCargo(cargoNuevo);
+                if(guardar!=0){
+                    //AUDITORIA
+                    try {
+                        String descripcioAudit = "Se actualizo un cargo. Antes ("+cargoAnterior.getNombre()+") Después ("+cargoNuevo.getNombre()+")";
+                        String guardarAuditoria = auditoria.guardarAuditoria(personaSesion, ClasificacionAuditorias.CARGO.getNombre(), AccionesAuditadas.EDICION.getNombre(), descripcioAudit);
+                    } catch (Exception e) {
+                        Logger.getLogger(CargosNegocio.class.getName()).log(Level.SEVERE, null, e);
+                    }
+                }
             } else {
-                guardar = cargosDao.insertarCargo(cargo);
+                guardar = cargosDao.insertarCargo(cargoNuevo);
+                if(guardar!=0){
+                    //AUDITORIA
+                    try {
+                        String descripcioAudit = "Se creo un nuevo cargo con nombre "+cargoNuevo.getNombre();
+                        String guardarAuditoria = auditoria.guardarAuditoria(personaSesion, ClasificacionAuditorias.CARGO.getNombre(), AccionesAuditadas.CREACION.getNombre(), descripcioAudit);
+                    } catch (Exception e) {
+                        Logger.getLogger(CargosNegocio.class.getName()).log(Level.SEVERE, null, e);
+                    }
+                }
             }
             if (guardar == 0) {
                 error += "El cargo no pudo ser guardado \n";
@@ -86,12 +115,27 @@ public class CargosNegocio {
         return error;
     }
 
-    public String eliminarCargo(Integer id) {
+    public String eliminarCargo(Integer id, String personaSesionStr) {
         String error = "";
+        
+        Integer personaSesion = null;
         try {
+            personaSesion = Integer.parseInt(personaSesionStr);
+        } catch (Exception e) {
+        }
+        try {
+            CargosBean cargoEliminado = cargosDao.consultarCargo(Integer.valueOf(id));
             int eliminacion = cargosDao.eliminarCargo(id);
             if (eliminacion == 0) {
                 error += "El cargo no pudo ser eliminado \n";
+            }else{
+                //AUDITORIA
+                try {
+                    String descripcioAudit = "Se eliminó el cargo: "+cargoEliminado.getNombre();// completar
+                    String guardarAuditoria = auditoria.guardarAuditoria(personaSesion, ClasificacionAuditorias.CARGO.getNombre(), AccionesAuditadas.ELIMINACION.getNombre(), descripcioAudit);
+                } catch (Exception e) {
+                    Logger.getLogger(CargosNegocio.class.getName()).log(Level.SEVERE, null, e);
+                }
             }
         } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
             Logger.getLogger(CargosNegocio.class.getName()).log(Level.SEVERE, null, ex);

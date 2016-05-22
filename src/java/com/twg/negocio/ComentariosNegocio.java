@@ -1,5 +1,7 @@
 package com.twg.negocio;
 
+import com.twg.persistencia.beans.AccionesAuditadas;
+import com.twg.persistencia.beans.ClasificacionAuditorias;
 import com.twg.persistencia.beans.ComentariosBean;
 import com.twg.persistencia.daos.ComentariosDao;
 import java.sql.SQLException;
@@ -17,6 +19,7 @@ import java.util.logging.Logger;
 public class ComentariosNegocio {
 
     private final ComentariosDao comentariosDao = new ComentariosDao();
+    private final AuditoriasNegocio auditoria = new AuditoriasNegocio();
     private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
     public final String TIPO_ARCHIVO = "ARCHIVOS";
     public final String TIPO_VERSION = "VERSION";
@@ -35,8 +38,22 @@ public class ComentariosNegocio {
             if (id != null && !id.isEmpty()) {
                 comentario.setId(Integer.valueOf(id));
                 guardado = comentariosDao.actualizarComentario(comentario);
+                //AUDITORIA
+                try {
+                    String descripcioAudit = "Se actualizó un comentario.";
+                    String guardarAuditoria = auditoria.guardarAuditoria(idPersona, ClasificacionAuditorias.COMENTARIO.getNombre(), AccionesAuditadas.EDICION.getNombre(), descripcioAudit);
+                } catch (Exception e) {
+                    Logger.getLogger(ComentariosNegocio.class.getName()).log(Level.SEVERE, null, e);
+                }
             } else {
                 guardado = comentariosDao.crearComentario(comentario);
+                //AUDITORIA
+                try {
+                    String descripcioAudit = "Se creó un comentario.";
+                    String guardarAuditoria = auditoria.guardarAuditoria(idPersona, ClasificacionAuditorias.COMENTARIO.getNombre(), AccionesAuditadas.CREACION.getNombre(), descripcioAudit);
+                } catch (Exception e) {
+                    Logger.getLogger(ComentariosNegocio.class.getName()).log(Level.SEVERE, null, e);
+                }
             }
             if (guardado == 0) {
                 error += "El comentario no pudo ser guardado";
@@ -66,12 +83,20 @@ public class ComentariosNegocio {
         return listaComentarios;
     }
 
-    public String eliminarComentario(Integer idComentario) {
+    public String eliminarComentario(Integer idComentario, Integer personaSesion) {
         String error = "";
         try {
             int eliminacion = comentariosDao.eliminarComentario(idComentario);
             if (eliminacion == 0) {
                 error = "El comentario no pudo ser eliminado";
+            }else{
+                //AUDITORIA
+                try {
+                    String descripcioAudit = "Se eliminó un comentario.";
+                    String guardarAuditoria = auditoria.guardarAuditoria(personaSesion, ClasificacionAuditorias.COMENTARIO.getNombre(), AccionesAuditadas.ELIMINACION.getNombre(), descripcioAudit);
+                } catch (Exception e) {
+                    Logger.getLogger(ComentariosNegocio.class.getName()).log(Level.SEVERE, null, e);
+                }
             }
         } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
             Logger.getLogger(ProyectosNegocio.class.getName()).log(Level.SEVERE, null, ex);

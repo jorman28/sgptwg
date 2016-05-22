@@ -1,5 +1,7 @@
 package com.twg.negocio;
 
+import com.twg.persistencia.beans.AccionesAuditadas;
+import com.twg.persistencia.beans.ClasificacionAuditorias;
 import com.twg.persistencia.beans.PersonasBean;
 import com.twg.persistencia.beans.ProyectosBean;
 import com.twg.persistencia.daos.ProyectosDao;
@@ -23,9 +25,10 @@ public class ProyectosNegocio {
 
     private final ProyectosDao proyectosDao = new ProyectosDao();
     private final VersionesDao versionesDao = new VersionesDao();
+    private final AuditoriasNegocio auditoria = new AuditoriasNegocio();
     private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
-    public String guardarProyecto(String id, String nombre, String fechaInicio, String[] idPersonas) {
+    public String guardarProyecto(String id, String nombre, String fechaInicio, String[] idPersonas, Integer personaSesion) {
         String error = "";
         ProyectosBean proyecto = new ProyectosBean();
         proyecto.setNombre(nombre);
@@ -44,8 +47,22 @@ public class ProyectosNegocio {
             if (idProyecto != null) {
                 proyecto.setId(idProyecto);
                 guardado = proyectosDao.actualizarProyecto(proyecto);
+                //AUDITORIA
+                try {
+                    String descripcioAudit = "Se actualizó un proyecto.";
+                    String guardarAuditoria = auditoria.guardarAuditoria(personaSesion, ClasificacionAuditorias.PROYECTO.getNombre(), AccionesAuditadas.EDICION.getNombre(), descripcioAudit);
+                } catch (Exception e) {
+                    Logger.getLogger(ProyectosNegocio.class.getName()).log(Level.SEVERE, null, e);
+                }
             } else {
                 guardado = proyectosDao.crearProyecto(proyecto);
+                //AUDITORIA
+                try {
+                    String descripcioAudit = "Se creó un proyecto.";
+                    String guardarAuditoria = auditoria.guardarAuditoria(personaSesion, ClasificacionAuditorias.PROYECTO.getNombre(), AccionesAuditadas.CREACION.getNombre(), descripcioAudit);
+                } catch (Exception e) {
+                    Logger.getLogger(ProyectosNegocio.class.getName()).log(Level.SEVERE, null, e);
+                }
             }
             if (guardado == 0) {
                 error += "El proyecto no pudo ser guardado";
@@ -175,12 +192,20 @@ public class ProyectosNegocio {
         return proyBean;
     }
 
-    public String eliminarProyecto(Integer idProyecto) {
+    public String eliminarProyecto(Integer idProyecto, Integer personaSesion) {
         String error = "";
         try {
             int eliminacion = proyectosDao.eliminarProyecto(idProyecto);
             if (eliminacion == 0) {
                 error = "El proyecto no pudo ser eliminado";
+            }else{
+                //AUDITORIA
+                try {
+                    String descripcioAudit = "Se eliminó un proyecto.";
+                    String guardarAuditoria = auditoria.guardarAuditoria(personaSesion, ClasificacionAuditorias.PROYECTO.getNombre(), AccionesAuditadas.ELIMINACION.getNombre(), descripcioAudit);
+                } catch (Exception e) {
+                    Logger.getLogger(ProyectosNegocio.class.getName()).log(Level.SEVERE, null, e);
+                }
             }
             versionesDao.eliminarVersion(null, idProyecto);
         } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {

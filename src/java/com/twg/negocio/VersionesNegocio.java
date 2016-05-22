@@ -1,5 +1,7 @@
 package com.twg.negocio;
 
+import com.twg.persistencia.beans.AccionesAuditadas;
+import com.twg.persistencia.beans.ClasificacionAuditorias;
 import com.twg.persistencia.beans.EstadosBean;
 import com.twg.persistencia.beans.VersionesBean;
 import com.twg.persistencia.daos.EstadosDao;
@@ -20,9 +22,10 @@ import org.json.simple.JSONObject;
 public class VersionesNegocio {
 
     private final VersionesDao versionesDao = new VersionesDao();
+    private final AuditoriasNegocio auditoria = new AuditoriasNegocio();
     private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
-    public String guardarVersion(String id, String nombre, String fechaInicio, String fechaTerminacion, String alcance, String proyecto, String estado, String costo) {
+    public String guardarVersion(String id, String nombre, String fechaInicio, String fechaTerminacion, String alcance, String proyecto, String estado, String costo, Integer personaSesion) {
         String error = "";
         VersionesBean version = new VersionesBean();
         version.setNombre(nombre);
@@ -47,8 +50,22 @@ public class VersionesNegocio {
             if (id != null && !id.isEmpty()) {
                 version.setId(Integer.valueOf(id));
                 guardado = versionesDao.actualizarVersion(version);
+                //AUDITORIA
+                try {
+                    String descripcioAudit = "Se actualizó una versión.";
+                    String guardarAuditoria = auditoria.guardarAuditoria(personaSesion, ClasificacionAuditorias.VERSION.getNombre(), AccionesAuditadas.EDICION.getNombre(), descripcioAudit);
+                } catch (Exception e) {
+                    Logger.getLogger(VersionesNegocio.class.getName()).log(Level.SEVERE, null, e);
+                }
             } else {
                 guardado = versionesDao.crearVersion(version);
+                //AUDITORIA
+                try {
+                    String descripcioAudit = "Se creó una versión.";
+                    String guardarAuditoria = auditoria.guardarAuditoria(personaSesion, ClasificacionAuditorias.VERSION.getNombre(), AccionesAuditadas.CREACION.getNombre(), descripcioAudit);
+                } catch (Exception e) {
+                    Logger.getLogger(VersionesNegocio.class.getName()).log(Level.SEVERE, null, e);
+                }
             }
             if (guardado == 0) {
                 error += "La version no pudo ser guardada";
@@ -191,12 +208,20 @@ public class VersionesNegocio {
         return object;
     }
 
-    public String eliminarVersion(Integer idVersion, Integer idProyecto) {
+    public String eliminarVersion(Integer idVersion, Integer idProyecto, Integer personaSesion) {
         String error = "";
         try {
             int eliminacion = versionesDao.eliminarVersion(idVersion, idProyecto);
             if (eliminacion == 0) {
                 error = "La versión no pudo ser eliminada";
+            }else{
+                //AUDITORIA
+                try {
+                    String descripcioAudit = "Se eliminó una versión.";
+                    String guardarAuditoria = auditoria.guardarAuditoria(personaSesion, ClasificacionAuditorias.VERSION.getNombre(), AccionesAuditadas.ELIMINACION.getNombre(), descripcioAudit);
+                } catch (Exception e) {
+                    Logger.getLogger(VersionesNegocio.class.getName()).log(Level.SEVERE, null, e);
+                }
             }
         } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
             Logger.getLogger(ProyectosNegocio.class.getName()).log(Level.SEVERE, null, ex);

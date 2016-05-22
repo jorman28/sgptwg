@@ -57,6 +57,13 @@ public class CargosController extends HttpServlet {
 
         List<String> permisosPagina = PerfilesNegocio.permisosPorPagina(request, Paginas.CARGOS);
 
+        String personaSesion = "";
+        try {
+            personaSesion = String.valueOf(request.getSession().getAttribute("personaSesion"));
+        } catch (Exception e) {
+            System.err.print("Error obteniendo la persona en sesion");
+        }
+        
         switch (accion) {
             case "consultar":
                 cargarTabla(response, permisosPagina, descripcion);
@@ -68,7 +75,7 @@ public class CargosController extends HttpServlet {
             case "guardar":
                 mensajeAlerta = cargosNegocio.validarCargo(idCargoStr, descripcion);
                 if (mensajeAlerta.isEmpty()) {
-                    mensajeError = cargosNegocio.guardarCargo(idCargoStr, descripcion);
+                    mensajeError = cargosNegocio.guardarCargo(idCargoStr, descripcion, personaSesion);
                     if (mensajeError.isEmpty()) {
                         mensajeExito = "El cargo ha sido guardado con éxito";
                         break;
@@ -78,7 +85,10 @@ public class CargosController extends HttpServlet {
                 request.setAttribute("descripcion", descripcion);
                 break;
             case "eliminar":
-                mensajeError = cargosNegocio.eliminarCargo(idCargo);
+                mensajeError = cargosNegocio.eliminarCargo(idCargo, personaSesion);
+                if(mensajeError.equals("")){
+                    mensajeExito = "El cargo se eliminó correctamente.";
+                }
                 break;
             default:
                 break;

@@ -29,7 +29,7 @@ public class PersonasSql {
      * @param nombreCompleto
      * @return
      */
-    public String consultarPersonas(String idPersona, String documento, String tipoDocumento, String nombres, String apellidos, String correo, String usuario, String perfil, String cargo, String nombreCompleto) {
+    public String consultarPersonas(String idPersona, String documento, String tipoDocumento, String nombres, String apellidos, String correo, String usuario, String perfil, String cargo, String nombreCompleto, Boolean busquedaExacta) {
         String sql = "";
         sql += "SELECT  "
                 + "    p.id, "
@@ -62,8 +62,10 @@ public class PersonasSql {
         if (idPersona != null && !idPersona.isEmpty() && !idPersona.equals("0")) {
             sql += "and p.id = " + idPersona + " ";
         }
-        if (documento != null && !documento.isEmpty()) {
+        if (documento != null && !documento.isEmpty() && !busquedaExacta) {
             sql += "and p.documento like '%" + documento + "%' ";
+        }else if(documento != null && !documento.isEmpty() && busquedaExacta){
+            sql += "and p.documento = " + documento + " ";
         }
         if (tipoDocumento != null && !tipoDocumento.isEmpty() && !tipoDocumento.equals("0")) {
             sql += "and d.tipo = '" + tipoDocumento + "' ";
