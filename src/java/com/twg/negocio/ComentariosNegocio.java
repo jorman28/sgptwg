@@ -37,10 +37,15 @@ public class ComentariosNegocio {
             int guardado = 0;
             if (id != null && !id.isEmpty()) {
                 comentario.setId(Integer.valueOf(id));
+                List<ComentariosBean> comentarioAntes = comentariosDao.consultarComentarios(Integer.valueOf(id), null, null);
                 guardado = comentariosDao.actualizarComentario(comentario);
                 //AUDITORIA
                 try {
-                    String descripcioAudit = "Se actualizó un comentario.";
+                    String descripcioAudit = "Se actualizó un comentario. ANTES ("+
+                            " Comentario: "+comentarioAntes.get(0).getComentario()+
+                            ", Destino: "+comentarioAntes.get(0).getTipoDestino()+
+                            ") DESPUÉS ( Comentario: "+comentario.getComentario()+
+                            ", Destino: "+comentario.getTipoDestino()+")";
                     String guardarAuditoria = auditoria.guardarAuditoria(idPersona, ClasificacionAuditorias.COMENTARIO.getNombre(), AccionesAuditadas.EDICION.getNombre(), descripcioAudit);
                 } catch (Exception e) {
                     Logger.getLogger(ComentariosNegocio.class.getName()).log(Level.SEVERE, null, e);
@@ -49,7 +54,7 @@ public class ComentariosNegocio {
                 guardado = comentariosDao.crearComentario(comentario);
                 //AUDITORIA
                 try {
-                    String descripcioAudit = "Se creó un comentario.";
+                    String descripcioAudit = "Se creó el siguiente comentario ("+comentario.getComentario()+") en ("+comentario.getTipoDestino()+")";
                     String guardarAuditoria = auditoria.guardarAuditoria(idPersona, ClasificacionAuditorias.COMENTARIO.getNombre(), AccionesAuditadas.CREACION.getNombre(), descripcioAudit);
                 } catch (Exception e) {
                     Logger.getLogger(ComentariosNegocio.class.getName()).log(Level.SEVERE, null, e);
@@ -76,7 +81,7 @@ public class ComentariosNegocio {
     public List<ComentariosBean> consultarComentarios(String tipoDestino, Integer idDestino) {
         List<ComentariosBean> listaComentarios = new ArrayList<>();
         try {
-            listaComentarios = comentariosDao.consultarComentarios(tipoDestino, idDestino);
+            listaComentarios = comentariosDao.consultarComentarios(null, tipoDestino, idDestino);
         } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
             Logger.getLogger(ComentariosNegocio.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -86,13 +91,14 @@ public class ComentariosNegocio {
     public String eliminarComentario(Integer idComentario, Integer personaSesion) {
         String error = "";
         try {
+            List<ComentariosBean> comentarioEliminar = comentariosDao.consultarComentarios(idComentario, null, null);
             int eliminacion = comentariosDao.eliminarComentario(idComentario);
             if (eliminacion == 0) {
                 error = "El comentario no pudo ser eliminado";
             }else{
                 //AUDITORIA
                 try {
-                    String descripcioAudit = "Se eliminó un comentario.";
+                    String descripcioAudit = "Se eliminó el comentario ("+comentarioEliminar.get(0).getComentario()+") realizado en ("+comentarioEliminar.get(0).getTipoDestino()+")";
                     String guardarAuditoria = auditoria.guardarAuditoria(personaSesion, ClasificacionAuditorias.COMENTARIO.getNombre(), AccionesAuditadas.ELIMINACION.getNombre(), descripcioAudit);
                 } catch (Exception e) {
                     Logger.getLogger(ComentariosNegocio.class.getName()).log(Level.SEVERE, null, e);

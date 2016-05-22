@@ -153,10 +153,17 @@ public class EstadosNegocio {
                         mensajeExito = "El estado ha sido modificado con éxito.";
                         //AUDITORIA
                         try {
-                            String descripcioAudit = "Se modificó un estado. Antes (Tipo: "+estadoBeanAntes.get(0).getTipoEstado()+" Nombre: "+estadoBeanAntes.get(0).getNombre()+" Previo: "+estadoPrevioAntes
-                            +" Siguiente: "+estadoSiguienteAntes+" Final: "+(estadoBeanAntes.get(0).getEstadoFinal().equals("T")?"Sí":"No")+") Después "
-                            + "(Tipo: "+estadoBeanNuevo.getTipoEstado()+" Nombre: "+estadoBeanNuevo.getNombre()+" Previo: "+estadoPrevioNuevo
-                            +" Siguiente: "+estadoSiguienteNuevo+" Final: "+(estadoBeanNuevo.getEstadoFinal().equals("T")?"Sí":"No")+")";
+                            String descripcioAudit = "Se modificó un estado. Antes ("+
+                                    " Tipo: "+estadoBeanAntes.get(0).getTipoEstado()+
+                                    " Nombre: "+estadoBeanAntes.get(0).getNombre()+
+                                    " Previo: "+estadoPrevioAntes+
+                                    " Siguiente: "+estadoSiguienteAntes+
+                                    " Final: "+(estadoBeanAntes.get(0).getEstadoFinal().equals("T")?"Sí":"No")+
+                                    ") Después (Tipo: "+estadoBeanNuevo.getTipoEstado()+
+                                    " Nombre: "+estadoBeanNuevo.getNombre()+
+                                    " Previo: "+estadoPrevioNuevo+
+                                    " Siguiente: "+estadoSiguienteNuevo+
+                                    " Final: "+(estadoBeanNuevo.getEstadoFinal().equals("T")?"Sí":"No")+")";
                             String guardarAuditoria = auditoria.guardarAuditoria(personaSesion, ClasificacionAuditorias.ESTADO.getNombre(), AccionesAuditadas.EDICION.getNombre(), descripcioAudit);
                         } catch (Exception e) {
                             Logger.getLogger(EstadosNegocio.class.getName()).log(Level.SEVERE, null, e);
@@ -172,8 +179,12 @@ public class EstadosNegocio {
                             mensajeExito = "El estado ha sido guardado con éxito";
                             //AUDITORIA
                             try {
-                                String descripcioAudit = "Se insertó un registro en Estados (Tipo: "+estadoBeanNuevo.getTipoEstado()+" Nombre: "+estadoBeanNuevo.getNombre()+" Previo: "+estadoPrevioNuevo
-                                    +" Siguiente: "+estadoSiguienteNuevo+" Final: "+(estadoBeanNuevo.getEstadoFinal().equals("T")?"Sí":"No")+")";
+                                String descripcioAudit = "Se insertó un registro en Estados ("+
+                                        " Tipo: "+estadoBeanNuevo.getTipoEstado()+
+                                        " Nombre: "+estadoBeanNuevo.getNombre()+
+                                        " Previo: "+estadoPrevioNuevo+
+                                        " Siguiente: "+estadoSiguienteNuevo+
+                                        " Final: "+(estadoBeanNuevo.getEstadoFinal().equals("T")?"Sí":"No")+")";
                                 String guardarAuditoria = auditoria.guardarAuditoria(personaSesion, ClasificacionAuditorias.ESTADO.getNombre(), AccionesAuditadas.CREACION.getNombre(), descripcioAudit);
                             } catch (Exception e) {
                                 Logger.getLogger(EstadosNegocio.class.getName()).log(Level.SEVERE, null, e);

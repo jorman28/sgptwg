@@ -148,8 +148,14 @@ public class UsuariosNegocio {
                         //AUDITORIA
                         try {
                             List<UsuariosBean> usuarioActual = usuariosDao.consultarUsuarios(idPersona);
-                            String descripcioAudit = "Se actualizó la información del usuario asociado a la persona con documento "+usuarios.get(0).getDocumento()+": Antes ("+usuarios.get(0).getUsuario()+", "+usuarios.get(0).getDescripcionPerfil()+", "+(usuarios.get(0).getActivo().equals("T")?"Activo":"Inactivo")+")";
-                            descripcioAudit += " Después ("+usuario.getUsuario()+", "+usuarioActual.get(0).getDescripcionPerfil()+", "+(usuario.getActivo().equals("T")?"Activo":"Inactivo")+")";
+                            String descripcioAudit = "Se actualizó la información del usuario asociado a la persona con documento "+
+                                    usuarios.get(0).getDocumento()+
+                                    ": Antes (Nombre usuario: "+usuarios.get(0).getUsuario()+
+                                    ", Perfil: "+usuarios.get(0).getDescripcionPerfil()+
+                                    ", Estado: "+(usuarios.get(0).getActivo().equals("T")?"Activo":"Inactivo")+
+                                    ") Después (Nombre usuario: "+usuario.getUsuario()+
+                                    ", Perfil: "+usuarioActual.get(0).getDescripcionPerfil()+
+                                    ", Estado: "+(usuario.getActivo().equals("T")?"Activo":"Inactivo")+")";
                             String guardarAuditoria = auditoria.guardarAuditoria(personaSesion, ClasificacionAuditorias.USUARIO.getNombre(), AccionesAuditadas.EDICION.getNombre(), descripcioAudit);
                         } catch (Exception e) {
                             Logger.getLogger(UsuariosNegocio.class.getName()).log(Level.SEVERE, null, e);

@@ -49,19 +49,42 @@ public class VersionesNegocio {
             int guardado = 0;
             if (id != null && !id.isEmpty()) {
                 version.setId(Integer.valueOf(id));
+                List<VersionesBean> versionAntes = versionesDao.consultarVersiones(Integer.valueOf(id), null, null, false);
                 guardado = versionesDao.actualizarVersion(version);
+                List<VersionesBean> versionNueva = versionesDao.consultarVersiones(version.getId(), null, null, false);
                 //AUDITORIA
                 try {
-                    String descripcioAudit = "Se actualizó una versión.";
+                    String descripcioAudit = "Se actualizó una versión. ANTES ("+
+                            " Nombre version: "+versionAntes.get(0).getNombre()+
+                            " Proyecto: "+versionAntes.get(0).getNombreProyecto()+
+                            " Fecha inicio: "+(versionAntes.get(0).getFechaInicio()!=null?versionAntes.get(0).getFechaInicio():"Ninguno")+
+                            " Fecha terminación: "+(versionAntes.get(0).getFechaTerminacion()!=null?versionAntes.get(0).getFechaTerminacion():"Ninguno")+
+                            " Alcance: "+(versionAntes.get(0).getAlcance()!=null&&!versionAntes.get(0).getAlcance().equals("")?versionAntes.get(0).getAlcance():"Ninguno")+
+                            " Estado: "+(versionAntes.get(0).getNombreEstado()!=null&&!versionAntes.get(0).getNombreEstado().equals("")?versionAntes.get(0).getNombreEstado():"Ninguno")+
+                            " Costo: "+(versionAntes.get(0).getCosto()!=null?versionAntes.get(0).getCosto():"Ninguno")+
+                            ") DESPUÉS ( Nombre version: "+versionNueva.get(0).getNombre()+
+                            " Proyecto: "+versionNueva.get(0).getNombreProyecto()+
+                            " Fecha inicio: "+(versionNueva.get(0).getFechaInicio()!=null?versionNueva.get(0).getFechaInicio():"Ninguno")+
+                            " Fecha terminación: "+(versionNueva.get(0).getFechaTerminacion()!=null?versionNueva.get(0).getFechaTerminacion():"Ninguno")+
+                            " Alcance: "+(versionNueva.get(0).getAlcance()!=null&&!versionNueva.get(0).getAlcance().equals("")?versionNueva.get(0).getAlcance():"Ninguno")+
+                            " Estado: "+(versionNueva.get(0).getNombreEstado()!=null&&!versionNueva.get(0).getNombreEstado().equals("")?versionNueva.get(0).getNombreEstado():"Ninguno");
                     String guardarAuditoria = auditoria.guardarAuditoria(personaSesion, ClasificacionAuditorias.VERSION.getNombre(), AccionesAuditadas.EDICION.getNombre(), descripcioAudit);
                 } catch (Exception e) {
                     Logger.getLogger(VersionesNegocio.class.getName()).log(Level.SEVERE, null, e);
                 }
             } else {
                 guardado = versionesDao.crearVersion(version);
+                List<VersionesBean> versionNueva = versionesDao.consultarVersiones(null, null, version.getNombre(), true);
                 //AUDITORIA
                 try {
-                    String descripcioAudit = "Se creó una versión.";
+                    String descripcioAudit = "Se creó una versión con la siguiente información ("+
+                            " Nombre version: "+versionNueva.get(0).getNombre()+
+                            " Proyecto: "+versionNueva.get(0).getNombreProyecto()+
+                            " Fecha inicio: "+(versionNueva.get(0).getFechaInicio()!=null?versionNueva.get(0).getFechaInicio():"Ninguno")+
+                            " Fecha terminación: "+(versionNueva.get(0).getFechaTerminacion()!=null?versionNueva.get(0).getFechaTerminacion():"Ninguno")+
+                            " Alcance: "+(versionNueva.get(0).getAlcance()!=null&&!versionNueva.get(0).getAlcance().equals("")?versionNueva.get(0).getAlcance():"Ninguno")+
+                            " Estado: "+(versionNueva.get(0).getNombreEstado()!=null&&!versionNueva.get(0).getNombreEstado().equals("")?versionNueva.get(0).getNombreEstado():"Ninguno")+
+                            " Costo: "+(versionNueva.get(0).getCosto()!=null?versionNueva.get(0).getCosto():"Ninguno")+").";
                     String guardarAuditoria = auditoria.guardarAuditoria(personaSesion, ClasificacionAuditorias.VERSION.getNombre(), AccionesAuditadas.CREACION.getNombre(), descripcioAudit);
                 } catch (Exception e) {
                     Logger.getLogger(VersionesNegocio.class.getName()).log(Level.SEVERE, null, e);
@@ -211,13 +234,14 @@ public class VersionesNegocio {
     public String eliminarVersion(Integer idVersion, Integer idProyecto, Integer personaSesion) {
         String error = "";
         try {
+            List<VersionesBean> versionEliminar = versionesDao.consultarVersiones(idVersion, null, null, false);
             int eliminacion = versionesDao.eliminarVersion(idVersion, idProyecto);
             if (eliminacion == 0) {
                 error = "La versión no pudo ser eliminada";
             }else{
                 //AUDITORIA
                 try {
-                    String descripcioAudit = "Se eliminó una versión.";
+                    String descripcioAudit = "Se eliminó la versión ("+versionEliminar.get(0).getNombre()+") que pertenece al proyecto ("+versionEliminar.get(0).getNombreProyecto()+")";
                     String guardarAuditoria = auditoria.guardarAuditoria(personaSesion, ClasificacionAuditorias.VERSION.getNombre(), AccionesAuditadas.ELIMINACION.getNombre(), descripcioAudit);
                 } catch (Exception e) {
                     Logger.getLogger(VersionesNegocio.class.getName()).log(Level.SEVERE, null, e);

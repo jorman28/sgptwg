@@ -19,9 +19,10 @@ public class ComentariosSql {
     /**
      * Método encargado de retornar el SQL para consultar los comentarios según
      * el lugar donde ses vayan a visualizar.
+     * @param id
      * @return 
      */
-    public String consultarComentarios() {
+    public String consultarComentarios(Integer id) {
         String sql = "  SELECT \n"
                 + "         com.id,\n"
                 + "         com.id_persona,\n"
@@ -37,9 +38,13 @@ public class ComentariosSql {
                 + "             INNER JOIN\n"
                 + "         personas per ON per.id = com.id_persona\n"
                 + "     WHERE "
-                + "         com.fecha_eliminacion IS NULL "
-                + "         AND com.tipo_destino = ? AND com.id_destino = ? "
-                + "     ORDER BY com.fecha_creacion, com.id";
+                + "         com.fecha_eliminacion IS NULL ";
+                if (id != null) {
+                    sql += "         AND com.id = " + id + " ";
+                }else{
+                    sql += "         AND com.tipo_destino = ? AND com.id_destino = ? ";
+                }
+                sql += "     ORDER BY com.fecha_creacion, com.id";
         return sql;
     }
 

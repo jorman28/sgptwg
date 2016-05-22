@@ -46,10 +46,15 @@ public class ProyectosNegocio {
             int guardado = 0;
             if (idProyecto != null) {
                 proyecto.setId(idProyecto);
+                List<ProyectosBean> proyectoAntes = proyectosDao.consultarProyectos(idProyecto, null, false);
                 guardado = proyectosDao.actualizarProyecto(proyecto);
                 //AUDITORIA
                 try {
-                    String descripcioAudit = "Se actualizó un proyecto.";
+                    String descripcioAudit = "Se actualizó la información de un proyecto. ANTES ("+
+                            " Nombre: "+proyectoAntes.get(0).getNombre()+
+                            " Fecha inicio: "+proyectoAntes.get(0).getFechaInicio()+
+                            ") DESPUÉS ( Nombre: "+proyecto.getNombre()+
+                            " Fecha inicio: "+proyecto.getFechaInicio()+")";
                     String guardarAuditoria = auditoria.guardarAuditoria(personaSesion, ClasificacionAuditorias.PROYECTO.getNombre(), AccionesAuditadas.EDICION.getNombre(), descripcioAudit);
                 } catch (Exception e) {
                     Logger.getLogger(ProyectosNegocio.class.getName()).log(Level.SEVERE, null, e);
@@ -58,7 +63,9 @@ public class ProyectosNegocio {
                 guardado = proyectosDao.crearProyecto(proyecto);
                 //AUDITORIA
                 try {
-                    String descripcioAudit = "Se creó un proyecto.";
+                    String descripcioAudit = "Se creó un proyecto con la siguiente información ("+
+                            " Nombre: "+proyecto.getNombre()+
+                            " Fecha inicio: "+proyecto.getFechaInicio()+")";
                     String guardarAuditoria = auditoria.guardarAuditoria(personaSesion, ClasificacionAuditorias.PROYECTO.getNombre(), AccionesAuditadas.CREACION.getNombre(), descripcioAudit);
                 } catch (Exception e) {
                     Logger.getLogger(ProyectosNegocio.class.getName()).log(Level.SEVERE, null, e);
@@ -195,13 +202,14 @@ public class ProyectosNegocio {
     public String eliminarProyecto(Integer idProyecto, Integer personaSesion) {
         String error = "";
         try {
+            List<ProyectosBean> proyectoEliminar = proyectosDao.consultarProyectos(idProyecto, null, false);
             int eliminacion = proyectosDao.eliminarProyecto(idProyecto);
             if (eliminacion == 0) {
                 error = "El proyecto no pudo ser eliminado";
             }else{
                 //AUDITORIA
                 try {
-                    String descripcioAudit = "Se eliminó un proyecto.";
+                    String descripcioAudit = "Se eliminó el proyecto llamado "+proyectoEliminar.get(0).getNombre();
                     String guardarAuditoria = auditoria.guardarAuditoria(personaSesion, ClasificacionAuditorias.PROYECTO.getNombre(), AccionesAuditadas.ELIMINACION.getNombre(), descripcioAudit);
                 } catch (Exception e) {
                     Logger.getLogger(ProyectosNegocio.class.getName()).log(Level.SEVERE, null, e);

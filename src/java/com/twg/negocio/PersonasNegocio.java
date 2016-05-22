@@ -95,7 +95,7 @@ public class PersonasNegocio {
                             " Cargo: "+(personaAnterior.get(0).getNombreCargo()!=null&&!personaAnterior.get(0).getNombreCargo().equals("")?personaAnterior.get(0).getNombreCargo():"Ninguno")+
                             " Usuario: "+(personaAnterior.get(0).getUsuario()!=null&&!personaAnterior.get(0).getUsuario().equals("")?personaAnterior.get(0).getUsuario():"Ninguno")+
                             " Perfil: "+(personaAnterior.get(0).getNombrePerfil()!=null&&!personaAnterior.get(0).getNombrePerfil().equals("")?personaAnterior.get(0).getNombrePerfil():"Ninguno")+")"+
-                            " DESPUÉS ( Documento: "+personaNueva.get(0).getDocumento()+
+                            ") DESPUÉS ( Documento: "+personaNueva.get(0).getDocumento()+
                             " Tipo documento: "+personaNueva.get(0).getNombreTipoDocumento()+
                             " Nombre completo: "+personaNueva.get(0).getNombre()+
                             " Teléfono: "+(personaNueva.get(0).getTelefono()!=null&&!personaNueva.get(0).getTelefono().equals("")?personaNueva.get(0).getTelefono():"Ninguno")+
