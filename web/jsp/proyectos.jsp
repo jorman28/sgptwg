@@ -150,7 +150,6 @@
                             </div>
                         </div>
                         <h2>PROYECTOS</h2>
-                        <div id="listaProyectos">${listaProyectos}</div>
                         <div class="row form-group" align="center">
                             <c:if test="${opcionConsultar == 'T'}">
                                 <button class="btn btn-default" type="button" data-toggle="modal" data-target="#modalConsulta">Consultar</button>
@@ -160,6 +159,7 @@
                             </c:if>
                             <button class="btn btn-default" type="submit" name="accion" id="limpiarProyecto" value="limpiarProyecto">Limpiar</button>
                         </div>
+                        <div id="listaProyectos">${listaProyectos}</div>
                     </form>
                 </div>
             </div>
