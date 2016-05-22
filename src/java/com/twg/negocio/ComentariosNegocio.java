@@ -41,11 +41,11 @@ public class ComentariosNegocio {
                 guardado = comentariosDao.actualizarComentario(comentario);
                 //AUDITORIA
                 try {
-                    String descripcioAudit = "Se actualizó un comentario. ANTES ("+
-                            " Comentario: "+comentarioAntes.get(0).getComentario()+
-                            ", Destino: "+comentarioAntes.get(0).getTipoDestino()+
-                            ") DESPUÉS ( Comentario: "+comentario.getComentario()+
-                            ", Destino: "+comentario.getTipoDestino()+")";
+                    String descripcioAudit = "Se actualizó un comentario. ANTES ("
+                            + " Comentario: " + comentarioAntes.get(0).getComentario()
+                            + ", Destino: " + comentarioAntes.get(0).getTipoDestino()
+                            + ") DESPUÉS ( Comentario: " + comentario.getComentario()
+                            + ", Destino: " + comentario.getTipoDestino() + ")";
                     String guardarAuditoria = auditoria.guardarAuditoria(idPersona, ClasificacionAuditorias.COMENTARIO.getNombre(), AccionesAuditadas.EDICION.getNombre(), descripcioAudit);
                 } catch (Exception e) {
                     Logger.getLogger(ComentariosNegocio.class.getName()).log(Level.SEVERE, null, e);
@@ -54,7 +54,7 @@ public class ComentariosNegocio {
                 guardado = comentariosDao.crearComentario(comentario);
                 //AUDITORIA
                 try {
-                    String descripcioAudit = "Se creó el siguiente comentario ("+comentario.getComentario()+") en ("+comentario.getTipoDestino()+")";
+                    String descripcioAudit = "Se creó el siguiente comentario (" + comentario.getComentario() + ") en (" + comentario.getTipoDestino() + ")";
                     String guardarAuditoria = auditoria.guardarAuditoria(idPersona, ClasificacionAuditorias.COMENTARIO.getNombre(), AccionesAuditadas.CREACION.getNombre(), descripcioAudit);
                 } catch (Exception e) {
                     Logger.getLogger(ComentariosNegocio.class.getName()).log(Level.SEVERE, null, e);
@@ -95,10 +95,10 @@ public class ComentariosNegocio {
             int eliminacion = comentariosDao.eliminarComentario(idComentario);
             if (eliminacion == 0) {
                 error = "El comentario no pudo ser eliminado";
-            }else{
+            } else {
                 //AUDITORIA
                 try {
-                    String descripcioAudit = "Se eliminó el comentario ("+comentarioEliminar.get(0).getComentario()+") realizado en ("+comentarioEliminar.get(0).getTipoDestino()+")";
+                    String descripcioAudit = "Se eliminó el comentario (" + comentarioEliminar.get(0).getComentario() + ") realizado en (" + comentarioEliminar.get(0).getTipoDestino() + ")";
                     String guardarAuditoria = auditoria.guardarAuditoria(personaSesion, ClasificacionAuditorias.COMENTARIO.getNombre(), AccionesAuditadas.ELIMINACION.getNombre(), descripcioAudit);
                 } catch (Exception e) {
                     Logger.getLogger(ComentariosNegocio.class.getName()).log(Level.SEVERE, null, e);
@@ -118,7 +118,7 @@ public class ComentariosNegocio {
             for (ComentariosBean comentario : listaComentarios) {
                 resultado += "  <div id=\"comentario" + comentario.getId() + "\" class=\"list-group\">\n"
                         + "         <div class=\"list-group-item\">\n"
-                        + "             <button type=\"button\" class=\"close\" onclick=\"eliminarComentario(" + comentario.getId() + ")\"><span aria-hidden=\"true\">&times;</span></button>\n"
+                        + "             <button type=\"button\" class=\"close\" data-toggle=\"modal\" data-target=\"#eliminacionComentarios\" onclick=\"$('#idComentario').val(" + comentario.getId() + ");\"><span aria-hidden=\"true\">&times;</span></button>\n"
                         + "             <p class=\"list-group-item-heading\"><strong>" + comentario.getNombres() + " " + comentario.getApellidos() + " (" + sdf.format(comentario.getFechaCreacion()) + ")" + "</strong></p>\n"
                         + "             <p class=\"list-group-item-text\">" + comentario.getComentario() + "</p>\n"
                         + "         </div>\n"

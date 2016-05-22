@@ -388,7 +388,8 @@ function guardarComentario() {
     });
 }
 
-function eliminarComentario(idComentario) {
+function eliminarComentario() {
+    var idComentario = $("#idComentario").val();
     $.ajax({
         type: "POST",
         url: "ActividadesController",
@@ -401,9 +402,11 @@ function eliminarComentario(idComentario) {
                     $("#listaComentarios").html(data.comentarios);
                 }
             }
+            $('#eliminacionComentarios').modal('hide');
         },
         error: function () {
             mostrarError('Error eliminando comentario');
+            $('#eliminacionComentarios').modal('hide');
         }
     });
 }
