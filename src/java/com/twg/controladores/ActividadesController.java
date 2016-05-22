@@ -136,6 +136,13 @@ public class ActividadesController extends HttpServlet {
 
             List<String> permisosPagina = PerfilesNegocio.permisosPorPagina(request, Paginas.ACTIVIDADES);
 
+            Integer personaSesion;
+            try {
+                personaSesion = (Integer) request.getSession(false).getAttribute("personaSesion");
+            } catch (Exception e) {
+                personaSesion = null;
+            }
+
             switch (accion) {
                 case "consultar":
                     cargarTabla(response, permisosPagina, idProyecto, idVersion, descripcion, idEstado, fecha, idResponsable, pagina);
@@ -174,7 +181,7 @@ public class ActividadesController extends HttpServlet {
                             nombreVersion = actividadExistente.getNombreVersion();
                             if (!accion.equals("duplicarActividad")) {
                                 request.setAttribute("id", idActividad);
-                                request.setAttribute("listaComentarios", comentariosNegocio.listaComentarios(comentariosNegocio.TIPO_ACTIVIDAD, actividadExistente.getId()));
+                                request.setAttribute("listaComentarios", comentariosNegocio.listaComentarios(permisosPagina, personaSesion, comentariosNegocio.TIPO_ACTIVIDAD, actividadExistente.getId()));
                             }
                         }
                     }
@@ -204,7 +211,7 @@ public class ActividadesController extends HttpServlet {
                         request.setAttribute("clientesActividad", clientes.isEmpty() ? "" : clientes);
                         request.setAttribute("empleadosActividad", empleados.isEmpty() ? "" : empleados);
                         request.setAttribute("id", idActividad);
-                        request.setAttribute("listaComentarios", comentariosNegocio.listaComentarios(comentariosNegocio.TIPO_ACTIVIDAD, idActividad));
+                        request.setAttribute("listaComentarios", comentariosNegocio.listaComentarios(permisosPagina, personaSesion, comentariosNegocio.TIPO_ACTIVIDAD, idActividad));
                     }
                     request.setAttribute("nombre", nombre);
                     request.setAttribute("descripcion", descripcion);
@@ -310,18 +317,12 @@ public class ActividadesController extends HttpServlet {
                     break;
                 case "guardarComentario":
                     String comentario = request.getParameter("comentario");
-                    Integer persona;
-                    try {
-                        persona = (Integer) request.getSession(false).getAttribute("personaSesion");
-                    } catch (Exception e) {
-                        persona = null;
-                    }
                     JSONObject comentarioGuardado = new JSONObject();
                     mensajeAlerta = comentariosNegocio.validarDatos(comentario);
                     if (mensajeAlerta.isEmpty()) {
-                        mensajeError = comentariosNegocio.guardarComentario(null, persona, comentario, comentariosNegocio.TIPO_ACTIVIDAD, idActividad);
+                        mensajeError = comentariosNegocio.guardarComentario(null, personaSesion, comentario, comentariosNegocio.TIPO_ACTIVIDAD, idActividad);
                         if (mensajeError.isEmpty()) {
-                            comentarioGuardado.put("comentarios", comentariosNegocio.listaComentarios(comentariosNegocio.TIPO_ACTIVIDAD, idActividad));
+                            comentarioGuardado.put("comentarios", comentariosNegocio.listaComentarios(permisosPagina, personaSesion, comentariosNegocio.TIPO_ACTIVIDAD, idActividad));
                         } else {
                             comentarioGuardado.put("mensajeError", mensajeError);
                         }
@@ -333,15 +334,9 @@ public class ActividadesController extends HttpServlet {
                 case "eliminarComentario":
                     Integer idComentario = Integer.valueOf(request.getParameter("idComentario"));
                     JSONObject comentarioEliminado = new JSONObject();
-                    Integer personaSesion;
-                    try {
-                        personaSesion = (Integer) request.getSession(false).getAttribute("personaSesion");
-                    } catch (Exception e) {
-                        personaSesion = null;
-                    }
-                    mensajeError = comentariosNegocio.eliminarComentario(idComentario,personaSesion);
+                    mensajeError = comentariosNegocio.eliminarComentario(idComentario, personaSesion);
                     if (mensajeError.isEmpty()) {
-                        comentarioEliminado.put("comentarios", comentariosNegocio.listaComentarios(comentariosNegocio.TIPO_ACTIVIDAD, idActividad));
+                        comentarioEliminado.put("comentarios", comentariosNegocio.listaComentarios(permisosPagina, personaSesion, comentariosNegocio.TIPO_ACTIVIDAD, idActividad));
                     } else {
                         comentarioEliminado.put("mensajeError", mensajeError);
                     }
@@ -375,7 +370,7 @@ public class ActividadesController extends HttpServlet {
                 request.setAttribute("mensajeAlerta", mensajeAlerta);
                 request.setAttribute("mensajeExito", mensajeExito);
                 request.setAttribute("mensajeError", mensajeError);
-                request.setAttribute("proyectos", proyectosNegocio.consultarProyectos(null, null, false));
+                request.setAttribute("proyectos", proyectosNegocio.consultarProyectos(null, null, false, null));
                 request.setAttribute("estados", estadosNegocio.consultarEstados(null, "ACTIVIDADES", null, null, null, null, null));
                 if (permisosPagina != null && !permisosPagina.isEmpty()) {
                     if (permisosPagina.contains(Permisos.CONSULTAR.getNombre())) {
