@@ -632,17 +632,28 @@ public class ActividadesNegocio {
                 "estado",
                 "fechaInicio",
                 "fechaFin",
+                "fechaRealInicio",
+                "ultimaModificacion",
                 "tiempoEstimado",
-                "tiempoInvertido");
+                "tiempoInvertido",
+                "porcentaje");
         for (ActividadesBean actividad : listaActividades) {
+            double porcentajeAvance = 0;
+            try {
+                porcentajeAvance = actividad.getTiempoInvertido() / actividad.getTiempoEstimado();
+            } catch (Exception e) {
+            }
             datos.add(actividad.getNombreProyecto(),
                     actividad.getNombreVersion(),
                     actividad.getNombre(),
                     actividad.getNombreEstado(),
                     actividad.getFechaInicio() != null ? sdf.format(actividad.getFechaInicio()) : "",
                     actividad.getFechaFin() != null ? sdf.format(actividad.getFechaFin()) : "",
+                    actividad.getFechaRealInicio() != null ? sdf.format(actividad.getFechaRealInicio()) : "",
+                    actividad.getUltimaModificacion() != null ? sdf.format(actividad.getUltimaModificacion()) : "",
                     actividad.getTiempoEstimado() != null ? actividad.getTiempoEstimado() : 0,
-                    actividad.getTiempoInvertido() != null ? actividad.getTiempoInvertido() : 0);
+                    actividad.getTiempoInvertido() != null ? actividad.getTiempoInvertido() : 0,
+                    porcentajeAvance);
         }
         return datos;
     }

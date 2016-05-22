@@ -17,6 +17,7 @@ import net.sf.dynamicreports.report.builder.DynamicReports;
 import static net.sf.dynamicreports.report.builder.DynamicReports.cht;
 import static net.sf.dynamicreports.report.builder.DynamicReports.cmp;
 import static net.sf.dynamicreports.report.builder.DynamicReports.stl;
+import net.sf.dynamicreports.report.builder.chart.GanttChartBuilder;
 import net.sf.dynamicreports.report.builder.column.Columns;
 import net.sf.dynamicreports.report.builder.column.TextColumnBuilder;
 import net.sf.dynamicreports.report.builder.datatype.DataTypes;
@@ -127,8 +128,44 @@ public class GeneradorReportes {
         TextColumnBuilder<String> estado = Columns.column("Estado", "estado", DataTypes.stringType());
         TextColumnBuilder<String> fechaInicio = Columns.column("Fecha de inicio", "fechaInicio", DataTypes.stringType());
         TextColumnBuilder<String> fechaFin = Columns.column("Fecha de fin", "fechaFin", DataTypes.stringType());
+        TextColumnBuilder<String> fechaRealInicio = Columns.column("Fecha real de inicio", "fechaRealInicio", DataTypes.stringType());
+        TextColumnBuilder<String> ultimaModificacion = Columns.column("Última modificacion", "ultimaModificacion", DataTypes.stringType());
+//        TextColumnBuilder<Date> dateFechaInicio = Columns.column("Fecha de inicio", "dateFechaInicio", DataTypes.dateType());
+//        TextColumnBuilder<Date> dateFechaFin = Columns.column("Fecha de fin", "dateFechaFin", DataTypes.dateType());
+//        TextColumnBuilder<Date> dateFechaRealInicio = Columns.column("Fecha real de inicio", "dateFechaRealInicio", DataTypes.dateType());
+//        TextColumnBuilder<Date> dateUltimaModificacion = Columns.column("Última modificacion", "dateUltimaModificacion", DataTypes.dateType());
         TextColumnBuilder<Double> tiempoEstimado = Columns.column("Tiempo estimado", "tiempoEstimado", DataTypes.doubleType());
         TextColumnBuilder<Double> tiempoInvertido = Columns.column("Tiempo invertido", "tiempoInvertido", DataTypes.doubleType());
+        TextColumnBuilder<Double> avance = Columns.column("Porcentaje", "porcentaje", DataTypes.percentageType());
+
+//        GanttChartBuilder gantt1 = cht.ganttChart()
+//                .setTask(actividad)
+//                .series(
+//                        cht.ganttSerie()
+//                        .setStartDate(dateFechaInicio)
+//                        .setEndDate(dateFechaFin)
+//                        .setLabel("Estimado"),
+//                        cht.ganttSerie()
+//                        .setStartDate(dateFechaRealInicio)
+//                        .setEndDate(dateUltimaModificacion)
+//                        .setLabel("Invertido"))
+//                .setTimeAxisFormat(
+//                        cht.axisFormat().setLabel("Tiempo"))
+//                .setTaskAxisFormat(
+//                        cht.axisFormat().setLabel("Actividad"));
+
+//        GanttChartBuilder gannt2 = cht.ganttChart()
+//                .setTask(actividad)
+//                .series(
+//                        cht.ganttSerie()
+//                        .setStartDate(dateFechaInicio)
+//                        .setEndDate(dateFechaFin)
+//                        .setPercent(avance)
+//                        .setLabel("Estimado"))
+//                .setTimeAxisFormat(
+//                        cht.axisFormat().setLabel("Tiempo"))
+//                .setTaskAxisFormat(
+//                        cht.axisFormat().setLabel("Actividad"));
 
         JasperReportBuilder reporte = DynamicReports.report();
         reporte.addColumn(proyecto);
@@ -137,12 +174,16 @@ public class GeneradorReportes {
         reporte.addColumn(estado);
         reporte.addColumn(fechaInicio);
         reporte.addColumn(fechaFin);
+        reporte.addColumn(fechaRealInicio);
+        reporte.addColumn(ultimaModificacion);
         reporte.addColumn(tiempoEstimado);
         reporte.addColumn(tiempoInvertido);
+        reporte.addColumn(avance);
         reporte.title(Templates.createTitleComponent("Listado de actividades"));
         reporte.pageFooter(Templates.footerComponent);
         reporte.setDataSource(actividadesNegocio.listaActividades(listaActividades));
         reporte.setTemplate(Templates.reportTemplate);
+        reporte.setPageFormat(PageType.A3, PageOrientation.LANDSCAPE);
         return guardarReporte(reporte, "Listado_de_actividades");
     }
 
