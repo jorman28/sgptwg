@@ -80,7 +80,6 @@ function obtenerPermisos(idPerfil) {
                 $("#permiso_11_3").prop("checked", data.permiso_26 !== undefined ? data.permiso_26 : false);
                 $("#permiso_11_4").prop("checked", data.permiso_27 !== undefined ? data.permiso_27 : false);
                 $("#permiso_12").prop("checked", data.permiso_12 !== undefined ? data.permiso_12 : false);
-                $("#permiso_13").prop("checked", data.permiso_13 !== undefined ? data.permiso_13 : false);
                 $("#permiso_14").prop("checked", data.permiso_14 !== undefined ? data.permiso_14 : false);
                 $("#permiso_15").prop("checked", data.permiso_15 !== undefined ? data.permiso_15 : false);
                 $("#permiso_15_1").prop("checked", data.permiso_17 !== undefined ? data.permiso_17 : false);
@@ -95,7 +94,6 @@ function obtenerPermisos(idPerfil) {
                 $("#permiso_16_6").prop("checked", data.permiso_37 !== undefined ? data.permiso_37 : false);
                 $("#permiso_16_7").prop("checked", data.permiso_38 !== undefined ? data.permiso_38 : false);
                 $("#permiso_16_8").prop("checked", data.permiso_39 !== undefined ? data.permiso_39 : false);
-                $("#permiso_45").prop("checked", data.permiso_45 !== undefined ? data.permiso_45 : false);
 
                 $("#perfilPermiso").val(idPerfil);
                 $("#modalPermisos").modal('show');

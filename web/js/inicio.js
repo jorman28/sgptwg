@@ -1,32 +1,35 @@
-$(document).ready(function() {
-    llenarTabla();
+/* global google */
+
+$(document).ready(function () {
+    cargarDatos();
     $("#responsable").typeahead({
-        onSelect: function(item) {
+        onSelect: function (item) {
             $("#idPersona").val(item.value);
         },
         ajax: {
-            url: "ActividadesPorEstadoController",
+            url: "InicioController",
             timeout: 500,
             displayField: "nombre",
             valueField: 'id',
             triggerLength: 1,
             items: 10,
             method: "POST",
-            preDispatch: function(query) {
+            preDispatch: function (query) {
                 return {busqueda: query, accion: "completarPersonas"};
             },
-            preProcess: function(data) {
+            preProcess: function (data) {
                 return data;
             }
         }
     });
-    google.charts.load('current', {'packages': ['corechart']});
-    google.charts.setOnLoadCallback(pintarGrafica);
+    google.charts.load('current', {'packages': ['corechart', 'bar'], 'language': 'es'});
+    google.charts.setOnLoadCallback(graficaEstados);
+    google.charts.setOnLoadCallback(graficaAvance);
 });
 
 var datos = [];
 
-function pintarGrafica() {
+function graficaEstados() {
     if (google.visualization !== undefined) {
         var data = google.visualization.arrayToDataTable(datos);
         var options = {
@@ -38,7 +41,30 @@ function pintarGrafica() {
     }
 }
 
-function llenarTabla() {
+function graficaAvance() {
+    if (google.visualization !== undefined) {
+        var data = google.visualization.arrayToDataTable([
+            ['Versión', 'Estimado', 'Invertido'],
+            ['Version un poco grande', 10, 8],
+            ['Version otro tanto mas grande', 15, 12],
+            ['2016', 20, 35],
+            ['2017', 12, 15]
+        ]);
+
+        var options = {
+            chart: {title: 'Proyecto x'},
+            bars: 'horizontal',
+            hAxis: {format: 'decimal'},
+            height: '100%',
+            colors: ['#5e97f6', '#2a56c6']
+        };
+
+        var chart = new google.charts.Bar(document.getElementById('avanceProyectos'));
+        chart.draw(data, options);
+    }
+}
+
+function cargarDatos() {
     var proyecto = $('#proyecto').val() !== undefined && $('#proyecto').val() !== "0" ? $('#proyecto').val() : null;
     var version = $('#version').val() !== undefined && $('#version').val() !== "0" ? $('#version').val() : null;
     var persona = $('#idPersona').val() !== undefined && $('#idPersona').val() !== "" ? $('#idPersona').val() : null;
@@ -47,27 +73,28 @@ function llenarTabla() {
     }
     $.ajax({
         type: "POST",
-        url: "ActividadesPorEstadoController",
+        url: "InicioController",
         dataType: "json",
         data: {accion: "consultar", proyecto: proyecto, version: version, persona: persona},
-        success: function(data) {
+        success: function (data) {
             if (data !== undefined) {
                 if (data.html !== undefined) {
                     $('#tablaActividadesPorEstado').html(data.html);
                 }
                 if (data.estados !== undefined) {
                     datos = data.estados;
-                    pintarGrafica();
+                    graficaEstados();
+                    graficaAvance();
                 }
             }
         },
-        error: function() {
+        error: function () {
             console.log('Error al cargar la tabla');
         }
     });
 }
 
-function generarReporte() {
+function generarReporte(tipoReporte) {
     var proyecto = $('#proyecto').val() !== undefined && $('#proyecto').val() !== "0" ? $('#proyecto').val() : null;
     var version = $('#version').val() !== undefined && $('#version').val() !== "0" ? $('#version').val() : null;
     var persona = $('#idPersona').val() !== undefined && $('#idPersona').val() !== "" ? $('#idPersona').val() : null;
@@ -76,21 +103,21 @@ function generarReporte() {
     }
     $.ajax({
         type: "POST",
-        url: "ActividadesPorEstadoController",
+        url: "InicioController",
         dataType: "json",
-        data: {accion: "generarReporte", proyecto: proyecto, version: version, persona: persona},
-        success: function(data) {
+        data: {accion: "generarReporte", proyecto: proyecto, version: version, persona: persona, tipoReporte: tipoReporte},
+        success: function (data) {
             if (data !== undefined && data.archivo !== undefined) {
                 console.log('El reporte ha sido generado con éxito');
                 var link = document.createElement('a');
-                link.href = 'ActividadesPorEstadoController?accion=obtenerArchivo&archivo=' + data.archivo;
+                link.href = 'InicioController?accion=obtenerArchivo&archivo=' + data.archivo;
                 link.target = '_blank';
                 link.click();
             } else {
                 alert('Error al generar el reporte');
             }
         },
-        error: function() {
+        error: function () {
             alert('Error al generar el reporte');
         }
     });
@@ -102,10 +129,10 @@ function consultarVersiones(idProyecto) {
     } else {
         $.ajax({
             type: "POST",
-            url: "ActividadesPorEstadoController",
+            url: "InicioController",
             dataType: "json",
             data: {proyecto: idProyecto, accion: "consultarVersiones"},
-            success: function(data) {
+            success: function (data) {
                 if (data !== undefined) {
                     var html = "<option value='0'>SELECCIONE</option>";
                     for (var version in data) {
@@ -115,7 +142,7 @@ function consultarVersiones(idProyecto) {
                     $("#version").html(html);
                 }
             },
-            error: function(err) {
+            error: function (err) {
                 alert(err);
             }
         });

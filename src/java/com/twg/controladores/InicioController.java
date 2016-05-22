@@ -19,13 +19,12 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 /**
- * Este controlador es el encargado de gestionar todas las peticiones
- * relacionadas con la consulta, visualización y/o exportación de las
- * actividades que se encuentran en los distintos estados.
+ * Esta clase define métodos para controlar las peticiones y respuestas que se
+ * hacen al ingresar al sistema para cargar la página principal.
  *
  * @author Andrés Felipe Giraldo, Jorman Rincón, Erika Jhoana Castaneda
  */
-public class ActividadesPorEstadoController extends HttpServlet {
+public class InicioController extends HttpServlet {
 
     private final GeneradorReportes generadorReportes = new GeneradorReportes();
     private final ActividadesNegocio actividadesNegocio = new ActividadesNegocio();
@@ -65,6 +64,7 @@ public class ActividadesPorEstadoController extends HttpServlet {
         }
         String archivo = request.getParameter("archivo");
         String busqueda = request.getParameter("busqueda");
+        String tipoReporte = request.getParameter("tipoReporte");
         String accion = request.getParameter("accion");
         if (accion == null) {
             accion = "";
@@ -72,7 +72,10 @@ public class ActividadesPorEstadoController extends HttpServlet {
         switch (accion) {
             case "generarReporte":
                 JSONObject reporteObject = new JSONObject();
-                String nombreArchivo = generadorReportes.actividadesPorEstado(proyecto, version, persona);
+                String nombreArchivo = "";
+                if (tipoReporte != null && tipoReporte.equals("estados")) {
+                    nombreArchivo = generadorReportes.actividadesPorEstado(proyecto, version, persona);
+                }
                 if (nombreArchivo != null && !nombreArchivo.isEmpty()) {
                     reporteObject.put("archivo", nombreArchivo);
                 }
@@ -107,7 +110,7 @@ public class ActividadesPorEstadoController extends HttpServlet {
         }
         if (accion.equals("")) {
             request.setAttribute("proyectos", proyectosNegocio.consultarProyectos(null, null, false));
-            request.getRequestDispatcher("jsp/actividadesPorEstado.jsp").forward(request, response);
+            request.getRequestDispatcher("jsp/inicio.jsp").forward(request, response);
         }
     }
 
@@ -131,6 +134,7 @@ public class ActividadesPorEstadoController extends HttpServlet {
 
         List<Map<String, Object>> actividadesPorEstado = actividadesNegocio.listarActividadesPorEstado(proyecto, version, persona);
         StringBuilder html = new StringBuilder();
+        html.append("<div class=\"table-responsive\">");
         html.append("<table class=\"table table-striped table-hover table-condensed bordo-tablas\">");
         html.append("<thead>");
         html.append("<tr>");
@@ -169,6 +173,7 @@ public class ActividadesPorEstadoController extends HttpServlet {
         }
         html.append("</tbody>");
         html.append("</table>");
+        html.append("</div>");
         resultado.put("html", html.toString());
         resultado.put("estados", arrayEstados);
         return resultado;
@@ -208,5 +213,4 @@ public class ActividadesPorEstadoController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         processRequest(request, response);
     }
-
 }
