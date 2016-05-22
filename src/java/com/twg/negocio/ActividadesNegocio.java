@@ -4,10 +4,12 @@ import com.twg.persistencia.beans.ActividadesBean;
 import com.twg.persistencia.beans.ActividadesEmpleadosBean;
 import com.twg.persistencia.beans.ActividadesEsfuerzosBean;
 import com.twg.persistencia.beans.EstadosBean;
+import com.twg.persistencia.beans.VersionesBean;
 import com.twg.persistencia.daos.ActividadesDao;
 import com.twg.persistencia.daos.ActividadesEmpleadosDao;
 import com.twg.persistencia.daos.ActividadesEsfuerzosDao;
 import com.twg.persistencia.daos.EstadosDao;
+import com.twg.persistencia.daos.VersionesDao;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -33,6 +35,7 @@ public class ActividadesNegocio {
 
     private final ActividadesDao actividadesDao = new ActividadesDao();
     private final EstadosDao estadosDao = new EstadosDao();
+    private final VersionesDao verionesDao = new VersionesDao();
     private final ActividadesEmpleadosDao actividadesEmpleadosDao = new ActividadesEmpleadosDao();
     private final ActividadesEsfuerzosDao actividadesEsfuerzosDao = new ActividadesEsfuerzosDao();
 
@@ -47,7 +50,8 @@ public class ActividadesNegocio {
      * @param nombre
      * @param descripcion
      * @param idEstado
-     * @return
+     * @return Un mapa con el mensaje de éxito o error al momento de insertar la
+     * actividad
      */
     public Map<String, Object> guardarActividad(Integer idActividad, Integer idProyecto, Integer idVersion, String nombre, String descripcion, Integer idEstado) {
         Map<String, Object> result = new HashMap<>();
@@ -100,14 +104,16 @@ public class ActividadesNegocio {
      * @param nombre
      * @param descripcion
      * @param idEstado
-     * @return
+     * @return Una cadena de texto con el detalle de los errores de datos
+     * ingresados en el formulario. Si no se presentan errores la cadena queda
+     * vacía
      */
     public String validarDatos(Integer idActividad, Integer idProyecto, Integer idVersion, String nombre, String descripcion, Integer idEstado) {
         String validacion = "";
-        if (idProyecto == null || idProyecto.intValue() == 0) {
+        if (idProyecto == null || idProyecto == 0) {
             validacion += "El campo 'Proyecto' es obligatorio <br/>";
         }
-        if (idVersion == null || idVersion.intValue() == 0) {
+        if (idVersion == null || idVersion == 0) {
             validacion += "El campo 'Versión' es obligatorio <br/>";
         }
         if (nombre == null || nombre.isEmpty()) {
@@ -120,13 +126,13 @@ public class ActividadesNegocio {
         } else if (descripcion.length() > 1000) {
             validacion += "El campo 'Descripción' no debe contener más de 1000 caracteres. Has dígitado " + descripcion.length() + " caracteres <br/>";
         }
-        if (idEstado == null || idEstado.intValue() == 0) {
+        if (idEstado == null || idEstado == 0) {
             validacion += "El campo 'Estado' es obligatorio <br/>";
         } else /* Actividad existente: se valida contra estados previo y siguiente */ if (idActividad != null) {
             ActividadesBean actividadAntigua = consultarActividadPorId(idActividad);
             if (actividadAntigua != null) {
                 //Si el estado seleccionado es distinto al que ya tenía, se valida que sea el previo o el siguiente
-                if (actividadAntigua.getEstado() != idEstado) {
+                if (actividadAntigua.getEstado().intValue() != idEstado.intValue()) {
                     List<EstadosBean> listaEstados;
                     try {
                         listaEstados = estadosDao.consultarEstados(actividadAntigua.getEstado(), null, null, null, null, null, null);
@@ -137,7 +143,8 @@ public class ActividadesNegocio {
                     if (listaEstados != null && !listaEstados.isEmpty()) {
                         if (listaEstados.get(0).getEstadoPrevio() != null && listaEstados.get(0).getEstadoPrevio() > 0
                                 || listaEstados.get(0).getEstadoSiguiente() != null && listaEstados.get(0).getEstadoSiguiente() > 0) {
-                            if (listaEstados.get(0).getEstadoPrevio() != idEstado && listaEstados.get(0).getEstadoSiguiente() != idEstado) {
+                            if (listaEstados.get(0).getEstadoPrevio().intValue() != idEstado.intValue()
+                                    && listaEstados.get(0).getEstadoSiguiente().intValue() != idEstado.intValue()) {
                                 validacion += "El estado seleccionado no es válido. <br/>";
                             }
                         }
@@ -171,7 +178,8 @@ public class ActividadesNegocio {
      * @param fechaFin
      * @param tiempo
      * @param estimacion
-     * @return
+     * @return Una cadena de texto con los posibles errores en el proceso de
+     * almacenamiento. Si no hay errores la cadana queda vacía
      */
     public String guardarActividadPersona(Integer idActividad, Integer idPersona, String fechaInicio, String fechaFin, String tiempo, boolean estimacion) {
         String error = "";
@@ -189,14 +197,19 @@ public class ActividadesNegocio {
         }
         List<ActividadesEmpleadosBean> listaActividadesEmpleados;
         try {
-            listaActividadesEmpleados = actividadesEmpleadosDao.consultarActividadesEmpleados(idActividad, idPersona, null, null, false, true);
+            listaActividadesEmpleados = actividadesEmpleadosDao.consultarActividadesEmpleados(idActividad, idPersona, null, null, false, true, true);
         } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
             Logger.getLogger(ActividadesNegocio.class.getName()).log(Level.SEVERE, null, ex);
             listaActividadesEmpleados = null;
         }
         try {
-            int guardado = 0;
+            int guardado;
             if (listaActividadesEmpleados != null && !listaActividadesEmpleados.isEmpty()) {
+                if (listaActividadesEmpleados.get(0).getFechaEliminacion() != null) {
+                    actividadesEmpleados.setFechaEstimadaInicio(null);
+                    actividadesEmpleados.setFechaEstimadaTerminacion(null);
+                    actividadesEmpleados.setTiempoEstimado(0d);
+                }
                 guardado = actividadesEmpleadosDao.actualizarActividadEmpleado(actividadesEmpleados);
                 if (guardado == 0) {
                     error = "El reponsable no pudo ser asociado a la actividad";
@@ -218,7 +231,8 @@ public class ActividadesNegocio {
      * Método encargado de consultar los responsables asociados a una actividad
      *
      * @param idActividad
-     * @return
+     * @return La lista de las personas asociadas a un actividad en un array de
+     * JSON
      */
     public JSONArray consultarActividadesEmpleados(Integer idActividad) {
         JSONArray responsablesActividad = new JSONArray();
@@ -247,14 +261,16 @@ public class ActividadesNegocio {
      * @param idEmpleado
      * @param fechaEstimadaInicio
      * @param fechaEstimadaFin
-     * @param evaluarEstado
-     * @param actividadIgual
-     * @return
+     * @param evaluarEstado Indica si se evalúa el estado cerrado de la
+     * actividad
+     * @param actividadIgual Indica si el id de la actividad mandado como
+     * parámetro debe ser igual o diferente
+     * @return La lista de las actividades y empleados relacionados
      */
     public List<ActividadesEmpleadosBean> consultarActividadesEmpleados(Integer idActividad, Integer idEmpleado, Date fechaEstimadaInicio, Date fechaEstimadaFin, boolean evaluarEstado, boolean actividadIgual) {
         List<ActividadesEmpleadosBean> listaActividadesEmpleados = new ArrayList<>();
         try {
-            listaActividadesEmpleados = actividadesEmpleadosDao.consultarActividadesEmpleados(idActividad, idEmpleado, fechaEstimadaInicio, fechaEstimadaFin, evaluarEstado, actividadIgual);
+            listaActividadesEmpleados = actividadesEmpleadosDao.consultarActividadesEmpleados(idActividad, idEmpleado, fechaEstimadaInicio, fechaEstimadaFin, evaluarEstado, actividadIgual, false);
         } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
             Logger.getLogger(ActividadesNegocio.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -270,7 +286,8 @@ public class ActividadesNegocio {
      * @param idEmpleado
      * @param fechaEstimadaInicio
      * @param fechaEstimadaFin
-     * @return
+     * @return La lista de las actividades y empleados relacionados en un array
+     * de JSON
      */
     public JSONArray consultarActividadesAsociadas(Integer idActividad, Integer idEmpleado, Date fechaEstimadaInicio, Date fechaEstimadaFin) {
         JSONArray actividadesAsociadas = new JSONArray();
@@ -301,7 +318,8 @@ public class ActividadesNegocio {
      * @param idEstado
      * @param responsable
      * @param limite
-     * @return
+     * @return La lista de las actividades relacionadas con los parámetros de
+     * búsqueda ingresados
      */
     public List<ActividadesBean> consultarActividades(Integer idActividad, Integer proyecto, Integer version, String contiene, String fecha, Integer idEstado, Integer responsable, String limite) {
         List<ActividadesBean> listaActividades = new ArrayList<>();
@@ -330,7 +348,8 @@ public class ActividadesNegocio {
      * @param fecha
      * @param idEstado
      * @param responsable
-     * @return
+     * @return El número de actividades existentes de acuerdo a los parámetros
+     * enviados
      */
     public int contarActividades(Integer proyecto, Integer version, String contiene, String fecha, Integer idEstado, Integer responsable) {
         int actividades = 0;
@@ -354,7 +373,7 @@ public class ActividadesNegocio {
      * actividad por medio del id de la misma
      *
      * @param idActividad
-     * @return
+     * @return La actividad relacionada al id enviado
      */
     public ActividadesBean consultarActividadPorId(Integer idActividad) {
         List<ActividadesBean> listaActividades = consultarActividades(idActividad, null, null, null, null, null, null, null);
@@ -365,10 +384,13 @@ public class ActividadesNegocio {
     }
 
     /**
-     * Método encargado de realizar la eliminación lógica de una actividad
+     * Método encargado de realizar la eliminación lógica de una actividad. Para
+     * esto, se borra tanto las personas asociadas a la actividad como los
+     * esfuerzos en la misma
      *
      * @param idActividad
-     * @return
+     * @return Una cadena de texto con los posibles errores en el proceso de
+     * borrado de la actividad. Si no se presentan errores la lista queda vacía
      */
     public String eliminarActividad(Integer idActividad) {
         String error = "";
@@ -393,7 +415,8 @@ public class ActividadesNegocio {
      *
      * @param idActividad
      * @param idEmpleado
-     * @return
+     * @return Una cadena de texto con los posibles errores en el proceso de
+     * borrado de la actividad. Si no se presentan errores la lista queda vacía
      */
     public String eliminarActividadEmpleado(Integer idActividad, Integer idEmpleado) {
         String error = "";
@@ -415,7 +438,8 @@ public class ActividadesNegocio {
      * empleado para una actividad
      *
      * @param idEsfuerzo
-     * @return
+     * @return Una cadena de texto con los posibles errores en el proceso de
+     * borrado de la actividad. Si no se presentan errores la lista queda vacía
      */
     public String eliminarActividadEsfuerzo(Integer idEsfuerzo) {
         String error = "";
@@ -437,7 +461,8 @@ public class ActividadesNegocio {
      *
      * @param idActividad
      * @param idEmpleado
-     * @return
+     * @return La lista con la descripción del tiempo invertido en la actividad
+     * para un empleado en un array de JSON
      */
     public JSONArray consultarHistorialTrabajo(Integer idActividad, Integer idEmpleado) {
         JSONArray historial = new JSONArray();
@@ -471,7 +496,8 @@ public class ActividadesNegocio {
      * @param fecha
      * @param tiempo
      * @param descripcion
-     * @return
+     * @return Una cadena de texto con los posibles errores en el proceso de
+     * guardado. Si no se presentan errores la cadena queda vacía
      */
     public String guardarActividadEsfuerzo(Integer idEsfuerzo, Integer idActividad, Integer idEmpleado, String fecha, String tiempo, String descripcion) {
         String error = "";
@@ -486,7 +512,7 @@ public class ActividadesNegocio {
         }
         actividadesEsfuerzos.setDescripcion(descripcion);
         try {
-            int guardado = 0;
+            int guardado;
             if (idEsfuerzo != null) {
                 actividadesEsfuerzos.setId(idEsfuerzo);
                 guardado = actividadesEsfuerzosDao.actualizarActividadEsfuerzo(actividadesEsfuerzos);
@@ -511,7 +537,9 @@ public class ActividadesNegocio {
      * @param fecha
      * @param tiempo
      * @param descripcion
-     * @return
+     * @return Una cadena de texto con el detalle de los errores de datos
+     * ingresados en el formulario. Si no se presentan errores la cadena queda
+     * vacía
      */
     public String validarActividadEsfuerzo(String fecha, String tiempo, String descripcion) {
         String advertencia = "";
@@ -550,24 +578,29 @@ public class ActividadesNegocio {
      * @param fechaInicio
      * @param fechaFin
      * @param tiempo
-     * @return
+     * @param idVersion
+     * @return Una cadena de texto con el detalle de los errores de datos
+     * ingresados en el formulario. Si no se presentan errores la cadena queda
+     * vacía
      */
-    public String validarActividadEmpleado(String fechaInicio, String fechaFin, String tiempo) {
+    public String validarActividadEmpleado(String fechaInicio, String fechaFin, String tiempo, Integer idVersion) {
         String advertencia = "";
+        Date dateFechaInicio = null;
         if (fechaInicio == null || fechaInicio.isEmpty()) {
             advertencia += "El campo 'Fecha de inicio' es obligatorio <br>";
         } else {
             try {
-                sdf.parse(fechaInicio);
+                dateFechaInicio = sdf.parse(fechaInicio);
             } catch (ParseException e) {
                 advertencia += "El valor ingresado en el campo 'Fecha de inicio' no se encuentra en el formato 'día/mes/año' <br>";
             }
         }
+        Date dateFechaFin = null;
         if (fechaFin == null || fechaFin.isEmpty()) {
             advertencia += "El campo 'Fecha de fin' es obligatorio <br>";
         } else {
             try {
-                sdf.parse(fechaFin);
+                dateFechaFin = sdf.parse(fechaFin);
             } catch (ParseException e) {
                 advertencia += "El valor ingresado en el campo 'Fecha de fin' no se encuentra en el formato 'día/mes/año' <br>";
             }
@@ -583,6 +616,39 @@ public class ActividadesNegocio {
                 advertencia += "El valor ingresado en el campo 'Tiempo estimado' no es un número decimal <br>";
             }
         }
+        if (dateFechaInicio != null && dateFechaFin != null) {
+            if (dateFechaInicio.compareTo(dateFechaFin) > 0) {
+                advertencia += "La fecha de inicio de la actividad (" + fechaInicio + ") es mayo a la fecha de fin de la misma (" + fechaFin + "). <br>";
+            }
+            Date dateFechaInicioVersion = null;
+            Date dateFechaFinVersion = null;
+            try {
+                if (idVersion != null && idVersion != 0) {
+                    List<VersionesBean> listaVersiones = verionesDao.consultarVersiones(idVersion, null, null, false);
+                    if (listaVersiones != null && !listaVersiones.isEmpty()) {
+                        dateFechaInicioVersion = listaVersiones.get(0).getFechaInicio();
+                        dateFechaFinVersion = listaVersiones.get(0).getFechaTerminacion();
+                    }
+                }
+            } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException e) {
+            }
+            if (dateFechaInicioVersion != null && dateFechaFinVersion != null) {
+                if (dateFechaInicio.compareTo(dateFechaInicioVersion) < 0) {
+                    advertencia += "La fecha de inicio de la actividad (" + fechaInicio + ") es menor a la fecha de inicio de la versión (" + sdf.format(dateFechaInicioVersion) + "). <br>";
+                }
+                if (dateFechaInicio.compareTo(dateFechaFinVersion) > 0) {
+                    advertencia += "La fecha de inicio de la actividad (" + fechaInicio + ") es mayor a la fecha de fin de la versión (" + sdf.format(dateFechaFinVersion) + "). <br>";
+                }
+                if (dateFechaFin.compareTo(dateFechaInicioVersion) < 0) {
+                    advertencia += "La fecha de fin de la actividad (" + fechaFin + ") es menor a la fecha de inicio de la versión (" + sdf.format(dateFechaInicioVersion) + "). <br>";
+                }
+                if (dateFechaFin.compareTo(dateFechaFinVersion) > 0) {
+                    advertencia += "La fecha de fin de la actividad (" + fechaFin + ") es mayor a la fecha de fin de la versión (" + sdf.format(dateFechaFinVersion) + "). <br>";
+                }
+            } else {
+                advertencia += "No se logró obtener las fechas de inicio y fin de la versión <br>";
+            }
+        }
         return advertencia;
     }
 
@@ -592,7 +658,8 @@ public class ActividadesNegocio {
      * @param proyecto
      * @param version
      * @param persona
-     * @return
+     * @return La lista de actividades por estado en el formato requerido para
+     * la creación del reporte
      */
     public JRDataSource actividadesPorEstado(Integer proyecto, Integer version, Integer persona) {
         DRDataSource datos = new DRDataSource("estado", "actividades", "porcentaje");
@@ -623,7 +690,8 @@ public class ActividadesNegocio {
      * Método encargado de retornar el dataset del reporte de actividades
      *
      * @param listaActividades
-     * @return
+     * @return La lista de actividades en el formato requerido para la creación
+     * del reporte
      */
     public JRDataSource listaActividades(List<ActividadesBean> listaActividades) {
         DRDataSource datos = new DRDataSource("proyecto",
@@ -669,7 +737,8 @@ public class ActividadesNegocio {
      * @param fecha
      * @param estado
      * @param responsable
-     * @return
+     * @return La lista de actividades en el formato requerido para la creación
+     * del reporte
      */
     public List<Map<String, Object>> actividadesDetalladas(Integer proyecto, Integer version, String contiene, String fecha, Integer estado, Integer responsable) {
         List<Map<String, Object>> listaActividades;
@@ -694,7 +763,8 @@ public class ActividadesNegocio {
      * detallado para enviarlo al generador del reporte.
      *
      * @param listaActividades
-     * @return
+     * @return La lista de actividades en el formato requerido para la creación
+     * del reporte
      */
     public JRDataSource listaDetalladaActividades(List<Map<String, Object>> listaActividades) {
 
@@ -733,7 +803,7 @@ public class ActividadesNegocio {
      * @param proyecto
      * @param version
      * @param persona
-     * @return
+     * @return La lista de mapas con la cantidad de actividades por estado
      */
     public List<Map<String, Object>> listarActividadesPorEstado(Integer proyecto, Integer version, Integer persona) {
         List<Map<String, Object>> actividadesPorEstado = new ArrayList<>();
@@ -769,7 +839,8 @@ public class ActividadesNegocio {
      * @param proyecto
      * @param version
      * @param participante
-     * @return
+     * @return La lista de actividades agrupadas por proyecti o versión para
+     * evaluar el tiempo estimado vs el invertido en las mismas
      */
     public List<ActividadesBean> consolidadoActividades(Integer proyecto, Integer version, Integer participante) {
         List<ActividadesBean> listaActividades = new ArrayList<>();
@@ -788,7 +859,8 @@ public class ActividadesNegocio {
      * @param proyecto
      * @param version
      * @param persona
-     * @return La información en el formato requerido para crear el reporte
+     * @return La lista de actividades consolidadas en el formato requerido para
+     * la creación del reporte
      */
     public JRDataSource datosConsolidadoActividades(Integer proyecto, Integer version, Integer persona) {
         DRDataSource datos = new DRDataSource("item",

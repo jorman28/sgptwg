@@ -12,8 +12,10 @@ import java.util.Date;
 import java.util.List;
 
 /**
+ * Clase encargada de obtener la conexión con la base de datos y ejecutar las
+ * sentencias con base en los datos enviados desde el negocio
  *
- * @author erikasta07
+ * @author Andrés Felipe Giraldo, Jorman Rincón, Erika Jhoana Castaneda
  */
 public class ActividadesEmpleadosDao {
 
@@ -32,20 +34,24 @@ public class ActividadesEmpleadosDao {
      * @param idEmpleado
      * @param fechaEstimadaInicio
      * @param fechaEstimadaFin
-     * @param evaluarEstado
-     * @param actividadIgual
-     * @return
+     * @param evaluarEstado Indica si se evalúa el estado cerrado de la
+     * actividad
+     * @param actividadIgual Indica si el id de la actividad mandado como
+     * parámetro debe ser igual o diferente
+     * @param eliminados Indica si se tiene en cuenta los registros que ya
+     * fueron eliminados logicamente
+     * @return La lista de actividades y empleados relacionados
      * @throws ClassNotFoundException
      * @throws InstantiationException
      * @throws SQLException
      * @throws IllegalAccessException
      */
-    public List<ActividadesEmpleadosBean> consultarActividadesEmpleados(Integer idActividad, Integer idEmpleado, Date fechaEstimadaInicio, Date fechaEstimadaFin, boolean evaluarEstado, boolean actividadIgual) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
+    public List<ActividadesEmpleadosBean> consultarActividadesEmpleados(Integer idActividad, Integer idEmpleado, Date fechaEstimadaInicio, Date fechaEstimadaFin, boolean evaluarEstado, boolean actividadIgual, boolean eliminados) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         List<ActividadesEmpleadosBean> listaActividadesEmpleados = new ArrayList<>();
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;
-        ps = con.prepareStatement(sql.consultarActividadEmpleado(idActividad, idEmpleado, fechaEstimadaInicio, fechaEstimadaFin, evaluarEstado, actividadIgual));
+        ps = con.prepareStatement(sql.consultarActividadEmpleado(idActividad, idEmpleado, fechaEstimadaInicio, fechaEstimadaFin, evaluarEstado, actividadIgual, eliminados));
         if (fechaEstimadaInicio != null && fechaEstimadaFin != null) {
             ps.setObject(1, fechaEstimadaInicio);
             ps.setObject(2, fechaEstimadaFin);
@@ -64,6 +70,7 @@ public class ActividadesEmpleadosDao {
             actividadEmpleado.setCargo(rs.getString("nombre_cargo"));
             actividadEmpleado.setFechaEstimadaInicio((Date) rs.getObject("fecha_estimada_inicio"));
             actividadEmpleado.setFechaEstimadaTerminacion((Date) rs.getObject("fecha_estimada_terminacion"));
+            actividadEmpleado.setFechaEliminacion((Date) rs.getObject("fecha_eliminacion"));
             actividadEmpleado.setTiempoEstimado(rs.getObject("tiempo_estimado") != null ? rs.getDouble("tiempo_estimado") : 0);
             actividadEmpleado.setTiempoInvertido(rs.getObject("tiempo_invertido") != null ? rs.getDouble("tiempo_invertido") : 0);
             listaActividadesEmpleados.add(actividadEmpleado);
@@ -78,7 +85,7 @@ public class ActividadesEmpleadosDao {
      * Método encargado de asociar una persona a una actividad
      *
      * @param actividadEmpleado
-     * @return
+     * @return La cantidad de registros insertados en base de datos
      * @throws ClassNotFoundException
      * @throws InstantiationException
      * @throws SQLException
@@ -102,7 +109,7 @@ public class ActividadesEmpleadosDao {
      * asociada a una actividad
      *
      * @param actividadEmpleado
-     * @return
+     * @return La cantidad de registros actualizados en base de datos
      * @throws ClassNotFoundException
      * @throws InstantiationException
      * @throws SQLException
@@ -129,7 +136,7 @@ public class ActividadesEmpleadosDao {
      *
      * @param idActividad
      * @param idEmpleado
-     * @return
+     * @return La cantidad de registros actualizados en base de datos
      * @throws ClassNotFoundException
      * @throws InstantiationException
      * @throws SQLException

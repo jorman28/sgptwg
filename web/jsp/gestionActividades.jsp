@@ -49,7 +49,7 @@
                                     <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
                                         <label for="version">*Version</label>
                                         <c:if test="${empty id}">
-                                            <select id="version" name="version" class="form-control" onchange="actualizarFechas(this.value);">
+                                            <select id="version" name="version" class="form-control">
                                                 <option value="0">SELECCIONE</option>
                                                 <c:forEach items="${versiones}" var="ver">
                                                     <option value="${ver.id}" <c:if test="${ver.id == version}">selected</c:if>>${ver.nombre}</option>
