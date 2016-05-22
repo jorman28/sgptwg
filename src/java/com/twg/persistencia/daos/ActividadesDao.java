@@ -291,4 +291,43 @@ public class ActividadesDao {
         }
         return listaActividadesPorEstado;
     }
+
+    /**
+     * Método encargado de consultar en base de datos la lista de proyectos o
+     * versiones relacionados con los parámetros de búsqueda con el fin de
+     * definir el tiempo estimado e invertido de los mismos a manera de
+     * consolidado
+     *
+     * @param proyecto
+     * @param version
+     * @param responsable
+     * @return
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws IllegalAccessException
+     * @throws SQLException
+     */
+    public List<ActividadesBean> consolidadoActividades(Integer proyecto, Integer version, Integer responsable) throws ClassNotFoundException, InstantiationException, IllegalAccessException, SQLException {
+        List<ActividadesBean> listaActividades = new ArrayList<>();
+        Connection con;
+        con = new ConexionBaseDatos().obtenerConexion();
+        PreparedStatement ps;
+        ps = con.prepareStatement(sql.consolidadoActividades(proyecto, version, responsable));
+        ResultSet rs;
+        rs = ps.executeQuery();
+        while (rs.next()) {
+            ActividadesBean actividad = new ActividadesBean();
+            actividad.setProyecto(rs.getInt("proyecto"));
+            actividad.setNombreProyecto(rs.getString("nombre_proyecto"));
+            actividad.setVersion(rs.getInt("version"));
+            actividad.setNombreVersion(rs.getString("nombre_version"));
+            actividad.setTiempoEstimado(rs.getDouble("tiempo_estimado"));
+            actividad.setTiempoInvertido(rs.getDouble("tiempo_invertido"));
+            listaActividades.add(actividad);
+        }
+        rs.close();
+        ps.close();
+        con.close();
+        return listaActividades;
+    }
 }

@@ -749,4 +749,49 @@ public class ActividadesNegocio {
         }
         return actividadesPorEstado;
     }
+
+    /**
+     * Método encargado de retornar la lista de datos relacionados el tiempo
+     * estimado e invertido en los proyectos o versiones filtradas en la página
+     * de inicio de la aplicación
+     *
+     * @param proyecto
+     * @param version
+     * @param participante
+     * @return
+     */
+    public List<ActividadesBean> consolidadoActividades(Integer proyecto, Integer version, Integer participante) {
+        List<ActividadesBean> listaActividades = new ArrayList<>();
+        try {
+            listaActividades = actividadesDao.consolidadoActividades(proyecto, version, participante);
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | SQLException ex) {
+            Logger.getLogger(ActividadesNegocio.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return listaActividades;
+    }
+
+    /**
+     * Método encargado de retornar la lista de datos a imprimir en el reporte
+     * consolidado de tiempo invertido en proyectos o versiones de proyectos
+     *
+     * @param proyecto
+     * @param version
+     * @param persona
+     * @return La información en el formato requerido para crear el reporte
+     */
+    public JRDataSource datosConsolidadoActividades(Integer proyecto, Integer version, Integer persona) {
+        DRDataSource datos = new DRDataSource("item",
+                "tiempoEstimado",
+                "tiempoInvertido");
+        List<ActividadesBean> listaActividades = consolidadoActividades(proyecto, version, persona);
+        if (listaActividades != null && !listaActividades.isEmpty()) {
+            boolean porVersion = proyecto != null && proyecto != 0;
+            for (ActividadesBean actividad : listaActividades) {
+                datos.add(porVersion ? actividad.getNombreVersion() : actividad.getNombreProyecto(),
+                        actividad.getTiempoEstimado(),
+                        actividad.getTiempoInvertido());
+            }
+        }
+        return datos;
+    }
 }
