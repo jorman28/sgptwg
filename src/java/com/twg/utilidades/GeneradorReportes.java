@@ -21,6 +21,7 @@ import net.sf.dynamicreports.report.builder.column.Columns;
 import net.sf.dynamicreports.report.builder.column.TextColumnBuilder;
 import net.sf.dynamicreports.report.builder.datatype.DataTypes;
 import net.sf.dynamicreports.report.builder.style.FontBuilder;
+import net.sf.dynamicreports.report.constant.Orientation;
 import net.sf.dynamicreports.report.constant.PageOrientation;
 import net.sf.dynamicreports.report.constant.PageType;
 import net.sf.dynamicreports.report.exception.DRException;
@@ -69,6 +70,47 @@ public class GeneradorReportes {
                 .add(cht.pie3DChart().setTitleFont(boldFont).setKey(estado).series(cht.serie(cantidad))));
         reporte.setTemplate(Templates.reportTemplate);
         return guardarReporte(reporte, "Actividades_por_estado");
+    }
+
+    /**
+     * Método encargado de generar el reporte consolidado de tiempo estimado vs
+     * tiempo invertido en proyectos o versiones de un proyecto
+     *
+     * @param proyecto
+     * @param version
+     * @param persona
+     * @return
+     */
+    public String consolidadoActividades(Integer proyecto, Integer version, Integer persona) {
+        FontBuilder boldFont = stl.fontArialBold().setFontSize(12);
+        String columnaItem;
+        if (proyecto != null && proyecto != 0) {
+            columnaItem = "Version";
+        } else {
+            columnaItem = "Proyecto";
+        }
+        TextColumnBuilder<String> item = Columns.column(columnaItem, "item", DataTypes.stringType());
+        TextColumnBuilder<Double> tiempoEstimado = Columns.column("Estimado", "tiempoEstimado", DataTypes.doubleType());
+        TextColumnBuilder<Double> tiempoInvertido = Columns.column("Invertido", "tiempoInvertido", DataTypes.doubleType());
+
+        JasperReportBuilder reporte = DynamicReports.report();
+        reporte.addColumn(item);
+        reporte.addColumn(tiempoEstimado);
+        reporte.addColumn(tiempoInvertido);
+        reporte.title(Templates.createTitleComponent("Inversión de tiempo"));
+        reporte.pageFooter(Templates.footerComponent);
+        reporte.setDataSource(actividadesNegocio.datosConsolidadoActividades(proyecto, version, persona));
+        reporte.summary(cmp.verticalList()
+                .add(cmp.verticalGap(20))
+                .add(cht.barChart()
+                        .setTitleFont(boldFont)
+                        .setCategory(item)
+                        .setOrientation(Orientation.HORIZONTAL)
+                        .series(cht.serie(tiempoEstimado), cht.serie(tiempoInvertido))
+                        .setCategoryAxisFormat(cht.axisFormat().setLabel(columnaItem)))
+        );
+        reporte.setTemplate(Templates.reportTemplate);
+        return guardarReporte(reporte, "Inversion_de_tiempo");
     }
 
     /**

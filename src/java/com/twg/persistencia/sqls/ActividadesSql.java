@@ -313,4 +313,56 @@ public class ActividadesSql {
                 + "        AND est.tipo_estado = 'ACTIVIDADES';";
         return sql;
     }
+
+    /**
+     * Método encargado de retornar el SQL para consultar el tiempo estimado vs
+     * el tiempo invertido en las actividades correspondientes a un proyecto con
+     * sus versiones
+     *
+     * @param proyecto
+     * @param version
+     * @param responsable
+     * @return
+     */
+    public String consolidadoActividades(Integer proyecto, Integer version, Integer responsable) {
+        String sql = "SELECT \n"
+                + "    pro.id AS proyecto,\n"
+                + "    pro.nombre AS nombre_proyecto,\n"
+                + "    ver.id AS version,\n"
+                + "    ver.nombre AS nombre_version,\n"
+                + "    IFNULL(SUM(aemp.tiempo_estimado), 0) AS tiempo_estimado,\n"
+                + "    IFNULL(SUM(aesf.tiempo), 0) AS tiempo_invertido\n"
+                + "FROM\n"
+                + "    actividades act\n"
+                + "        INNER JOIN\n"
+                + "    versiones ver ON ver.id = act.version\n"
+                + "        INNER JOIN\n"
+                + "    proyectos pro ON pro.id = ver.proyecto\n"
+                + "        INNER JOIN\n"
+                + "    estados est ON est.id = act.estado\n"
+                + "        LEFT JOIN\n"
+                + "    actividades_empleados aemp ON aemp.actividad = act.id\n"
+                + "        LEFT JOIN\n"
+                + "    actividades_esfuerzos aesf ON aesf.empleado = aemp.empleado\n"
+                + "        AND aesf.actividad = act.id\n"
+                + "WHERE\n"
+                + "    act.fecha_eliminacion IS NULL\n"
+                + "        AND aemp.fecha_eliminacion IS NULL\n";
+        if (proyecto != null) {
+            sql += "        AND pro.id = " + proyecto + "\n";
+        }
+        if (version != null) {
+            sql += "        AND ver.id = " + version + "\n";
+        }
+        System.out.println(responsable);
+        if (responsable != null) {
+            sql += "        AND aemp.empleado = " + responsable + "\n";
+        }
+        if (proyecto != null && proyecto != 0) {
+            sql += "GROUP BY ver.id";
+        } else {
+            sql += "GROUP BY pro.id";
+        }
+        return sql;
+    }
 }

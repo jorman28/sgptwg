@@ -27,11 +27,10 @@ $(document).ready(function () {
     google.charts.setOnLoadCallback(graficaAvance);
 });
 
-var datos = [];
-
+var datosEstados = [];
 function graficaEstados() {
     if (google.visualization !== undefined) {
-        var data = google.visualization.arrayToDataTable(datos);
+        var data = google.visualization.arrayToDataTable(datosEstados);
         var options = {
             'is3D': true,
             'chartArea': {top: 0, width: '100%', height: '100%'}
@@ -41,18 +40,12 @@ function graficaEstados() {
     }
 }
 
+var datosAvance = [];
 function graficaAvance() {
     if (google.visualization !== undefined) {
-        var data = google.visualization.arrayToDataTable([
-            ['Versión', 'Estimado', 'Invertido'],
-            ['Version un poco grande', 10, 8],
-            ['Version otro tanto mas grande', 15, 12],
-            ['2016', 20, 35],
-            ['2017', 12, 15]
-        ]);
+        var data = google.visualization.arrayToDataTable(datosAvance);
 
         var options = {
-            chart: {title: 'Proyecto x'},
             bars: 'horizontal',
             hAxis: {format: 'decimal'},
             height: '100%',
@@ -82,7 +75,8 @@ function cargarDatos() {
                     $('#tablaActividadesPorEstado').html(data.html);
                 }
                 if (data.estados !== undefined) {
-                    datos = data.estados;
+                    datosEstados = data.estados;
+                    datosAvance = data.avance;
                     graficaEstados();
                     graficaAvance();
                 }

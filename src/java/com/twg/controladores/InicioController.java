@@ -4,6 +4,7 @@ import com.twg.negocio.ActividadesNegocio;
 import com.twg.negocio.PersonasNegocio;
 import com.twg.negocio.ProyectosNegocio;
 import com.twg.negocio.VersionesNegocio;
+import com.twg.persistencia.beans.ActividadesBean;
 import com.twg.persistencia.beans.VersionesBean;
 import com.twg.utilidades.GeneradorReportes;
 import java.io.FileInputStream;
@@ -75,6 +76,8 @@ public class InicioController extends HttpServlet {
                 String nombreArchivo = "";
                 if (tipoReporte != null && tipoReporte.equals("estados")) {
                     nombreArchivo = generadorReportes.actividadesPorEstado(proyecto, version, persona);
+                } else {
+                    nombreArchivo = generadorReportes.consolidadoActividades(proyecto, version, persona);
                 }
                 if (nombreArchivo != null && !nombreArchivo.isEmpty()) {
                     reporteObject.put("archivo", nombreArchivo);
@@ -85,8 +88,8 @@ public class InicioController extends HttpServlet {
                 obtenerArchivo(response, archivo);
                 break;
             case "consultar":
-                JSONObject estadosObject = actividadesPorEstado(request.getContextPath(), proyecto, version, persona);
-                response.getWriter().write(estadosObject.toString());
+                JSONObject resultado = graficasPantallaInicio(request.getContextPath(), proyecto, version, persona);
+                response.getWriter().write(resultado.toString());
                 break;
             case "consultarVersiones":
                 JSONArray array = new JSONArray();
@@ -124,7 +127,7 @@ public class InicioController extends HttpServlet {
      * @throws ServletException
      * @throws IOException
      */
-    private JSONObject actividadesPorEstado(String contexto, Integer proyecto, Integer version, Integer persona) throws ServletException, IOException {
+    private JSONObject graficasPantallaInicio(String contexto, Integer proyecto, Integer version, Integer persona) throws ServletException, IOException {
         JSONObject resultado = new JSONObject();
         JSONArray arrayEstados = new JSONArray();
         JSONArray titulos = new JSONArray();
@@ -176,6 +179,31 @@ public class InicioController extends HttpServlet {
         html.append("</div>");
         resultado.put("html", html.toString());
         resultado.put("estados", arrayEstados);
+        List<ActividadesBean> listaActividades = actividadesNegocio.consolidadoActividades(proyecto, version, persona);
+        JSONArray avanceActividades = new JSONArray();
+        if (listaActividades != null && !listaActividades.isEmpty()) {
+            JSONArray avance = new JSONArray();
+            if (proyecto != null && proyecto != 0) {
+                avance.add("Versión");
+            } else {
+                avance.add("Proyecto");
+            }
+            avance.add("Estimado");
+            avance.add("Invertido");
+            avanceActividades.add(avance);
+            for (ActividadesBean actividad : listaActividades) {
+                avance = new JSONArray();
+                if (proyecto != null && proyecto != 0) {
+                    avance.add(actividad.getNombreVersion());
+                } else {
+                    avance.add(actividad.getNombreProyecto());
+                }
+                avance.add(actividad.getTiempoEstimado());
+                avance.add(actividad.getTiempoInvertido());
+                avanceActividades.add(avance);
+            }
+        }
+        resultado.put("avance", avanceActividades);
         return resultado;
     }
 
