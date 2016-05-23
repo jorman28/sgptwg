@@ -30,10 +30,10 @@ public class UsuariosNegocio {
 
     /**
      * Consulta de los datos relacionados a un usuario por medio del id de la
-     * persona
+     * persona.
      *
      * @param idPersona
-     * @return
+     * @return Objeto con todos los atributos de un usuario específico.
      */
     public JSONObject consultarUsuario(Integer idPersona) {
         JSONObject jsonUsuario = new JSONObject();
@@ -66,7 +66,7 @@ public class UsuariosNegocio {
      * @param activo
      * @param documento
      * @param tipoDocumento
-     * @return
+     * @return Cantidad de registros de usuarios, según los parámetros de búsqueda.
      */
     public int cantidadUsuarios(Integer idPersona, String nombreUsuario, Integer perfil, String activo, String documento, String tipoDocumento) {
         int cantidadUsuarios = 0;
@@ -89,7 +89,8 @@ public class UsuariosNegocio {
      * @param documento
      * @param tipoDocumento
      * @param limite
-     * @return
+     * @return Listado con todos los usuarios consultados, dependiendo de los
+     * parámetros de búsqueda.
      */
     public List<UsuariosBean> consultarUsuarios(Integer idPersona, String nombreUsuario, Integer perfil, String activo, String documento, String tipoDocumento, String limite) {
         List<UsuariosBean> listaUsuarios = new ArrayList<>();
@@ -112,7 +113,9 @@ public class UsuariosNegocio {
      * @param activo
      * @param documento
      * @param tipoDocumento
-     * @return
+     * @param personaSesionStr
+     * @return Mapa con un mensaje de error o éxito dependiendo del resultado del 
+     * proceso.
      */
     public Map<String, Object> crearUsuario(Integer idPersona, String nombreUsuario, String clave, String clave2, Integer perfil, String activo, String documento, String tipoDocumento, Integer personaSesion) {
         UsuariosBean usuario = new UsuariosBean();
@@ -227,7 +230,8 @@ public class UsuariosNegocio {
      * actual como fecha de eliminación
      *
      * @param idPersona
-     * @return
+     * @return Mapa con un mensaje de error o de éxito dependiendo del resultado
+     * del proceso.
      */
     public Map<String, Object> eliminarUsuario(Integer idPersona, Integer personaSesion) {
         String mensajeExito = "";
@@ -271,7 +275,7 @@ public class UsuariosNegocio {
      *
      * @param usuario
      * @param clave2
-     * @return
+     * @return Cadena con un mensaje de error en caso de que el proceso falle.
      */
     private String validarDatos(UsuariosBean usuario, String clave2) {
         String error = "";
@@ -373,7 +377,8 @@ public class UsuariosNegocio {
      * @param contexto
      * @param usuario
      * @param clave
-     * @return
+     * @return Mapa con un mensaje de error o éxito, dependiendo del resultado
+     * del proceso.
      */
     public Map<String, Object> validarInicioSession(String contexto, String usuario, String clave) {
         Map<String, Object> resultado = new HashMap<>();

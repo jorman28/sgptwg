@@ -18,9 +18,8 @@ public class ActividadesEsfuerzosSql {
      * @param actividad
      * @param empleado
      * @param fecha
-     * @param tiempo
      * @param descripcion
-     * @return
+     * @return El SQL de la sentencia de base de datos
      */
     public String consultarActividadesEsfuerzos(Integer id, Integer actividad, Integer empleado, Date fecha, String descripcion) {
         String sql = "SELECT \n"
@@ -56,7 +55,7 @@ public class ActividadesEsfuerzosSql {
      * Método encargado de retornar el SQL para insertar un esfuerzo a una
      * actividad.
      *
-     * @return
+     * @return El SQL de la sentencia de base de datos
      */
     public String insertarActividadEsfuerzo() {
         return "INSERT INTO actividades_esfuerzos (actividad, empleado, fecha, tiempo, descripcion) VALUES (?, ?, ?, ?, ?)";
@@ -66,7 +65,7 @@ public class ActividadesEsfuerzosSql {
      * Método encargado de retornar el SQL para actualizar los esfuerzos de una
      * actividad.
      *
-     * @return
+     * @return El SQL de la sentencia de base de datos
      */
     public String actualizarActividadEsfuerzo() {
         return "UPDATE actividades_esfuerzos SET fecha = ?, tiempo = ?, descripcion = ? WHERE id = ?";
@@ -80,7 +79,7 @@ public class ActividadesEsfuerzosSql {
      * @param idActividadEsfuerzo
      * @param idActividad
      * @param idEmpleado
-     * @return
+     * @return El SQL de la sentencia de base de datos
      */
     public String eliminarActividadEsfuerzo(Integer idActividadEsfuerzo, Integer idActividad, Integer idEmpleado) {
         String sql = "UPDATE actividades_esfuerzos SET fecha_eliminacion = now() WHERE 1 = 1 ";

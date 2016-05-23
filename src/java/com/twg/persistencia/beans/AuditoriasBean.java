@@ -10,6 +10,7 @@ import java.util.Date;
  */
 public class AuditoriasBean {
 
+    //Definición de atributos.
     private Integer id;
     private Integer idPersona;
     private String nombrePersona;
@@ -17,7 +18,10 @@ public class AuditoriasBean {
     private String clasificacion;
     private String accion;
     private String descripcion;
-
+    
+    /*
+     * Declaración de métodos Get y Set para cada atributo de la clase.
+     */
     public Integer getId() {
         return id;
     }

@@ -35,7 +35,7 @@ public class EstadosDao {
      * @param estadoPrev
      * @param estadoSig
      * @param eFinal
-     * @return
+     * @return Cantidad de estados según los filtros aplicados.
      * @throws ClassNotFoundException
      * @throws InstantiationException
      * @throws SQLException

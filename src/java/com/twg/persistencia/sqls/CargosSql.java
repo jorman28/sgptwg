@@ -20,7 +20,7 @@ public class CargosSql {
      * @param nombre
      * @param nombreExacto
      * @param limite
-     * @return
+     * @return El SQL de la sentencia de base de datos
      */
     public String consultarCargos(String nombre, boolean nombreExacto, String limite) {
         String sql = "SELECT id, nombre FROM cargos WHERE 1 = 1 AND fecha_eliminacion IS NULL ";
@@ -43,7 +43,7 @@ public class CargosSql {
      *
      * @param nombre
      * @param nombreExacto
-     * @return
+     * @return El SQL de la sentencia de base de datos
      */
     public String cantidadCargos(String nombre, boolean nombreExacto) {
         String sql = "SELECT COUNT(*) AS cantidadCargos FROM cargos WHERE 1 = 1 AND fecha_eliminacion IS NULL ";
@@ -61,7 +61,7 @@ public class CargosSql {
      * Método encargado de retornar el SQL para consultar un cargo específico.
      *
      * @param id
-     * @return
+     * @return El SQL de la sentencia de base de datos
      */
     public String consultarCargo(int id) {
         return "SELECT id, nombre FROM cargos WHERE id = " + id;
@@ -70,7 +70,7 @@ public class CargosSql {
     /**
      * Método encargado de retornar el SQL para insertar un cargo nuevo.
      *
-     * @return
+     * @return El SQL de la sentencia de base de datos
      */
     public String insertarCargo() {
         return "INSERT INTO cargos (nombre) VALUES (?)";
@@ -79,7 +79,7 @@ public class CargosSql {
     /**
      * Método encargado de retornar el SQL para actualizar un cargo existente.
      *
-     * @return
+     * @return El SQL de la sentencia de base de datos
      */
     public String actualizarCargo() {
         return "UPDATE cargos SET nombre = ? WHERE id = ?";
@@ -89,7 +89,7 @@ public class CargosSql {
      * Método encargado de retornar el SQL para eliminar lógicamente un cargo,
      * actualizando la fecha de eliminación con la fecha actual.
      *
-     * @return
+     * @return El SQL de la sentencia de base de datos
      */
     public String eliminarCargo() {
         return "UPDATE cargos SET fecha_eliminacion = now() WHERE id = ?";

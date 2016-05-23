@@ -80,7 +80,7 @@ public class GeneradorReportes {
      * @param proyecto
      * @param version
      * @param persona
-     * @return
+     * @return El nombre del archivo generado
      */
     public String consolidadoActividades(Integer proyecto, Integer version, Integer persona) {
         FontBuilder boldFont = stl.fontArialBold().setFontSize(12);
@@ -119,7 +119,7 @@ public class GeneradorReportes {
      * la pantalla de gestión de actividades
      *
      * @param listaActividades
-     * @return
+     * @return El nombre del archivo generado
      */
     public String listadoActividades(List<ActividadesBean> listaActividades) {
         TextColumnBuilder<String> proyecto = Columns.column("Proyecto", "proyecto", DataTypes.stringType());
@@ -187,6 +187,12 @@ public class GeneradorReportes {
         return guardarReporte(reporte, "Listado_de_actividades");
     }
 
+    /**
+     * Mètodo encargado de generar un reporte con el listado de actividades
+     * detalladas según los filtros aplicados.
+     * @param listaActividades
+     * @return El nombre del archivo generado
+     */
     public String listadoDetalladaActividades(List<Map<String, Object>> listaActividades) {
         TextColumnBuilder<String> proyecto = Columns.column("Proyecto", "proyecto", DataTypes.stringType());
         TextColumnBuilder<String> version = Columns.column("Version", "version", DataTypes.stringType());

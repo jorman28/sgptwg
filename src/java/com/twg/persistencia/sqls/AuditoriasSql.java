@@ -21,7 +21,7 @@ public class AuditoriasSql {
      * @param fecha
      * @param idPersona
      * @param limite
-     * @return 
+     * @return El SQL de la sentencia de base de datos
      */
     public String consultarAuditorias(Integer idAuditoria, String clasificacion, String accion, String contiene, Date fecha, Integer idPersona, String limite) {
         String sql = "SELECT \n"
@@ -72,7 +72,7 @@ public class AuditoriasSql {
      * @param contiene
      * @param fecha
      * @param idPersona
-     * @return 
+     * @return El SQL de la sentencia de base de datos
      */
     public String cantidadAuditorias(Integer idAuditoria, String clasificacion, String accion, String contiene, Date fecha, Integer idPersona) {
         String sql = "SELECT COUNT(*) AS cantidadAuditorias \n"
@@ -105,7 +105,7 @@ public class AuditoriasSql {
     
     /**
      * Método encargado de retornar el SQL para insertar una nueva auditoria.
-     * @return 
+     * @return El SQL de la sentencia de base de datos
      */
     public String insertarAuditoria() {
         return "INSERT INTO auditorias (id_persona, fecha_creacion, clasificacion, accion, descripcion) VALUES (?,?,?,?,?)";
@@ -114,7 +114,7 @@ public class AuditoriasSql {
     /**
      * Método encargado de retornar el SQL para eliminar lógicamente una auditoria, 
      * actualizando la fecha de eliminación con la fecha actual.
-     * @return 
+     * @return El SQL de la sentencia de base de datos
      */
     public String eliminarAuditoria() {
         return "UPDATE auditorias SET fecha_eliminacion = now() WHERE id = ? AND fecha_eliminacion IS NULL";

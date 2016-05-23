@@ -16,8 +16,10 @@ import java.util.logging.Logger;
 import org.json.simple.JSONObject;
 
 /**
+ * Clase encargada de realizar la conexión entre la vista y las operaciones en
+ * base de datos, para la tabla de versiones.
  *
- * @author Pipe
+ * @author Andrés Felipe Giraldo, Jorman Rincón, Erika Jhoana Castaneda
  */
 public class VersionesNegocio {
 
@@ -25,6 +27,19 @@ public class VersionesNegocio {
     private final AuditoriasNegocio auditoria = new AuditoriasNegocio();
     private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
+    /**
+     * Método encargado de guardar o actualizar la información de una versión.
+     * @param id
+     * @param nombre
+     * @param fechaInicio
+     * @param fechaTerminacion
+     * @param alcance
+     * @param proyecto
+     * @param estado
+     * @param costo
+     * @param personaSesion
+     * @return Cadena con un mensaje de error en caso de que el proceso falle.
+     */
     public String guardarVersion(String id, String nombre, String fechaInicio, String fechaTerminacion, String alcance, String proyecto, String estado, String costo, Integer personaSesion) {
         String error = "";
         VersionesBean version = new VersionesBean();
@@ -56,18 +71,18 @@ public class VersionesNegocio {
                 try {
                     String descripcioAudit = "Se actualizó una versión. ANTES ("+
                             " Nombre version: "+versionAntes.get(0).getNombre()+
-                            " Proyecto: "+versionAntes.get(0).getNombreProyecto()+
-                            " Fecha inicio: "+(versionAntes.get(0).getFechaInicio()!=null?versionAntes.get(0).getFechaInicio():"Ninguno")+
-                            " Fecha terminación: "+(versionAntes.get(0).getFechaTerminacion()!=null?versionAntes.get(0).getFechaTerminacion():"Ninguno")+
-                            " Alcance: "+(versionAntes.get(0).getAlcance()!=null&&!versionAntes.get(0).getAlcance().equals("")?versionAntes.get(0).getAlcance():"Ninguno")+
-                            " Estado: "+(versionAntes.get(0).getNombreEstado()!=null&&!versionAntes.get(0).getNombreEstado().equals("")?versionAntes.get(0).getNombreEstado():"Ninguno")+
-                            " Costo: "+(versionAntes.get(0).getCosto()!=null?versionAntes.get(0).getCosto():"Ninguno")+
+                            ", Proyecto: "+versionAntes.get(0).getNombreProyecto()+
+                            ", Fecha inicio: "+(versionAntes.get(0).getFechaInicio()!=null?versionAntes.get(0).getFechaInicio():"Ninguno")+
+                            ", Fecha terminación: "+(versionAntes.get(0).getFechaTerminacion()!=null?versionAntes.get(0).getFechaTerminacion():"Ninguno")+
+                            ", Alcance: "+(versionAntes.get(0).getAlcance()!=null&&!versionAntes.get(0).getAlcance().equals("")?versionAntes.get(0).getAlcance():"Ninguno")+
+                            ", Estado: "+(versionAntes.get(0).getNombreEstado()!=null&&!versionAntes.get(0).getNombreEstado().equals("")?versionAntes.get(0).getNombreEstado():"Ninguno")+
+                            ", Costo: "+(versionAntes.get(0).getCosto()!=null?versionAntes.get(0).getCosto():"Ninguno")+
                             ") DESPUÉS ( Nombre version: "+versionNueva.get(0).getNombre()+
-                            " Proyecto: "+versionNueva.get(0).getNombreProyecto()+
-                            " Fecha inicio: "+(versionNueva.get(0).getFechaInicio()!=null?versionNueva.get(0).getFechaInicio():"Ninguno")+
-                            " Fecha terminación: "+(versionNueva.get(0).getFechaTerminacion()!=null?versionNueva.get(0).getFechaTerminacion():"Ninguno")+
-                            " Alcance: "+(versionNueva.get(0).getAlcance()!=null&&!versionNueva.get(0).getAlcance().equals("")?versionNueva.get(0).getAlcance():"Ninguno")+
-                            " Estado: "+(versionNueva.get(0).getNombreEstado()!=null&&!versionNueva.get(0).getNombreEstado().equals("")?versionNueva.get(0).getNombreEstado():"Ninguno");
+                            ", Proyecto: "+versionNueva.get(0).getNombreProyecto()+
+                            ", Fecha inicio: "+(versionNueva.get(0).getFechaInicio()!=null?versionNueva.get(0).getFechaInicio():"Ninguno")+
+                            ", Fecha terminación: "+(versionNueva.get(0).getFechaTerminacion()!=null?versionNueva.get(0).getFechaTerminacion():"Ninguno")+
+                            ", Alcance: "+(versionNueva.get(0).getAlcance()!=null&&!versionNueva.get(0).getAlcance().equals("")?versionNueva.get(0).getAlcance():"Ninguno")+
+                            ", Estado: "+(versionNueva.get(0).getNombreEstado()!=null&&!versionNueva.get(0).getNombreEstado().equals("")?versionNueva.get(0).getNombreEstado():"Ninguno");
                     String guardarAuditoria = auditoria.guardarAuditoria(personaSesion, ClasificacionAuditorias.VERSION.getNombre(), AccionesAuditadas.EDICION.getNombre(), descripcioAudit);
                 } catch (Exception e) {
                     Logger.getLogger(VersionesNegocio.class.getName()).log(Level.SEVERE, null, e);
@@ -79,12 +94,12 @@ public class VersionesNegocio {
                 try {
                     String descripcioAudit = "Se creó una versión con la siguiente información ("+
                             " Nombre version: "+versionNueva.get(0).getNombre()+
-                            " Proyecto: "+versionNueva.get(0).getNombreProyecto()+
-                            " Fecha inicio: "+(versionNueva.get(0).getFechaInicio()!=null?versionNueva.get(0).getFechaInicio():"Ninguno")+
-                            " Fecha terminación: "+(versionNueva.get(0).getFechaTerminacion()!=null?versionNueva.get(0).getFechaTerminacion():"Ninguno")+
-                            " Alcance: "+(versionNueva.get(0).getAlcance()!=null&&!versionNueva.get(0).getAlcance().equals("")?versionNueva.get(0).getAlcance():"Ninguno")+
-                            " Estado: "+(versionNueva.get(0).getNombreEstado()!=null&&!versionNueva.get(0).getNombreEstado().equals("")?versionNueva.get(0).getNombreEstado():"Ninguno")+
-                            " Costo: "+(versionNueva.get(0).getCosto()!=null?versionNueva.get(0).getCosto():"Ninguno")+").";
+                            ", Proyecto: "+versionNueva.get(0).getNombreProyecto()+
+                            ", Fecha inicio: "+(versionNueva.get(0).getFechaInicio()!=null?versionNueva.get(0).getFechaInicio():"Ninguno")+
+                            ", Fecha terminación: "+(versionNueva.get(0).getFechaTerminacion()!=null?versionNueva.get(0).getFechaTerminacion():"Ninguno")+
+                            ", Alcance: "+(versionNueva.get(0).getAlcance()!=null&&!versionNueva.get(0).getAlcance().equals("")?versionNueva.get(0).getAlcance():"Ninguno")+
+                            ", Estado: "+(versionNueva.get(0).getNombreEstado()!=null&&!versionNueva.get(0).getNombreEstado().equals("")?versionNueva.get(0).getNombreEstado():"Ninguno")+
+                            ", Costo: "+(versionNueva.get(0).getCosto()!=null?versionNueva.get(0).getCosto():"Ninguno")+").";
                     String guardarAuditoria = auditoria.guardarAuditoria(personaSesion, ClasificacionAuditorias.VERSION.getNombre(), AccionesAuditadas.CREACION.getNombre(), descripcioAudit);
                 } catch (Exception e) {
                     Logger.getLogger(VersionesNegocio.class.getName()).log(Level.SEVERE, null, e);
@@ -100,6 +115,20 @@ public class VersionesNegocio {
         return error;
     }
 
+    /**
+     * Método encargado de validar la información necesaria para poder guardar
+     * una nueva versión.
+     * @param idVersion
+     * @param nombre
+     * @param fechaInicio
+     * @param fechaTerminacion
+     * @param alcance
+     * @param proyecto
+     * @param estado
+     * @param costo
+     * @return Cadena con un mensaje de error en caso de que alguna validación
+     * no se cumpla.
+     */
     public String validarDatos(Integer idVersion, String nombre, String fechaInicio, String fechaTerminacion, String alcance, String proyecto, String estado, String costo) {
         String validacion = "";
         if (nombre == null || nombre.isEmpty()) {
@@ -204,6 +233,15 @@ public class VersionesNegocio {
         return validacion;
     }
 
+    /**
+     * Método encargado de consultar las versiones según los parámetros de 
+     * búsqueda.
+     * @param id
+     * @param idProyecto
+     * @param nombre
+     * @param nombreExacto
+     * @return Listado con todos los registros de versiones, según la búsqueda.
+     */
     public List<VersionesBean> consultarVersiones(Integer id, Integer idProyecto, String nombre, boolean nombreExacto) {
         List<VersionesBean> listaVersiones = new ArrayList<>();
         try {
@@ -214,6 +252,11 @@ public class VersionesNegocio {
         return listaVersiones;
     }
 
+    /**
+     * Método encargado de consultar una versión específica.
+     * @param idVersion
+     * @return Objeto con todos los atributos de una versión.
+     */
     public JSONObject consultarVersion(Integer idVersion) {
         JSONObject object = new JSONObject();
         List<VersionesBean> listaVersiones = consultarVersiones(idVersion, null, null, false);
@@ -231,6 +274,13 @@ public class VersionesNegocio {
         return object;
     }
 
+    /**
+     * Método encargado de eliminar una versión específica.
+     * @param idVersion
+     * @param idProyecto
+     * @param personaSesion
+     * @return Cadena con un mensaje de error en caso de que el proceso falle.
+     */
     public String eliminarVersion(Integer idVersion, Integer idProyecto, Integer personaSesion) {
         String error = "";
         try {
