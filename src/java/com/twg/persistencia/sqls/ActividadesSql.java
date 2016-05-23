@@ -314,7 +314,7 @@ public class ActividadesSql {
                 + "            actividades_empleados actEmp ON actEmp.actividad = act.id\n"
                 + "        WHERE\n"
                 + "            act.estado = est.id "
-                + "            AND act.fecha_elimiancion IS NULL ";
+                + "            AND act.fecha_eliminacion IS NULL ";
         if (proyecto != null && proyecto != 0) {
             sql += "                AND pro.id = '" + proyecto + "'\n";
         }
@@ -329,7 +329,8 @@ public class ActividadesSql {
                 + "    estados est\n"
                 + "WHERE\n"
                 + "    est.estado_final != 'T'\n"
-                + "        AND est.tipo_estado = 'ACTIVIDADES';";
+                + "        AND est.tipo_estado = 'ACTIVIDADES' "
+                + "        AND est.fecha_eliminacion IS NULL;";
         return sql;
     }
 
