@@ -29,6 +29,7 @@ import org.json.simple.JSONObject;
 public class AuditoriasController extends HttpServlet {
 
     private final AuditoriasNegocio auditoriasNegocio = new AuditoriasNegocio();
+    private final PersonasNegocio personasNegocio = new PersonasNegocio();
     private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
     /**
@@ -49,6 +50,7 @@ public class AuditoriasController extends HttpServlet {
         String mensajeExito = "";
         String mensajeError = "";
 
+        String busqueda = request.getParameter("busqueda");
         String accion = request.getParameter("accion");
         if (accion == null) {
             accion = "";
@@ -69,7 +71,7 @@ public class AuditoriasController extends HttpServlet {
        
         Integer idPersona;
         try {
-            idPersona = Integer.valueOf(request.getParameter("idPersona"));
+            idPersona = Integer.valueOf(request.getParameter("id_personaH"));
         } catch (NumberFormatException e) {
             idPersona = null;
         }
@@ -108,11 +110,9 @@ public class AuditoriasController extends HttpServlet {
                     enviarDatos(request, null, null, null, null, null, null);
                 }
                 break;
-            case "consultarPersonas":
-                String strNombrePerson = request.getParameter("nombrePerson");
-                PersonasNegocio personasNegocio = new PersonasNegocio();
-                JSONArray arrayPersonas = personasNegocio.completarPersonas(strNombrePerson);
-                response.getWriter().write(arrayPersonas.toString());
+                case "completarPersonas":
+                JSONArray arrayPersonasAC = personasNegocio.completarPersonas(busqueda);
+                response.getWriter().write(arrayPersonasAC.toJSONString());
                 break;
             default:
                 enviarDatos(request, null, null, null, null, null, null);
@@ -121,7 +121,7 @@ public class AuditoriasController extends HttpServlet {
         request.setAttribute("mensajeAlerta", mensajeAlerta);
         request.setAttribute("mensajeExito", mensajeExito);
         request.setAttribute("mensajeError", mensajeError);
-        if (!accion.equals("consultar") && !accion.equals("detalle")){
+        if (!accion.equals("consultar") && !accion.equals("detalle") && !accion.equals("completarPersonas")){
             if (permisosPagina != null && !permisosPagina.isEmpty()) {
                 if (permisosPagina.contains(Permisos.CONSULTAR.getNombre())) {
                     request.setAttribute("opcionConsultar", "T");

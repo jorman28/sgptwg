@@ -17,7 +17,7 @@
         <div class="container-fluid">
             <div>${menu}</div>
             <c:import url="/jsp/general/alertas.jsp"/>
-            <a id="help" href="#" title="Ayuda" class="linkAyuda"><i class="glyphicon glyphicon-question-sign"></i></a>
+            <a id="help" href="./manuales/Ayuda_Actividades.pdf" target="_blank" title="Ayuda" class="linkAyuda"><i class="glyphicon glyphicon-question-sign"></i></a>
             <div class="row">
                 <c:import url="/jsp/general/about.jsp"/>
                 <div class="col-xs-12 col-sm-9 col-md-10 col-lg-10" id="contenido">

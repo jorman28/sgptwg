@@ -1,10 +1,13 @@
 package com.twg.controladores;
 
 import com.twg.negocio.ActividadesNegocio;
+import com.twg.negocio.PerfilesNegocio;
 import com.twg.negocio.PersonasNegocio;
 import com.twg.negocio.ProyectosNegocio;
 import com.twg.negocio.VersionesNegocio;
 import com.twg.persistencia.beans.ActividadesBean;
+import com.twg.persistencia.beans.Paginas;
+import com.twg.persistencia.beans.Permisos;
 import com.twg.persistencia.beans.VersionesBean;
 import com.twg.utilidades.GeneradorReportes;
 import java.io.FileInputStream;
@@ -70,6 +73,16 @@ public class InicioController extends HttpServlet {
         if (accion == null) {
             accion = "";
         }
+
+        List<String> permisosPagina = PerfilesNegocio.permisosPorPagina(request, Paginas.ACTIVIDADES);
+
+        Integer personaSesion;
+        try {
+            personaSesion = (Integer) request.getSession(false).getAttribute("personaSesion");
+        } catch (Exception e) {
+            personaSesion = null;
+        }
+
         switch (accion) {
             case "generarReporte":
                 JSONObject reporteObject = new JSONObject();
@@ -112,7 +125,11 @@ public class InicioController extends HttpServlet {
                 break;
         }
         if (accion.equals("")) {
-            request.setAttribute("proyectos", proyectosNegocio.consultarProyectos(null, null, false));
+            Integer idPersona = null;
+            if (permisosPagina != null && permisosPagina.contains(Permisos.CONSULTAR.getNombre())) {
+                idPersona = personaSesion;
+            }
+            request.setAttribute("proyectos", proyectosNegocio.consultarProyectos(null, null, false, idPersona));
             request.getRequestDispatcher("jsp/inicio.jsp").forward(request, response);
         }
     }

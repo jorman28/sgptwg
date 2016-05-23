@@ -97,7 +97,7 @@ public class ProyectosController extends HttpServlet {
         } catch (Exception e) {
             personaSesion = null;
         }
-        
+
         switch (accion) {
             case "editarProyecto":
                 JSONObject proyecto = proyectosNegocio.consultarProyecto(idProyecto);
@@ -105,7 +105,7 @@ public class ProyectosController extends HttpServlet {
                 break;
             case "editarVersion":
                 JSONObject version = versionesNegocio.consultarVersion(idVersion);
-                version.put("comentarios", comentariosNegocio.listaComentarios(comentariosNegocio.TIPO_VERSION, idVersion));
+                version.put("comentarios", comentariosNegocio.listaComentarios(permisosPagina, personaSesion, comentariosNegocio.TIPO_VERSION, idVersion));
                 response.getWriter().write(version.toJSONString());
                 break;
             case "guardarProyecto":
@@ -171,7 +171,7 @@ public class ProyectosController extends HttpServlet {
                 if (mensajeAlerta.isEmpty()) {
                     mensajeError = comentariosNegocio.guardarComentario(null, personaSesion, comentario, comentariosNegocio.TIPO_VERSION, idVersion);
                     if (mensajeError.isEmpty()) {
-                        comentarioGuardado.put("comentarios", comentariosNegocio.listaComentarios(comentariosNegocio.TIPO_VERSION, idVersion));
+                        comentarioGuardado.put("comentarios", comentariosNegocio.listaComentarios(permisosPagina, personaSesion, comentariosNegocio.TIPO_VERSION, idVersion));
                     } else {
                         comentarioGuardado.put("mensajeError", mensajeError);
                     }
@@ -185,7 +185,7 @@ public class ProyectosController extends HttpServlet {
                 JSONObject comentarioEliminado = new JSONObject();
                 mensajeError = comentariosNegocio.eliminarComentario(idComentario, personaSesion);
                 if (mensajeError.isEmpty()) {
-                    comentarioEliminado.put("comentarios", comentariosNegocio.listaComentarios(comentariosNegocio.TIPO_VERSION, idVersion));
+                    comentarioEliminado.put("comentarios", comentariosNegocio.listaComentarios(permisosPagina, personaSesion, comentariosNegocio.TIPO_VERSION, idVersion));
                 } else {
                     comentarioEliminado.put("mensajeError", mensajeError);
                 }
@@ -195,26 +195,23 @@ public class ProyectosController extends HttpServlet {
                 break;
         }
 
-        if (!accion.equals("editarProyecto") && !accion.equals("editarVersion") && 
-                !accion.equals("completarPersonas") && !accion.equals("guardarComentario") && !accion.equals("eliminarComentario")) {
+        if (!accion.equals("editarProyecto") && !accion.equals("editarVersion")
+                && !accion.equals("completarPersonas") && !accion.equals("guardarComentario") && !accion.equals("eliminarComentario")) {
             request.setAttribute("mensajeError", mensajeError);
             request.setAttribute("mensajeExito", mensajeExito);
             request.setAttribute("mensajeAlerta", mensajeAlerta);
-            request.setAttribute("listaProyectos", listarProyectos(busquedaProyecto, permisosPagina));
+            Integer persona = null;
+            if (permisosPagina != null && !permisosPagina.contains(Permisos.CONSULTAR.getNombre())) {
+                persona = personaSesion;
+            }
+            request.setAttribute("listaProyectos", listarProyectos(busquedaProyecto, permisosPagina, persona));
             request.setAttribute("estados", estadosNegocio.consultarEstados(null, "VERSIONES", null, null, null, null, null));
             if (permisosPagina != null && !permisosPagina.isEmpty()) {
-                if (permisosPagina.contains(Permisos.CONSULTAR.getNombre())) {
-                    request.setAttribute("opcionConsultar", "T");
-                }
-                if (permisosPagina.contains(Permisos.CREAR_PROYECTO.getNombre())) {
-                    request.setAttribute("opcionCrearProyecto", "T");
-                }
-                if (permisosPagina.contains(Permisos.GUARDAR_PROYECTO.getNombre())) {
-                    request.setAttribute("opcionGuardarProyecto", "T");
-                }
-                if (permisosPagina.contains(Permisos.GUARDAR_VERSION.getNombre())) {
-                    request.setAttribute("opcionGuardarVersion", "T");
-                }
+                request.setAttribute("opcionConsultar", permisosPagina.contains(Permisos.CONSULTAR.getNombre()));
+                request.setAttribute("opcionCrearProyecto", permisosPagina.contains(Permisos.CREAR_PROYECTO.getNombre()));
+                request.setAttribute("opcionGuardarProyecto", permisosPagina.contains(Permisos.GUARDAR_PROYECTO.getNombre()));
+                request.setAttribute("opcionGuardarVersion", permisosPagina.contains(Permisos.GUARDAR_VERSION.getNombre()));
+                request.setAttribute("opcionComentar", permisosPagina.contains(Permisos.COMENTAR.getNombre()));
             }
             request.getRequestDispatcher(redireccion).forward(request, response);
         }
@@ -230,9 +227,9 @@ public class ProyectosController extends HttpServlet {
      * @param permisos
      * @return Retorna un texto donde se concatena todo el html que pinta los proyectos.
      */
-    private String listarProyectos(String nombre, List<String> permisos) {
+    private String listarProyectos(String nombre, List<String> permisos, Integer personaSesion) {
         String lista = "";
-        List<ProyectosBean> listaProyectos = proyectosNegocio.consultarProyectos(null, nombre, false);
+        List<ProyectosBean> listaProyectos = proyectosNegocio.consultarProyectos(null, nombre, false, personaSesion);
         if (listaProyectos != null && !listaProyectos.isEmpty()) {
             for (ProyectosBean proyecto : listaProyectos) {
                 lista += "  <div class=\"panel-group\" id=\"proyecto" + proyecto.getId() + "\" role=\"tablist\" aria-multiselectable=\"true\">\n"

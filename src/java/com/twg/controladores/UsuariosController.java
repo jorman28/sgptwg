@@ -81,14 +81,14 @@ public class UsuariosController extends HttpServlet {
         }
 
         List<String> permisosPagina = PerfilesNegocio.permisosPorPagina(request, Paginas.USUARIOS);
-        
+
         String personaSesion = "";
         try {
             personaSesion = String.valueOf(request.getSession().getAttribute("personaSesion"));
         } catch (Exception e) {
             System.err.print("Error obteniendo la persona en sesion");
         }
-        
+
         switch (accion) {
             case "consultar":
                 cargarTabla(response, permisosPagina, idPersona, nombreUsuario, perfil, activo, documento, tipoDocumento, pagina);
@@ -131,12 +131,8 @@ public class UsuariosController extends HttpServlet {
         request.setAttribute("perfiles", perfilesNegocio.consultarPerfiles());
         if (!accion.equals("consultar") && !accion.equals("editar")) {
             if (permisosPagina != null && !permisosPagina.isEmpty()) {
-                if (permisosPagina.contains(Permisos.CONSULTAR.getNombre())) {
-                    request.setAttribute("opcionConsultar", "T");
-                }
-                if (permisosPagina.contains(Permisos.GUARDAR.getNombre())) {
-                    request.setAttribute("opcionGuardar", "T");
-                }
+                request.setAttribute("opcionConsultar", permisosPagina.contains(Permisos.CONSULTAR.getNombre()));
+                request.setAttribute("opcionGuardar", permisosPagina.contains(Permisos.GUARDAR.getNombre()));
             }
             request.getRequestDispatcher("jsp/usuarios.jsp").forward(request, response);
         }
@@ -212,7 +208,7 @@ public class UsuariosController extends HttpServlet {
                 }
                 out.println("<td>");
                 out.println("<button class=\"btn btn-default\" type=\"button\" onclick=\"consultarUsuario(" + usuario.getIdPersona() + ")\">Detalle</button>");
-                if (permisos != null && !permisos.isEmpty() && permisos.contains(Permisos.ELIMINAR.getNombre())) {
+                if (permisos != null && permisos.contains(Permisos.ELIMINAR.getNombre())) {
                     out.println("<button class=\"btn btn-default\" type=\"button\" data-toggle=\"modal\" data-target=\"#confirmationMessage\" onclick=\"jQuery('#idPersona').val('" + usuario.getIdPersona() + "');\">Eliminar</button>");
                 }
                 out.println("</td>");
@@ -225,7 +221,7 @@ public class UsuariosController extends HttpServlet {
         }
         out.println("</tbody>");
         out.println("</table>");
-        
+
         /* Manejo de paginación */
         int cantidadUsuarios = usuariosNegocio.cantidadUsuarios(idPersona, nombreUsuario, perfil, activo, documento, tipoDocumento);
         int cantidadPaginas = 1;

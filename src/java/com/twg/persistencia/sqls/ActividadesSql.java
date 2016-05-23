@@ -313,7 +313,8 @@ public class ActividadesSql {
                 + "                LEFT JOIN\n"
                 + "            actividades_empleados actEmp ON actEmp.actividad = act.id\n"
                 + "        WHERE\n"
-                + "            act.estado = est.id ";
+                + "            act.estado = est.id "
+                + "            AND act.fecha_eliminacion IS NULL ";
         if (proyecto != null && proyecto != 0) {
             sql += "                AND pro.id = '" + proyecto + "'\n";
         }
@@ -321,14 +322,15 @@ public class ActividadesSql {
             sql += "                AND ver.id = '" + version + "'\n";
         }
         if (persona != null && persona != 0) {
-            sql += "                AND actEmp.empleado = '" + persona + "' ";
+            sql += "                AND actEmp.empleado = '" + persona + "' AND actEmp.fecha_eliminacion IS NULL ";
         }
         sql += "     ) AS actividades\n"
                 + "FROM\n"
                 + "    estados est\n"
                 + "WHERE\n"
                 + "    est.estado_final != 'T'\n"
-                + "        AND est.tipo_estado = 'ACTIVIDADES';";
+                + "        AND est.tipo_estado = 'ACTIVIDADES' "
+                + "        AND est.fecha_eliminacion IS NULL;";
         return sql;
     }
 

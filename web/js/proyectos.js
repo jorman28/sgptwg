@@ -214,7 +214,7 @@ function guardarComentario() {
         url: "ProyectosController",
         dataType: "json",
         data: {accion: "guardarComentario", comentario: jQuery("#comentario").val(), idVersion: $("#idVersion").val()},
-        success: function(data) {
+        success: function (data) {
             if (data !== undefined) {
                 if (data.comentarios !== undefined && data.comentarios !== '') {
                     $("#comentario").val('');
@@ -222,26 +222,29 @@ function guardarComentario() {
                 }
             }
         },
-        error: function() {
+        error: function () {
         }
     });
 }
 
-function eliminarComentario(idComentario) {
+function eliminarComentario() {
+    var idComentario = $("#idComentario").val();
     $.ajax({
         type: "POST",
         url: "ProyectosController",
         dataType: "json",
         data: {accion: "eliminarComentario", idComentario: idComentario, idVersion: $("#idVersion").val()},
-        success: function(data) {
+        success: function (data) {
             if (data !== undefined) {
                 if (data.comentarios !== undefined && data.comentarios !== '') {
                     $("#comentario").val('');
                     $("#listaComentarios").html(data.comentarios);
                 }
             }
+            $('#eliminacionComentarios').modal('hide');
         },
-        error: function() {
+        error: function () {
+            $('#eliminacionComentarios').modal('hide');
         }
     });
 }

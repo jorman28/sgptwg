@@ -57,7 +57,7 @@ public class ProyectosNegocio {
             int guardado = 0;
             if (idProyecto != null) {
                 proyecto.setId(idProyecto);
-                List<ProyectosBean> proyectoAntes = proyectosDao.consultarProyectos(idProyecto, null, false);
+                List<ProyectosBean> proyectoAntes = proyectosDao.consultarProyectos(idProyecto, null, false, null);
                 guardado = proyectosDao.actualizarProyecto(proyecto);
                 //AUDITORIA
                 try {
@@ -86,7 +86,7 @@ public class ProyectosNegocio {
                 error += "El proyecto no pudo ser guardado";
             } else if (idPersonas != null && idPersonas.length > 0) {
                 if (idProyecto == null) {
-                    List<ProyectosBean> listaProyectos = consultarProyectos(null, nombre, true);
+                    List<ProyectosBean> listaProyectos = consultarProyectos(null, nombre, true, null);
                     if (listaProyectos != null && !listaProyectos.isEmpty()) {
                         idProyecto = listaProyectos.get(0).getId();
                     }
@@ -123,7 +123,7 @@ public class ProyectosNegocio {
             if (nombre.length() > 30) {
                 validacion += "El campo 'Nombre' no debe contener más de 30 caracteres, has dígitado " + nombre.length() + " caracteres <br />";
             } else {
-                List<ProyectosBean> listaProyectos = consultarProyectos(null, nombre, true);
+                List<ProyectosBean> listaProyectos = consultarProyectos(null, nombre, true, null);
                 if (listaProyectos != null && !listaProyectos.isEmpty()) {
                     if (idProyecto == null || idProyecto.intValue() != listaProyectos.get(0).getId().intValue()) {
                         validacion += "El valor ingresado en el campo 'Nombre' ya existe en el sistema \n";
@@ -159,10 +159,10 @@ public class ProyectosNegocio {
      * @param nombreExacto
      * @return Listado de proyectos según los parámetros de búsqueda.
      */
-    public List<ProyectosBean> consultarProyectos(Integer id, String nombre, boolean nombreExacto) {
+    public List<ProyectosBean> consultarProyectos(Integer id, String nombre, boolean nombreExacto, Integer idPersona) {
         List<ProyectosBean> listaProyectos = new ArrayList<>();
         try {
-            listaProyectos = proyectosDao.consultarProyectos(id, nombre, nombreExacto);
+            listaProyectos = proyectosDao.consultarProyectos(id, nombre, nombreExacto, idPersona);
         } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
             Logger.getLogger(ProyectosNegocio.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -176,7 +176,7 @@ public class ProyectosNegocio {
      */
     public JSONObject consultarProyecto(Integer idProyecto) {
         JSONObject object = new JSONObject();
-        List<ProyectosBean> listaProyectos = consultarProyectos(idProyecto, null, false);
+        List<ProyectosBean> listaProyectos = consultarProyectos(idProyecto, null, false, null);
         if (listaProyectos != null && !listaProyectos.isEmpty()) {
             object.put("idProyecto", listaProyectos.get(0).getId());
             object.put("nombreProyecto", listaProyectos.get(0).getNombre());
@@ -242,7 +242,7 @@ public class ProyectosNegocio {
     public String eliminarProyecto(Integer idProyecto, Integer personaSesion) {
         String error = "";
         try {
-            List<ProyectosBean> proyectoEliminar = proyectosDao.consultarProyectos(idProyecto, null, false);
+            List<ProyectosBean> proyectoEliminar = proyectosDao.consultarProyectos(idProyecto, null, false, null);
             int eliminacion = proyectosDao.eliminarProyecto(idProyecto);
             if (eliminacion == 0) {
                 error = "El proyecto no pudo ser eliminado";

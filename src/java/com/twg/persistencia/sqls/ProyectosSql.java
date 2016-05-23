@@ -2,7 +2,7 @@ package com.twg.persistencia.sqls;
 
 /**
  * Esta clase define métodos para contruír los SQLs utilizados en el DAO.
- * 
+ *
  * @author Andrés Felipe Giraldo, Jorman Rincón, Erika Jhoana Castaneda
  */
 public class ProyectosSql {
@@ -19,23 +19,33 @@ public class ProyectosSql {
     /**
      * Método encargado de consultar los proyectos, aplicando diferentes filtros
      * según los parámetros que reciba distintos de nulos.
-     * 
+     *
      * @param id
      * @param nombre
      * @param nombreExacto
      * @return El SQL de la sentencia de base de datos
      */
-    public String consultarProyectos(Integer id, String nombre, boolean nombreExacto) {
-        String sql = "SELECT * FROM proyectos WHERE fecha_eliminacion IS NULL ";
+    public String consultarProyectos(Integer id, String nombre, boolean nombreExacto, Integer idPersona) {
+        String sql = "SELECT DISTINCT\n"
+                + "    pro.*\n"
+                + "FROM\n"
+                + "    proyectos pro\n"
+                + "        LEFT JOIN\n"
+                + "    personas_proyectos perpro ON pro.id = perpro.id_proyecto\n"
+                + "WHERE\n"
+                + "    fecha_eliminacion IS NULL ";
         if (id != null) {
-            sql += "AND id = " + id + " ";
+            sql += "AND pro.id = " + id + " ";
         }
         if (nombre != null && !nombre.isEmpty()) {
             if (nombreExacto) {
-                sql += "AND nombre = '" + nombre + "' ";
+                sql += "AND pro.nombre = '" + nombre + "' ";
             } else {
-                sql += "AND nombre LIKE '%" + nombre + "%' ";
+                sql += "AND pro.nombre LIKE '%" + nombre + "%' ";
             }
+        }
+        if (idPersona != null) {
+            sql += "AND perpro.id_persona = " + idPersona + " ";
         }
         return sql;
     }
@@ -102,16 +112,17 @@ public class ProyectosSql {
     public String insertarPersonaProyecto() {
         return "INSERT INTO personas_proyectos (id_proyecto, id_persona) VALUES (?,?)";
     }
-    
+
     /**
      * Método encargado de retornar el SQL para consultar el proyecto de una
      * versión específica.
+     *
      * @param idVersion
      * @return El SQL de la sentencia de base de datos
      */
     public String consultarProyectosPorVersion(int idVersion) {
-        return "SELECT DISTINCT p.id, p.nombre, p.fecha_inicio \n" +
-               "FROM proyectos as p INNER JOIN versiones AS v ON (v.proyecto = p.id)\n" +
-               "WHERE v.id = " + idVersion;
+        return "SELECT DISTINCT p.id, p.nombre, p.fecha_inicio \n"
+                + "FROM proyectos as p INNER JOIN versiones AS v ON (v.proyecto = p.id)\n"
+                + "WHERE v.id = " + idVersion;
     }
 }

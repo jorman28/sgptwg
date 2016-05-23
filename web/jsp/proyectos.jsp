@@ -17,7 +17,7 @@
         <div class="container-fluid">
             <div>${menu}</div>
             <c:import url="/jsp/general/alertas.jsp"/>
-            <a id="help" href="#" title="Ayuda" class="linkAyuda"><i class="glyphicon glyphicon-question-sign"></i></a>
+            <a id="help" href="./manuales/Ayuda_Proyectos_Versiones.pdf" target="_blank" title="Ayuda" class="linkAyuda"><i class="glyphicon glyphicon-question-sign"></i></a>
             <div class="row">
                 <c:import url="/jsp/general/about.jsp"/>
                 <div class="col-xs-12 col-sm-9 col-md-10 col-lg-10" id="contenido">
@@ -62,7 +62,7 @@
                                             </div>
                                             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                                 <label for="participante">*Participante:</label> 
-                                                <input class="form-control" type="text" id="participante" name="participante" />
+                                                <input class="form-control" type="text" id="participante" name="participante" <c:if test="${!opcionGuardarProyecto}">readonly="true"</c:if> />
                                                 <span id="limpiarParticipante" class="glyphicon glyphicon-remove-circle"></span>
                                             </div>
                                         </div>
@@ -85,7 +85,7 @@
                                         </div>
                                     </div>
                                     <div class="modal-footer">
-                                        <c:if test="${opcionGuardarProyecto == 'T'}">
+                                        <c:if test="${opcionGuardarProyecto}">
                                             <button type="submit" class="btn btn-primary" name="accion" id="guardarProyecto" value="guardarProyecto">Guardar</button>
                                         </c:if>
                                         <button type="button" class="btn btn-primary" data-dismiss="modal">Cancelar</button>
@@ -141,7 +141,7 @@
                                         </div>  
                                     </div>
                                     <div class="modal-footer">
-                                        <c:if test="${opcionGuardarVersion == 'T'}">
+                                        <c:if test="${opcionGuardarVersion}">
                                             <button type="submit" class="btn btn-primary" name="accion" id="guardarVersion" value="guardarVersion">Guardar</button>
                                         </c:if>
                                         <button type="button" class="btn btn-primary" data-dismiss="modal">Cancelar</button>
@@ -150,16 +150,14 @@
                             </div>
                         </div>
                         <h2>PROYECTOS</h2>
-                        <div id="listaProyectos">${listaProyectos}</div>
                         <div class="row form-group" align="center">
-                            <c:if test="${opcionConsultar == 'T'}">
-                                <button class="btn btn-default" type="button" data-toggle="modal" data-target="#modalConsulta">Consultar</button>
-                            </c:if>
-                            <c:if test="${opcionCrearProyecto == 'T'}">
+                            <button class="btn btn-default" type="button" data-toggle="modal" data-target="#modalConsulta">Consultar</button>
+                            <c:if test="${opcionCrearProyecto}">
                                 <button class="btn btn-default" type="button" name="accion" id="crearProyecto" value="crearProyecto" onclick="nuevoProyecto();">Nuevo</button>
                             </c:if>
                             <button class="btn btn-default" type="submit" name="accion" id="limpiarProyecto" value="limpiarProyecto">Limpiar</button>
                         </div>
+                        <div id="listaProyectos">${listaProyectos}</div>
                     </form>
                 </div>
             </div>

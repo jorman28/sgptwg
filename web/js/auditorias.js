@@ -10,12 +10,12 @@ $(document).ready(function () {
         minView: 2});
     llenarTablaAuditorias();
 
-    $("#filtroPersona").typeahead({
+    $("#id_persona").typeahead({
         onSelect: function (item) {
-            $("#idPersona").val(item.value);
+            $("#id_personaH").val(item.value);
         },
         ajax: {
-            url: "ArchivosController",
+            url: "AuditoriasController",
             timeout: 500,
             displayField: "nombre",
             valueField: 'id',
@@ -42,6 +42,7 @@ function consultarAuditoria(id){
             console.log(data);
             if(data !== undefined){
                 $("#id").val(data.id !== undefined ? data.id : "");
+                $("#id_personaH").val(data.id_persona !== undefined ? data.id_persona : "");
                 $("#id_persona").val(data.nombrePersona !== undefined ? data.nombrePersona : "");
                 $("#fecha_creacion").val(data.fecha_creacion !== undefined ? data.fecha_creacion : "");
                 $("#clasificacion").val(data.clasificacion !== undefined ? data.clasificacion : "");
@@ -55,50 +56,20 @@ function consultarAuditoria(id){
     });
 }
 
-var personas = {};
-jQuery(function () {
-    $("#id_persona")
-            .typeahead({
-                onSelect: function (item) {
-                    var persona = personas[item.value];
-                    $('#id_persona').val(persona.id);
-                },
-                ajax: {
-                    url: "AuditoriasController",
-                    timeout: 500,
-                    displayField: "nombre",
-                    valueField: 'id',
-                    triggerLength: 1,
-                    items: 10,
-                    method: "POST",
-                    preDispatch: function (nombrePerson) {
-                        return {nombrePerson: nombrePerson, accion: "consultarPersonas"};
-                    },
-                    preProcess: function (data) {
-                        for (var i = 0; i < data.length; i++) {
-                            var persona = data[i];
-                            personas[persona.id] = persona;
-                        }
-                        return data;
-                    }
-                }
-            });
-});
-
 function llenarTablaAuditorias(pagina) {
     if (pagina === undefined) {
         pagina = 1;
     }
     var id = $('#id').val() !== undefined && $('#id').val() !== "" ? $('#id').val() : null;
+    var idPersona = $('#id_personaH').val() !== undefined && $('#id_personaH').val() !== "" ? $('#id_personaH').val() : null;
+    if ($('#idPersona').val() === "") {
+        idPersona = null;
+    }
     //var id_persona = $('#id_persona').val() !== undefined && $('#id_persona').val() !== "" ? $('#id_persona').val() : null;
     var fecha_creacion = $('#fecha_creacion').val() !== undefined && $('#fecha_creacion').val() !== "" ? $('#fecha_creacion').val() : null;
     var clasificacion = $('#clasificacion').val() !== undefined && $('#clasificacion').val() !== "" ? $('#clasificacion').val() : null;
     var accionAud = $('#accionAud').val() !== undefined && $('#accionAud').val() !== "" ? $('#accionAud').val() : null;
     var descripcion = $('#descripcion').val() !== undefined && $('#descripcion').val() !== "" ? $('#descripcion').val() : null;
-    var idPersona = $('#idPersona').val() !== undefined && $('#idPersona').val() !== "" ? $('#idPersona').val() : null;
-    if ($('#filtroCreador').val() === "") {
-        idPersona = null;
-    }
     $.ajax({
         type: "POST",
         url: "AuditoriasController",

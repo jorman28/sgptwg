@@ -89,6 +89,9 @@ public class AuditoriasDao {
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;
         ps = con.prepareStatement(sql.cantidadAuditorias(idAuditoria, clasificacion, accion, contiene, fecha, idPersona));
+        if (fecha != null) {
+            ps.setObject(1, fecha);
+        }
         ResultSet rs;
         rs = ps.executeQuery();
         if (rs.next()) {

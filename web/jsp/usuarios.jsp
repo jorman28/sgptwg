@@ -17,7 +17,7 @@
         <div class="container-fluid">
             <div>${menu}</div>
             <c:import url="/jsp/general/alertas.jsp"/>
-            <a id="help" href="#" title="Ayuda" class="linkAyuda"><i class="glyphicon glyphicon-question-sign"></i></a>
+            <a id="help" href="./manuales/Ayuda_Usuarios.pdf" target="_blank" title="Ayuda" class="linkAyuda"><i class="glyphicon glyphicon-question-sign"></i></a>
             <div class="row">
                 <c:import url="/jsp/general/about.jsp"/>
                 <div class="col-xs-12 col-sm-9 col-md-10 col-lg-10" id="contenido">
@@ -74,10 +74,10 @@
                         </div>
                         <br>
                         <div class="row" align="center">
-                            <c:if test="${opcionConsultar == 'T'}">
+                            <c:if test="${opcionConsultar}">
                                 <button class="btn btn-default" type="button" name="accion" id="consultar" value="consultar" onclick="llenarTabla()">Consultar</button>
                             </c:if>
-                            <c:if test="${opcionGuardar == 'T'}">
+                            <c:if test="${opcionGuardar}">
                                 <button class="btn btn-default" type="submit" name="accion" id="guardar" value="guardar">Guardar</button>
                             </c:if>
                             <button class="btn btn-default" type="submit" name="accion" id="limpiar" value="limpiar">Limpiar</button>

@@ -17,7 +17,7 @@
         <div class="container-fluid">
             <div>${menu}</div>
             <c:import url="/jsp/general/alertas.jsp"/>
-            <a id="help" href="#" title="Ayuda" class="linkAyuda"><i class="glyphicon glyphicon-question-sign"></i></a>
+            <a id="help" href="./manuales/Ayuda_Permisos.pdf" target="_blank" title="Ayuda" class="linkAyuda"><i class="glyphicon glyphicon-question-sign"></i></a>
             <div class="row">
                 <c:import url="/jsp/general/about.jsp"/>
                 <div class="col-xs-12 col-sm-9 col-md-10 col-lg-10" id="contenido">
@@ -34,19 +34,30 @@
 
                                     <!-- dialog body -->
                                     <div class="modal-body">
-                                        <div class="panel-group">
+                                        <div class="panel-group" id="pagina_inicio" role="tablist" aria-multiselectable="true">
                                             <div class="panel panel-default">
-                                                <div class="panel-heading">
+                                                <div class="panel-heading" role="tab" id="heading_inicio">
                                                     <h4 class="panel-title">
                                                         <div class="row">
                                                             <div class="col-xs-10 col-sm-11 col-md-11 col-lg-11">
-                                                                Inicio
+                                                                <a role="button" data-toggle="collapse" data-parent="#pagina_inicio" href="#collapse_inicio" aria-expanded="true" aria-controls="collapse_inicio">
+                                                                    Inicio
+                                                                </a>
                                                             </div>
                                                             <div align="right" class="col-xs-2 col-sm-1 col-md-1 col-lg-1">
-                                                                <input type="checkbox" name="permisos" id="permiso_9" value="9" />
+                                                                <input type="checkbox" name="permisos" id="permiso_9" value="9" onclick="encenderPermisosHijos(this.id);" />
                                                             </div>
                                                         </div>
                                                     </h4>
+                                                </div>
+                                                <div id="collapse_inicio" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading_inicio">
+                                                    <div class="panel-body">
+                                                        <div class="checkbox">
+                                                            <label>
+                                                                <input type="checkbox" name="permisos" id="permiso_9_1" value="59" onclick="encenderPermisoPadre('permiso_9');" /> Consultar
+                                                            </label>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -136,6 +147,37 @@
                                                                             &nbsp;
                                                                             <label>
                                                                                 <input type="checkbox" name="permisos" id="permiso_10_4" value="23" onclick="encenderPermisoPadre('permiso_10');" /> Guardar
+                                                                            </label>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="panel-group" id="pagina_auditorias" role="tablist" aria-multiselectable="true">
+                                                            <div class="panel panel-default">
+                                                                <div class="panel-heading" role="tab" id="heading_auditorias">
+                                                                    <h4 class="panel-title">
+                                                                        <div class="row">
+                                                                            <a role="button" data-toggle="collapse" data-parent="#pagina_auditorias" href="#collapse_auditorias" aria-expanded="true" aria-controls="collapse_auditorias">
+                                                                                <div class="col-xs-10 col-sm-11 col-md-11 col-lg-11">
+                                                                                    Auditorías
+                                                                                </div>
+                                                                            </a>
+                                                                            <div align="right" class="col-xs-2 col-sm-1 col-md-1 col-lg-1">
+                                                                                <input type="checkbox" name="permisos" id="permiso_58" value="58" onclick="encenderPermisosHijos(this.id);" />
+                                                                            </div>
+                                                                        </div>
+                                                                    </h4>
+                                                                </div>
+                                                                <div id="collapse_auditorias" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading_auditorias">
+                                                                    <div class="panel-body">
+                                                                        <div class="checkbox">
+                                                                            <label>
+                                                                                <input type="checkbox" name="permisos" id="permiso_58_1" value="47" onclick="encenderPermisoPadre('permiso_58');" /> Consultar
+                                                                            </label>
+                                                                            &nbsp;
+                                                                            <label>
+                                                                                <input type="checkbox" name="permisos" id="permiso_58_2" value="46" onclick="encenderPermisoPadre('permiso_58');" /> Eliminar
                                                                             </label>
                                                                         </div>
                                                                     </div>
@@ -337,6 +379,14 @@
                                                                             <label>
                                                                                 <input type="checkbox" name="permisos" id="permiso_16_8" value="39" onclick="encenderPermisoPadre('permiso_16');" /> Comentar
                                                                             </label>
+                                                                            &nbsp;
+                                                                            <label>
+                                                                                <input type="checkbox" name="permisos" id="permiso_16_9" value="48" onclick="encenderPermisoPadre('permiso_16');" /> Eliminar comentarios
+                                                                            </label>
+                                                                            &nbsp;
+                                                                            <label>
+                                                                                <input type="checkbox" name="permisos" id="permiso_16_10" value="49" onclick="encenderPermisoPadre('permiso_16');" /> Eliminar comentario propio
+                                                                            </label>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -380,6 +430,30 @@
                                                                             <label>
                                                                                 <input type="checkbox" name="permisos" id="permiso_1_5" value="44" onclick="encenderPermisoPadre('permiso_1');" /> Comentar
                                                                             </label>
+                                                                            &nbsp;
+                                                                            <label>
+                                                                                <input type="checkbox" name="permisos" id="permiso_1_6" value="50" onclick="encenderPermisoPadre('permiso_1');" /> Eliminar comentarios
+                                                                            </label>
+                                                                            &nbsp;
+                                                                            <label>
+                                                                                <input type="checkbox" name="permisos" id="permiso_1_7" value="51" onclick="encenderPermisoPadre('permiso_1');" /> Eliminar comentario propio
+                                                                            </label>
+                                                                            &nbsp;
+                                                                            <label>
+                                                                                <input type="checkbox" name="permisos" id="permiso_1_8" value="54" onclick="encenderPermisoPadre('permiso_1');" /> Ingresar tiempos
+                                                                            </label>
+                                                                            &nbsp;
+                                                                            <label>
+                                                                                <input type="checkbox" name="permisos" id="permiso_1_9" value="55" onclick="encenderPermisoPadre('permiso_1');" /> Ingresar tiempo propio
+                                                                            </label>
+                                                                            &nbsp;
+                                                                            <label>
+                                                                                <input type="checkbox" name="permisos" id="permiso_1_10" value="56" onclick="encenderPermisoPadre('permiso_1');" /> Eliminar tiempos
+                                                                            </label>
+                                                                            &nbsp;
+                                                                            <label>
+                                                                                <input type="checkbox" name="permisos" id="permiso_1_11" value="57" onclick="encenderPermisoPadre('permiso_1');" /> Eliminar tiempo propio
+                                                                            </label>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -400,7 +474,7 @@
                                                                 </div>
                                                             </a>
                                                             <div align="right" class="col-xs-2 col-sm-1 col-md-1 col-lg-1">
-                                                                <input type="checkbox" name="permisos" id="permiso_7" value="7" /> 
+                                                                <input type="checkbox" name="permisos" id="permiso_7" value="7" onclick="encenderPermisosHijos(this.id);" /> 
                                                             </div>
                                                         </div>
                                                     </h4>
@@ -409,6 +483,31 @@
                                                     <div class="panel-body">
                                                         <div class="checkbox">
                                                             <label>
+                                                                <input type="checkbox" name="permisos" id="permiso_7_1" value="60" onclick="encenderPermisoPadre('permiso_1');" /> Consultar
+                                                            </label>
+                                                            &nbsp;
+                                                            <label>
+                                                                <input type="checkbox" name="permisos" id="permiso_7_2" value="61" onclick="encenderPermisoPadre('permiso_7');" /> Crear
+                                                            </label>
+                                                            &nbsp;
+                                                            <label>
+                                                                <input type="checkbox" name="permisos" id="permiso_7_3" value="62" onclick="encenderPermisoPadre('permiso_7');" /> Eliminar
+                                                            </label>
+                                                            &nbsp;
+                                                            <label>
+                                                                <input type="checkbox" name="permisos" id="permiso_7_4" value="63" onclick="encenderPermisoPadre('permiso_7');" /> Guardar
+                                                            </label>
+                                                            &nbsp;
+                                                            <label>
+                                                                <input type="checkbox" name="permisos" id="permiso_7_5" value="64" onclick="encenderPermisoPadre('permiso_7');" /> Comentar
+                                                            </label>
+                                                            &nbsp;
+                                                            <label>
+                                                                <input type="checkbox" name="permisos" id="permiso_7_6" value="52" onclick="encenderPermisoPadre('permiso_7');" /> Eliminar comentarios
+                                                            </label>
+                                                            &nbsp;
+                                                            <label>
+                                                                <input type="checkbox" name="permisos" id="permiso_7_7" value="53" onclick="encenderPermisoPadre('permiso_7');" /> Eliminar comentario propio
                                                             </label>
                                                         </div>
                                                     </div>

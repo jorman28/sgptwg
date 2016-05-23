@@ -11,7 +11,7 @@
         <div class="container-fluid">
             <div>${menu}</div>
             <c:import url="/jsp/general/alertas.jsp"/>
-            <a id="help" href="#" title="Ayuda" class="linkAyuda"><i class="glyphicon glyphicon-question-sign"></i></a>
+            <a id="help" href="./manuales/Ayuda_Auditorias.pdf" target="_blank" title="Ayuda" class="linkAyuda"><i class="glyphicon glyphicon-question-sign"></i></a>
             <div class="row">
                 <c:import url="/jsp/general/about.jsp"/>
                 <div class="col-xs-12 col-sm-9 col-md-10 col-lg-10" id="contenido">
@@ -26,7 +26,7 @@
                             <div class="panel-body">
                                 <div class="row">
                                     <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                                        <input type="hidden" id="id_personaH" name="id_personaH" value="${id_personaH}" />
+                                        <input type="hidden" id="id_personaH" name="id_personaH" />
                                         <label for="id_persona">Persona:</label>
                                         <input class="form-control" type="search" id="id_persona" name="id_persona" value="${id_persona}" maxlength="50"/>                                       
                                     </div>

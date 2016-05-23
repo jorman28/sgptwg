@@ -2,8 +2,11 @@ package com.twg.controladores;
 
 import com.twg.negocio.ArchivosNegocio;
 import com.twg.negocio.ComentariosNegocio;
+import com.twg.negocio.PerfilesNegocio;
 import com.twg.negocio.PersonasNegocio;
 import com.twg.persistencia.beans.ArchivosBean;
+import com.twg.persistencia.beans.Paginas;
+import com.twg.persistencia.beans.Permisos;
 import com.twg.persistencia.beans.PersonasBean;
 import com.twg.utilidades.AlmacenamientoArchivos;
 import java.io.FileInputStream;
@@ -87,14 +90,28 @@ public class ArchivosController extends HttpServlet {
         if (accion == null) {
             accion = "";
         }
+
+        List<String> permisosPagina = PerfilesNegocio.permisosPorPagina(request, Paginas.DOCUMENTACION);
+
+        Integer personaSesion = null;
+        try {
+            personaSesion = (Integer) request.getSession(false).getAttribute("personaSesion");
+        } catch (Exception e) {
+        }
+
+        if (permisosPagina != null && !permisosPagina.isEmpty() && 
+                !permisosPagina.contains(Permisos.CONSULTAR.getNombre())) {
+            idPersona = personaSesion;
+        }
+
         switch (accion) {
             case "editar":
                 JSONObject archivoConsultado = archivosNegocio.consultarArchivo(idArchivo);
-                archivoConsultado.put("comentarios", comentariosNegocio.listaComentarios(comentariosNegocio.TIPO_ARCHIVO, idArchivo));
+                archivoConsultado.put("comentarios", comentariosNegocio.listaComentarios(permisosPagina, personaSesion, comentariosNegocio.TIPO_ARCHIVO, idArchivo));
                 response.getWriter().write(archivoConsultado.toJSONString());
                 break;
             case "consultar":
-                cargarTabla(response, contiene, filtroFecha, idPersona, pagina);
+                cargarTabla(response, permisosPagina, contiene, filtroFecha, idPersona, pagina);
                 break;
             case "eliminar":
                 mensajeError = archivosNegocio.eliminarArchivo(idArchivo);
@@ -105,8 +122,7 @@ public class ArchivosController extends HttpServlet {
             case "guardar":
                 mensajeAlerta = archivosNegocio.validarDatos(idArchivo, nombre, descripcion, nombreArchivo);
                 if (mensajeAlerta.isEmpty()) {
-                    Integer persona = (Integer) request.getSession(false).getAttribute("personaSesion");
-                    mensajeError = archivosNegocio.guardarArchivo(idArchivo, nombre, descripcion, persona, nombreArchivo);
+                    mensajeError = archivosNegocio.guardarArchivo(idArchivo, nombre, descripcion, personaSesion, nombreArchivo);
                     if (mensajeError.isEmpty()) {
                         Part archivoPart = request.getPart("archivo");
                         almacenamientoArchivos.cargarArchivo(archivoPart, nombreArchivo);
@@ -123,18 +139,12 @@ public class ArchivosController extends HttpServlet {
                 break;
             case "guardarComentario":
                 String comentario = request.getParameter("comentario");
-                Integer persona;
-                try {
-                    persona = (Integer) request.getSession(false).getAttribute("personaSesion");
-                } catch (Exception e) {
-                    persona = null;
-                }
                 JSONObject comentarioGuardado = new JSONObject();
                 mensajeAlerta = comentariosNegocio.validarDatos(comentario);
                 if (mensajeAlerta.isEmpty()) {
-                    mensajeError = comentariosNegocio.guardarComentario(null, persona, comentario, comentariosNegocio.TIPO_ARCHIVO, idArchivo);
+                    mensajeError = comentariosNegocio.guardarComentario(null, personaSesion, comentario, comentariosNegocio.TIPO_ARCHIVO, idArchivo);
                     if (mensajeError.isEmpty()) {
-                        comentarioGuardado.put("comentarios", comentariosNegocio.listaComentarios(comentariosNegocio.TIPO_ARCHIVO, idArchivo));
+                        comentarioGuardado.put("comentarios", comentariosNegocio.listaComentarios(permisosPagina, personaSesion, comentariosNegocio.TIPO_ARCHIVO, idArchivo));
                     } else {
                         comentarioGuardado.put("mensajeError", mensajeError);
                     }
@@ -146,14 +156,9 @@ public class ArchivosController extends HttpServlet {
             case "eliminarComentario":
                 Integer idComentario = Integer.valueOf(request.getParameter("idComentario"));
                 JSONObject comentarioEliminado = new JSONObject();
-                Integer personaSesion = null;
-                try {
-                    personaSesion = (Integer) request.getSession(false).getAttribute("personaSesion");
-                } catch (Exception e) {
-                }
                 mensajeError = comentariosNegocio.eliminarComentario(idComentario, personaSesion);
                 if (mensajeError.isEmpty()) {
-                    comentarioEliminado.put("comentarios", comentariosNegocio.listaComentarios(comentariosNegocio.TIPO_ARCHIVO, idArchivo));
+                    comentarioEliminado.put("comentarios", comentariosNegocio.listaComentarios(permisosPagina, personaSesion, comentariosNegocio.TIPO_ARCHIVO, idArchivo));
                 } else {
                     comentarioEliminado.put("mensajeError", mensajeError);
                 }
@@ -166,11 +171,16 @@ public class ArchivosController extends HttpServlet {
             request.setAttribute("mensajeExito", mensajeExito);
             request.setAttribute("mensajeError", mensajeError);
             request.setAttribute("mensajeAlerta", mensajeAlerta);
-            Integer persona = (Integer) request.getSession(false).getAttribute("personaSesion");
-            PersonasBean objetoPersona = personasNegocio.consultarPersona(persona, null, null);
+            PersonasBean objetoPersona = personasNegocio.consultarPersona(personaSesion, null, null);
             if (objetoPersona != null) {
                 request.setAttribute("hiddenCreador", objetoPersona.getNombres() + " " + objetoPersona.getApellidos());
                 request.setAttribute("hiddenFecha", archivosNegocio.sdf.format(new Date()));
+            }
+            if (permisosPagina != null && !permisosPagina.isEmpty()) {
+                request.setAttribute("opcionConsultar", permisosPagina.contains(Permisos.CONSULTAR.getNombre()));
+                request.setAttribute("opcionGuardar", permisosPagina.contains(Permisos.GUARDAR.getNombre()));
+                request.setAttribute("opcionCrear", permisosPagina.contains(Permisos.CREAR.getNombre()));
+                request.setAttribute("opcionComentar", permisosPagina.contains(Permisos.COMENTAR.getNombre()));
             }
             request.getRequestDispatcher("jsp/archivos.jsp").forward(request, response);
         }
@@ -187,7 +197,7 @@ public class ArchivosController extends HttpServlet {
      * @throws ServletException
      * @throws IOException
      */
-    private void cargarTabla(HttpServletResponse response, String contiene, Date fecha, Integer persona, int pagina) throws ServletException, IOException {
+    private void cargarTabla(HttpServletResponse response, List<String> permisos, String contiene, Date fecha, Integer persona, int pagina) throws ServletException, IOException {
         response.setContentType("text/html; charset=iso-8859-1");
         int registros = 10;
         int paginasAdicionales = 2;
@@ -216,7 +226,9 @@ public class ArchivosController extends HttpServlet {
                 out.println("<td>" + archivo.getRuta() + "</td>");
                 out.println("<td>");
                 out.println("<button class=\"btn btn-default\" type=\"button\" onclick=\"consultarArchivo(" + archivo.getId() + ");\">Gestionar</button>");
-                out.println("<button class=\"btn btn-default\" type=\"button\" data-toggle=\"modal\" data-target=\"#confirmationMessage\" onclick=\"jQuery('#id').val('" + archivo.getId() + "');\">Eliminar</button>");
+                if (permisos != null && !permisos.isEmpty() && permisos.contains(Permisos.ELIMINAR.getNombre())) {
+                    out.println("<button class=\"btn btn-default\" type=\"button\" data-toggle=\"modal\" data-target=\"#confirmationMessage\" onclick=\"jQuery('#id').val('" + archivo.getId() + "');\">Eliminar</button>");
+                }
                 out.println("</td>");
                 out.println("</tr>");
             }
