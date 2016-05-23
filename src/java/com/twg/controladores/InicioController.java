@@ -74,7 +74,7 @@ public class InicioController extends HttpServlet {
             accion = "";
         }
 
-        List<String> permisosPagina = PerfilesNegocio.permisosPorPagina(request, Paginas.ACTIVIDADES);
+        List<String> permisosPagina = PerfilesNegocio.permisosPorPagina(request, Paginas.INICIO);
 
         Integer personaSesion;
         try {
@@ -130,7 +130,7 @@ public class InicioController extends HttpServlet {
         }
         if (accion.equals("")) {
             Integer idPersona = null;
-            if (permisosPagina != null && permisosPagina.contains(Permisos.CONSULTAR.getNombre())) {
+            if (permisosPagina != null && !permisosPagina.contains(Permisos.CONSULTAR.getNombre())) {
                 idPersona = personaSesion;
             }
             request.setAttribute("opcionConsultar", permisosPagina != null && permisosPagina.contains(Permisos.CONSULTAR.getNombre()));
