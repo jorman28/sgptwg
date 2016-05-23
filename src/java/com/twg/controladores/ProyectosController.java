@@ -211,6 +211,7 @@ public class ProyectosController extends HttpServlet {
                 request.setAttribute("opcionCrearProyecto", permisosPagina.contains(Permisos.CREAR_PROYECTO.getNombre()));
                 request.setAttribute("opcionGuardarProyecto", permisosPagina.contains(Permisos.GUARDAR_PROYECTO.getNombre()));
                 request.setAttribute("opcionGuardarVersion", permisosPagina.contains(Permisos.GUARDAR_VERSION.getNombre()));
+                request.setAttribute("opcionComentar", permisosPagina.contains(Permisos.COMENTAR.getNombre()));
             }
             request.getRequestDispatcher(redireccion).forward(request, response);
         }
