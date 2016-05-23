@@ -52,7 +52,7 @@ public class CargosDao {
      *
      * @param nombre
      * @param nombreExacto
-     * @return
+     * @return Cantidad de registros de cargos, según los filtros aplicados.
      * @throws ClassNotFoundException
      * @throws InstantiationException
      * @throws SQLException

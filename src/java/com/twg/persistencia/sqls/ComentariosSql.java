@@ -10,7 +10,7 @@ public class ComentariosSql {
     /**
      * Método encargado de retornar el SQL para contar el número de comentarios
      * que existen.
-     * @return 
+     * @return El SQL de la sentencia de base de datos
      */
     public String contarComentarios() {
         return "SELECT COUNT(*) FROM comentarios WHERE fecha_eliminacion IS NULL";
@@ -20,7 +20,7 @@ public class ComentariosSql {
      * Método encargado de retornar el SQL para consultar los comentarios según
      * el lugar donde ses vayan a visualizar.
      * @param id
-     * @return 
+     * @return El SQL de la sentencia de base de datos
      */
     public String consultarComentarios(Integer id) {
         String sql = "  SELECT \n"
@@ -50,7 +50,7 @@ public class ComentariosSql {
 
     /**
      * Método encargado de retornar el SQL para insertar un nuevo comentario.
-     * @return 
+     * @return El SQL de la sentencia de base de datos
      */
     public String insertarComentario() {
         return "INSERT INTO comentarios (id_persona, comentario, fecha_creacion, tipo_destino, id_destino) VALUES (?,?,now(),?,?)";
@@ -58,7 +58,7 @@ public class ComentariosSql {
 
     /**
      * Método encargado de retornar el SQL para actualizar un comentario existente.
-     * @return 
+     * @return El SQL de la sentencia de base de datos
      */
     public String actualizarComentario() {
         return "UPDATE comentarios SET id_persona = ?, comentario = ?, fecha_creacion = now(), tipo_destino = ?, id_destino = ? WHERE id = ?";
@@ -67,7 +67,7 @@ public class ComentariosSql {
     /**
      * Método encargado de retornar el SQL para eliminar lógicamente un 
      * comentario, actualizando la fecha de eliminación por la fecha actual.
-     * @return 
+     * @return El SQL de la sentencia de base de datos
      */
     public String eliminarComentario() {
         String sql = "UPDATE comentarios SET fecha_eliminacion = now() WHERE fecha_eliminacion IS NULL AND id = ? ";

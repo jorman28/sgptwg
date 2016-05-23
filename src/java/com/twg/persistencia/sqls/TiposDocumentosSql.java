@@ -23,7 +23,7 @@ public class TiposDocumentosSql {
      * Método encargado de retornar el SQL para consultar todos los tipos
      * de documentos.
      * 
-     * @return 
+     * @return El SQL de la sentencia de base de datos
      */
     public String consultarTiposDocumentos(){
         return "SELECT tipo, nombre FROM tipos_documentos";
@@ -32,7 +32,7 @@ public class TiposDocumentosSql {
     /**
      * Método encargado de retornar el SQL para insertar un nuevo tipo de 
      * documento.
-     * @return 
+     * @return El SQL de la sentencia de base de datos
      */
     public String insertarTipoDocumento(){
         return "INSERT INTO tipos_documentos (tipo, nombre) VALUES (?, ?)";
@@ -41,7 +41,7 @@ public class TiposDocumentosSql {
     /**
      * Método encargado de retornar el SQL para actualizar un tipo de 
      * documento existente.
-     * @return 
+     * @return El SQL de la sentencia de base de datos
      */
     public String actualizarTipoDocumento(){
         return "UPDATE tipos_documentos SET nombre = ? WHERE tipo = ?";
@@ -49,7 +49,7 @@ public class TiposDocumentosSql {
     
     /**
      * Método encargado de retornar el SQL para eliminar 
-     * @return 
+     * @return El SQL de la sentencia de base de datos
      */
     public String eliminarTipoDocumento(){
         return "DELETE FROM tipos_documentos WHERE tipo = ?";

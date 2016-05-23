@@ -10,6 +10,16 @@ import java.util.Date;
  */
 public class ArchivosSql {
 
+    /**
+     * Método encargado de consultar los registros de los archivos guardados
+     * en el sistema, aplicando diferentes filtros.
+     * @param idArchivo
+     * @param contiene
+     * @param fecha
+     * @param idPersona
+     * @param limite
+     * @return El SQL de la sentencia de base de datos
+     */
     public String consultarArchivos(Integer idArchivo, String contiene, Date fecha, Integer idPersona, String limite) {
         String sql = "SELECT \n"
                 + "    arc.id,\n"
@@ -45,6 +55,15 @@ public class ArchivosSql {
         return sql;
     }
     
+    /**
+     * Método encargado de construír el SQL para contar los archivos según
+     * los parámetros de búsqueda.
+     * @param idArchivo
+     * @param contiene
+     * @param fecha
+     * @param idPersona
+     * @return El SQL de la sentencia de base de datos
+     */
     public String cantidadArchivos(Integer idArchivo, String contiene, Date fecha, Integer idPersona) {
         String sql = "SELECT COUNT(*) AS cantidadArchivos \n"
                 + "FROM\n"
@@ -69,14 +88,27 @@ public class ArchivosSql {
         return sql;
     }
 
+    /**
+     * Método encargado de retornar el SQL para insertar un archivo.
+     * @return El SQL de la sentencia de base de datos
+     */
     public String insertarArchivo() {
         return "INSERT INTO archivos (nombre, descripcion, fecha_creacion, ruta, id_persona, tipo) VALUES (?,?,?,?,?,?)";
     }
 
+    /**
+     * Método encargado de retornar el SQL para actualiar la información 
+     * de un archivo.
+     * @return El SQL de la sentencia de base de datos
+     */
     public String actualizarArchivo() {
         return "UPDATE archivos SET nombre = ?, descripcion = ? WHERE id = ?";
     }
 
+    /**
+     * Método encargado de retornar el SQL para eliminar un archivo.
+     * @return El SQL de la sentencia de base de datos
+     */
     public String eliminarArchivo() {
         return "UPDATE archivos SET fecha_eliminacion = now() WHERE id = ? AND fecha_eliminacion IS NULL";
     }

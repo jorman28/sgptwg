@@ -18,12 +18,23 @@ import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import org.json.simple.JSONObject;
 
+/**
+ * Clase encargada de realizar la conexión entre la vista y las operaciones en
+ * base de datos, para la tabla de perfiles.
+ *
+ * @author Andrés Felipe Giraldo, Jorman Rincón, Erika Jhoana Castaneda
+ */
 public class PerfilesNegocio {
 
     private final PerfilesDao perfilesDao = new PerfilesDao();
     private final UsuariosDao usuariosDao = new UsuariosDao();
     private final AuditoriasNegocio auditoria = new AuditoriasNegocio();
 
+    /**
+     * Método encargado de invocar otro método para consultar los perfiles,
+     * sin enviar parámetros de búsqueda
+     * @return Listado de perfiles registrados en la Base de Datos.
+     */
     public List<PerfilesBean> consultarPerfiles() {
         return consultarPerfiles(null, null, null);
     }
@@ -34,7 +45,7 @@ public class PerfilesNegocio {
      *
      * @param idPerfil
      * @param nombrePerfil
-     * @return
+     * @return Cantidad de perfiles según los parámetros de búsqueda.
      */
     public int cantidadPerfiles(Integer idPerfil, String nombrePerfil) {
         int cantidadPerfiles = 0;
@@ -46,6 +57,14 @@ public class PerfilesNegocio {
         return cantidadPerfiles;
     }
     
+    /**
+     * Método encargado de consultar los perfiles según los parámetros de búsqueda.
+     * @param idPerfil
+     * @param nombrePersona
+     * @param limite
+     * @return Listado con todos los perfiles que resultan de la búsqueda, según 
+     * los parámetros de búsqueda.
+     */
     public List<PerfilesBean> consultarPerfiles(Integer idPerfil, String nombrePersona, String limite) {
         List<PerfilesBean> perfiles = new ArrayList<>();
         try {
@@ -56,6 +75,12 @@ public class PerfilesNegocio {
         return perfiles;
     }
 
+    /**
+     * Método encargado de consultar un perfil específico.
+     * @param idPerfil
+     * @param nombrePersona
+     * @return Objeto con la información del perfil consultado.
+     */
     public JSONObject consultarPerfil(Integer idPerfil, String nombrePersona) {
         JSONObject perfil = new JSONObject();
         try {
@@ -70,6 +95,12 @@ public class PerfilesNegocio {
         return perfil;
     }
 
+    /**
+     * Método encargado de consultar los permisos que tiene un perfil asignados
+     * según la página donde se encuentre navegando.
+     * @param idPerfil
+     * @return Mapa con todos los permisos que tiene un perfil sobre una página.
+     */
     public Map<Integer, Map<String, Object>> consultarPermisosPorPagina(Integer idPerfil) {
         Map<Integer, Map<String, Object>> permisos = new TreeMap<>();
         try {
@@ -80,6 +111,13 @@ public class PerfilesNegocio {
         return permisos;
     }
 
+    /**
+     * Método encargado de guardar o actualizar la información de un perfil.
+     * @param idPerfil
+     * @param nombrePerfil
+     * @param personaSesionStr
+     * @return Mapa con un mensaje de éxito o error según el resultado del proceso.
+     */
     public Map<String, Object> guardarPerfil(Integer idPerfil, String nombrePerfil, String personaSesionStr) {
         String mensajeExito = "";
         String mensajeError = "";
@@ -157,6 +195,13 @@ public class PerfilesNegocio {
         return result;
     }
 
+    /**
+     * Método encargado de guardar los permisos que se seleccionen para un perfil.
+     * @param idPerfil
+     * @param permisos
+     * @param personaSesionStr
+     * @return Mapa con un mensaje de éxito o error según el resultado del proceso.
+     */
     public Map<String, Object> guardarPermisos(Integer idPerfil, String[] permisos, String personaSesionStr) {
         String mensajeExito = "";
         String mensajeError = "";
@@ -211,6 +256,12 @@ public class PerfilesNegocio {
         return result;
     }
 
+    /**
+     * Método encargado de eliminar un perfil junto con todos sus permisos.
+     * @param idPerfil
+     * @param personaSesionStr
+     * @return Mapa con un mensaje de exito o error según el resultado del proceso.
+     */
     public Map<String, Object> eliminarPerfil(Integer idPerfil, String personaSesionStr) {
         String mensajeExito = "";
         String mensajeError = "";
@@ -259,6 +310,14 @@ public class PerfilesNegocio {
         return result;
     }
 
+    /**
+     * Método encargado de construír todo el árbol de navegación o el menú al 
+     * que puede acceder una persona.
+     * @param permisos
+     * @param context
+     * @return Cadena con el html del menú que aparece en la parte superior del 
+     * sistema.
+     */
     public String construccionMenuNavegacion(Map<Integer, Map<String, Object>> permisos, String context) {
         StringBuilder menu = new StringBuilder();
         menu.append("<nav class=\"navbar navbar-default\">\n");
@@ -319,6 +378,11 @@ public class PerfilesNegocio {
         return menu.toString();
     }
 
+    /**
+     * Método encargado de obtener los permisos de un perfil específico.
+     * @param idPerfil
+     * @return Objeto con los permisos que tiene el perfil enviado como parámetro.
+     */
     public JSONObject obtenerPermisosPerfil(Integer idPerfil) {
         JSONObject resultado = new JSONObject();
         try {
@@ -334,6 +398,13 @@ public class PerfilesNegocio {
         return resultado;
     }
 
+    /**
+     * Método encargado de construír el listado de permisos o de accesos que tiene
+     * un perfil por página.
+     * @param request
+     * @param pagina
+     * @return Listado de permisos por página.
+     */
     public static List<String> permisosPorPagina(HttpServletRequest request, Paginas pagina) {
         List<String> permisos = null;
         Map<Integer, Map<String, Object>> datosPagina = (Map<Integer, Map<String, Object>>) request.getSession().getAttribute("permisos");

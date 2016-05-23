@@ -27,7 +27,7 @@ public class UsuariosDao {
      * Método encargado de consultar todos los usuarios existentes en la base de
      * datos
      *
-     * @return
+     * @return Listado de usuarios según los filtros aplicados.
      * @throws ClassNotFoundException
      * @throws InstantiationException
      * @throws SQLException
@@ -42,7 +42,7 @@ public class UsuariosDao {
      * usuario
      *
      * @param nombreUsuario
-     * @return
+     * @return Listado de usuarios según los filtros aplicados.
      * @throws ClassNotFoundException
      * @throws InstantiationException
      * @throws SQLException
@@ -57,7 +57,7 @@ public class UsuariosDao {
      * de dicha persona
      *
      * @param idPersona
-     * @return
+     * @return Listado con la información de un usuario específico.
      * @throws ClassNotFoundException
      * @throws InstantiationException
      * @throws SQLException
@@ -77,7 +77,7 @@ public class UsuariosDao {
      * @param activo
      * @param documento
      * @param tipoDocumento
-     * @return
+     * @return Cantdad de usuarios según los filtros aplicados.
      * @throws ClassNotFoundException
      * @throws InstantiationException
      * @throws SQLException
@@ -111,7 +111,7 @@ public class UsuariosDao {
      * @param documento
      * @param tipoDocumento
      * @param limite
-     * @return
+     * @return Listado de usuarios según los filtros aplicados.
      * @throws ClassNotFoundException
      * @throws InstantiationException
      * @throws SQLException
@@ -150,7 +150,7 @@ public class UsuariosDao {
      * Método encargado de insertar un registro de usuario en la base de datos
      *
      * @param usuario
-     * @return
+     * @return Número para indicar que un registro se insertó o no de forma correcta.
      * @throws ClassNotFoundException
      * @throws InstantiationException
      * @throws SQLException
@@ -177,7 +177,7 @@ public class UsuariosDao {
      * insertado en la base de datos
      *
      * @param usuario
-     * @return
+     * @return Número para indicar que un registro se actualizó o no de forma correcta.
      * @throws ClassNotFoundException
      * @throws InstantiationException
      * @throws SQLException
@@ -205,7 +205,7 @@ public class UsuariosDao {
      * datos
      *
      * @param idPersona
-     * @return
+     * @return Número para indicar que un registro se eliminó o no de forma correcta.
      * @throws ClassNotFoundException
      * @throws InstantiationException
      * @throws SQLException

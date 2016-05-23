@@ -30,7 +30,7 @@ public enum AccionesAuditadas {
      * Método encargado de obtener el nombre que tenga asociado un elemento de
      * la enumeración
      *
-     * @return
+     * @return Cadena con el nombre de la acción de la auditoría.
      */
     public String getNombre() {
         return this.nombre;
