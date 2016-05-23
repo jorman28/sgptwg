@@ -9,7 +9,7 @@ public class ProyectosSql {
 
     /**
      * Método encargado de retornar el SQL para contar los proyectos existentes.
-     * 
+     *
      * @return El SQL de la sentencia de base de datos
      */
     public String contarProyectos() {
@@ -23,6 +23,7 @@ public class ProyectosSql {
      * @param id
      * @param nombre
      * @param nombreExacto
+     * @param idPersona
      * @return El SQL de la sentencia de base de datos
      */
     public String consultarProyectos(Integer id, String nombre, boolean nombreExacto, Integer idPersona) {
@@ -52,6 +53,7 @@ public class ProyectosSql {
 
     /**
      * Método encargado de retornar el SQL para insertar un nuevo proyecto.
+     *
      * @return El SQL de la sentencia de base de datos
      */
     public String insertarProyecto() {
@@ -59,7 +61,9 @@ public class ProyectosSql {
     }
 
     /**
-     * Método encargado de retornar el SQL para actualizar un proyecto existente.
+     * Método encargado de retornar el SQL para actualizar un proyecto
+     * existente.
+     *
      * @return El SQL de la sentencia de base de datos
      */
     public String actualizarProyecto() {
@@ -67,8 +71,9 @@ public class ProyectosSql {
     }
 
     /**
-     * Método encargado de eliminar lógicamente un proyecto, actualizando 
-     * la fecha de eliminación con la fecha actual.
+     * Método encargado de eliminar lógicamente un proyecto, actualizando la
+     * fecha de eliminación con la fecha actual.
+     *
      * @return El SQL de la sentencia de base de datos
      */
     public String eliminarProyecto() {
@@ -76,9 +81,9 @@ public class ProyectosSql {
     }
 
     /**
-     * Método encargado de retornar el SQL para consultar las personas 
-     * que pertenecen a un proyecto específico.
-     * 
+     * Método encargado de retornar el SQL para consultar las personas que
+     * pertenecen a un proyecto específico.
+     *
      * @return El SQL de la sentencia de base de datos
      */
     public String consultarPersonasProyecto() {
@@ -96,8 +101,9 @@ public class ProyectosSql {
     }
 
     /**
-     * Método encargado de eliminar físicamente las personas que pertenecen 
-     * a un proyecto.
+     * Método encargado de eliminar físicamente las personas que pertenecen a un
+     * proyecto.
+     *
      * @return El SQL de la sentencia de base de datos
      */
     public String eliminarPersonasProyecto() {
@@ -105,8 +111,9 @@ public class ProyectosSql {
     }
 
     /**
-     * Método encargado de retornar el SQL para insertar peronas en un 
-     * proyecto específico.
+     * Método encargado de retornar el SQL para insertar peronas en un proyecto
+     * específico.
+     *
      * @return El SQL de la sentencia de base de datos
      */
     public String insertarPersonaProyecto() {

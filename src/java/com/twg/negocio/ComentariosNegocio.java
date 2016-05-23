@@ -29,8 +29,9 @@ public class ComentariosNegocio {
     public final String TIPO_ACTIVIDAD = "ACTIVIDAD";
 
     /**
-     * Método encargado de guardar o actualizar un comentario dentro de una 
+     * Método encargado de guardar o actualizar un comentario dentro de una
      * actividad o versión.
+     *
      * @param id
      * @param idPersona
      * @param comentarioEscrito
@@ -84,8 +85,9 @@ public class ComentariosNegocio {
     }
 
     /**
-     * Método encargado de hacer las validaciones correspondientes para agregar 
+     * Método encargado de hacer las validaciones correspondientes para agregar
      * un comentario.
+     *
      * @param comentario
      * @return Cadena con un mensaje de error en caso de que alguna validación
      * no cumpla.
@@ -101,6 +103,7 @@ public class ComentariosNegocio {
     /**
      * Método encargado de consultar el listado de comentarios según el destino,
      * ya sea en actividades o versiones.
+     *
      * @param tipoDestino
      * @param idDestino
      * @return Listado de comentarios según los parámetros de búsqueda.
@@ -117,9 +120,10 @@ public class ComentariosNegocio {
 
     /**
      * Método encargado de eliminar un comentario específico.
+     *
      * @param idComentario
      * @param personaSesion
-     * @return Cadena con un mensaje de error en caso de que el proceso de 
+     * @return Cadena con un mensaje de error en caso de que el proceso de
      * eliminación falle.
      */
     public String eliminarComentario(Integer idComentario, Integer personaSesion) {
@@ -148,10 +152,13 @@ public class ComentariosNegocio {
     /**
      * Método encargado de construír el html que pinta el listado de comentarios
      * realizados en actividades o versiones.
+     *
+     * @param permisos
+     * @param idPersona
      * @param tipoDestino
      * @param idDestino
-     * @return Cadena con el html que pinta todo el listado de comentarios, según
-     * los parámetros de búsqueda.
+     * @return Cadena con el html que pinta todo el listado de comentarios,
+     * según los parámetros de búsqueda.
      */
     public String listaComentarios(List<String> permisos, Integer idPersona, String tipoDestino, Integer idDestino) {
         String resultado = "";
