@@ -74,7 +74,7 @@ function llenarTablaAuditorias(pagina) {
         type: "POST",
         url: "AuditoriasController",
         dataType: "html",
-        data: {accion: "consultar", id: id, idPersona: id_personaH, fecha_creacion: fecha_creacion, clasificacion: clasificacion, accionAud: accionAud, descripcion: descripcion, pagina: pagina},
+        data: {accion: "consultar", id: id, id_personaH: id_personaH, fecha_creacion: fecha_creacion, clasificacion: clasificacion, accionAud: accionAud, descripcion: descripcion, pagina: pagina},
         success: function (data) {
             if (data !== undefined) {
                 $('#tablaAuditorias').html(data);

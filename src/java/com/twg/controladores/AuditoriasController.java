@@ -69,11 +69,11 @@ public class AuditoriasController extends HttpServlet {
         } catch (NumberFormatException e) {
         }
 
-        Integer idPersona;
+        Integer id_personaH;
         try {
-            idPersona = Integer.valueOf(request.getParameter("id_personaH"));
+            id_personaH = Integer.valueOf(request.getParameter("id_personaH"));
         } catch (NumberFormatException e) {
-            idPersona = null;
+            id_personaH = null;
         }
 
         Integer pagina;
@@ -92,7 +92,7 @@ public class AuditoriasController extends HttpServlet {
         }
 
         if (permisosPagina != null && !permisosPagina.contains(Permisos.CONSULTAR.getNombre())) {
-            idPersona = personaSesion;
+            id_personaH = personaSesion;
         }
 
         switch (accion) {
@@ -101,7 +101,7 @@ public class AuditoriasController extends HttpServlet {
                 response.getWriter().write(audit.toString());
                 break;
             case "consultar":
-                cargarTabla(response, permisosPagina, id, idPersona, fecha_creacion, clasificacion, accionAud, descripcion, pagina);
+                cargarTabla(response, permisosPagina, id, id_personaH, fecha_creacion, clasificacion, accionAud, descripcion, pagina);
                 break;
             case "eliminar":
                 String result = auditoriasNegocio.eliminarAuditoria(id, personaSesion);

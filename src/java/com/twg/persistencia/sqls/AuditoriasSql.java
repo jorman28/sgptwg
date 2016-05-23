@@ -51,7 +51,7 @@ public class AuditoriasSql {
             sql += "AND aud.descripcion LIKE '%" + contiene + "%' ";
         }
         if (fecha != null) {
-            sql += "AND aud.fecha_creacion = ? ";
+            sql += "AND date(aud.fecha_creacion) = ? ";
         }
         if (idPersona != null) {
             sql += "AND aud.id_persona = " + idPersona + " ";
