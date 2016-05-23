@@ -10,6 +10,7 @@ import java.util.Date;
  */
 public class ArchivosBean {
 
+    //Definición de atributos.
     private Integer id;
     private String nombre;
     private String descripcion;
@@ -19,6 +20,10 @@ public class ArchivosBean {
     private String nombrePersona;
     private String tipo;
 
+    
+    /*
+     * Declaración de métodos Get y Set para cada atributo de la clase.
+     */
     public Integer getId() {
         return id;
     }

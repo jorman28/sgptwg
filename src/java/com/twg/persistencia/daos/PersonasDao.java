@@ -69,7 +69,7 @@ public class PersonasDao {
      * @param correo
      * @param cargo
      * @param nombreCompleto
-     * @return
+     * @return Cantdad de personas según los filtros aplicados.
      * @throws ClassNotFoundException
      * @throws InstantiationException
      * @throws SQLException

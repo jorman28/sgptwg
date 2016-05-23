@@ -18,8 +18,10 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 /**
+ * Clase encargada de realizar la conexión entre la vista y las operaciones en
+ * base de datos, para la tabla de proyectos.
  *
- * @author Pipe
+ * @author Andrés Felipe Giraldo, Jorman Rincón, Erika Jhoana Castaneda
  */
 public class ProyectosNegocio {
 
@@ -28,6 +30,15 @@ public class ProyectosNegocio {
     private final AuditoriasNegocio auditoria = new AuditoriasNegocio();
     private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
+    /**
+     * Método encargado de guardar o actualizar la información de un proyecto.
+     * @param id
+     * @param nombre
+     * @param fechaInicio
+     * @param idPersonas
+     * @param personaSesion
+     * @return Cadena con un mensaje de error en caso de que el proceso falle.
+     */
     public String guardarProyecto(String id, String nombre, String fechaInicio, String[] idPersonas, Integer personaSesion) {
         String error = "";
         ProyectosBean proyecto = new ProyectosBean();
@@ -52,9 +63,9 @@ public class ProyectosNegocio {
                 try {
                     String descripcioAudit = "Se actualizó la información de un proyecto. ANTES ("+
                             " Nombre: "+proyectoAntes.get(0).getNombre()+
-                            " Fecha inicio: "+proyectoAntes.get(0).getFechaInicio()+
+                            ", Fecha inicio: "+proyectoAntes.get(0).getFechaInicio()+
                             ") DESPUÉS ( Nombre: "+proyecto.getNombre()+
-                            " Fecha inicio: "+proyecto.getFechaInicio()+")";
+                            ", Fecha inicio: "+proyecto.getFechaInicio()+")";
                     String guardarAuditoria = auditoria.guardarAuditoria(personaSesion, ClasificacionAuditorias.PROYECTO.getNombre(), AccionesAuditadas.EDICION.getNombre(), descripcioAudit);
                 } catch (Exception e) {
                     Logger.getLogger(ProyectosNegocio.class.getName()).log(Level.SEVERE, null, e);
@@ -65,7 +76,7 @@ public class ProyectosNegocio {
                 try {
                     String descripcioAudit = "Se creó un proyecto con la siguiente información ("+
                             " Nombre: "+proyecto.getNombre()+
-                            " Fecha inicio: "+proyecto.getFechaInicio()+")";
+                            ", Fecha inicio: "+proyecto.getFechaInicio()+")";
                     String guardarAuditoria = auditoria.guardarAuditoria(personaSesion, ClasificacionAuditorias.PROYECTO.getNombre(), AccionesAuditadas.CREACION.getNombre(), descripcioAudit);
                 } catch (Exception e) {
                     Logger.getLogger(ProyectosNegocio.class.getName()).log(Level.SEVERE, null, e);
@@ -97,6 +108,13 @@ public class ProyectosNegocio {
         return error;
     }
 
+    /**
+     * Método encargado de validar los datos necesarios para poder guardar un proyecto.
+     * @param idProyecto
+     * @param nombre
+     * @param fechaInicio
+     * @return Cadena con un mensaje de error en caso de que no cumpla alguna validación.
+     */
     public String validarDatos(Integer idProyecto, String nombre, String fechaInicio) {
         String validacion = "";
         if (nombre == null || nombre.isEmpty()) {
@@ -134,6 +152,13 @@ public class ProyectosNegocio {
         return validacion;
     }
 
+    /**
+     * Método encargado de consultar los proyectos según los parámetros de búsqueda.
+     * @param id
+     * @param nombre
+     * @param nombreExacto
+     * @return Listado de proyectos según los parámetros de búsqueda.
+     */
     public List<ProyectosBean> consultarProyectos(Integer id, String nombre, boolean nombreExacto) {
         List<ProyectosBean> listaProyectos = new ArrayList<>();
         try {
@@ -144,6 +169,11 @@ public class ProyectosNegocio {
         return listaProyectos;
     }
 
+    /**
+     * Método encargado de consultar un proyecto específico.
+     * @param idProyecto
+     * @return Objeto con todos los atributos de un proyecto.
+     */
     public JSONObject consultarProyecto(Integer idProyecto) {
         JSONObject object = new JSONObject();
         List<ProyectosBean> listaProyectos = consultarProyectos(idProyecto, null, false);
@@ -182,7 +212,11 @@ public class ProyectosNegocio {
         return object;
     }
 
-    //JARA 17/02/2016 Método para encontrar los proyectos de una versión determinada
+    /**
+     * Método para encontrar los proyectos de una versión determinada.
+     * @param idVersion
+     * @return Objeto con todos los atributos de un proyecto.
+     */
     public ProyectosBean consultarProyectoPorVersion(Integer idVersion) {
         ProyectosBean proyBean = new ProyectosBean();
         if (idVersion != null) {
@@ -199,6 +233,12 @@ public class ProyectosNegocio {
         return proyBean;
     }
 
+    /**
+     * Método encargado de eliminar un proyecto específico.
+     * @param idProyecto
+     * @param personaSesion
+     * @return Cadena con un mensaje de error en caso de que el proceso falle.
+     */
     public String eliminarProyecto(Integer idProyecto, Integer personaSesion) {
         String error = "";
         try {

@@ -136,6 +136,13 @@ public class ActividadesController extends HttpServlet {
 
             List<String> permisosPagina = PerfilesNegocio.permisosPorPagina(request, Paginas.ACTIVIDADES);
 
+            Integer personaSesion;
+            try {
+                personaSesion = (Integer) request.getSession(false).getAttribute("personaSesion");
+            } catch (Exception e) {
+                personaSesion = null;
+            }
+            
             switch (accion) {
                 case "consultar":
                     cargarTabla(response, permisosPagina, idProyecto, idVersion, descripcion, idEstado, fecha, idResponsable, pagina);
@@ -181,7 +188,7 @@ public class ActividadesController extends HttpServlet {
                     redireccion = gestionActividades;
                     break;
                 case "guardar":
-                    Map<String, Object> guardado = actividadesNegocio.guardarActividad(idActividad, idProyecto, idVersion, nombre, descripcion, idEstado);
+                    Map<String, Object> guardado = actividadesNegocio.guardarActividad(idActividad, idProyecto, idVersion, nombre, descripcion, idEstado, personaSesion);
                     if (guardado.get("mensajeError") != null) {
                         mensajeError = (String) guardado.get("mensajeError");
                     }
@@ -248,7 +255,7 @@ public class ActividadesController extends HttpServlet {
                     response.getWriter().write(resultado.toJSONString());
                     break;
                 case "eliminar":
-                    mensajeError = actividadesNegocio.eliminarActividad(idActividad);
+                    mensajeError = actividadesNegocio.eliminarActividad(idActividad, personaSesion);
                     if (mensajeError.isEmpty()) {
                         mensajeExito = "La actividad ha sido eliminada con éxito";
                     }
@@ -333,12 +340,6 @@ public class ActividadesController extends HttpServlet {
                 case "eliminarComentario":
                     Integer idComentario = Integer.valueOf(request.getParameter("idComentario"));
                     JSONObject comentarioEliminado = new JSONObject();
-                    Integer personaSesion;
-                    try {
-                        personaSesion = (Integer) request.getSession(false).getAttribute("personaSesion");
-                    } catch (Exception e) {
-                        personaSesion = null;
-                    }
                     mensajeError = comentariosNegocio.eliminarComentario(idComentario,personaSesion);
                     if (mensajeError.isEmpty()) {
                         comentarioEliminado.put("comentarios", comentariosNegocio.listaComentarios(comentariosNegocio.TIPO_ACTIVIDAD, idActividad));
@@ -417,6 +418,11 @@ public class ActividadesController extends HttpServlet {
         }
     }
 
+    /**
+     * Este método se encarga de consultar los empleados o clientes pertenecientes a una actividad.
+     * @param resultado
+     * @param idActividad
+     */
     private void consultarEmpleadosActividad(JSONObject resultado, Integer idActividad) {
         JSONArray personas = actividadesNegocio.consultarActividadesEmpleados(idActividad);
         JSONArray empleados = new JSONArray();

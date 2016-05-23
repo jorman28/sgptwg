@@ -41,7 +41,7 @@ public class PerfilesDao {
      * @param idPerfil
      * @param nombrePerfil
      * @param nombreExacto
-     * @return
+     * @return Cantdad de perfiles según los filtros aplicados.
      * @throws ClassNotFoundException
      * @throws InstantiationException
      * @throws SQLException

@@ -126,6 +126,7 @@ public class InicioController extends HttpServlet {
      * @param persona
      * @throws ServletException
      * @throws IOException
+     * @return Un objeto con todos los elementos que aparecen en la pantalla inicial del sistsema.
      */
     private JSONObject graficasPantallaInicio(String contexto, Integer proyecto, Integer version, Integer persona) throws ServletException, IOException {
         JSONObject resultado = new JSONObject();

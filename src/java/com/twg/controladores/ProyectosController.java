@@ -228,7 +228,7 @@ public class ProyectosController extends HttpServlet {
      * @param nombre Parámetro utilizado para filtrar por un proyecto
      * específico.
      * @param permisos
-     * @return
+     * @return Retorna un texto donde se concatena todo el html que pinta los proyectos.
      */
     private String listarProyectos(String nombre, List<String> permisos) {
         String lista = "";

@@ -17,11 +17,22 @@ import java.util.logging.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+/**
+ * Clase encargada de realizar la conexión entre la vista y las operaciones en
+ * base de datos, para la tabla de estados.
+ *
+ * @author Andrés Felipe Giraldo, Jorman Rincón, Erika Jhoana Castaneda
+ */
 public class EstadosNegocio {
 
     private final EstadosDao estadosDao = new EstadosDao();
     private final AuditoriasNegocio auditoria = new AuditoriasNegocio();
 
+    /**
+     * Método encargado de consultar un estado específico.
+     * @param id
+     * @return Objeto con todos los atributos del estado consultado.
+     */
     public JSONObject consultarEstado(Integer id) {
         JSONObject jsonEstado = new JSONObject();
         List<EstadosBean> listaEstados = new ArrayList<>();
@@ -89,7 +100,7 @@ public class EstadosNegocio {
         return jsonEstado;
     }
 
-        /**
+    /**
      * Método encargado de contar la cantidad total de registros que se
      * encuentran en base de datos con base en los filtros ingresados
      *
@@ -99,7 +110,7 @@ public class EstadosNegocio {
      * @param estadoPrev
      * @param estadoSig
      * @param eFinal
-     * @return
+     * @return Cantidad de estados según los parámetros de búsqueda.
      */
     public int cantidadEstados(Integer id, String tipoEstado, String nombre, Integer estadoPrev, Integer estadoSig, String eFinal) {
         int cantidadEstados = 0;
@@ -111,6 +122,18 @@ public class EstadosNegocio {
         return cantidadEstados;
     }
     
+    /**
+     * Método encargado de consultar los estados según los parámetros
+     * de búsqueda.
+     * @param id
+     * @param tipoEstado
+     * @param nombre
+     * @param estadoPrev
+     * @param estadoSig
+     * @param eFinal
+     * @param limite
+     * @return Listado con los estados encontrados según los parámetros de búsqueda.
+     */
     public List<EstadosBean> consultarEstados(Integer id, String tipoEstado, String nombre, Integer estadoPrev, Integer estadoSig, String eFinal, String limite) {
         List<EstadosBean> listaEstados = new ArrayList<>();
         try {
@@ -121,6 +144,18 @@ public class EstadosNegocio {
         return listaEstados;
     }
 
+    /**
+     * Método encargado de crear o actualizar la información de un estado específico.
+     * @param id
+     * @param tipoEstado
+     * @param nombre
+     * @param estadoPrev
+     * @param estadoSig
+     * @param eFinal
+     * @param personaSesionStr
+     * @return Mapa con el mensade de éxito o de error, según el resultado del
+     * proceso.
+     */
     public Map<String, Object> crearEstado(Integer id, String tipoEstado, String nombre, Integer estadoPrev,
             Integer estadoSig, String eFinal, String personaSesionStr) {
         EstadosBean estadoBeanNuevo = new EstadosBean();
@@ -177,15 +212,15 @@ public class EstadosNegocio {
                         try {
                             String descripcioAudit = "Se modificó un estado. Antes ("+
                                     " Tipo: "+estadoBeanAntes.get(0).getTipoEstado()+
-                                    " Nombre: "+estadoBeanAntes.get(0).getNombre()+
-                                    " Previo: "+estadoPrevioAntes+
-                                    " Siguiente: "+estadoSiguienteAntes+
-                                    " Final: "+(estadoBeanAntes.get(0).getEstadoFinal().equals("T")?"Sí":"No")+
+                                    ", Nombre: "+estadoBeanAntes.get(0).getNombre()+
+                                    ", Previo: "+estadoPrevioAntes+
+                                    ", Siguiente: "+estadoSiguienteAntes+
+                                    ", Final: "+(estadoBeanAntes.get(0).getEstadoFinal().equals("T")?"Sí":"No")+
                                     ") Después (Tipo: "+estadoBeanNuevo.getTipoEstado()+
-                                    " Nombre: "+estadoBeanNuevo.getNombre()+
-                                    " Previo: "+estadoPrevioNuevo+
-                                    " Siguiente: "+estadoSiguienteNuevo+
-                                    " Final: "+(estadoBeanNuevo.getEstadoFinal().equals("T")?"Sí":"No")+")";
+                                    ", Nombre: "+estadoBeanNuevo.getNombre()+
+                                    ", Previo: "+estadoPrevioNuevo+
+                                    ", Siguiente: "+estadoSiguienteNuevo+
+                                    ", Final: "+(estadoBeanNuevo.getEstadoFinal().equals("T")?"Sí":"No")+")";
                             String guardarAuditoria = auditoria.guardarAuditoria(personaSesion, ClasificacionAuditorias.ESTADO.getNombre(), AccionesAuditadas.EDICION.getNombre(), descripcioAudit);
                         } catch (Exception e) {
                             Logger.getLogger(EstadosNegocio.class.getName()).log(Level.SEVERE, null, e);
@@ -203,10 +238,10 @@ public class EstadosNegocio {
                             try {
                                 String descripcioAudit = "Se insertó un registro en Estados ("+
                                         " Tipo: "+estadoBeanNuevo.getTipoEstado()+
-                                        " Nombre: "+estadoBeanNuevo.getNombre()+
-                                        " Previo: "+estadoPrevioNuevo+
-                                        " Siguiente: "+estadoSiguienteNuevo+
-                                        " Final: "+(estadoBeanNuevo.getEstadoFinal().equals("T")?"Sí":"No")+")";
+                                        ", Nombre: "+estadoBeanNuevo.getNombre()+
+                                        ", Previo: "+estadoPrevioNuevo+
+                                        ", Siguiente: "+estadoSiguienteNuevo+
+                                        ", Final: "+(estadoBeanNuevo.getEstadoFinal().equals("T")?"Sí":"No")+")";
                                 String guardarAuditoria = auditoria.guardarAuditoria(personaSesion, ClasificacionAuditorias.ESTADO.getNombre(), AccionesAuditadas.CREACION.getNombre(), descripcioAudit);
                             } catch (Exception e) {
                                 Logger.getLogger(EstadosNegocio.class.getName()).log(Level.SEVERE, null, e);
@@ -226,8 +261,8 @@ public class EstadosNegocio {
                                 mensajeExito = "El estado ha sido guardado con éxito";
                                 //AUDITORIA
                                 try {
-                                    String descripcioAudit = "Se insertó un registro en Estados (Tipo: "+estadoBeanNuevo.getTipoEstado()+" Nombre: "+estadoBeanNuevo.getNombre()+" Previo: "+estadoPrevioNuevo
-                                        +" Siguiente: "+estadoSiguienteNuevo+" Final: "+(estadoBeanNuevo.getEstadoFinal().equals("T")?"Sí":"No")+")";
+                                    String descripcioAudit = "Se insertó un registro en Estados (Tipo: "+estadoBeanNuevo.getTipoEstado()+", Nombre: "+estadoBeanNuevo.getNombre()+", Previo: "+estadoPrevioNuevo
+                                        +", Siguiente: "+estadoSiguienteNuevo+", Final: "+(estadoBeanNuevo.getEstadoFinal().equals("T")?"Sí":"No")+")";
                                     String guardarAuditoria = auditoria.guardarAuditoria(personaSesion, ClasificacionAuditorias.ESTADO.getNombre(), AccionesAuditadas.CREACION.getNombre(), descripcioAudit);
                                 } catch (Exception e) {
                                     Logger.getLogger(EstadosNegocio.class.getName()).log(Level.SEVERE, null, e);
@@ -253,6 +288,13 @@ public class EstadosNegocio {
         return result;
     }
 
+    /**
+     * Método encargado de eliminar un estado según el identificador enviado.
+     * @param id
+     * @param personaSesionStr
+     * @return Mapa con el mensaje de éxito o error, según el resultado del
+     * proceso.
+     */
     public Map<String, Object> eliminarEstado(Integer id, String personaSesionStr) {
         String mensajeExito = "";
         String mensajeError = "";
@@ -304,6 +346,13 @@ public class EstadosNegocio {
         return result;
     }
 
+    /**
+     * Método encargado de validar la información necesaria para crear o 
+     * actualizar un esttado.
+     * @param estado
+     * @return Cadena con el mensaje de error en caso de que alguna validación
+     * falle.
+     */
     private String validarDatos(EstadosBean estado) {
         String error = "";
         if (estado.getTipoEstado() == null || estado.getTipoEstado().equals("0") || estado.getTipoEstado().isEmpty()) {

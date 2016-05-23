@@ -77,7 +77,7 @@ public class AuditoriasDao {
      * @param contiene
      * @param fecha
      * @param idPersona
-     * @return
+     * @return Cantidad de auditorías según los filtros aplicados.
      * @throws ClassNotFoundException
      * @throws InstantiationException
      * @throws SQLException
@@ -105,7 +105,7 @@ public class AuditoriasDao {
      * auditorias de la base de datos
      *
      * @param auditoria Objeto con las propiedades de la auditoria a almacenar
-     * @return
+     * @return Número para indicar que el registro se insertó o no de forma correcta.
      * @throws ClassNotFoundException
      * @throws InstantiationException
      * @throws SQLException
@@ -132,7 +132,7 @@ public class AuditoriasDao {
      * tabla de auditorias de la base de datos
      *
      * @param id Identificador de la auditoria que se desea eliminar
-     * @return
+     * @return Número para indicar que el registro se eliminó o no de forma correcta.
      * @throws ClassNotFoundException
      * @throws InstantiationException
      * @throws SQLException

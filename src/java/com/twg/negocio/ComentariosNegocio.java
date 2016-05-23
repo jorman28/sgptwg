@@ -13,8 +13,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
+ * Clase encargada de realizar la conexión entre la vista y las operaciones en
+ * base de datos, para la tabla de comentarios.
  *
- * @author Andrés Giraldo
+ * @author Andrés Felipe Giraldo, Jorman Rincón, Erika Jhoana Castaneda
  */
 public class ComentariosNegocio {
 
@@ -25,6 +27,16 @@ public class ComentariosNegocio {
     public final String TIPO_VERSION = "VERSION";
     public final String TIPO_ACTIVIDAD = "ACTIVIDAD";
 
+    /**
+     * Método encargado de guardar o actualizar un comentario dentro de una 
+     * actividad o versión.
+     * @param id
+     * @param idPersona
+     * @param comentarioEscrito
+     * @param tipoDestino
+     * @param idDestino
+     * @return Cadena con un mensaje de error en caso de que el proceso falle.
+     */
     public String guardarComentario(String id, Integer idPersona, String comentarioEscrito, String tipoDestino, Integer idDestino) {
         String error = "";
         ComentariosBean comentario = new ComentariosBean();
@@ -70,6 +82,13 @@ public class ComentariosNegocio {
         return error;
     }
 
+    /**
+     * Método encargado de hacer las validaciones correspondientes para agregar 
+     * un comentario.
+     * @param comentario
+     * @return Cadena con un mensaje de error en caso de que alguna validación
+     * no cumpla.
+     */
     public String validarDatos(String comentario) {
         String validacion = "";
         if (comentario == null || comentario.isEmpty()) {
@@ -78,6 +97,13 @@ public class ComentariosNegocio {
         return validacion;
     }
 
+    /**
+     * Método encargado de consultar el listado de comentarios según el destino,
+     * ya sea en actividades o versiones.
+     * @param tipoDestino
+     * @param idDestino
+     * @return Listado de comentarios según los parámetros de búsqueda.
+     */
     public List<ComentariosBean> consultarComentarios(String tipoDestino, Integer idDestino) {
         List<ComentariosBean> listaComentarios = new ArrayList<>();
         try {
@@ -88,6 +114,13 @@ public class ComentariosNegocio {
         return listaComentarios;
     }
 
+    /**
+     * Método encargado de eliminar un comentario específico.
+     * @param idComentario
+     * @param personaSesion
+     * @return Cadena con un mensaje de error en caso de que el proceso de 
+     * eliminación falle.
+     */
     public String eliminarComentario(Integer idComentario, Integer personaSesion) {
         String error = "";
         try {
@@ -111,6 +144,14 @@ public class ComentariosNegocio {
         return error;
     }
 
+    /**
+     * Método encargado de construír el html que pinta el listado de comentarios
+     * realizados en actividades o versiones.
+     * @param tipoDestino
+     * @param idDestino
+     * @return Cadena con el html que pinta todo el listado de comentarios, según
+     * los parámetros de búsqueda.
+     */
     public String listaComentarios(String tipoDestino, Integer idDestino) {
         String resultado = "";
         List<ComentariosBean> listaComentarios = consultarComentarios(tipoDestino, idDestino);

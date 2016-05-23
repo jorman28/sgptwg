@@ -27,9 +27,10 @@ public class PersonasSql {
      * @param perfil
      * @param cargo
      * @param nombreCompleto
+     * @param busquedaExacta
      * @param idProyecto
      * @param limite
-     * @return
+     * @return El SQL de la sentencia de base de datos
      */
     public String consultarPersonas(Integer idPersona, String documento, String tipoDocumento, String nombres, String apellidos, String correo, String usuario, String perfil, String cargo, String nombreCompleto, Boolean busquedaExacta, Integer idProyecto, String limite) {
         String sql = "";
@@ -118,7 +119,7 @@ public class PersonasSql {
      * @param perfil
      * @param cargo
      * @param nombreCompleto
-     * @return
+     * @return El SQL de la sentencia de base de datos
      */
     public String cantidadPersonas(Integer idPersona, String documento, String tipoDocumento, String nombres, String apellidos, String correo, String usuario, String perfil, String cargo, String nombreCompleto) {
         String sql = "";
@@ -171,7 +172,7 @@ public class PersonasSql {
     /**
      * Método encargado de retornar el SQL para insertar una nueva persona.
      *
-     * @return
+     * @return El SQL de la sentencia de base de datos
      */
     public String insertarPersona() {
         return "INSERT INTO personas (documento, tipo_documento, nombres, apellidos, direccion, telefono, celular, correo, cargo) "
@@ -182,7 +183,7 @@ public class PersonasSql {
      * Método encargado de retornar el SQL para actualizar una persona
      * existente.
      *
-     * @return
+     * @return El SQL de la sentencia de base de datos
      */
     public String actualizarPersona() {
         return "UPDATE personas "
@@ -194,7 +195,7 @@ public class PersonasSql {
      * Método encargado de eliminar lógicamente una persona, actualizando la
      * fecha de eliminación con la fecha actual.
      *
-     * @return
+     * @return El SQL de la sentencia de base de datos
      */
     public String eliminarPersona() {
         return "UPDATE personas SET fecha_eliminacion = now() WHERE id = ?";
@@ -206,7 +207,7 @@ public class PersonasSql {
      *
      * @param documento
      * @param tipoDocumento
-     * @return
+     * @return El SQL de la sentencia de base de datos 
      */
     public String consultarIdPersona(String documento, String tipoDocumento) {
         String sql = "";

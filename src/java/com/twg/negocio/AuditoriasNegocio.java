@@ -1,8 +1,6 @@
 package com.twg.negocio;
 
-import com.twg.persistencia.beans.AccionesAuditadas;
 import com.twg.persistencia.beans.AuditoriasBean;
-import com.twg.persistencia.beans.ClasificacionAuditorias;
 import com.twg.persistencia.daos.AuditoriasDao;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -60,7 +58,8 @@ public class AuditoriasNegocio {
      * @param contiene
      * @param fecha
      * @param idPersona
-     * @return
+     * @return La cantidad de registros que hay creados en auditorías, 
+     * según los filtros aplicados.
      */
     public int cantidadAuditorias(Integer idAuditoria, String clasificacion, String accion, String contiene, Date fecha, Integer idPersona) {
         int cantidadAuditorias = 0;
@@ -130,7 +129,8 @@ public class AuditoriasNegocio {
      * @param clasificacion
      * @param accion
      * @param descripcion
-     * @return
+     * @return Una cadena con el mensaje de error en caso de que el proceso
+     * que guarda la auditoría tenga un fallo.
      */
     public static String guardarAuditoria(Integer idPersona, String clasificacion, String accion, String descripcion) {
         String error = "";

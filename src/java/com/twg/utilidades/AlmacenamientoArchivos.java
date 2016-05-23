@@ -18,6 +18,11 @@ public class AlmacenamientoArchivos {
 
     public final String rutaCargas = "D://POLITECNICO JIC/PPI SGPTWG/cargas/";
 
+    /**
+     * Método encargado de subir los archivos a una ubicación específica.
+     * @param archivoTemporal
+     * @param nombreArchivo 
+     */
     public void cargarArchivo(Part archivoTemporal, String nombreArchivo) {
         try {
             InputStream ubicacionArchivo;

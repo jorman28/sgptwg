@@ -57,7 +57,7 @@ public class ArchivosNegocio {
      * @param contiene
      * @param fecha
      * @param idPersona
-     * @return
+     * @return Cantidad de archivos según los filtros.
      */
     public int cantidadArchivos(Integer idArchivo, String contiene, Date fecha, Integer idPersona) {
         int cantidadArchivos = 0;
@@ -150,7 +150,7 @@ public class ArchivosNegocio {
      * @param descripcion
      * @param idPersona
      * @param nombreArchivo
-     * @return
+     * @return Cadena con un mensaje de error en caso de que el proceso falle.
      */
     public String guardarArchivo(Integer idArchivo, String nombre, String descripcion, Integer idPersona, String nombreArchivo) {
         String error = "";
