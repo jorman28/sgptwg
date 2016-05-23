@@ -81,14 +81,8 @@ public class PersonasNegocio {
     }
 
     public String guardarPersona(Integer idPersona, String documento, String tipoDocumento, String nombres, String apellidos,
-            String telefono, String celular, String correo, String direccion, String cargo, String nombreUsuario, String perfil, String clave, String clave2, String personaSesionStr) {
+            String telefono, String celular, String correo, String direccion, String cargo, String nombreUsuario, String perfil, String clave, String clave2, Integer personaSesion) {
         String error = "";
-        
-        Integer personaSesion = null;
-        try {
-            personaSesion = Integer.parseInt(personaSesionStr);
-        } catch (Exception e) {
-        }
         
         try {
             PersonasBean persona = new PersonasBean();
@@ -324,14 +318,8 @@ public class PersonasNegocio {
         return error;
     }
 
-    public String eliminarPersona(Integer idPersona, String personaSesionStr) {
+    public String eliminarPersona(Integer idPersona, Integer personaSesion) {
         String error = "";
-        
-        Integer personaSesion = null;
-        try {
-            personaSesion = Integer.parseInt(personaSesionStr);
-        } catch (Exception e) {
-        }
         
         try {
             List<PersonasBean> personaEliminar = personasDao.consultarPersonas(idPersona, null, null, null, null, null, null, null, null, null, true, null, null);

@@ -1,3 +1,5 @@
+/* global opcionGuardar */
+
 $(function () {
     $('#fechaInicio')
             .datetimepicker({format: 'dd/mm/yyyy', language: 'es', weekStart: true, todayBtn: true, autoclose: true, todayHighlight: true, startView: 2, minView: 2})
@@ -84,8 +86,10 @@ function pintarListaPersonas(listaPersonas) {
         html += '        </div>';
         html += '        <div class="col-xs-2 col-sm-1 col-md-1 col-lg-1">';
         html += '           <span class="glyphicon glyphicon-time" style="cursor:pointer;" onclick="registrarTiempo(' + persona.idPersona + ');"></span>';
-        html += '           <span class="glyphicon glyphicon-calendar" style="cursor:pointer;" onclick="estimar(' + persona.idPersona + ', \'' + persona.fechaInicio + '\', \'' + persona.fechaFin + '\', ' + persona.tiempoEstimado + ');"></span>';
-        html += '           <span class="glyphicon glyphicon-remove" style="cursor:pointer;" onclick="botonEliminarPersona(' + persona.idPersona + ');"></span>';
+        if (opcionGuardar === 'true') {
+            html += '       <span class="glyphicon glyphicon-calendar" style="cursor:pointer;" onclick="estimar(' + persona.idPersona + ', \'' + persona.fechaInicio + '\', \'' + persona.fechaFin + '\', ' + persona.tiempoEstimado + ');"></span>';
+            html += '       <span class="glyphicon glyphicon-remove" style="cursor:pointer;" onclick="botonEliminarPersona(' + persona.idPersona + ');"></span>';
+        }
         html += '        </div>';
         html += '   </div>';
         html += '</li>';

@@ -71,7 +71,7 @@ public class CargosController extends HttpServlet {
         } catch (Exception e) {
             System.err.print("Error obteniendo la persona en sesion");
         }
-        
+
         switch (accion) {
             case "consultar":
                 cargarTabla(response, permisosPagina, descripcion, pagina);
@@ -94,7 +94,7 @@ public class CargosController extends HttpServlet {
                 break;
             case "eliminar":
                 mensajeError = cargosNegocio.eliminarCargo(idCargo, personaSesion);
-                if(mensajeError.equals("")){
+                if (mensajeError.equals("")) {
                     mensajeExito = "El cargo se eliminó correctamente.";
                 }
                 break;
@@ -108,12 +108,7 @@ public class CargosController extends HttpServlet {
             request.setAttribute("mensajeAlerta", mensajeAlerta);
 
             if (permisosPagina != null && !permisosPagina.isEmpty()) {
-                if (permisosPagina.contains(Permisos.CONSULTAR.getNombre())) {
-                    request.setAttribute("opcionConsultar", "T");
-                }
-                if (permisosPagina.contains(Permisos.GUARDAR.getNombre())) {
-                    request.setAttribute("opcionGuardar", "T");
-                }
+                request.setAttribute("opcionGuardar", permisosPagina.contains(Permisos.GUARDAR.getNombre()));
             }
 
             request.getRequestDispatcher("jsp/cargos.jsp").forward(request, response);
@@ -166,7 +161,7 @@ public class CargosController extends HttpServlet {
         }
         out.println("</tbody>");
         out.println("</table>");
-        
+
         /* Manejo de paginación */
         int cantidadCargos = cargosNegocio.cantidadCargos(nombre, false);
         int cantidadPaginas = 1;

@@ -101,6 +101,7 @@ public class ProyectosController extends HttpServlet {
         switch (accion) {
             case "editarProyecto":
                 JSONObject proyecto = proyectosNegocio.consultarProyecto(idProyecto);
+                proyecto.put("editarPersonas", permisosPagina != null && permisosPagina.contains(Permisos.GUARDAR_PROYECTO.getNombre()));
                 response.getWriter().write(proyecto.toJSONString());
                 break;
             case "editarVersion":

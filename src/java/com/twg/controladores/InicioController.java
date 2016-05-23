@@ -129,6 +129,7 @@ public class InicioController extends HttpServlet {
             if (permisosPagina != null && permisosPagina.contains(Permisos.CONSULTAR.getNombre())) {
                 idPersona = personaSesion;
             }
+            request.setAttribute("opcionConsultar", permisosPagina != null && permisosPagina.contains(Permisos.CONSULTAR.getNombre()));
             request.setAttribute("proyectos", proyectosNegocio.consultarProyectos(null, null, false, idPersona));
             request.getRequestDispatcher("jsp/inicio.jsp").forward(request, response);
         }

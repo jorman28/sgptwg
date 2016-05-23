@@ -114,7 +114,7 @@ public class UsuariosNegocio {
      * @param tipoDocumento
      * @return
      */
-    public Map<String, Object> crearUsuario(Integer idPersona, String nombreUsuario, String clave, String clave2, Integer perfil, String activo, String documento, String tipoDocumento, String personaSesionStr) {
+    public Map<String, Object> crearUsuario(Integer idPersona, String nombreUsuario, String clave, String clave2, Integer perfil, String activo, String documento, String tipoDocumento, Integer personaSesion) {
         UsuariosBean usuario = new UsuariosBean();
         usuario.setUsuario(nombreUsuario);
         usuario.setClave(clave);
@@ -123,11 +123,6 @@ public class UsuariosNegocio {
         usuario.setDocumento(documento);
         usuario.setTipoDocumento(tipoDocumento);
         usuario.setIdPersona(idPersona);
-        int personaSesion = 0;
-        try {
-            personaSesion = Integer.parseInt(personaSesionStr);
-        } catch (Exception e) {
-        }
 
         String mensajeExito = "";
         String mensajeError = validarDatos(usuario, clave2);
@@ -234,15 +229,9 @@ public class UsuariosNegocio {
      * @param idPersona
      * @return
      */
-    public Map<String, Object> eliminarUsuario(Integer idPersona, String personaSesionStr) {
+    public Map<String, Object> eliminarUsuario(Integer idPersona, Integer personaSesion) {
         String mensajeExito = "";
         String mensajeError = "";
-        int personaSesion = 0;
-        try {
-            personaSesion = Integer.parseInt(personaSesionStr);
-        } catch (Exception e) {
-        }
-        
         if (idPersona != null) {
             try {
                 List<UsuariosBean> usuarios = usuariosDao.consultarUsuarios(idPersona);

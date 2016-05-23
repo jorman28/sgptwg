@@ -72,7 +72,7 @@
 
                                     <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
                                         <label for="responsable">Responsable</label>
-                                        <input class="form-control" type="text" id="nombreResponsable" name="nombreResponsable" value="${nombreResponsable}"/>
+                                        <input class="form-control" type="text" id="nombreResponsable" name="nombreResponsable" value="${nombreResponsable}" <c:if test="${!opcionConsultar}">readonly="true"</c:if>/>
                                         <input class="form-control" type="hidden" id="responsable" name="responsable" value="${responsable}"/>
                                     </div>
                                 </div>
@@ -80,10 +80,8 @@
                             </div>                            
                         </div>
                         <div class="row" align="center">
-                            <c:if test="${opcionConsultar == 'T'}">
-                                <button class="btn btn-default" type="button" name="accion" id="consultar" value="consultar" onclick="llenarTablaActividades()">Consultar</button>
-                            </c:if>
-                            <c:if test="${opcionGuardar == 'T'}">
+                            <button class="btn btn-default" type="button" name="accion" id="consultar" value="consultar" onclick="llenarTablaActividades()">Consultar</button>
+                            <c:if test="${opcionGuardar}">
                                 <button class="btn btn-default" type="submit" name="accion" id="crearActividad" value="crearActividad">Crear</button>
                             </c:if>
                             <button class="btn btn-default" type="submit" name="accion" id="limpiar" value="limpiar">Limpiar</button>
