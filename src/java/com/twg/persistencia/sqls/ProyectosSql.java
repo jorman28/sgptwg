@@ -32,7 +32,7 @@ public class ProyectosSql {
                 + "FROM\n"
                 + "    proyectos pro\n"
                 + "        LEFT JOIN\n"
-                + "    personas_proyectos perpro ON pro.id = perpro.id_persona\n"
+                + "    personas_proyectos perpro ON pro.id = perpro.id_proyecto\n"
                 + "WHERE\n"
                 + "    fecha_eliminacion IS NULL ";
         if (id != null) {
