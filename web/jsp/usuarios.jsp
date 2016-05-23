@@ -74,10 +74,10 @@
                         </div>
                         <br>
                         <div class="row" align="center">
-                            <c:if test="${opcionConsultar == 'T'}">
+                            <c:if test="${opcionConsultar}">
                                 <button class="btn btn-default" type="button" name="accion" id="consultar" value="consultar" onclick="llenarTabla()">Consultar</button>
                             </c:if>
-                            <c:if test="${opcionGuardar == 'T'}">
+                            <c:if test="${opcionGuardar}">
                                 <button class="btn btn-default" type="submit" name="accion" id="guardar" value="guardar">Guardar</button>
                             </c:if>
                             <button class="btn btn-default" type="submit" name="accion" id="limpiar" value="limpiar">Limpiar</button>
