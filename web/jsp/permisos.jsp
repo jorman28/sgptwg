@@ -39,14 +39,12 @@
                                                 <div class="panel-heading" role="tab" id="heading_inicio">
                                                     <h4 class="panel-title">
                                                         <div class="row">
-                                                            <div class="col-xs-10 col-sm-11 col-md-11 col-lg-11">
-                                                                <a role="button" data-toggle="collapse" data-parent="#pagina_inicio" href="#collapse_inicio" aria-expanded="true" aria-controls="collapse_inicio">
+                                                            <a role="button" data-toggle="collapse" data-parent="#pagina_inicio" href="#collapse_inicio" aria-expanded="true" aria-controls="collapse_inicio">
+                                                                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                                                     Inicio
-                                                                </a>
-                                                            </div>
-                                                            <div align="right" class="col-xs-2 col-sm-1 col-md-1 col-lg-1">
-                                                                <input type="checkbox" name="permisos" id="permiso_9" value="9" onclick="encenderPermisosHijos(this.id);" />
-                                                            </div>
+                                                                </div>
+                                                            </a>
+                                                            <input type="hidden" name="permisos" id="permiso_9" value="9"/>
                                                         </div>
                                                     </h4>
                                                 </div>
@@ -66,11 +64,11 @@
                                                 <div class="panel-heading" role="tab" id="heading_seguridad">
                                                     <h4 class="panel-title">
                                                         <div class="row">
-                                                            <div class="col-xs-10 col-sm-11 col-md-11 col-lg-11">
-                                                                <a role="button" data-toggle="collapse" data-parent="#pagina_seguridad" href="#collapse_seguridad" aria-expanded="true" aria-controls="collapse_seguridad">
+                                                            <a role="button" data-toggle="collapse" data-parent="#pagina_seguridad" href="#collapse_seguridad" aria-expanded="true" aria-controls="collapse_seguridad">
+                                                                <div class="col-xs-10 col-sm-11 col-md-11 col-lg-11">
                                                                     Seguridad
-                                                                </a>
-                                                            </div>
+                                                                </div>
+                                                            </a>
                                                             <div align="right" class="col-xs-2 col-sm-1 col-md-1 col-lg-1">
                                                                 <input type="checkbox" name="permisos" id="permiso_14" value="14" />
                                                             </div>
@@ -483,7 +481,7 @@
                                                     <div class="panel-body">
                                                         <div class="checkbox">
                                                             <label>
-                                                                <input type="checkbox" name="permisos" id="permiso_7_1" value="60" onclick="encenderPermisoPadre('permiso_1');" /> Consultar
+                                                                <input type="checkbox" name="permisos" id="permiso_7_1" value="60" onclick="encenderPermisoPadre('permiso_7');" /> Consultar
                                                             </label>
                                                             &nbsp;
                                                             <label>
@@ -534,10 +532,10 @@
                         </div>
                         <br>
                         <div class="row" align="center">
-                            <c:if test="${opcionConsultar == 'T'}">
+                            <c:if test="${opcionConsultar}">
                                 <button class="btn btn-default" type="button" name="accion" id="consultar" value="consultar" onclick="llenarTabla();">Consultar</button>
                             </c:if>
-                            <c:if test="${opcionGuardar == 'T'}">
+                            <c:if test="${opcionGuardar}">
                                 <button class="btn btn-default" type="submit" name="accion" id="guardar" value="guardar">Guardar</button>
                             </c:if>
                             <button class="btn btn-default" type="button" name="accion" id="limpiar" value="limpiar" onclick="nuevoPerfil();">Limpiar</button>

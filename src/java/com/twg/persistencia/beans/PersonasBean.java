@@ -1,5 +1,7 @@
 package com.twg.persistencia.beans;
 
+import java.util.Date;
+
 /**
  * Esta clase define los atributos del objeto Personas, 
  * junto con los métodos get y set.
@@ -25,6 +27,7 @@ public class PersonasBean {
     private String nombrePerfil;
     private Integer cargo;
     private String nombreCargo;
+    private Date fechaEliminacion;
     
     private String nombre; //utilizada para cargar las listas en actividades
 
@@ -172,6 +175,14 @@ public class PersonasBean {
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
+    }
+
+    public Date getFechaEliminacion() {
+        return fechaEliminacion;
+    }
+
+    public void setFechaEliminacion(Date fechaEliminacion) {
+        this.fechaEliminacion = fechaEliminacion;
     }
     
 }

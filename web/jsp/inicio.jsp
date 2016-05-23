@@ -42,7 +42,7 @@
                                 </div>
                                 <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
                                     <label for="responsable">Reponsable</label>
-                                    <input class="form-control" type="text" id="responsable" name="responsable"/>
+                                    <input class="form-control" type="text" id="responsable" name="responsable" <c:if test="${!opcionConsultar}">readonly="true"</c:if> />
                                     <input type="hidden" id="idPersona" name="idPersona"/>
                                 </div>
                             </div>

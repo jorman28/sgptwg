@@ -8,6 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -92,8 +93,8 @@ public class PersonasDao {
         return cantidadPersonas;
     }
 
-    public Integer consultarIdPersona(String documento, String tipoDocumento) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
-        Integer idPersona = null;
+    public PersonasBean consultarIdPersona(String documento, String tipoDocumento) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
+        PersonasBean persona = null;
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;
@@ -101,12 +102,14 @@ public class PersonasDao {
         ResultSet rs;
         rs = ps.executeQuery();
         if (rs.next()) {
-            idPersona = rs.getInt("id");
+            persona = new PersonasBean();
+            persona.setId(rs.getInt("id"));
+            persona.setFechaEliminacion((Date) rs.getObject("fecha_eliminacion"));
         }
         rs.close();
         ps.close();
         con.close();
-        return idPersona;
+        return persona;
     }
 
     public int insertarPersona(PersonasBean persona) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {

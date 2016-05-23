@@ -69,7 +69,7 @@ public class PersonasSql {
         }
         if (documento != null && !documento.isEmpty() && !busquedaExacta) {
             sql += "and p.documento like '%" + documento + "%' ";
-        }else if(documento != null && !documento.isEmpty() && busquedaExacta){
+        } else if (documento != null && !documento.isEmpty() && busquedaExacta) {
             sql += "and p.documento = " + documento + " ";
         }
         if (tipoDocumento != null && !tipoDocumento.isEmpty() && !tipoDocumento.equals("0")) {
@@ -187,7 +187,7 @@ public class PersonasSql {
      */
     public String actualizarPersona() {
         return "UPDATE personas "
-                + "SET documento = ?, tipo_documento = ?, nombres = ?, apellidos = ?, direccion = ?, telefono = ?, celular = ?, correo = ?, cargo = ? "
+                + "SET documento = ?, tipo_documento = ?, nombres = ?, apellidos = ?, direccion = ?, telefono = ?, celular = ?, correo = ?, cargo = ?, fecha_eliminacion = null "
                 + "WHERE id = ?";
     }
 
@@ -207,11 +207,10 @@ public class PersonasSql {
      *
      * @param documento
      * @param tipoDocumento
-     * @return El SQL de la sentencia de base de datos 
+     * @return El SQL de la sentencia de base de datos
      */
     public String consultarIdPersona(String documento, String tipoDocumento) {
-        String sql = "";
-        sql += "SELECT id FROM personas WHERE documento = '" + documento + "'";
+        String sql = "SELECT id, fecha_eliminacion FROM personas WHERE documento = '" + documento + "'";
         if (tipoDocumento != null && !tipoDocumento.isEmpty() && !tipoDocumento.equals("0")) {
             sql += "AND tipo_documento = '" + tipoDocumento + "' ";
         }

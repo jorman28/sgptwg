@@ -71,7 +71,7 @@ public class PermisosController extends HttpServlet {
         } catch (Exception e) {
             System.err.print("Error obteniendo la persona en sesion");
         }
-        
+
         switch (accion) {
             case "consultar":
                 cargarTabla(response, permisosPagina, nombrePerfil, pagina);
@@ -125,12 +125,8 @@ public class PermisosController extends HttpServlet {
         request.setAttribute("mensajeError", mensajeError);
         if (!accion.equals("consultar") && !accion.equals("editar") && !accion.equals("consultarPermisos")) {
             if (permisosPagina != null && !permisosPagina.isEmpty()) {
-                if (permisosPagina.contains(Permisos.CONSULTAR.getNombre())) {
-                    request.setAttribute("opcionConsultar", "T");
-                }
-                if (permisosPagina.contains(Permisos.GUARDAR.getNombre())) {
-                    request.setAttribute("opcionGuardar", "T");
-                }
+                request.setAttribute("opcionConsultar", permisosPagina.contains(Permisos.CONSULTAR.getNombre()));
+                request.setAttribute("opcionGuardar", permisosPagina.contains(Permisos.GUARDAR.getNombre()));
             }
             request.getRequestDispatcher("jsp/permisos.jsp").forward(request, response);
         }

@@ -72,7 +72,7 @@
                             </div>                            
                         </div>
                         <div class="row" align="center">
-                            <c:if test="${opcionConsultar == 'T'}">
+                            <c:if test="${opcionConsultar}">
                                 <button class="btn btn-default" type="button" name="accion" id="consultar" value="consultar" onclick="llenarTablaAuditorias()">Consultar</button>
                             </c:if>
                             <button class="btn btn-default" type="submit" name="accion" id="limpiar" value="limpiar">Limpiar</button>

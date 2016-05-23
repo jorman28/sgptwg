@@ -91,7 +91,7 @@ public class EstadosController extends HttpServlet {
         } catch (Exception e) {
             System.err.print("Error obteniendo la persona en sesion");
         }
-        
+
         switch (accion) {
             case "consultar":
                 cargarTabla(response, permisosPagina, id, tipoEstado, nombre, estadoPrev, estadoSig, eFinal, pagina);
@@ -147,12 +147,7 @@ public class EstadosController extends HttpServlet {
         //request.setAttribute("estadosSig", estadosNegocio.consultarEstados(null, null, null, null, null, null));
         if (!accion.equals("consultar") && !accion.equals("editar") && busquedaAsincronica == null) {
             if (permisosPagina != null && !permisosPagina.isEmpty()) {
-                if (permisosPagina.contains(Permisos.CONSULTAR.getNombre())) {
-                    request.setAttribute("opcionConsultar", "T");
-                }
-                if (permisosPagina.contains(Permisos.GUARDAR.getNombre())) {
-                    request.setAttribute("opcionGuardar", "T");
-                }
+                request.setAttribute("opcionGuardar", permisosPagina.contains(Permisos.GUARDAR.getNombre()));
             }
             request.getRequestDispatcher("jsp/estados.jsp").forward(request, response);
         }
@@ -240,7 +235,7 @@ public class EstadosController extends HttpServlet {
                 }
                 out.println("<td>");
                 out.println("<button class=\"btn btn-default\" type=\"button\" onclick=\"consultarEstado(" + estado.getId() + ")\">Detalle</button>");
-                if (permisos != null && !permisos.isEmpty() && permisos.contains(Permisos.ELIMINAR.getNombre())) {
+                if (permisos != null && permisos.contains(Permisos.ELIMINAR.getNombre())) {
                     out.println("<button class=\"btn btn-default\" type=\"button\" data-toggle=\"modal\" data-target=\"#confirmationMessage\" onclick=\"jQuery('#id').val('" + estado.getId() + "');\">Eliminar</button>");
                 }
                 out.println("</td>");
@@ -253,7 +248,7 @@ public class EstadosController extends HttpServlet {
         }
         out.println("</tbody>");
         out.println("</table>");
-        
+
         /* Manejo de paginación */
         int cantidadEstados = estadosNegocio.cantidadEstados(id, tipoEstado, nombre, estadoPrev, estadoSig, eFinal);
         int cantidadPaginas = 1;

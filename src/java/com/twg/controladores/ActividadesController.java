@@ -143,6 +143,10 @@ public class ActividadesController extends HttpServlet {
                 personaSesion = null;
             }
 
+            if (permisosPagina != null && !permisosPagina.contains(Permisos.CONSULTAR.getNombre())) {
+                idResponsable = personaSesion;
+            }
+
             switch (accion) {
                 case "consultar":
                     cargarTabla(response, permisosPagina, idProyecto, idVersion, descripcion, idEstado, fecha, idResponsable, pagina);
@@ -367,19 +371,24 @@ public class ActividadesController extends HttpServlet {
             }
             if (accion.isEmpty() || accion.equals("limpiar") || accion.equals("crearActividad") || accion.equals("limpiarCreacion") || accion.equals("gestionarActividad")
                     || accion.equals("limpiarGestion") || accion.equals("duplicarActividad") || accion.equals("guardar") || accion.equals("eliminar")) {
+                request.setAttribute("personaSesion", personaSesion);
                 request.setAttribute("mensajeAlerta", mensajeAlerta);
                 request.setAttribute("mensajeExito", mensajeExito);
                 request.setAttribute("mensajeError", mensajeError);
-                request.setAttribute("proyectos", proyectosNegocio.consultarProyectos(null, null, false, null));
+                Integer idPersona = null;
+                if (permisosPagina != null && !permisosPagina.contains(Permisos.CONSULTAR.getNombre())) {
+                    idPersona = personaSesion;
+                }
+                request.setAttribute("proyectos", proyectosNegocio.consultarProyectos(null, null, false, idPersona));
                 request.setAttribute("estados", estadosNegocio.consultarEstados(null, "ACTIVIDADES", null, null, null, null, null));
                 if (permisosPagina != null && !permisosPagina.isEmpty()) {
-                    if (permisosPagina.contains(Permisos.CONSULTAR.getNombre())) {
-                        request.setAttribute("opcionConsultar", "T");
-                    }
-                    if (permisosPagina.contains(Permisos.GUARDAR.getNombre())) {
-                        request.setAttribute("opcionGuardar", "T");
-                    }
+                    request.setAttribute("opcionConsultar", permisosPagina.contains(Permisos.CONSULTAR.getNombre()));
+                    request.setAttribute("opcionGuardar", permisosPagina.contains(Permisos.GUARDAR.getNombre()));
                     request.setAttribute("opcionComentar", permisosPagina.contains(Permisos.COMENTAR.getNombre()));
+                    request.setAttribute("opcionTiempos", permisosPagina.contains(Permisos.INGRESAR_TIEMPOS.getNombre()));
+                    request.setAttribute("opcionTiempoPropio", permisosPagina.contains(Permisos.INGRESAR_TIEMPO_PROPIO.getNombre()));
+                    request.setAttribute("opcionEliminarTiempos", permisosPagina.contains(Permisos.ELIMINAR_TIEMPOS.getNombre()));
+                    request.setAttribute("opcionEliminarTiempoPropio", permisosPagina.contains(Permisos.ELIMINAR_TIEMPO_PROPIO.getNombre()));
                 }
                 if (idProyecto != null) {
                     request.setAttribute("versiones", versionesNegocio.consultarVersiones(null, idProyecto, null, false));
@@ -492,12 +501,12 @@ public class ActividadesController extends HttpServlet {
                 out.println("       <span class=\"caret\"></span>");
                 out.println("   </button>");
                 out.println("   <ul class=\"dropdown-menu dropdown-menu-right\">");
+                out.println("   <li><a onclick=\"jQuery('#id').val('" + actividad.getId() + "'); jQuery('#gestionarActividad').click();\">Gestionar</a></li>");
                 if (permisos != null && !permisos.isEmpty() && permisos.contains(Permisos.GUARDAR.getNombre())) {
-                    out.println("   <li><a onclick=\"jQuery('#id').val('" + actividad.getId() + "'); jQuery('#gestionarActividad').click();\">Gestionar</a></li>");
                     out.println("   <li><a onclick=\"jQuery('#id').val('" + actividad.getId() + "'); jQuery('#duplicarActividad').click();\">Duplicar</a></li>");
                 }
-                if (permisos != null && !permisos.isEmpty() && permisos.contains(Permisos.GUARDAR.getNombre())) {
-                    out.println("   <button hidden type=\"button\" >Eliminar</button>");
+                if (permisos != null && !permisos.isEmpty() && permisos.contains(Permisos.ELIMINAR.getNombre())) {
+                    out.println("   <button hidden type=\"button\">Eliminar</button>");
                     out.println("   <li><a data-toggle=\"modal\" data-target=\"#confirmationMessage\" onclick=\"jQuery('#id').val('" + actividad.getId() + "');\">Eliminar</a></li>");
                 }
                 out.println("   </ul>");
