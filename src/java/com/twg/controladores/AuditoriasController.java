@@ -57,7 +57,6 @@ public class AuditoriasController extends HttpServlet {
         }
 
         String idStr = request.getParameter("id");
-        String idPersonaStr = request.getParameter("id_personaH");
         String fecha_creacion = request.getParameter("fecha_creacion");
         String clasificacion = request.getParameter("clasificacion");
         String accionAud = request.getParameter("accionAud");
@@ -70,10 +69,11 @@ public class AuditoriasController extends HttpServlet {
         } catch (NumberFormatException e) {
         }
        
-        Integer idPersona  = null;
+        Integer idPersona;
         try {
-            idPersona = Integer.valueOf(idPersonaStr);
+            idPersona = Integer.valueOf(request.getParameter("id_personaH"));
         } catch (NumberFormatException e) {
+            idPersona = null;
         }
         
         Integer pagina;
