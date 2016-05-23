@@ -379,6 +379,7 @@ public class ActividadesController extends HttpServlet {
                     if (permisosPagina.contains(Permisos.GUARDAR.getNombre())) {
                         request.setAttribute("opcionGuardar", "T");
                     }
+                    request.setAttribute("opcionComentar", permisosPagina.contains(Permisos.COMENTAR.getNombre()));
                 }
                 if (idProyecto != null) {
                     request.setAttribute("versiones", versionesNegocio.consultarVersiones(null, idProyecto, null, false));
