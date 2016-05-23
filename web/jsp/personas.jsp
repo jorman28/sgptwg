@@ -116,7 +116,7 @@
                         </div>
                         <div class="row" align="center">
                             <div class="col-lg-12">
-                                <c:if test="${opcionGuardar == 'T'}">
+                                <c:if test="${opcionGuardar}">
                                     <button class="btn btn-default" type="submit" name="accion" id="guardar" value="guardar">Guardar</button>
                                 </c:if>
                                 <button class="btn btn-default" type="submit" name="accion" id="cancelar" value="cancelar">Atrás</button>

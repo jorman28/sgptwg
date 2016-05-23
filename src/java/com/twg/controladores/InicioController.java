@@ -82,6 +82,10 @@ public class InicioController extends HttpServlet {
         } catch (Exception e) {
             personaSesion = null;
         }
+        
+        if (permisosPagina != null && !permisosPagina.contains(Permisos.CONSULTAR.getNombre())) {
+            persona = personaSesion;
+        }
 
         switch (accion) {
             case "generarReporte":
@@ -129,6 +133,7 @@ public class InicioController extends HttpServlet {
             if (permisosPagina != null && permisosPagina.contains(Permisos.CONSULTAR.getNombre())) {
                 idPersona = personaSesion;
             }
+            request.setAttribute("opcionConsultar", permisosPagina != null && permisosPagina.contains(Permisos.CONSULTAR.getNombre()));
             request.setAttribute("proyectos", proyectosNegocio.consultarProyectos(null, null, false, idPersona));
             request.getRequestDispatcher("jsp/inicio.jsp").forward(request, response);
         }
@@ -143,6 +148,7 @@ public class InicioController extends HttpServlet {
      * @param persona
      * @throws ServletException
      * @throws IOException
+     * @return Un objeto con todos los elementos que aparecen en la pantalla inicial del sistsema.
      */
     private JSONObject graficasPantallaInicio(String contexto, Integer proyecto, Integer version, Integer persona) throws ServletException, IOException {
         JSONObject resultado = new JSONObject();

@@ -108,11 +108,11 @@ function editarProyecto(idProyecto) {
                 $("#idProyecto").val(data.idProyecto !== undefined ? data.idProyecto : "");
                 $("#nombreProyecto").val(data.nombreProyecto !== undefined ? data.nombreProyecto : "");
                 $("#fechaInicioProyecto").val(data.fechaInicio !== undefined ? data.fechaInicio : "");
-                $("#clientesProyecto").html(data.clientes !== undefined ? pintarListaPersonas(data.clientes) : 'No se han agregado clientes al proyecto');
+                $("#clientesProyecto").html(data.clientes !== undefined ? pintarListaPersonas(data.clientes, data.editarPersonas) : 'No se han agregado clientes al proyecto');
                 if (data.clientes !== undefined) {
                     clientesSeleccionados = data.clientes.length;
                 }
-                $("#empleadosProyecto").html(data.empleados !== undefined ? pintarListaPersonas(data.empleados) : 'No se han agregado empleados al proyecto');
+                $("#empleadosProyecto").html(data.empleados !== undefined ? pintarListaPersonas(data.empleados, data.editarPersonas) : 'No se han agregado empleados al proyecto');
                 if (data.empleados !== undefined) {
                     empleadosSeleccionados = data.empleados.length;
                 }
@@ -170,24 +170,26 @@ function eliminarVersion(idVersion) {
     $("#confirmationMessage").modal("show");
 }
 
-function pintarListaPersonas(listaPersonas) {
+function pintarListaPersonas(listaPersonas, editarPersonas) {
     var html = "";
     for (var persona in listaPersonas) {
-        html += pintarPersona(listaPersonas[persona]);
+        html += pintarPersona(listaPersonas[persona], editarPersonas);
     }
     return html;
 }
 
-function pintarPersona(persona) {
+function pintarPersona(persona, editarPersonas) {
     var html = '    <li class="list-group-item" id="persona' + persona.id + '">'
             + '         <div class="row">'
             + '             <input type="hidden" id="idPersona' + persona.id + '" name="idPersonas" value="' + persona.id + '" />'
             + '             <div class="col-xs-10 col-sm-11 col-md-11 col-lg-11">'
             + '                 ' + persona.nombre
             + '             </div>'
-            + '             <div class="col-xs-2 col-sm-1 col-md-1 col-lg-1">'
-            + '                 <span class="glyphicon glyphicon-remove" onclick="eliminarPersona(' + persona.id + ' , \'' + persona.cargo + '\');"></span>'
-            + '             </div>'
+            + '             <div class="col-xs-2 col-sm-1 col-md-1 col-lg-1">';
+    if (editarPersonas === undefined || editarPersonas === true) {
+        html += '                 <span class="glyphicon glyphicon-remove" onclick="eliminarPersona(' + persona.id + ' , \'' + persona.cargo + '\');"></span>';
+    }
+    html += '               </div>'
             + '         </div>'
             + '     </li>';
     return html;

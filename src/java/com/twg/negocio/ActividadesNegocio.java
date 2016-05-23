@@ -1,8 +1,10 @@
 package com.twg.negocio;
 
+import com.twg.persistencia.beans.AccionesAuditadas;
 import com.twg.persistencia.beans.ActividadesBean;
 import com.twg.persistencia.beans.ActividadesEmpleadosBean;
 import com.twg.persistencia.beans.ActividadesEsfuerzosBean;
+import com.twg.persistencia.beans.ClasificacionAuditorias;
 import com.twg.persistencia.beans.EstadosBean;
 import com.twg.persistencia.beans.VersionesBean;
 import com.twg.persistencia.daos.ActividadesDao;
@@ -38,6 +40,7 @@ public class ActividadesNegocio {
     private final VersionesDao verionesDao = new VersionesDao();
     private final ActividadesEmpleadosDao actividadesEmpleadosDao = new ActividadesEmpleadosDao();
     private final ActividadesEsfuerzosDao actividadesEsfuerzosDao = new ActividadesEsfuerzosDao();
+    private final AuditoriasNegocio auditoria = new AuditoriasNegocio();
 
     private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
@@ -53,7 +56,7 @@ public class ActividadesNegocio {
      * @return Un mapa con el mensaje de éxito o error al momento de insertar la
      * actividad
      */
-    public Map<String, Object> guardarActividad(Integer idActividad, Integer idProyecto, Integer idVersion, String nombre, String descripcion, Integer idEstado) {
+    public Map<String, Object> guardarActividad(Integer idActividad, Integer idProyecto, Integer idVersion, String nombre, String descripcion, Integer idEstado, Integer personaSesion) {
         Map<String, Object> result = new HashMap<>();
         String mensajeExito = "";
         String mensajeError = validarDatos(idActividad, idProyecto, idVersion, nombre, descripcion, idEstado);
@@ -68,11 +71,52 @@ public class ActividadesNegocio {
                 if (idActividad != null) {
                     actividad.setId(idActividad);
                     result.put("idActividad", idActividad);
+                    List<ActividadesBean> actividadAntes = actividadesDao.consultarActividades(idActividad, null, null, null, null, null, null, null);
                     guardado = actividadesDao.actualizarActividad(actividad);
+                    List<ActividadesBean> actividadNueva = actividadesDao.consultarActividades(idActividad, null, null, null, null, null, null, null);
+                    if(guardado!=0){
+                        //AUDITORIA
+                        try {
+                            String descripcioAudit = "Se actualizó una actividad. ANTES ("+
+                                    " Nombre: "+(actividadAntes.get(0).getNombre()!=null&&!actividadAntes.get(0).getNombre().equals("")?actividadAntes.get(0).getNombre():"Ninguno")+
+                                    ", Descripción: "+(actividadAntes.get(0).getDescripcion()!=null&&!actividadAntes.get(0).getDescripcion().equals("")?actividadAntes.get(0).getDescripcion():"Ninguno")+
+                                    ", Estado: "+(actividadAntes.get(0).getNombreEstado()!=null&&!actividadAntes.get(0).getNombreEstado().equals("")?actividadAntes.get(0).getNombreEstado():"Ninguno")+
+                                    ", Versión: "+(actividadAntes.get(0).getNombreVersion()!=null&&!actividadAntes.get(0).getNombreVersion().equals("")?actividadAntes.get(0).getNombreVersion():"Ninguno")+
+                                    ", Proyecto: "+(actividadAntes.get(0).getNombreProyecto()!=null&&!actividadAntes.get(0).getNombreProyecto().equals("")?actividadAntes.get(0).getNombreProyecto():"Ninguno")+
+                                    ", Fecha inicial: "+(actividadAntes.get(0).getFechaInicio()!=null?actividadAntes.get(0).getFechaInicio():"Ninguno")+
+                                    ", Fecha final: "+(actividadAntes.get(0).getFechaFin()!=null?actividadAntes.get(0).getFechaFin():"Ninguno")+
+                                    ") DESPUÉS ( Nombre: "+(actividadNueva.get(0).getNombre()!=null&&!actividadNueva.get(0).getNombre().equals("")?actividadNueva.get(0).getNombre():"Ninguno")+
+                                    ", Descripción: "+(actividadNueva.get(0).getDescripcion()!=null&&!actividadNueva.get(0).getDescripcion().equals("")?actividadNueva.get(0).getDescripcion():"Ninguno")+
+                                    ", Estado: "+(actividadNueva.get(0).getNombreEstado()!=null&&!actividadNueva.get(0).getNombreEstado().equals("")?actividadNueva.get(0).getNombreEstado():"Ninguno")+
+                                    ", Versión: "+(actividadNueva.get(0).getNombreVersion()!=null&&!actividadNueva.get(0).getNombreVersion().equals("")?actividadNueva.get(0).getNombreVersion():"Ninguno")+
+                                    ", Proyecto: "+(actividadNueva.get(0).getNombreProyecto()!=null&&!actividadNueva.get(0).getNombreProyecto().equals("")?actividadNueva.get(0).getNombreProyecto():"Ninguno")+
+                                    ", Fecha inicial: "+(actividadNueva.get(0).getFechaInicio()!=null?actividadNueva.get(0).getFechaInicio():"Ninguno")+
+                                    ", Fecha final: "+(actividadNueva.get(0).getFechaFin()!=null?actividadNueva.get(0).getFechaFin():"Ninguno")+")";
+                            String guardarAuditoria = auditoria.guardarAuditoria(personaSesion, ClasificacionAuditorias.ACTIVIDAD.getNombre(), AccionesAuditadas.EDICION.getNombre(), descripcioAudit);
+                        } catch (Exception e) {
+                            Logger.getLogger(ActividadesNegocio.class.getName()).log(Level.SEVERE, null, e);
+                        }
+                    }
                 } else {
                     guardado = actividadesDao.crearActividad(actividad);
                     if (guardado != 0) {
                         result.put("idActividad", actividadesDao.consultarUtimaActividad());
+                        List<ActividadesBean> actividadCreada = actividadesDao.consultarActividades(actividadesDao.consultarUtimaActividad(), null, null, null, null, null, null, null);
+                        //AUDITORIA
+                        try {
+                            String descripcioAudit = "Se creó una actividad con la siguiente informaión ("+
+                                    " Nombre: "+(actividadCreada.get(0).getNombre()!=null&&!actividadCreada.get(0).getNombre().equals("")?actividadCreada.get(0).getNombre():"Ninguno")+
+                                    ", Descripción: "+(actividadCreada.get(0).getDescripcion()!=null&&!actividadCreada.get(0).getDescripcion().equals("")?actividadCreada.get(0).getDescripcion():"Ninguno")+
+                                    ", Estado: "+(actividadCreada.get(0).getNombreEstado()!=null&&!actividadCreada.get(0).getNombreEstado().equals("")?actividadCreada.get(0).getNombreEstado():"Ninguno")+
+                                    ", Versión: "+(actividadCreada.get(0).getNombreVersion()!=null&&!actividadCreada.get(0).getNombreVersion().equals("")?actividadCreada.get(0).getNombreVersion():"Ninguno")+
+                                    ", Proyecto: "+(actividadCreada.get(0).getNombreProyecto()!=null&&!actividadCreada.get(0).getNombreProyecto().equals("")?actividadCreada.get(0).getNombreProyecto():"Ninguno")+
+                                    ", Fecha inicial: "+(actividadCreada.get(0).getFechaInicio()!=null?actividadCreada.get(0).getFechaInicio():"Ninguno")+
+                                    ", Fecha final: "+(actividadCreada.get(0).getFechaFin()!=null?actividadCreada.get(0).getFechaFin():"Ninguno")+
+                                    ")";
+                            String guardarAuditoria = auditoria.guardarAuditoria(personaSesion, ClasificacionAuditorias.ACTIVIDAD.getNombre(), AccionesAuditadas.CREACION.getNombre(), descripcioAudit);
+                        } catch (Exception e) {
+                            Logger.getLogger(ActividadesNegocio.class.getName()).log(Level.SEVERE, null, e);
+                        }
                     }
                 }
                 if (guardado == 0) {
@@ -392,14 +436,27 @@ public class ActividadesNegocio {
      * @return Una cadena de texto con los posibles errores en el proceso de
      * borrado de la actividad. Si no se presentan errores la lista queda vacía
      */
-    public String eliminarActividad(Integer idActividad) {
+    public String eliminarActividad(Integer idActividad, Integer personaSesion) {
         String error = "";
         try {
+            List<ActividadesBean> actividadEliminar = actividadesDao.consultarActividades(idActividad, null, null, null, null, null, null, null);
             actividadesEmpleadosDao.eliminarActividadEmpleado(idActividad, null);
             actividadesEsfuerzosDao.eliminarActividadEsfuerzo(null, idActividad, null);
             int eliminacion = actividadesDao.eliminarActividad(idActividad);
             if (eliminacion == 0) {
                 error = "La actividad no pudo ser eliminada";
+            }else{
+                //AUDITORIA
+                try {
+                    String descripcioAudit = "Se eliminó la actividad con la siguiente información ("+
+                            " Nombre: "+actividadEliminar.get(0).getNombre()+
+                            ", Descripción: "+actividadEliminar.get(0).getDescripcion()+
+                            ", Versión: "+actividadEliminar.get(0).getNombreVersion()+
+                            ", Proyecto: "+actividadEliminar.get(0).getNombreProyecto()+")";
+                    String guardarAuditoria = auditoria.guardarAuditoria(personaSesion, ClasificacionAuditorias.ACTIVIDAD.getNombre(), AccionesAuditadas.CREACION.getNombre(), descripcioAudit);
+                } catch (Exception e) {
+                    Logger.getLogger(ActividadesNegocio.class.getName()).log(Level.SEVERE, null, e);
+                }
             }
         } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
             Logger.getLogger(ActividadesNegocio.class.getName()).log(Level.SEVERE, null, ex);

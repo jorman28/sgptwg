@@ -93,7 +93,7 @@
                                     <div class="row">
                                         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                             <label for="participante">Añadir participante:</label>
-                                            <input class="form-control" type="text" id="participante" name="participante"/>
+                                            <input class="form-control" type="text" id="participante" name="participante" <c:if test="${!opcionGuardar}">readonly="true"</c:if>/>
                                             <span id="limpiarParticipante" class="glyphicon glyphicon-remove-circle"></span>
                                         </div>
                                     </div>
@@ -122,9 +122,13 @@
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-xs-2 col-sm-1 col-md-1 col-lg-1">
-                                                                    <span class="glyphicon glyphicon-time" style="cursor:pointer;" onclick="registrarTiempo(${item.idPersona});"></span>
-                                                                    <span class="glyphicon glyphicon-calendar" style="cursor:pointer;" onclick="estimar(${item.idPersona}, '${item.fechaInicio}', '${item.fechaFin}', ${item.tiempoEstimado});"></span>
-                                                                    <span class="glyphicon glyphicon-remove" style="cursor:pointer;" onclick="botonEliminarPersona(${item.idPersona});"></span>
+                                                                    <c:if test="${opcionTiempos || (opcionTiempoPropio && personaSesion == item.idPersona)}">
+                                                                        <span class="glyphicon glyphicon-time" style="cursor:pointer;" onclick="registrarTiempo(${item.idPersona});"></span>
+                                                                    </c:if>
+                                                                    <c:if test="${opcionGuardar}">
+                                                                        <span class="glyphicon glyphicon-calendar" style="cursor:pointer;" onclick="estimar(${item.idPersona}, '${item.fechaInicio}', '${item.fechaFin}', ${item.tiempoEstimado});"></span>
+                                                                        <span class="glyphicon glyphicon-remove" style="cursor:pointer;" onclick="botonEliminarPersona(${item.idPersona});"></span>
+                                                                    </c:if>
                                                                 </div>
                                                             </div>
                                                         </li>
@@ -158,9 +162,13 @@
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-xs-2 col-sm-1 col-md-1 col-lg-1">
-                                                                    <span class="glyphicon glyphicon-time" style="cursor:pointer;" onclick="registrarTiempo(${item.idPersona});"></span>
-                                                                    <span class="glyphicon glyphicon-calendar" style="cursor:pointer;" onclick="estimar(${item.idPersona}, '${item.fechaInicio}', '${item.fechaFin}', ${item.tiempoEstimado});"></span>
-                                                                    <span class="glyphicon glyphicon-remove" style="cursor:pointer;" onclick="botonEliminarPersona(${item.idPersona});"></span>
+                                                                    <c:if test="${opcionTiempos || (opcionTiempoPropio && personaSesion == item.idPersona)}">
+                                                                        <span class="glyphicon glyphicon-time" style="cursor:pointer;" onclick="registrarTiempo(${item.idPersona});"></span>
+                                                                    </c:if>
+                                                                    <c:if test="${opcionGuardar}">
+                                                                        <span class="glyphicon glyphicon-calendar" style="cursor:pointer;" onclick="estimar(${item.idPersona}, '${item.fechaInicio}', '${item.fechaFin}', ${item.tiempoEstimado});"></span>
+                                                                        <span class="glyphicon glyphicon-remove" style="cursor:pointer;" onclick="botonEliminarPersona(${item.idPersona});"></span>
+                                                                    </c:if>
                                                                 </div>
                                                             </div>
                                                         </li>
@@ -186,7 +194,7 @@
                             </div>
                         </c:if>
                         <div class="row form-group" align="center">
-                            <c:if test="${opcionGuardar == 'T'}">
+                            <c:if test="${opcionGuardar}">
                                 <button class="btn btn-primary" type="submit" name="accion" id="guardar" value="guardar">Guardar</button>
                             </c:if>
                             <c:if test="${not empty id}">
@@ -299,5 +307,13 @@
                 </div>
             </div>
         </div>
+        <script>
+            var personaSesion = '${personaSesion}';
+            var opcionGuardar = '${opcionGuardar}';
+            var opcionTiempos = '${opcionTiempos}';
+            var opcionTiempoPropio = '${opcionTiempoPropio}';
+            var opcionEliminarTiempos = '${opcionEliminarTiempos}';
+            var opcionEliminarTiempoPropio = '${opcionEliminarTiempoPropio}';
+        </script>
     </body>
 </html>

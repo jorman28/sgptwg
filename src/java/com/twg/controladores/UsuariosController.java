@@ -82,11 +82,14 @@ public class UsuariosController extends HttpServlet {
 
         List<String> permisosPagina = PerfilesNegocio.permisosPorPagina(request, Paginas.USUARIOS);
 
-        String personaSesion = "";
+        Integer personaSesion = null;
         try {
-            personaSesion = String.valueOf(request.getSession().getAttribute("personaSesion"));
+            personaSesion = (Integer) request.getSession().getAttribute("personaSesion");
         } catch (Exception e) {
-            System.err.print("Error obteniendo la persona en sesion");
+        }
+
+        if (permisosPagina != null && !permisosPagina.contains(Permisos.CONSULTAR.getNombre())) {
+            idPersona = personaSesion;
         }
 
         switch (accion) {

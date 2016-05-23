@@ -28,7 +28,7 @@ public class ActividadesSql {
      * @param responsable
      * @param estado
      * @param limite
-     * @return
+     * @return El SQL de la sentencia de base de datos
      */
     public String consultarActividades(Integer idActividad, Integer proyecto, Integer version, String contiene, Date fecha, Integer estado, Integer responsable, String limite) {
         String sql = "SELECT DISTINCT\n"
@@ -47,8 +47,11 @@ public class ActividadesSql {
                 + "            actividades_empleados\n"
                 + "        WHERE\n"
                 + "            fecha_eliminacion IS NULL\n"
-                + "            AND actividad = a.id AND fecha_estimada_inicio IS NOT NULL\n"
-                + "        ORDER BY fecha_estimada_inicio ASC\n"
+                + "            AND actividad = a.id AND fecha_estimada_inicio IS NOT NULL\n";
+        if (responsable != null && responsable != 0) {
+            sql += "           AND empleado = " + responsable + " ";
+        }
+        sql += "        ORDER BY fecha_estimada_inicio ASC\n"
                 + "        LIMIT 1) AS fecha_estimada_inicio,\n"
                 + "    (SELECT \n"
                 + "            fecha_estimada_terminacion\n"
@@ -56,8 +59,11 @@ public class ActividadesSql {
                 + "            actividades_empleados\n"
                 + "        WHERE\n"
                 + "            fecha_eliminacion IS NULL\n"
-                + "            AND actividad = a.id AND fecha_estimada_terminacion IS NOT NULL\n"
-                + "        ORDER BY fecha_estimada_terminacion DESC\n"
+                + "            AND actividad = a.id AND fecha_estimada_terminacion IS NOT NULL\n";
+        if (responsable != null && responsable != 0) {
+            sql += "           AND empleado = " + responsable + " ";
+        }
+        sql += "        ORDER BY fecha_estimada_terminacion DESC\n"
                 + "        LIMIT 1) AS fecha_estimada_terminacion,\n"
                 + "    (SELECT \n"
                 + "            fecha\n"
@@ -65,8 +71,11 @@ public class ActividadesSql {
                 + "            actividades_esfuerzos\n"
                 + "        WHERE\n"
                 + "            fecha_eliminacion IS NULL\n"
-                + "                AND actividad = a.id\n"
-                + "        ORDER BY fecha ASC\n"
+                + "                AND actividad = a.id\n";
+        if (responsable != null && responsable != 0) {
+            sql += "               AND empleado = " + responsable + " ";
+        }
+        sql += "        ORDER BY fecha ASC\n"
                 + "        LIMIT 1) AS fecha_real_inicio,\n"
                 + "    (SELECT \n"
                 + "            fecha\n"
@@ -74,8 +83,11 @@ public class ActividadesSql {
                 + "            actividades_esfuerzos\n"
                 + "        WHERE\n"
                 + "            fecha_eliminacion IS NULL\n"
-                + "                AND actividad = a.id\n"
-                + "        ORDER BY fecha DESC\n"
+                + "                AND actividad = a.id\n";
+        if (responsable != null && responsable != 0) {
+            sql += "               AND empleado = " + responsable + " ";
+        }
+        sql += "        ORDER BY fecha DESC\n"
                 + "        LIMIT 1) AS ultima_modificacion,\n"
                 + "    (SELECT \n"
                 + "            CAST(IFNULL(SUM(tiempo_estimado), 0) AS DECIMAL (10 , 2 ))\n"
@@ -83,16 +95,22 @@ public class ActividadesSql {
                 + "            actividades_empleados\n"
                 + "        WHERE\n"
                 + "            fecha_eliminacion IS NULL\n"
-                + "            AND actividad = a.id\n"
-                + "        ORDER BY fecha_estimada_terminacion DESC\n"
+                + "            AND actividad = a.id\n";
+        if (responsable != null && responsable != 0) {
+            sql += "           AND empleado = " + responsable + " ";
+        }
+        sql += "        ORDER BY fecha_estimada_terminacion DESC\n"
                 + "        LIMIT 1) AS tiempo_estimado,\n"
                 + "    (SELECT \n"
                 + "            IFNULL(SUM(tiempo), 0)\n"
                 + "        FROM\n"
                 + "            actividades_esfuerzos\n"
                 + "        WHERE\n"
-                + "            fecha_eliminacion IS NULL\n"
-                + "            AND actividad = a.id) AS tiempo_invertido\n"
+                + "            fecha_eliminacion IS NULL\n";
+        if (responsable != null && responsable != 0) {
+            sql += "           AND empleado = " + responsable + " ";
+        }
+        sql += "            AND actividad = a.id) AS tiempo_invertido\n"
                 + "FROM\n"
                 + "    actividades a\n"
                 + "        INNER JOIN\n"
@@ -142,7 +160,7 @@ public class ActividadesSql {
      * @param fecha
      * @param estado
      * @param responsable
-     * @return
+     * @return El SQL de la sentencia de base de datos
      */
     public String contarActividades(Integer proyecto, Integer version, String contiene, Date fecha, Integer estado, Integer responsable) {
         String sql = "SELECT COUNT(*) AS cantidad_actividades\n"
@@ -189,7 +207,7 @@ public class ActividadesSql {
      * @param fecha
      * @param estado
      * @param responsable
-     * @return
+     * @return El SQL de la sentencia de base de datos
      */
     public String detalleActividades(Integer proyecto, Integer version, String contiene, Date fecha, Integer estado, Integer responsable) {
         String sql = "SELECT DISTINCT\n"
@@ -254,7 +272,7 @@ public class ActividadesSql {
      * Método encargado de retornar el SQL para consultar la última actividad
      * registrada en el sistema.
      *
-     * @return
+     * @return El SQL de la sentencia de base de datos
      */
     public String consultarUtimaActividad() {
         return "SELECT MAX(id) AS id FROM actividades";
@@ -263,7 +281,7 @@ public class ActividadesSql {
     /**
      * Método encargado de retornar el SQL para insertar una nueva actividad.
      *
-     * @return
+     * @return El SQL de la sentencia de base de datos
      */
     public String insertarActividad() {
         return "INSERT INTO actividades (version, nombre, descripcion, estado) VALUES (?, ?, ?, ?)";
@@ -273,7 +291,7 @@ public class ActividadesSql {
      * Método encargado de retornar el SQL para actualizar una actividad
      * existente.
      *
-     * @return
+     * @return El SQL de la sentencia de base de datos
      */
     public String actualizarActividad() {
         return "UPDATE actividades SET version = ?, nombre = ?, descripcion = ?, estado = ?  WHERE id = ?";
@@ -283,7 +301,7 @@ public class ActividadesSql {
      * Método encargado de retornar el SQL para eliminar lógicamente una
      * actividad, actualizando la fecha de eliminación con la fecha actual.
      *
-     * @return
+     * @return El SQL de la sentencia de base de datos
      */
     public String eliminarActividad() {
         return "UPDATE actividades SET fecha_eliminacion = now() WHERE id = ?";
@@ -296,7 +314,7 @@ public class ActividadesSql {
      * @param proyecto
      * @param version
      * @param persona
-     * @return
+     * @return El SQL de la sentencia de base de datos
      */
     public String actividadesPorEstados(Integer proyecto, Integer version, Integer persona) {
         String sql = "SELECT \n"
@@ -342,7 +360,7 @@ public class ActividadesSql {
      * @param proyecto
      * @param version
      * @param responsable
-     * @return
+     * @return El SQL de la sentencia de base de datos
      */
     public String consolidadoActividades(Integer proyecto, Integer version, Integer responsable) {
         String sql = "SELECT \n"

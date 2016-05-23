@@ -10,7 +10,7 @@ public class VersionesSql {
     /**
      * Método encargado de retornar el SQL para contar las versiones existentes.
      * 
-     * @return 
+     * @return El SQL de la sentencia de base de datos
      */
     public String contarVersiones() {
         return "SELECT COUNT(*) FROM versiones WHERE fecha_eliminacion IS NULL";
@@ -24,7 +24,7 @@ public class VersionesSql {
      * @param idProyecto
      * @param nombre
      * @param nombreExacto
-     * @return 
+     * @return El SQL de la sentencia de base de datos
      */
     public String consultarVersiones(Integer id, Integer idProyecto, String nombre, boolean nombreExacto) {
         String sql = "  SELECT  "
@@ -66,7 +66,7 @@ public class VersionesSql {
     /**
      * Método encargado de retornar el SQL para insertar una nueva versión.
      * 
-     * @return 
+     * @return El SQL de la sentencia de base de datos
      */
     public String insertarVersion() {
         return "INSERT INTO versiones (nombre,fecha_inicio,fecha_terminacion,alcance,proyecto,estado,costo) VALUES (?,?,?,?,?,?,?)";
@@ -75,7 +75,7 @@ public class VersionesSql {
     /**
      * Método encargado de retornar el SQL para actualizar una versión existente.
      * 
-     * @return 
+     * @return El SQL de la sentencia de base de datos
      */
     public String actualizarVersion() {
         return "UPDATE versiones SET nombre = ?, fecha_inicio = ?, fecha_terminacion = ?, alcance = ?, proyecto = ?, estado = ?, costo = ? WHERE id = ?";
@@ -87,7 +87,7 @@ public class VersionesSql {
      * 
      * @param idVersion
      * @param idProyecto
-     * @return 
+     * @return El SQL de la sentencia de base de datos
      */
     public String eliminarVersion(Integer idVersion, Integer idProyecto) {
         String sql = "UPDATE versiones SET fecha_eliminacion = now() WHERE 1 = 1 ";
@@ -104,7 +104,7 @@ public class VersionesSql {
      * Método encargado de retornar un SQL que consulta las versiones que tengan
      * una fecha de inicio inferior.
      * 
-     * @return 
+     * @return El SQL de la sentencia de base de datos
      */
     public String versionesPorFecha() {
         return "SELECT id, nombre FROM versiones WHERE proyecto = ? AND fecha_inicio < ?";

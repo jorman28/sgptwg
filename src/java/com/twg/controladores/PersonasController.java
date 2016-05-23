@@ -83,11 +83,14 @@ public class PersonasController extends HttpServlet {
 
         List<String> permisosPagina = PerfilesNegocio.permisosPorPagina(request, Paginas.PERSONAS);
 
-        String personaSesion = "";
+        Integer personaSesion = null;
         try {
-            personaSesion = String.valueOf(request.getSession().getAttribute("personaSesion"));
+            personaSesion = (Integer) request.getSession().getAttribute("personaSesion");
         } catch (Exception e) {
-            System.err.print("Error obteniendo la persona en sesion");
+        }
+
+        if (permisosPagina != null && !permisosPagina.contains(Permisos.CONSULTAR.getNombre())) {
+            idPersona = personaSesion;
         }
 
         switch (accion) {
@@ -152,15 +155,9 @@ public class PersonasController extends HttpServlet {
 
         if (!accion.equals("consultar")) {
             if (permisosPagina != null && !permisosPagina.isEmpty()) {
-                if (permisosPagina.contains(Permisos.CONSULTAR.getNombre())) {
-                    request.setAttribute("opcionConsultar", "T");
-                }
-                if (permisosPagina.contains(Permisos.CREAR.getNombre())) {
-                    request.setAttribute("opcionCrear", "T");
-                }
-                if (permisosPagina.contains(Permisos.GUARDAR.getNombre())) {
-                    request.setAttribute("opcionGuardar", "T");
-                }
+                request.setAttribute("opcionConsultar", permisosPagina.contains(Permisos.CONSULTAR.getNombre()));
+                request.setAttribute("opcionCrear", permisosPagina.contains(Permisos.CREAR.getNombre()));
+                request.setAttribute("opcionGuardar", permisosPagina.contains(Permisos.GUARDAR.getNombre()));
             }
             request.setAttribute("mensajeExito", mensajeExito);
             request.setAttribute("mensajeError", mensajeError);

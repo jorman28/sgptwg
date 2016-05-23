@@ -37,7 +37,7 @@ public enum ClasificacionAuditorias {
      * Método encargado de obtener el nombre que tenga asociado un elemento de
      * la enumeración
      *
-     * @return
+     * @return Cadena con el nombre de la clasificación de las auditorías.
      */
     public String getNombre() {
         return this.nombre;

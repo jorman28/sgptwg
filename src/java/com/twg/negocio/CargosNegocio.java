@@ -12,14 +12,24 @@ import java.util.logging.Logger;
 import org.json.simple.JSONObject;
 
 /**
+ * Clase encargada de realizar la conexión entre la vista y las operaciones en
+ * base de datos, para la tabla de cargos.
  *
- * @author Pipe
+ * @author Andrés Felipe Giraldo, Jorman Rincón, Erika Jhoana Castaneda
  */
 public class CargosNegocio {
 
     private final CargosDao cargosDao = new CargosDao();
     private final AuditoriasNegocio auditoria = new AuditoriasNegocio();
 
+    /**
+     * Método encargado de consultar los cargos que hay en el sistema,
+     * según los parámetros de búsqueda.
+     * @param nombre
+     * @param nombreExacto
+     * @param limite
+     * @return Listado de cargos que coincidan con los parámetros de busqueda.
+     */
     public List<CargosBean> consultarCargos(String nombre, boolean nombreExacto, String limite) {
         List<CargosBean> listaCargos = new ArrayList<>();
         try {
@@ -36,7 +46,7 @@ public class CargosNegocio {
      *
      * @param nombre
      * @param nombreExacto
-     * @return
+     * @return La cantidad de cargos que hay según los parámetros de búsqueda.
      */
     public int cantidadCargos(String nombre, boolean nombreExacto) {
         int cantidadCargos = 0;
@@ -48,6 +58,11 @@ public class CargosNegocio {
         return cantidadCargos;
     }
 
+    /**
+     * Método encargado de consultar un cargo específico, según el identificador.
+     * @param id
+     * @return Objeto con todos los atributos del cargo que fue consultado.
+     */
     public JSONObject consultarCargo(Integer id) {
         JSONObject object = new JSONObject();
         try {
@@ -62,6 +77,13 @@ public class CargosNegocio {
         return object;
     }
 
+    /**
+     * Método encargado de guardar o actualizar la información de un cargo.
+     * @param id
+     * @param nombre
+     * @param personaSesionStr
+     * @return Cadena con el mensaje de error en caso de que el proceso falle.
+     */
     public String guardarCargo(String id, String nombre, String personaSesionStr) {
         String error = "";
         CargosBean cargoNuevo = new CargosBean();
@@ -110,6 +132,13 @@ public class CargosNegocio {
         return error;
     }
 
+    /**
+     * Método encargado de hacer las validaciones correspondientes a los
+     * campos necesarios para crear un nuevo cargo.
+     * @param id
+     * @param nombre
+     * @return Cadena con los mensajes de error, de acuerdo a las validaciones.
+     */
     public String validarCargo(String id, String nombre) {
         String error = "";
         if (nombre == null || nombre.isEmpty()) {
@@ -133,6 +162,14 @@ public class CargosNegocio {
         return error;
     }
 
+    /**
+     * Método encargado de eliminar un cargo específico, según el identificador
+     * enviado.
+     * @param id
+     * @param personaSesionStr
+     * @return Cadena con un mensaje de error en caso de que el proceso de 
+     * eliminación falle.
+     */
     public String eliminarCargo(Integer id, String personaSesionStr) {
         String error = "";
         

@@ -23,7 +23,7 @@ public class PerfilesSql {
      * @param nombrePerfil
      * @param nombreExacto
      * @param limite
-     * @return
+     * @return El SQL de la sentencia de base de datos
      */
     public String consultarPerfiles(Integer idPerfil, String nombrePerfil, boolean nombreExacto, String limite) {
         StringBuilder sql = new StringBuilder();
@@ -51,7 +51,7 @@ public class PerfilesSql {
      * @param idPerfil
      * @param nombrePerfil
      * @param nombreExacto
-     * @return
+     * @return El SQL de la sentencia de base de datos
      */
     public String cantidadPerfiles(Integer idPerfil, String nombrePerfil, boolean nombreExacto) {
         StringBuilder sql = new StringBuilder();
@@ -74,7 +74,7 @@ public class PerfilesSql {
      * envíen.
      *
      * @param id
-     * @return
+     * @return El SQL de la sentencia de base de datos
      */
     public String consultarPerfil(int id) {
         return "SELECT id, nombre FROM perfiles WHERE id = " + id;
@@ -83,7 +83,7 @@ public class PerfilesSql {
     /**
      * Método encargado de retornar el SQL para insertar un nuevo perfil.
      *
-     * @return
+     * @return El SQL de la sentencia de base de datos
      */
     public String insertarPerfil() {
         return "INSERT INTO perfiles (nombre) VALUES (?)";
@@ -92,7 +92,7 @@ public class PerfilesSql {
     /**
      * Método encargado de retornar el SQL para actualizar un perfil existente.
      *
-     * @return
+     * @return El SQL de la sentencia de base de datos
      */
     public String actualizarPerfil() {
         return "UPDATE perfiles SET nombre = ? WHERE id = ?";
@@ -102,7 +102,7 @@ public class PerfilesSql {
      * Método encargado de retornar el SQL para eliminar todos los permisos
      * asociados a un perfil específico.
      *
-     * @return
+     * @return El SQL de la sentencia de base de datos
      */
     public String eliminarPermisosPorPerfil() {
         return "DELETE FROM permisos_perfiles WHERE perfil = ?";
@@ -112,7 +112,7 @@ public class PerfilesSql {
      * Método encargado de retornar el SQL para eliminar físicamente un perfil
      * de la base de datos.
      *
-     * @return
+     * @return El SQL de la sentencia de base de datos
      */
     public String eliminarPerfil() {
         return "DELETE FROM perfiles WHERE id = ?";
@@ -123,7 +123,7 @@ public class PerfilesSql {
      *
      * @param idPerfil
      * @param permisos
-     * @return
+     * @return El SQL de la sentencia de base de datos
      */
     public String insertarPermisos(Integer idPerfil, List<Integer> permisos) {
         StringBuilder sql = new StringBuilder();
@@ -139,7 +139,7 @@ public class PerfilesSql {
      * Método encargado de consultar los permisos para un perfil específico.
      *
      * @param idPerfil
-     * @return
+     * @return El SQL de la sentencia de base de datos
      */
     public String consultarPermisos(Integer idPerfil) {
         String sql = "SELECT DISTINCT\n"
@@ -166,7 +166,7 @@ public class PerfilesSql {
     /**
      * Método encargado de consultar los permisos de un perfil específico.
      *
-     * @return
+     * @return El SQL de la sentencia de base de datos
      */
     public String obtenerPermisosPerfil() {
         return "SELECT DISTINCT permiso FROM permisos_perfiles WHERE perfil = ?";

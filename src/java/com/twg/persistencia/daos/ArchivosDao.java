@@ -73,7 +73,7 @@ public class ArchivosDao {
      * @param contiene
      * @param fecha
      * @param idPersona
-     * @return
+     * @return Cantidad de archivos según los filtros aplicados.
      * @throws ClassNotFoundException
      * @throws InstantiationException
      * @throws SQLException
@@ -101,7 +101,8 @@ public class ArchivosDao {
      * la base de datos
      *
      * @param archivo Objeto con las propiedades del archivo a almacenar
-     * @return
+     * @return Número para indicar que el registro de insertó o no de forma
+     * correcta.
      * @throws ClassNotFoundException
      * @throws InstantiationException
      * @throws SQLException
@@ -129,7 +130,7 @@ public class ArchivosDao {
      * archivos de la base de datos
      *
      * @param archivo Objeto con las propiedades del archivo a modificar
-     * @return
+     * @return Número para indicar que el registro se actualizó o no de forma correcta.
      * @throws ClassNotFoundException
      * @throws InstantiationException
      * @throws SQLException
@@ -154,7 +155,7 @@ public class ArchivosDao {
      * de archivos de la base de datos
      *
      * @param id Identificador del archivo que se desea eliminar
-     * @return
+     * @return Número para indicar que el registro se eliminó o no de forma correcta.
      * @throws ClassNotFoundException
      * @throws InstantiationException
      * @throws SQLException

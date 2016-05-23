@@ -68,14 +68,14 @@ public class AuditoriasController extends HttpServlet {
             id = Integer.valueOf(idStr);
         } catch (NumberFormatException e) {
         }
-       
+
         Integer idPersona;
         try {
             idPersona = Integer.valueOf(request.getParameter("id_personaH"));
         } catch (NumberFormatException e) {
             idPersona = null;
         }
-        
+
         Integer pagina;
         try {
             pagina = Integer.valueOf(paginaStr);
@@ -84,14 +84,17 @@ public class AuditoriasController extends HttpServlet {
         }
 
         List<String> permisosPagina = PerfilesNegocio.permisosPorPagina(request, Paginas.AUDITORIAS);
-        
-        String personaSesion = "";
+
+        Integer personaSesion = null;
         try {
-            personaSesion = String.valueOf(request.getSession().getAttribute("personaSesion"));
+            personaSesion = (Integer) request.getSession().getAttribute("personaSesion");
         } catch (Exception e) {
-            System.err.print("Error obteniendo la persona en sesion");
         }
-        
+
+        if (permisosPagina != null && !permisosPagina.contains(Permisos.CONSULTAR.getNombre())) {
+            idPersona = personaSesion;
+        }
+
         switch (accion) {
             case "detalle":
                 JSONObject audit = auditoriasNegocio.consultarAuditoria(id);
@@ -110,7 +113,7 @@ public class AuditoriasController extends HttpServlet {
                     enviarDatos(request, null, null, null, null, null, null);
                 }
                 break;
-                case "completarPersonas":
+            case "completarPersonas":
                 JSONArray arrayPersonasAC = personasNegocio.completarPersonas(busqueda);
                 response.getWriter().write(arrayPersonasAC.toJSONString());
                 break;
@@ -121,14 +124,9 @@ public class AuditoriasController extends HttpServlet {
         request.setAttribute("mensajeAlerta", mensajeAlerta);
         request.setAttribute("mensajeExito", mensajeExito);
         request.setAttribute("mensajeError", mensajeError);
-        if (!accion.equals("consultar") && !accion.equals("detalle") && !accion.equals("completarPersonas")){
+        if (!accion.equals("consultar") && !accion.equals("detalle") && !accion.equals("completarPersonas")) {
             if (permisosPagina != null && !permisosPagina.isEmpty()) {
-                if (permisosPagina.contains(Permisos.CONSULTAR.getNombre())) {
-                    request.setAttribute("opcionConsultar", "T");
-                }
-                if (permisosPagina.contains(Permisos.ELIMINAR.getNombre())) {
-                    request.setAttribute("opcionEliminar", "T");
-                }
+                request.setAttribute("opcionConsultar", permisosPagina.contains(Permisos.CONSULTAR.getNombre()));
             }
             request.getRequestDispatcher("jsp/auditorias.jsp").forward(request, response);
         }

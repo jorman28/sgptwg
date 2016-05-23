@@ -24,7 +24,7 @@ public class UsuariosSql {
      * @param documento
      * @param tipoDocumento
      * @param limite
-     * @return
+     * @return El SQL de la sentencia de base de datos
      */
     public String consultarUsuarios(Integer idPersona, String usuario, Integer perfil, String activo, String documento, String tipoDocumento, String limite) {
         String sql = "SELECT "
@@ -74,6 +74,17 @@ public class UsuariosSql {
         return sql;
     }
 
+    /**
+     * Método encargado de retornar el SQL para consultar la cantidad de usuarios
+     * que hay en el sistema, según los filtros aplicados.
+     * @param idPersona
+     * @param usuario
+     * @param perfil
+     * @param activo
+     * @param documento
+     * @param tipoDocumento
+     * @return El SQL de la sentencia de base de datos
+     */
     public String cantidadUsuarios(Integer idPersona, String usuario, Integer perfil, String activo, String documento, String tipoDocumento) {
         String sql = "SELECT COUNT(*) AS cantidadUsuarios "
                 + "FROM "
@@ -112,7 +123,7 @@ public class UsuariosSql {
     /**
      * Método encargado de retornar el SQL para insertar uno nuevo usuario.
      *
-     * @return
+     * @return El SQL de la sentencia de base de datos
      */
     public String insertarUsuario() {
         return "INSERT INTO usuarios (id_persona, usuario, clave, perfil, activo) VALUES (?, ?, ?, ?, ?)";
@@ -121,7 +132,7 @@ public class UsuariosSql {
     /**
      * Método encargado de retornar el SQL para actualizar un usuario existente.
      *
-     * @return
+     * @return El SQL de la sentencia de base de datos
      */
     public String actualizarUsuario() {
         return "UPDATE usuarios SET usuario = ?, clave = ?, perfil = ?, activo = ?, fecha_eliminacion = ? WHERE id_persona = ?";
@@ -131,7 +142,7 @@ public class UsuariosSql {
      * Método encargado de eliminar lógicamente un usuario, actualizando la
      * fecha de eliminación con la fecha actual.
      *
-     * @return
+     * @return El SQL de la sentencia de base de datos
      */
     public String eliminarUsuario() {
         return "UPDATE usuarios SET fecha_eliminacion = now(), activo = 'F' WHERE id_persona = ?";

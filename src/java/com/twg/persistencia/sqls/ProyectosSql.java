@@ -10,7 +10,7 @@ public class ProyectosSql {
     /**
      * Método encargado de retornar el SQL para contar los proyectos existentes.
      *
-     * @return
+     * @return El SQL de la sentencia de base de datos
      */
     public String contarProyectos() {
         return "SELECT COUNT(*) FROM proyectos";
@@ -24,7 +24,7 @@ public class ProyectosSql {
      * @param nombre
      * @param nombreExacto
      * @param idPersona
-     * @return
+     * @return El SQL de la sentencia de base de datos
      */
     public String consultarProyectos(Integer id, String nombre, boolean nombreExacto, Integer idPersona) {
         String sql = "SELECT DISTINCT\n"
@@ -54,7 +54,7 @@ public class ProyectosSql {
     /**
      * Método encargado de retornar el SQL para insertar un nuevo proyecto.
      *
-     * @return
+     * @return El SQL de la sentencia de base de datos
      */
     public String insertarProyecto() {
         return "INSERT INTO proyectos (nombre,fecha_inicio) VALUES (?,?)";
@@ -64,7 +64,7 @@ public class ProyectosSql {
      * Método encargado de retornar el SQL para actualizar un proyecto
      * existente.
      *
-     * @return
+     * @return El SQL de la sentencia de base de datos
      */
     public String actualizarProyecto() {
         return "UPDATE proyectos SET nombre = ?, fecha_inicio = ? WHERE id = ?";
@@ -74,7 +74,7 @@ public class ProyectosSql {
      * Método encargado de eliminar lógicamente un proyecto, actualizando la
      * fecha de eliminación con la fecha actual.
      *
-     * @return
+     * @return El SQL de la sentencia de base de datos
      */
     public String eliminarProyecto() {
         return "UPDATE proyectos SET fecha_eliminacion = now() WHERE id = ?";
@@ -84,7 +84,7 @@ public class ProyectosSql {
      * Método encargado de retornar el SQL para consultar las personas que
      * pertenecen a un proyecto específico.
      *
-     * @return
+     * @return El SQL de la sentencia de base de datos
      */
     public String consultarPersonasProyecto() {
         return "   SELECT \n"
@@ -104,7 +104,7 @@ public class ProyectosSql {
      * Método encargado de eliminar físicamente las personas que pertenecen a un
      * proyecto.
      *
-     * @return
+     * @return El SQL de la sentencia de base de datos
      */
     public String eliminarPersonasProyecto() {
         return "DELETE FROM personas_proyectos WHERE id_proyecto = ? ";
@@ -114,7 +114,7 @@ public class ProyectosSql {
      * Método encargado de retornar el SQL para insertar peronas en un proyecto
      * específico.
      *
-     * @return
+     * @return El SQL de la sentencia de base de datos
      */
     public String insertarPersonaProyecto() {
         return "INSERT INTO personas_proyectos (id_proyecto, id_persona) VALUES (?,?)";
@@ -125,7 +125,7 @@ public class ProyectosSql {
      * versión específica.
      *
      * @param idVersion
-     * @return
+     * @return El SQL de la sentencia de base de datos
      */
     public String consultarProyectosPorVersion(int idVersion) {
         return "SELECT DISTINCT p.id, p.nombre, p.fecha_inicio \n"

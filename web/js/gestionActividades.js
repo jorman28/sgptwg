@@ -1,3 +1,5 @@
+/* global opcionGuardar, opcionTiempos, opcionTiempoPropio, personaSesion, opcionEliminarTiempos, opcionEliminarTiempoPropio */
+
 $(function () {
     $('#fechaInicio')
             .datetimepicker({format: 'dd/mm/yyyy', language: 'es', weekStart: true, todayBtn: true, autoclose: true, todayHighlight: true, startView: 2, minView: 2})
@@ -83,9 +85,13 @@ function pintarListaPersonas(listaPersonas) {
         html += '           </div>';
         html += '        </div>';
         html += '        <div class="col-xs-2 col-sm-1 col-md-1 col-lg-1">';
-        html += '           <span class="glyphicon glyphicon-time" style="cursor:pointer;" onclick="registrarTiempo(' + persona.idPersona + ');"></span>';
-        html += '           <span class="glyphicon glyphicon-calendar" style="cursor:pointer;" onclick="estimar(' + persona.idPersona + ', \'' + persona.fechaInicio + '\', \'' + persona.fechaFin + '\', ' + persona.tiempoEstimado + ');"></span>';
-        html += '           <span class="glyphicon glyphicon-remove" style="cursor:pointer;" onclick="botonEliminarPersona(' + persona.idPersona + ');"></span>';
+        if (opcionTiempos === 'true' || (opcionTiempoPropio === 'true' && personaSesion === (persona.idPersona + ''))) {
+            html += '       <span class="glyphicon glyphicon-time" style="cursor:pointer;" onclick="registrarTiempo(' + persona.idPersona + ');"></span>';
+        }
+        if (opcionGuardar === 'true') {
+            html += '       <span class="glyphicon glyphicon-calendar" style="cursor:pointer;" onclick="estimar(' + persona.idPersona + ', \'' + persona.fechaInicio + '\', \'' + persona.fechaFin + '\', ' + persona.tiempoEstimado + ');"></span>';
+            html += '       <span class="glyphicon glyphicon-remove" style="cursor:pointer;" onclick="botonEliminarPersona(' + persona.idPersona + ');"></span>';
+        }
         html += '        </div>';
         html += '   </div>';
         html += '</li>';
@@ -118,7 +124,9 @@ function pintarHistorialTrabajo(historialTrabajo) {
         html += '       </div>';
         html += '       <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">';
         html += '           <span class="glyphicon glyphicon-pencil" style="cursor:pointer;" onclick="editarHistorial(' + trabajo.id + ', \'' + trabajo.fecha + '\', ' + trabajo.tiempo + ',\'' + trabajo.descripcion + '\');"></span>';
-        html += '           <span class="glyphicon glyphicon-remove" style="cursor:pointer;" onclick="botonEliminarHistorial(' + trabajo.id + ');"></span>';
+        if (opcionEliminarTiempos === 'true' || (opcionEliminarTiempoPropio === 'true' && personaSesion === $("#idPersona").val())) {
+            html += '           <span class="glyphicon glyphicon-remove" style="cursor:pointer;" onclick="botonEliminarHistorial(' + trabajo.id + ');"></span>';
+        }
         html += '       </div>';
         html += '   </div>';
         html += '</li>';
