@@ -47,8 +47,11 @@ public class ActividadesSql {
                 + "            actividades_empleados\n"
                 + "        WHERE\n"
                 + "            fecha_eliminacion IS NULL\n"
-                + "            AND actividad = a.id AND fecha_estimada_inicio IS NOT NULL\n"
-                + "        ORDER BY fecha_estimada_inicio ASC\n"
+                + "            AND actividad = a.id AND fecha_estimada_inicio IS NOT NULL\n";
+        if (responsable != null && responsable != 0) {
+            sql += "           AND empleado = " + responsable + " ";
+        }
+        sql += "        ORDER BY fecha_estimada_inicio ASC\n"
                 + "        LIMIT 1) AS fecha_estimada_inicio,\n"
                 + "    (SELECT \n"
                 + "            fecha_estimada_terminacion\n"
@@ -56,8 +59,11 @@ public class ActividadesSql {
                 + "            actividades_empleados\n"
                 + "        WHERE\n"
                 + "            fecha_eliminacion IS NULL\n"
-                + "            AND actividad = a.id AND fecha_estimada_terminacion IS NOT NULL\n"
-                + "        ORDER BY fecha_estimada_terminacion DESC\n"
+                + "            AND actividad = a.id AND fecha_estimada_terminacion IS NOT NULL\n";
+        if (responsable != null && responsable != 0) {
+            sql += "           AND empleado = " + responsable + " ";
+        }
+        sql += "        ORDER BY fecha_estimada_terminacion DESC\n"
                 + "        LIMIT 1) AS fecha_estimada_terminacion,\n"
                 + "    (SELECT \n"
                 + "            fecha\n"
@@ -65,8 +71,11 @@ public class ActividadesSql {
                 + "            actividades_esfuerzos\n"
                 + "        WHERE\n"
                 + "            fecha_eliminacion IS NULL\n"
-                + "                AND actividad = a.id\n"
-                + "        ORDER BY fecha ASC\n"
+                + "                AND actividad = a.id\n";
+        if (responsable != null && responsable != 0) {
+            sql += "               AND empleado = " + responsable + " ";
+        }
+        sql += "        ORDER BY fecha ASC\n"
                 + "        LIMIT 1) AS fecha_real_inicio,\n"
                 + "    (SELECT \n"
                 + "            fecha\n"
@@ -74,8 +83,11 @@ public class ActividadesSql {
                 + "            actividades_esfuerzos\n"
                 + "        WHERE\n"
                 + "            fecha_eliminacion IS NULL\n"
-                + "                AND actividad = a.id\n"
-                + "        ORDER BY fecha DESC\n"
+                + "                AND actividad = a.id\n";
+        if (responsable != null && responsable != 0) {
+            sql += "               AND empleado = " + responsable + " ";
+        }
+        sql += "        ORDER BY fecha DESC\n"
                 + "        LIMIT 1) AS ultima_modificacion,\n"
                 + "    (SELECT \n"
                 + "            CAST(IFNULL(SUM(tiempo_estimado), 0) AS DECIMAL (10 , 2 ))\n"
@@ -83,16 +95,22 @@ public class ActividadesSql {
                 + "            actividades_empleados\n"
                 + "        WHERE\n"
                 + "            fecha_eliminacion IS NULL\n"
-                + "            AND actividad = a.id\n"
-                + "        ORDER BY fecha_estimada_terminacion DESC\n"
+                + "            AND actividad = a.id\n";
+        if (responsable != null && responsable != 0) {
+            sql += "           AND empleado = " + responsable + " ";
+        }
+        sql += "        ORDER BY fecha_estimada_terminacion DESC\n"
                 + "        LIMIT 1) AS tiempo_estimado,\n"
                 + "    (SELECT \n"
                 + "            IFNULL(SUM(tiempo), 0)\n"
                 + "        FROM\n"
                 + "            actividades_esfuerzos\n"
                 + "        WHERE\n"
-                + "            fecha_eliminacion IS NULL\n"
-                + "            AND actividad = a.id) AS tiempo_invertido\n"
+                + "            fecha_eliminacion IS NULL\n";
+        if (responsable != null && responsable != 0) {
+            sql += "           AND empleado = " + responsable + " ";
+        }
+        sql += "            AND actividad = a.id) AS tiempo_invertido\n"
                 + "FROM\n"
                 + "    actividades a\n"
                 + "        INNER JOIN\n"

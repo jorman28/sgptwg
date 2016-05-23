@@ -3,6 +3,7 @@ package com.twg.negocio;
 import com.twg.controladores.UsuariosController;
 import com.twg.persistencia.beans.AccionesAuditadas;
 import com.twg.persistencia.beans.ClasificacionAuditorias;
+import com.twg.persistencia.beans.PersonasBean;
 import com.twg.persistencia.beans.UsuariosBean;
 import com.twg.persistencia.daos.PersonasDao;
 import com.twg.persistencia.daos.UsuariosDao;
@@ -66,7 +67,8 @@ public class UsuariosNegocio {
      * @param activo
      * @param documento
      * @param tipoDocumento
-     * @return Cantidad de registros de usuarios, según los parámetros de búsqueda.
+     * @return Cantidad de registros de usuarios, según los parámetros de
+     * búsqueda.
      */
     public int cantidadUsuarios(Integer idPersona, String nombreUsuario, Integer perfil, String activo, String documento, String tipoDocumento) {
         int cantidadUsuarios = 0;
@@ -113,9 +115,9 @@ public class UsuariosNegocio {
      * @param activo
      * @param documento
      * @param tipoDocumento
-     * @param personaSesionStr
-     * @return Mapa con un mensaje de error o éxito dependiendo del resultado del 
-     * proceso.
+     * @param personaSesion
+     * @return Mapa con un mensaje de error o éxito dependiendo del resultado
+     * del proceso.
      */
     public Map<String, Object> crearUsuario(Integer idPersona, String nombreUsuario, String clave, String clave2, Integer perfil, String activo, String documento, String tipoDocumento, Integer personaSesion) {
         UsuariosBean usuario = new UsuariosBean();
@@ -146,28 +148,31 @@ public class UsuariosNegocio {
                         //AUDITORIA
                         try {
                             List<UsuariosBean> usuarioActual = usuariosDao.consultarUsuarios(idPersona);
-                            String descripcioAudit = "Se actualizó la información del usuario asociado a la persona con documento "+
-                                    usuarios.get(0).getDocumento()+
-                                    ": Antes (Nombre usuario: "+usuarios.get(0).getUsuario()+
-                                    ", Perfil: "+usuarios.get(0).getDescripcionPerfil()+
-                                    ", Estado: "+(usuarios.get(0).getActivo().equals("T")?"Activo":"Inactivo")+
-                                    ") Después (Nombre usuario: "+usuario.getUsuario()+
-                                    ", Perfil: "+usuarioActual.get(0).getDescripcionPerfil()+
-                                    ", Estado: "+(usuario.getActivo().equals("T")?"Activo":"Inactivo")+")";
+                            String descripcioAudit = "Se actualizó la información del usuario asociado a la persona con documento "
+                                    + usuarios.get(0).getDocumento()
+                                    + ": Antes (Nombre usuario: " + usuarios.get(0).getUsuario()
+                                    + ", Perfil: " + usuarios.get(0).getDescripcionPerfil()
+                                    + ", Estado: " + (usuarios.get(0).getActivo().equals("T") ? "Activo" : "Inactivo")
+                                    + ") Después (Nombre usuario: " + usuario.getUsuario()
+                                    + ", Perfil: " + usuarioActual.get(0).getDescripcionPerfil()
+                                    + ", Estado: " + (usuario.getActivo().equals("T") ? "Activo" : "Inactivo") + ")";
                             String guardarAuditoria = auditoria.guardarAuditoria(personaSesion, ClasificacionAuditorias.USUARIO.getNombre(), AccionesAuditadas.EDICION.getNombre(), descripcioAudit);
-                        } catch (Exception e) {
+                        } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException e) {
                             Logger.getLogger(UsuariosNegocio.class.getName()).log(Level.SEVERE, null, e);
                         }
                     } else {
                         mensajeError = "El usuario no pudo ser guardado";
                     }
                 } else {
-                    idPersona = personasDao.consultarIdPersona(documento, tipoDocumento);
+                    PersonasBean persona = personasDao.consultarIdPersona(documento, tipoDocumento);
+                    if (persona != null) {
+                        idPersona = persona.getId();
+                    }
                     if (idPersona != null) {
                         usuario.setIdPersona(idPersona);
                         List<UsuariosBean> existente = usuariosDao.consultarUsuarios(idPersona);
                         if (existente != null && !existente.isEmpty()) {
-                            if(existente.get(0).getFechaEliminacion() != null){
+                            if (existente.get(0).getFechaEliminacion() != null) {
                                 usuario.setFechaEliminacion(null);
                                 int actualizarUsuario = usuariosDao.actualizarUsuario(usuario);
                                 if (actualizarUsuario > 0) {
@@ -175,17 +180,17 @@ public class UsuariosNegocio {
                                     //AUDITORIA
                                     try {
                                         usuarios = usuariosDao.consultarUsuarios(idPersona);
-                                        String descripcioAudit = "Se creó un nuevo usuario para la persona con documento "+documento+", actualizando "
-                                                + "la informacion del usuario anterior ("+existente.get(0).getUsuario()+") que se encontraba eliminado. Nuevo usuario: ("+usuario.getUsuario()+", "+usuarios.get(0).getDescripcionPerfil()+", "
-                                                +(usuario.getActivo().equals("T")?"Activo":"Inactivo")+")";
+                                        String descripcioAudit = "Se creó un nuevo usuario para la persona con documento " + documento + ", actualizando "
+                                                + "la informacion del usuario anterior (" + existente.get(0).getUsuario() + ") que se encontraba eliminado. Nuevo usuario: (" + usuario.getUsuario() + ", " + usuarios.get(0).getDescripcionPerfil() + ", "
+                                                + (usuario.getActivo().equals("T") ? "Activo" : "Inactivo") + ")";
                                         String guardarAuditoria = auditoria.guardarAuditoria(personaSesion, ClasificacionAuditorias.USUARIO.getNombre(), AccionesAuditadas.CREACION.getNombre(), descripcioAudit);
-                                    } catch (Exception e) {
+                                    } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException e) {
                                         Logger.getLogger(UsuariosNegocio.class.getName()).log(Level.SEVERE, null, e);
                                     }
                                 } else {
                                     mensajeError = "El usuario no pudo ser guardado";
                                 }
-                            }else{
+                            } else {
                                 mensajeError = "Ya existe un usuario registrado para ese documento";
                             }
                         } else {
@@ -195,7 +200,7 @@ public class UsuariosNegocio {
                                 //AUDITORIA
                                 try {
                                     usuarios = usuariosDao.consultarUsuarios(idPersona);
-                                    String descripcioAudit = "Se creó un nuevo usuario para la persona con documento "+documento+" ("+usuario.getUsuario()+", "+usuarios.get(0).getDescripcionPerfil()+", "+(usuario.getActivo().equals("T")?"Activo":"Inactivo")+")";
+                                    String descripcioAudit = "Se creó un nuevo usuario para la persona con documento " + documento + " (" + usuario.getUsuario() + ", " + usuarios.get(0).getDescripcionPerfil() + ", " + (usuario.getActivo().equals("T") ? "Activo" : "Inactivo") + ")";
                                     String guardarAuditoria = auditoria.guardarAuditoria(personaSesion, ClasificacionAuditorias.USUARIO.getNombre(), AccionesAuditadas.CREACION.getNombre(), descripcioAudit);
                                 } catch (Exception e) {
                                     Logger.getLogger(UsuariosNegocio.class.getName()).log(Level.SEVERE, null, e);
@@ -230,6 +235,7 @@ public class UsuariosNegocio {
      * actual como fecha de eliminación
      *
      * @param idPersona
+     * @param personaSesion
      * @return Mapa con un mensaje de error o de éxito dependiendo del resultado
      * del proceso.
      */
@@ -244,7 +250,7 @@ public class UsuariosNegocio {
                     mensajeExito = "El usuario fue eliminado con éxito";
                     //AUDITORIA
                     try {
-                        String descripcioAudit = "Se eliminó el usuario "+usuarios.get(0).getUsuario()+" asociado a la persona con documento "+usuarios.get(0).getDocumento();
+                        String descripcioAudit = "Se eliminó el usuario " + usuarios.get(0).getUsuario() + " asociado a la persona con documento " + usuarios.get(0).getDocumento();
                         String guardarAuditoria = auditoria.guardarAuditoria(personaSesion, ClasificacionAuditorias.USUARIO.getNombre(), AccionesAuditadas.ELIMINACION.getNombre(), descripcioAudit);
                     } catch (Exception e) {
                         Logger.getLogger(UsuariosNegocio.class.getName()).log(Level.SEVERE, null, e);
@@ -286,32 +292,28 @@ public class UsuariosNegocio {
 
         if (usuario.getIdPersona() == null && (usuario.getDocumento() == null || usuario.getDocumento().isEmpty())) {
             error += "El campo 'Documento' es obligatorio <br />";
-        } else {
-            if (usuario.getDocumento()!=null && usuario.getDocumento().length() > 15) {
-                error += "El campo 'Documento' no debe contener más de 15 caracteres, has dígitado " + usuario.getDocumento().length() + " caracteres <br />";
-            }
+        } else if (usuario.getDocumento() != null && usuario.getDocumento().length() > 15) {
+            error += "El campo 'Documento' no debe contener más de 15 caracteres, has dígitado " + usuario.getDocumento().length() + " caracteres <br />";
         }
 
         if (usuario.getUsuario() == null || usuario.getUsuario().isEmpty()) {
             error += "El campo 'Usuario' es obligatorio <br />";
+        } else if (usuario.getUsuario().length() > 15) {
+            error += "El campo 'Usuario' no debe contener más de 15 caracteres, has dígitado " + usuario.getUsuario().length() + " caracteres <br />";
         } else {
-            if (usuario.getUsuario().length() > 15) {
-                error += "El campo 'Usuario' no debe contener más de 15 caracteres, has dígitado " + usuario.getUsuario().length() + " caracteres <br />";
-            } else {
-                try {
-                    List<UsuariosBean> usuarios = usuariosDao.consultarUsuarios(usuario.getUsuario());
-                    if (usuarios != null && !usuarios.isEmpty()) {
-                        if (usuario.getIdPersona() != null) {
-                            if (usuario.getIdPersona().intValue() != usuarios.get(0).getIdPersona().intValue()) {
-                                error += "El usuario a ingresar no está disponible <br />";
-                            }
-                        } else {
+            try {
+                List<UsuariosBean> usuarios = usuariosDao.consultarUsuarios(usuario.getUsuario());
+                if (usuarios != null && !usuarios.isEmpty()) {
+                    if (usuario.getIdPersona() != null) {
+                        if (usuario.getIdPersona().intValue() != usuarios.get(0).getIdPersona().intValue()) {
                             error += "El usuario a ingresar no está disponible <br />";
                         }
+                    } else {
+                        error += "El usuario a ingresar no está disponible <br />";
                     }
-                } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
-                    Logger.getLogger(UsuariosController.class.getName()).log(Level.SEVERE, null, ex);
                 }
+            } catch (ClassNotFoundException | InstantiationException | SQLException | IllegalAccessException ex) {
+                Logger.getLogger(UsuariosController.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
 
@@ -349,18 +351,12 @@ public class UsuariosNegocio {
             } else if (clave2 != null && !clave2.isEmpty()) {
                 error += "El campo 'Clave' es obligatorio <br />";
             }
-        } else {
-            if (usuario.getClave().length() > 15) {
-                error += "El campo 'Clave' no debe contener más de 15 caracteres <br />";
-            } else {
-                if (clave2 == null || clave2.isEmpty()) {
-                    error += "El campo 'Confirmar clave' es obligatorio <br />";
-                } else {
-                    if (!usuario.getClave().equals(clave2)) {
-                        error += "El valor en el campo 'Clave' y 'Confirmar clave' deben ser iguales <br />";
-                    }
-                }
-            }
+        } else if (usuario.getClave().length() > 15) {
+            error += "El campo 'Clave' no debe contener más de 15 caracteres <br />";
+        } else if (clave2 == null || clave2.isEmpty()) {
+            error += "El campo 'Confirmar clave' es obligatorio <br />";
+        } else if (!usuario.getClave().equals(clave2)) {
+            error += "El valor en el campo 'Clave' y 'Confirmar clave' deben ser iguales <br />";
         }
 
         if (usuario.getActivo() == null || usuario.getActivo().isEmpty()) {

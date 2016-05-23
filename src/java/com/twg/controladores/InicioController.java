@@ -82,6 +82,10 @@ public class InicioController extends HttpServlet {
         } catch (Exception e) {
             personaSesion = null;
         }
+        
+        if (permisosPagina != null && !permisosPagina.contains(Permisos.CONSULTAR.getNombre())) {
+            persona = personaSesion;
+        }
 
         switch (accion) {
             case "generarReporte":

@@ -100,16 +100,12 @@ public class AuditoriasNegocio {
      * asignando una fecha de eliminación
      *
      * @param idAuditoria
+     * @param personaSesion
      * @return Una cadena de texto con el error. En caso de ser vacío indica que
      * no se presentaron errores en el proceso
      */
-    public String eliminarAuditoria(Integer idAuditoria, String personaSesionStr) {
+    public String eliminarAuditoria(Integer idAuditoria, Integer personaSesion) {
         String errorEliminacion = "";
-        Integer personaSesion = null;
-        try {
-            personaSesion = Integer.parseInt(personaSesionStr);
-        } catch (Exception e) {
-        }
         try {
             if (auditoriasDao.eliminarAuditoria(idAuditoria) <= 0) {
                 errorEliminacion = "La auditoría no pudo ser eliminada";
