@@ -147,8 +147,9 @@ public class AuditoriasController extends HttpServlet {
      * @param descripcion
      */
     private void enviarDatos(HttpServletRequest request, Integer id, String id_persona, String fecha_creacion,
-            String clasificacion, String accionAud, String descripcion) {
+        String clasificacion, String accionAud, String descripcion) {
         request.setAttribute("id", id);
+        request.setAttribute("id_personaH", id_persona);
         request.setAttribute("id_persona", id_persona);
         request.setAttribute("fecha_creacion", fecha_creacion);
         request.setAttribute("clasificacion", clasificacion);

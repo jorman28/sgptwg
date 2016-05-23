@@ -61,9 +61,9 @@ function llenarTablaAuditorias(pagina) {
         pagina = 1;
     }
     var id = $('#id').val() !== undefined && $('#id').val() !== "" ? $('#id').val() : null;
-    var idPersona = $('#id_personaH').val() !== undefined && $('#id_personaH').val() !== "" ? $('#id_personaH').val() : null;
-    if ($('#idPersona').val() === "") {
-        idPersona = null;
+    var id_personaH = $('#id_personaH').val() !== undefined && $('#id_personaH').val() !== "" ? $('#id_personaH').val() : null;
+    if ($('#id_persona').val() === "") {
+        id_personaH = null;
     }
     //var id_persona = $('#id_persona').val() !== undefined && $('#id_persona').val() !== "" ? $('#id_persona').val() : null;
     var fecha_creacion = $('#fecha_creacion').val() !== undefined && $('#fecha_creacion').val() !== "" ? $('#fecha_creacion').val() : null;
@@ -74,7 +74,7 @@ function llenarTablaAuditorias(pagina) {
         type: "POST",
         url: "AuditoriasController",
         dataType: "html",
-        data: {accion: "consultar", id: id, idPersona: idPersona, fecha_creacion: fecha_creacion, clasificacion: clasificacion, accionAud: accionAud, descripcion: descripcion, pagina: pagina},
+        data: {accion: "consultar", id: id, idPersona: id_personaH, fecha_creacion: fecha_creacion, clasificacion: clasificacion, accionAud: accionAud, descripcion: descripcion, pagina: pagina},
         success: function (data) {
             if (data !== undefined) {
                 $('#tablaAuditorias').html(data);
