@@ -16,7 +16,7 @@ import javax.servlet.http.Part;
  */
 public class AlmacenamientoArchivos {
 
-    public final String rutaCargas = "D://POLITECNICO JIC/PPI SGPTWG/cargas/";
+    public final String rutaCargas = "/data/www/test/sgptwg/uploads/";
 
     /**
      * Método encargado de subir los archivos a una ubicación específica.

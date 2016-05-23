@@ -37,7 +37,7 @@ public class GeneradorReportes {
 
     private final ActividadesNegocio actividadesNegocio = new ActividadesNegocio();
     private final SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyy_hhmmss");
-    public final String rutaReportes = "D://POLITECNICO JIC/PPI SGPTWG/reportes/";
+    public final String rutaReportes = "/data/www/test/sgptwg/reports/";
 
     /**
      * Método encargado de listar los distintos estados de actividades y contar
@@ -153,7 +153,6 @@ public class GeneradorReportes {
 //                        cht.axisFormat().setLabel("Tiempo"))
 //                .setTaskAxisFormat(
 //                        cht.axisFormat().setLabel("Actividad"));
-
 //        GanttChartBuilder gannt2 = cht.ganttChart()
 //                .setTask(actividad)
 //                .series(
@@ -166,7 +165,6 @@ public class GeneradorReportes {
 //                        cht.axisFormat().setLabel("Tiempo"))
 //                .setTaskAxisFormat(
 //                        cht.axisFormat().setLabel("Actividad"));
-
         JasperReportBuilder reporte = DynamicReports.report();
         reporte.addColumn(proyecto);
         reporte.addColumn(version);
@@ -190,6 +188,7 @@ public class GeneradorReportes {
     /**
      * Mètodo encargado de generar un reporte con el listado de actividades
      * detalladas según los filtros aplicados.
+     *
      * @param listaActividades
      * @return El nombre del archivo generado
      */

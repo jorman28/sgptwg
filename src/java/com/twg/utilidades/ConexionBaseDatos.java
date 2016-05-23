@@ -11,11 +11,11 @@ import java.sql.SQLException;
  */
 public class ConexionBaseDatos {
     
-    private final String host = "localhost";
+    private final String host = "db.ateneaservices.com";
     private final String port = "3306";
     private final String dataBase = "sgptwg";
-    private final String user = "adminyCU5jj8";
-    private final String password = "UYkkahX37sYj";
+    private final String user = "sgptwg";
+    private final String password = "sgptwg_1376";
     
     /**
      * Método encargado de crear una nueva instancia para conectarse a la 
