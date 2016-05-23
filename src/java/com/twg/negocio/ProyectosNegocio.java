@@ -32,6 +32,7 @@ public class ProyectosNegocio {
 
     /**
      * Método encargado de guardar o actualizar la información de un proyecto.
+     *
      * @param id
      * @param nombre
      * @param fechaInicio
@@ -61,11 +62,11 @@ public class ProyectosNegocio {
                 guardado = proyectosDao.actualizarProyecto(proyecto);
                 //AUDITORIA
                 try {
-                    String descripcioAudit = "Se actualizó la información de un proyecto. ANTES ("+
-                            " Nombre: "+proyectoAntes.get(0).getNombre()+
-                            ", Fecha inicio: "+proyectoAntes.get(0).getFechaInicio()+
-                            ") DESPUÉS ( Nombre: "+proyecto.getNombre()+
-                            ", Fecha inicio: "+proyecto.getFechaInicio()+")";
+                    String descripcioAudit = "Se actualizó la información de un proyecto. ANTES ("
+                            + " Nombre: " + proyectoAntes.get(0).getNombre()
+                            + ", Fecha inicio: " + proyectoAntes.get(0).getFechaInicio()
+                            + ") DESPUÉS ( Nombre: " + proyecto.getNombre()
+                            + ", Fecha inicio: " + proyecto.getFechaInicio() + ")";
                     String guardarAuditoria = auditoria.guardarAuditoria(personaSesion, ClasificacionAuditorias.PROYECTO.getNombre(), AccionesAuditadas.EDICION.getNombre(), descripcioAudit);
                 } catch (Exception e) {
                     Logger.getLogger(ProyectosNegocio.class.getName()).log(Level.SEVERE, null, e);
@@ -74,9 +75,9 @@ public class ProyectosNegocio {
                 guardado = proyectosDao.crearProyecto(proyecto);
                 //AUDITORIA
                 try {
-                    String descripcioAudit = "Se creó un proyecto con la siguiente información ("+
-                            " Nombre: "+proyecto.getNombre()+
-                            ", Fecha inicio: "+proyecto.getFechaInicio()+")";
+                    String descripcioAudit = "Se creó un proyecto con la siguiente información ("
+                            + " Nombre: " + proyecto.getNombre()
+                            + ", Fecha inicio: " + proyecto.getFechaInicio() + ")";
                     String guardarAuditoria = auditoria.guardarAuditoria(personaSesion, ClasificacionAuditorias.PROYECTO.getNombre(), AccionesAuditadas.CREACION.getNombre(), descripcioAudit);
                 } catch (Exception e) {
                     Logger.getLogger(ProyectosNegocio.class.getName()).log(Level.SEVERE, null, e);
@@ -109,25 +110,26 @@ public class ProyectosNegocio {
     }
 
     /**
-     * Método encargado de validar los datos necesarios para poder guardar un proyecto.
+     * Método encargado de validar los datos necesarios para poder guardar un
+     * proyecto.
+     *
      * @param idProyecto
      * @param nombre
      * @param fechaInicio
-     * @return Cadena con un mensaje de error en caso de que no cumpla alguna validación.
+     * @return Cadena con un mensaje de error en caso de que no cumpla alguna
+     * validación.
      */
     public String validarDatos(Integer idProyecto, String nombre, String fechaInicio) {
         String validacion = "";
         if (nombre == null || nombre.isEmpty()) {
             validacion += "El campo 'Nombre' no debe estar vacío <br />";
+        } else if (nombre.length() > 30) {
+            validacion += "El campo 'Nombre' no debe contener más de 30 caracteres, has dígitado " + nombre.length() + " caracteres <br />";
         } else {
-            if (nombre.length() > 30) {
-                validacion += "El campo 'Nombre' no debe contener más de 30 caracteres, has dígitado " + nombre.length() + " caracteres <br />";
-            } else {
-                List<ProyectosBean> listaProyectos = consultarProyectos(null, nombre, true, null);
-                if (listaProyectos != null && !listaProyectos.isEmpty()) {
-                    if (idProyecto == null || idProyecto.intValue() != listaProyectos.get(0).getId().intValue()) {
-                        validacion += "El valor ingresado en el campo 'Nombre' ya existe en el sistema \n";
-                    }
+            List<ProyectosBean> listaProyectos = consultarProyectos(null, nombre, true, null);
+            if (listaProyectos != null && !listaProyectos.isEmpty()) {
+                if (idProyecto == null || idProyecto.intValue() != listaProyectos.get(0).getId().intValue()) {
+                    validacion += "El valor ingresado en el campo 'Nombre' ya existe en el sistema \n";
                 }
             }
         }
@@ -153,7 +155,9 @@ public class ProyectosNegocio {
     }
 
     /**
-     * Método encargado de consultar los proyectos según los parámetros de búsqueda.
+     * Método encargado de consultar los proyectos según los parámetros de
+     * búsqueda.
+     *
      * @param id
      * @param nombre
      * @param nombreExacto
@@ -171,6 +175,7 @@ public class ProyectosNegocio {
 
     /**
      * Método encargado de consultar un proyecto específico.
+     *
      * @param idProyecto
      * @return Objeto con todos los atributos de un proyecto.
      */
@@ -214,6 +219,7 @@ public class ProyectosNegocio {
 
     /**
      * Método para encontrar los proyectos de una versión determinada.
+     *
      * @param idVersion
      * @return Objeto con todos los atributos de un proyecto.
      */
@@ -235,6 +241,7 @@ public class ProyectosNegocio {
 
     /**
      * Método encargado de eliminar un proyecto específico.
+     *
      * @param idProyecto
      * @param personaSesion
      * @return Cadena con un mensaje de error en caso de que el proceso falle.
@@ -246,10 +253,10 @@ public class ProyectosNegocio {
             int eliminacion = proyectosDao.eliminarProyecto(idProyecto);
             if (eliminacion == 0) {
                 error = "El proyecto no pudo ser eliminado";
-            }else{
+            } else {
                 //AUDITORIA
                 try {
-                    String descripcioAudit = "Se eliminó el proyecto llamado "+proyectoEliminar.get(0).getNombre();
+                    String descripcioAudit = "Se eliminó el proyecto llamado " + proyectoEliminar.get(0).getNombre();
                     String guardarAuditoria = auditoria.guardarAuditoria(personaSesion, ClasificacionAuditorias.PROYECTO.getNombre(), AccionesAuditadas.ELIMINACION.getNombre(), descripcioAudit);
                 } catch (Exception e) {
                     Logger.getLogger(ProyectosNegocio.class.getName()).log(Level.SEVERE, null, e);

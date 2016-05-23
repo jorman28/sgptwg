@@ -142,7 +142,7 @@ public class ActividadesController extends HttpServlet {
             } catch (Exception e) {
                 personaSesion = null;
             }
-            
+
             switch (accion) {
                 case "consultar":
                     cargarTabla(response, permisosPagina, idProyecto, idVersion, descripcion, idEstado, fecha, idResponsable, pagina);
@@ -414,7 +414,9 @@ public class ActividadesController extends HttpServlet {
     }
 
     /**
-     * Este método se encarga de consultar los empleados o clientes pertenecientes a una actividad.
+     * Este método se encarga de consultar los empleados o clientes
+     * pertenecientes a una actividad.
+     *
      * @param resultado
      * @param idActividad
      */
