@@ -13,13 +13,27 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Clase encargada de obtener la conexión con la base de datos y ejecutar las
+ * sentencias con base en los datos enviados desde el negocio
  *
- * @author Pipe
+ * @author Andrés Felipe Giraldo, Jorman Rincón, Erika Jhoana Castaneda
  */
 public class ProyectosDao {
 
     private final ProyectosSql sql = new ProyectosSql();
 
+    /**
+     * Método encargado de consultar los proyectos del sistema.
+     * @param id
+     * @param nombre
+     * @param nombreExacto
+     * @param idPersona
+     * @return Listado con la información de los proyectos consultados.
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws SQLException
+     * @throws IllegalAccessException 
+     */
     public List<ProyectosBean> consultarProyectos(Integer id, String nombre, boolean nombreExacto, Integer idPersona) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         List<ProyectosBean> listaProyectos = new ArrayList();
         Connection con;
@@ -43,6 +57,15 @@ public class ProyectosDao {
         return listaProyectos;
     }
 
+    /**
+     * Método encargado de consultar los proyectos por versión.
+     * @param id
+     * @return Listado con la información de los proyectos asociados a una versión.
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws SQLException
+     * @throws IllegalAccessException 
+     */
     public List<ProyectosBean> consultarProyectosPorVersion(Integer id) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         List<ProyectosBean> listaProyectos = new ArrayList<>();
         Connection con;
@@ -64,6 +87,15 @@ public class ProyectosDao {
         return listaProyectos;
     }
 
+    /**
+     * Método encargado de rear un proyecto.
+     * @param proyecto
+     * @return Un número indicando si el procceso se realizó o no.
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws SQLException
+     * @throws IllegalAccessException 
+     */
     public int crearProyecto(ProyectosBean proyecto) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
@@ -77,6 +109,15 @@ public class ProyectosDao {
         return insercion;
     }
 
+    /**
+     * Método encargado de actualizar la información de un proyecto.
+     * @param proyecto
+     * @return Un número indicando si el procceso se realizó o no.
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws SQLException
+     * @throws IllegalAccessException 
+     */
     public int actualizarProyecto(ProyectosBean proyecto) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
@@ -91,6 +132,15 @@ public class ProyectosDao {
         return actualizacion;
     }
 
+    /**
+     * Método encargado de eliminar el registro de un proyecto.
+     * @param idProyecto
+     * @return Un número indicando si el procceso se realizó o no.
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws SQLException
+     * @throws IllegalAccessException 
+     */
     public int eliminarProyecto(Integer idProyecto) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
@@ -103,6 +153,16 @@ public class ProyectosDao {
         return eliminacion;
     }
 
+    /**
+     * Método encargado de consultar las personas asociadas a un proyecto.
+     * @param idProyecto
+     * @return Listado con la información de las personas que pertenecen a un
+     * proyecto.
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws SQLException
+     * @throws IllegalAccessException 
+     */
     public List<PersonasBean> consultarPersonasProyecto(Integer idProyecto) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         List<PersonasBean> listaPersonas = new ArrayList<>();
         Connection con;
@@ -129,6 +189,15 @@ public class ProyectosDao {
         return listaPersonas;
     }
 
+    /**
+     * Método encargado de eliminar las personas que pertenecen a un proyecto específico.
+     * @param idProyecto
+     * @return Un número indicando si el procceso se realizó o no.
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws SQLException
+     * @throws IllegalAccessException 
+     */
     public int eliminarPersonasProyecto(Integer idProyecto) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
@@ -141,6 +210,16 @@ public class ProyectosDao {
         return eliminacion;
     }
 
+    /**
+     * Método encargado de asociar las personas a un proyecto específco.
+     * @param idProyecto
+     * @param idPersona
+     * @return Un número indicando si el procceso se realizó o no.
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws SQLException
+     * @throws IllegalAccessException 
+     */
     public int insertarPersonaProyecto(Integer idProyecto, Integer idPersona) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();

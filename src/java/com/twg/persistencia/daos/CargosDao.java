@@ -17,15 +17,32 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Clase encargada de obtener la conexión con la base de datos y ejecutar las
+ * sentencias con base en los datos enviados desde el negocio
  *
- * @author Erika Jhoana
+ * @author Andrés Felipe Giraldo, Jorman Rincón, Erika Jhoana Castaneda
  */
 public class CargosDao {
     private final CargosSql sql = new CargosSql();
     
+    /**
+     * Método constructor de la clase.
+     */
     public CargosDao(){
     }
 
+    /**
+     * Método encargado de consultar el listado de cargos que hay en el sistema
+     * según los fltros aplicados.
+     * @param nombre
+     * @param nombreExacto
+     * @param limite
+     * @return Listado con los cargos consultados según los filtros.
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws SQLException
+     * @throws IllegalAccessException 
+     */
     public List<CargosBean> consultarCargos(String nombre, boolean nombreExacto, String limite) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
         List<CargosBean> listaCargos = new ArrayList<>();
         Connection con;
@@ -75,6 +92,15 @@ public class CargosDao {
         return cantidadCargos;
     }
     
+    /**
+     * Método encargado de consultar la información de un cargo específico.
+     * @param id
+     * @return Un objeto con todos los atributos del cargo consultado.
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws SQLException
+     * @throws IllegalAccessException 
+     */
     public CargosBean consultarCargo(Integer id) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
         CargosBean cargo = new CargosBean();
         Connection con;
@@ -93,6 +119,15 @@ public class CargosDao {
         return cargo;
     }
     
+    /**
+     * Método encargado de insertar un nuevo cargo en el sistema.
+     * @param cargo
+     * @return Un número indicando si el proceso se realizó o no.
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws SQLException
+     * @throws IllegalAccessException 
+     */
     public int insertarCargo(CargosBean cargo) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
@@ -105,6 +140,15 @@ public class CargosDao {
         return insercion;
     }
     
+    /**
+     * Método encargado de actualizar la información de un cargo específico.
+     * @param cargo
+     * @return Un número indicando si el proceso se realizó o no.
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws SQLException
+     * @throws IllegalAccessException 
+     */
     public int actualizarCargo(CargosBean cargo) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
@@ -118,6 +162,15 @@ public class CargosDao {
         return actualizacion;
     }
     
+    /**
+     * Método encargado de eliminar un cargo.
+     * @param idCargo
+     * @return Un número indicando si el proceso se realizó o no.
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws SQLException
+     * @throws IllegalAccessException 
+     */
     public int eliminarCargo(Integer idCargo) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();

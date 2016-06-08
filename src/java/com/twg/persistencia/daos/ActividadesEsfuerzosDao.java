@@ -21,6 +21,21 @@ public class ActividadesEsfuerzosDao {
 
     private final ActividadesEsfuerzosSql sql = new ActividadesEsfuerzosSql();
 
+    /**
+     * Método encargado de consultar el listado de los esfuerzos por
+     * actividad, aplicando filtros según los parámetros que lleguen distintos
+     * de nulo.
+     * @param id
+     * @param actividad
+     * @param empleado
+     * @param fecha
+     * @param descripcion
+     * @return Listado con todos los esfuerzos por actividad.
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws SQLException
+     * @throws IllegalAccessException 
+     */
     public List<ActividadesEsfuerzosBean> consultarActividadesEsfuerzos(Integer id, Integer actividad, Integer empleado, Date fecha, String descripcion) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         List<ActividadesEsfuerzosBean> listaActividadesEsfuerzos = new ArrayList();
         Connection con;
@@ -49,6 +64,21 @@ public class ActividadesEsfuerzosDao {
         return listaActividadesEsfuerzos;
     }
 
+    /**
+     * Método encargado de consultar los esfuerzos asociados a una actividad, 
+     * según los filtros aplicados.
+     * @param id
+     * @param actividad
+     * @param empleado
+     * @param fecha
+     * @param descripcion
+     * @return Un objeto con todos los atributos de los esfuerzos que pertenecen
+     * a una actividad.
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws SQLException
+     * @throws IllegalAccessException 
+     */
     public ActividadesEsfuerzosBean consultarActividadEsfuerzo(Integer id, Integer actividad, Integer empleado, Date fecha, String descripcion) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         ActividadesEsfuerzosBean ActividadesEsfuerzos = new ActividadesEsfuerzosBean();
         Connection con;
@@ -73,6 +103,15 @@ public class ActividadesEsfuerzosDao {
         return ActividadesEsfuerzos;
     }
 
+    /**
+     * Método encargado de insertar un esfuerzo para una actividad.
+     * @param actividadEsfuerzo
+     * @return Un número indicando si el proceso se realizó o no.
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws SQLException
+     * @throws IllegalAccessException 
+     */
     public int crearActividadEsfuerzo(ActividadesEsfuerzosBean actividadEsfuerzo) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
@@ -89,6 +128,15 @@ public class ActividadesEsfuerzosDao {
         return insercion;
     }
 
+    /**
+     * Método encargado de actualizar los esfuerzos de una actividad específica.
+     * @param actividadEsfuerzo
+     * @return Un número indicando si el proceso se realizó o no.
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws SQLException
+     * @throws IllegalAccessException 
+     */
     public int actualizarActividadEsfuerzo(ActividadesEsfuerzosBean actividadEsfuerzo) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
@@ -104,6 +152,17 @@ public class ActividadesEsfuerzosDao {
         return actualizacion;
     }
 
+    /**
+     * Método encargado de eliminar el esfuerzo de una actividad específica.
+     * @param idActividadEsfuerzo
+     * @param idActividad
+     * @param idEmpleado
+     * @return Un número indicando si el proceso se realizó o no.
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws SQLException
+     * @throws IllegalAccessException 
+     */
     public int eliminarActividadEsfuerzo(Integer idActividadEsfuerzo, Integer idActividad, Integer idEmpleado) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
