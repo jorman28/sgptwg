@@ -12,16 +12,43 @@ import java.util.Date;
 import java.util.List;
 
 /**
+ * Clase encargada de obtener la conexión con la base de datos y ejecutar las
+ * sentencias con base en los datos enviados desde el negocio
  *
- * @author Erika Jhoana
+ * @author Andrés Felipe Giraldo, Jorman Rincón, Erika Jhoana Castaneda
  */
 public class PersonasDao {
 
     private final PersonasSql sql = new PersonasSql();
 
+    /**
+     * Método constructor de la clase.
+     */
     public PersonasDao() {
     }
 
+    /**
+     * Método encargado de consultar las personas según los parámetros de 
+     * búsqueda.
+     * @param idPersona
+     * @param documento
+     * @param tipoDocumento
+     * @param nombres
+     * @param apellidos
+     * @param correo
+     * @param usuario
+     * @param perfil
+     * @param cargo
+     * @param nombreCompleto
+     * @param busquedaExacta
+     * @param idProyecto
+     * @param limite
+     * @return Listado con la información de las personas según la búsqueda.
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws SQLException
+     * @throws IllegalAccessException 
+     */
     public List<PersonasBean> consultarPersonas(Integer idPersona, String documento, String tipoDocumento, String nombres, String apellidos, String correo, String usuario, String perfil, String cargo, String nombreCompleto, Boolean busquedaExacta, Integer idProyecto, String limite) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         List<PersonasBean> listaPersonas = new ArrayList<>();
         PreparedStatement ps;
@@ -59,7 +86,6 @@ public class PersonasDao {
     /**
      * Método encargado de consultar la cantidad de usuarios existentes en base
      * de datos relacionados con los filtros ingresados
-     *
      * @param idPersona
      * @param documento
      * @param tipoDocumento
@@ -93,8 +119,19 @@ public class PersonasDao {
         return cantidadPersonas;
     }
 
-    public PersonasBean consultarIdPersona(String documento, String tipoDocumento) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
-        PersonasBean persona = null;
+    /**
+     * Método encargado de consultar el identificador de una persona específica
+     * según el tipo y número de documento.
+     * @param documento
+     * @param tipoDocumento
+     * @return
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws SQLException
+     * @throws IllegalAccessException 
+     */
+    public Integer consultarIdPersona(String documento, String tipoDocumento) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
+        Integer idPersona = null;
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;
@@ -112,6 +149,15 @@ public class PersonasDao {
         return persona;
     }
 
+    /**
+     * Método encargado de insertar una nueva persona en el sistema.
+     * @param persona
+     * @return Un número indicando si el proceso se realizó o no.
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws SQLException
+     * @throws IllegalAccessException 
+     */
     public int insertarPersona(PersonasBean persona) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
@@ -132,6 +178,15 @@ public class PersonasDao {
         return insercion;
     }
 
+    /**
+     * Método encargado de actualizar la información de una persona específica.
+     * @param persona
+     * @return Un número indicando si el proceso se realizó o no.
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws SQLException
+     * @throws IllegalAccessException 
+     */
     public int actualizarPersona(PersonasBean persona) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
@@ -153,6 +208,15 @@ public class PersonasDao {
         return actualizacion;
     }
 
+    /**
+     * Método encargado de eliminar el registro de una persona en la Base de Datos.
+     * @param id
+     * @return Un número indicando si el proceso se realizó o no.
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws SQLException
+     * @throws IllegalAccessException 
+     */
     public int eliminarPersona(Integer id) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();

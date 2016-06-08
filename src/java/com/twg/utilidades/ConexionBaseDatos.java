@@ -33,7 +33,7 @@ public class ConexionBaseDatos {
      * Método encargado de enviar las credenciales de la base de datos 
      * y obtener la conexión.
      * 
-     * @return
+     * @return La conexión con la base de datos.
      * @throws SQLException 
      */
     public Connection obtenerConexion() throws SQLException{
