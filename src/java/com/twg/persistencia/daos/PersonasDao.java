@@ -124,14 +124,14 @@ public class PersonasDao {
      * según el tipo y número de documento.
      * @param documento
      * @param tipoDocumento
-     * @return
+     * @return Un objeto con todos los atributos de una persona específica.
      * @throws ClassNotFoundException
      * @throws InstantiationException
      * @throws SQLException
      * @throws IllegalAccessException 
      */
-    public Integer consultarIdPersona(String documento, String tipoDocumento) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
-        Integer idPersona = null;
+    public PersonasBean consultarIdPersona(String documento, String tipoDocumento) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
+        PersonasBean persona = null;
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
         PreparedStatement ps;

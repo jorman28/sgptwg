@@ -17,15 +17,28 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Clase encargada de obtener la conexión con la base de datos y ejecutar las
+ * sentencias con base en los datos enviados desde el negocio
  *
- * @author Erika Jhoana
+ * @author Andrés Felipe Giraldo, Jorman Rincón, Erika Jhoana Castaneda
  */
 public class TiposDocumentosDao {
     private final TiposDocumentosSql sql = new TiposDocumentosSql();
     
+    /**
+     * Método constructor de la clase.
+     */
     public TiposDocumentosDao(){
     }
 
+    /**
+     * Método encargado de consultar todos los tipos de documentos del sistema.
+     * @return
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws SQLException
+     * @throws IllegalAccessException 
+     */
     public List<TiposDocumentosBean> consultarTiposDocumentos() throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
         List<TiposDocumentosBean> listaTiposDocumentos = new ArrayList<>();
         Connection con;

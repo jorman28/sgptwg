@@ -14,22 +14,43 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * Clase encargada de obtener la conexión con la base de datos y ejecutar las
+ * sentencias con base en los datos enviados desde el negocio
  *
- * @author Pipe
+ * @author Andrés Felipe Giraldo, Jorman Rincón, Erika Jhoana Castaneda
  */
 public class PerfilesDao {
     
     private final PerfilesSql sql = new PerfilesSql();
     
+    /**
+     * Método constructor de la clase.
+     */
     public PerfilesDao(){
     }
 
-    /* Eliminar cuando se arregle la pantalla de personas */
+    /**
+     * Método encargado de consultar la información de un perfil específico.
+     * @param idPerfil
+     * @return Un objeto con todos los atributos del perfil consultado.
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws SQLException
+     * @throws IllegalAccessException 
+     */
     public PerfilesBean consultarPerfil(Integer idPerfil) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
         List<PerfilesBean> listaPerfiles = consultarPerfiles(idPerfil, null, false, null);
         return listaPerfiles.get(0);
     }
     
+    /**
+     * Método encargado de consultar todos los perfiles del sistema.
+     * @return Listado con todos los perfiles existentes.
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws SQLException
+     * @throws IllegalAccessException 
+     */
     public List<PerfilesBean> consultarPerfiles() throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
         return consultarPerfiles(null, null, false, null);
     }
@@ -37,7 +58,6 @@ public class PerfilesDao {
     /**
      * Método encargado de consultar la cantidad de usuarios existentes en base
      * de datos relacionados con los filtros ingresados
-     *
      * @param idPerfil
      * @param nombrePerfil
      * @param nombreExacto
@@ -64,6 +84,18 @@ public class PerfilesDao {
         return cantidadPerfiles;
     }
     
+    /**
+     * Método encargado de consultar los perfiles según los parámetros de búsqueda.
+     * @param idPerfil
+     * @param nombrePerfil
+     * @param nombreExacto
+     * @param limite
+     * @return Listado con la información de los perfiles consultados.
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws SQLException
+     * @throws IllegalAccessException 
+     */
     public List<PerfilesBean> consultarPerfiles(Integer idPerfil, String nombrePerfil, boolean nombreExacto, String limite) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
         List<PerfilesBean> listaPerfiles = new ArrayList<>();
         Connection con;
@@ -84,6 +116,15 @@ public class PerfilesDao {
         return listaPerfiles;
     }
     
+    /**
+     * Método encargado de obtener os permisos de un perfil específico.
+     * @param idPerfil
+     * @return Un listado con los permisos de un perfil específico.
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws SQLException
+     * @throws IllegalAccessException 
+     */
     public List<Integer> obtenerPermisosPerfil(Integer idPerfil) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
         List<Integer> permisos = new ArrayList<>();
         Connection con;
@@ -102,6 +143,15 @@ public class PerfilesDao {
         return permisos;
     }
     
+    /**
+     * Método encargado de insertar un nuevo perfil.
+     * @param perfil
+     * @return Un número indicando si el proceso se realizó o no.
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws SQLException
+     * @throws IllegalAccessException 
+     */
     public int insertarPerfil(PerfilesBean perfil) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
@@ -114,6 +164,15 @@ public class PerfilesDao {
         return insercion;
     }
     
+    /**
+     * Método encargado de actualizar la información de un perfil.
+     * @param perfil
+     * @return Un número indicando si el proceso se realizó o no.
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws SQLException
+     * @throws IllegalAccessException 
+     */
     public int actualizarPerfil(PerfilesBean perfil) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
@@ -127,6 +186,15 @@ public class PerfilesDao {
         return actualizacion;
     }
     
+    /**
+     * Método encargado de eliminar un perfil específico.
+     * @param idPerfil
+     * @return Un número indicando si el proceso se realizó o no.
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws SQLException
+     * @throws IllegalAccessException 
+     */
     public int eliminarPerfil(Integer idPerfil) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
@@ -144,6 +212,16 @@ public class PerfilesDao {
         return eliminacion;
     }
     
+    /**
+     * Método encargado de insertar los permisos de un perfil específico.
+     * @param idPerfil
+     * @param permisos
+     * @return Un número indicando si el proceso se realizó o no.
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws SQLException
+     * @throws IllegalAccessException 
+     */
     public int insertarPermisos(Integer idPerfil, List<Integer> permisos) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
@@ -160,6 +238,16 @@ public class PerfilesDao {
         return insercion;
     }
     
+    /**
+     * Método encargado de consultar los permisos que tiene un perfil dentro de
+     * una página.
+     * @param idPerfil
+     * @return Mapa con los permisos de un perfil por cada página.
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws SQLException
+     * @throws IllegalAccessException 
+     */
     public Map<Integer, Map<String, Object>> consultarPermisosPorPagina(Integer idPerfil) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
         Map<Integer, Map<String, Object>> resultado = new LinkedHashMap<>();
         Connection con;

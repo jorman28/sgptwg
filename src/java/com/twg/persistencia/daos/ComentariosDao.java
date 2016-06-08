@@ -12,13 +12,26 @@ import java.util.Date;
 import java.util.List;
 
 /**
+ * Clase encargada de obtener la conexión con la base de datos y ejecutar las
+ * sentencias con base en los datos enviados desde el negocio
  *
- * @author Pipe
+ * @author Andrés Felipe Giraldo, Jorman Rincón, Erika Jhoana Castaneda
  */
 public class ComentariosDao {
 
     private final ComentariosSql sql = new ComentariosSql();
 
+    /**
+     * Método encargado de consultar el listado de comentarios según el destino.
+     * @param id
+     * @param tipoDestino
+     * @param idDestino
+     * @return Listado de comentarios según los parámetros de búsqueda.
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws SQLException
+     * @throws IllegalAccessException 
+     */
     public List<ComentariosBean> consultarComentarios(Integer id, String tipoDestino, Integer idDestino) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         List<ComentariosBean> listaComentarios = new ArrayList();
         Connection con;
@@ -51,6 +64,15 @@ public class ComentariosDao {
         return listaComentarios;
     }
 
+    /**
+     * Método encargado de crear un nuevo comentario dentro del sistema.
+     * @param comentario
+     * @return Un número indicando si el proceso se realizó exitosamente o no.
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws SQLException
+     * @throws IllegalAccessException 
+     */
     public int crearComentario(ComentariosBean comentario) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
@@ -66,6 +88,15 @@ public class ComentariosDao {
         return insercion;
     }
 
+    /**
+     * Método encargadoo de actualizar la información de un comentario.
+     * @param comentario
+     * @return Un número indicando si el proceso se realizó exitosamente o no.
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws SQLException
+     * @throws IllegalAccessException 
+     */
     public int actualizarComentario(ComentariosBean comentario) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
@@ -82,6 +113,15 @@ public class ComentariosDao {
         return actualizacion;
     }
 
+    /**
+     * Método encargado de eliminar un comentario.
+     * @param idComentario
+     * @return Un número indicando si el proceso se realizó exitosamente o no.
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws SQLException
+     * @throws IllegalAccessException 
+     */
     public int eliminarComentario(Integer idComentario) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();

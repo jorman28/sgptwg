@@ -11,16 +11,30 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Clase encargada de obtener la conexión con la base de datos y ejecutar las
+ * sentencias con base en los datos enviados desde el negocio
  *
- * @author Jorman Rincón
+ * @author Andrés Felipe Giraldo, Jorman Rincón, Erika Jhoana Castaneda
  */
 public class EstadosDao {
 
     private final EstadosSql sql = new EstadosSql();
 
+    /**
+     * Método constructor de la clase.
+     */
     public EstadosDao() {
     }
 
+    /**
+     * Método encargado de consultar los estados de la base de datos.
+     * @param id
+     * @return Listado con los estados del sistema.
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws SQLException
+     * @throws IllegalAccessException 
+     */
     public List<EstadosBean> consultarEstados(Integer id) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         return consultarEstados(id, null, null, null, null, null, null);
     }
@@ -59,6 +73,22 @@ public class EstadosDao {
         return cantidadEstados;
     }
 
+    /**
+     * Método encargado de consultar los estados del sistema según los parámetros
+     * de búsqueda.
+     * @param id
+     * @param tipoEstado
+     * @param nombre
+     * @param estadoPrev
+     * @param estadoSig
+     * @param eFinal
+     * @param limite
+     * @return Listado con los estados del sistema según los parámetros de búsqueda.
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws SQLException
+     * @throws IllegalAccessException 
+     */
     public List<EstadosBean> consultarEstados(Integer id, String tipoEstado, String nombre, Integer estadoPrev,
             Integer estadoSig, String eFinal, String limite) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         List<EstadosBean> listaEstados = new ArrayList<>();
@@ -84,6 +114,16 @@ public class EstadosDao {
         return listaEstados;
     }
 
+    /**
+     * Método encargado de consultar los estados previos y siguientes de un 
+     * estado específico.
+     * @param id
+     * @return Listado de estados previos o siguientes.
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws SQLException
+     * @throws IllegalAccessException 
+     */
     public List<EstadosBean> consultarEstadosPS(Integer id) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         List<EstadosBean> listaEstados = new ArrayList<>();
         Connection con;
@@ -108,6 +148,15 @@ public class EstadosDao {
         return listaEstados;
     }
 
+    /**
+     * Método encargado de consultar el id de un estado específico.
+     * @param nombre
+     * @return El ID de un estado específico según el nombre.
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws SQLException
+     * @throws IllegalAccessException 
+     */
     public Integer consultarId(String nombre) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         Integer idPersona = null;
         Connection con;
@@ -125,6 +174,15 @@ public class EstadosDao {
         return idPersona;
     }
 
+    /**
+     * Método encargado de insertar un nuevo estado en el sistema.
+     * @param estado
+     * @return Un número indicando si el proceso se realizó o no.
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws SQLException
+     * @throws IllegalAccessException 
+     */
     public int insertarEstado(EstadosBean estado) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
@@ -142,6 +200,15 @@ public class EstadosDao {
         return insercion;
     }
 
+    /**
+     * Método encargado de actualizar la información de un estado.
+     * @param estado
+     * @return Un número indicando si el proceso se realizó o no.
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws SQLException
+     * @throws IllegalAccessException 
+     */
     public int actualizarEstado(EstadosBean estado) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
@@ -159,6 +226,15 @@ public class EstadosDao {
         return actualizacion;
     }
 
+    /**
+     * Método encargado de eliminar un estado específico.
+     * @param id
+     * @return Un número indicando si el proceso se realizó o no.
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws SQLException
+     * @throws IllegalAccessException 
+     */
     public int eliminarEstado(Integer id) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
