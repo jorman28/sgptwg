@@ -33,7 +33,7 @@ public class TiposDocumentosDao {
 
     /**
      * Método encargado de consultar todos los tipos de documentos del sistema.
-     * @return
+     * @return Listado con la información de los tipos de documentos.
      * @throws ClassNotFoundException
      * @throws InstantiationException
      * @throws SQLException
@@ -60,6 +60,15 @@ public class TiposDocumentosDao {
         return listaTiposDocumentos;
     }
     
+    /**
+     * Método encargado de guardar la información de un tipo de documento.
+     * @param tipoDocumento
+     * @return Un número indicando si el proceso se realizó exitosamente o no.
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws SQLException
+     * @throws IllegalAccessException 
+     */
     public int insertarTipoDocumento(TiposDocumentosBean tipoDocumento) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
@@ -73,6 +82,15 @@ public class TiposDocumentosDao {
         return insercion;
     }
     
+    /**
+     * Método encargado de actualizar la información de un tipo de documento.
+     * @param tipoDocumento
+     * @return Un número indicando si el proceso se realizó exitosamente o no.
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws SQLException
+     * @throws IllegalAccessException 
+     */
     public int actualizarTipoDocumento(TiposDocumentosBean tipoDocumento) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
@@ -86,6 +104,15 @@ public class TiposDocumentosDao {
         return actualizacion;
     }
     
+    /**
+     * Método encargado de eliminar un tipo de documento. 
+     * @param tipoDocumento
+     * @return Un número indicando si el proceso se realizó exitosamente o no.
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws SQLException
+     * @throws IllegalAccessException 
+     */
     public int eliminarTipoDocumento(Integer tipoDocumento) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException{
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();

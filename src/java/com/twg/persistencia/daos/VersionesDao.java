@@ -12,13 +12,28 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Clase encargada de realizar la conexión con la base de datos y ejecutar las
+ * sentencias SQL especificadas
  *
- * @author Pipe
+ * @author Andrés Felipe Giraldo, Jorman Rincón, Erika Jhoana Castaneda
  */
 public class VersionesDao {
 
     private final VersionesSql sql = new VersionesSql();
 
+    /**
+     * Método encargado de consultar las versiones del sistema según los parámetros
+     * de búsqueda.
+     * @param id
+     * @param idProyecto
+     * @param nombre
+     * @param nombreExacto
+     * @return Listado con las versiones consultadas.
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws SQLException
+     * @throws IllegalAccessException 
+     */
     public List<VersionesBean> consultarVersiones(Integer id, Integer idProyecto, String nombre, boolean nombreExacto) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         List<VersionesBean> listaVersiones = new ArrayList();
         Connection con;
@@ -50,6 +65,17 @@ public class VersionesDao {
         return listaVersiones;
     }
 
+    /**
+     * Método encargado de consultar las versiones dentro de una fecha específica.
+     * @param idProyecto
+     * @param fecha
+     * @return Valor booleano para indicar si hay versiones dentro de una fecha
+     * específica.
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws SQLException
+     * @throws IllegalAccessException 
+     */
     public boolean versionesPorFecha(Integer idProyecto, java.util.Date fecha) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
@@ -69,6 +95,15 @@ public class VersionesDao {
         return versionesExistentes;
     }
 
+    /**
+     * Método encargado de crear una nueva versión.
+     * @param version
+     * @return Valor numérico para indicar si el proceso se realizó o no correctamente.
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws SQLException
+     * @throws IllegalAccessException 
+     */
     public int crearVersion(VersionesBean version) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
@@ -87,6 +122,15 @@ public class VersionesDao {
         return insercion;
     }
 
+    /**
+     * Método encargado de actualizar la información de una versión.
+     * @param version
+     * @return Valor numérico para indicar si el proceso se realizó o no correctamente.
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws SQLException
+     * @throws IllegalAccessException 
+     */
     public int actualizarVersion(VersionesBean version) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();
@@ -106,6 +150,16 @@ public class VersionesDao {
         return actualizacion;
     }
 
+    /**
+     * Método encargado de eliminar una versión específica.
+     * @param idVersion
+     * @param idProyecto
+     * @return Valor numérico para indicar si el proceso se realizó o no correctamente.
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws SQLException
+     * @throws IllegalAccessException 
+     */
     public int eliminarVersion(Integer idVersion, Integer idProyecto) throws ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
         Connection con;
         con = new ConexionBaseDatos().obtenerConexion();

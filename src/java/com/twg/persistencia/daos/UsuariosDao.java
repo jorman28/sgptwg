@@ -14,12 +14,15 @@ import java.util.List;
  * Clase encargada de realizar la conexión con la base de datos y ejecutar las
  * sentencias SQL especificadas
  *
- * @author Pipe
+ * @author Andrés Felipe Giraldo, Jorman Rincón, Erika Jhoana Castaneda
  */
 public class UsuariosDao {
 
     private final UsuariosSql sql = new UsuariosSql();
 
+    /**
+     * Método constructor de la clase.
+     */
     public UsuariosDao() {
     }
 
